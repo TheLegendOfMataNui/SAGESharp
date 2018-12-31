@@ -17,6 +17,26 @@ namespace ShoefitterDX
 
         public static SAGESharp.INIConfig Config { get; private set; }
 
+        public static event EventHandler<Project> ProjectClosed;
+        public static event EventHandler<Project> ProjectOpened;
+        private static Project _project = null;
+        public static Project Project
+        {
+            get => _project;
+            set
+            {
+                if (Project != null)
+                {
+                    ProjectClosed?.Invoke(null, Project);
+                }
+                _project = value;
+                if (Project != null)
+                {
+                    ProjectOpened?.Invoke(null, Project);
+                }
+            }
+        }
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
