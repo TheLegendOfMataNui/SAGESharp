@@ -51,6 +51,7 @@
     <Compile Include="BHDFile.cs" />
     <Compile Include="INIConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Slb\Identifier.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
