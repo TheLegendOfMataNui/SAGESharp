@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SAGESharp.Extensions;
+using System;
+using System.Text;
 
 namespace SAGESharp.Slb
 {
@@ -20,23 +22,13 @@ namespace SAGESharp.Slb
         /// <param name="value">The input value to initalize the instance.</param>
         public Identifier(uint value)
         {
-            throw new NotImplementedException();
+            Value = value;
         }
 
         /// <summary>
         /// The value of the identifier.
         /// </summary>
-        public uint Value
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public uint Value { get; set; }
 
         #region Byte level access
         /// <summary>
@@ -46,11 +38,11 @@ namespace SAGESharp.Slb
         {
             get
             {
-                throw new NotImplementedException();
+                return ByteToASCIIChar(B0);
             }
             set
             {
-                throw new NotImplementedException();
+                Value = Value.SetByte(0, ASCIICharToByte(value));
             }
         }
 
@@ -61,11 +53,11 @@ namespace SAGESharp.Slb
         {
             get
             {
-                throw new NotImplementedException();
+                return ByteToASCIIChar(B1);
             }
             set
             {
-                throw new NotImplementedException();
+                Value = Value.SetByte(1, ASCIICharToByte(value));
             }
         }
 
@@ -76,11 +68,11 @@ namespace SAGESharp.Slb
         {
             get
             {
-                throw new NotImplementedException();
+                return ByteToASCIIChar(B2);
             }
             set
             {
-                throw new NotImplementedException();
+                Value = Value.SetByte(2, ASCIICharToByte(value));
             }
         }
 
@@ -91,11 +83,11 @@ namespace SAGESharp.Slb
         {
             get
             {
-                throw new NotImplementedException();
+                return ByteToASCIIChar(B3);
             }
             set
             {
-                throw new NotImplementedException();
+                Value = Value.SetByte(3, ASCIICharToByte(value));
             }
         }
 
@@ -106,11 +98,11 @@ namespace SAGESharp.Slb
         {
             get
             {
-                throw new NotImplementedException();
+                return Value.GetByte(0);
             }
             set
             {
-                throw new NotImplementedException();
+                Value = Value.SetByte(0, value);
             }
         }
 
@@ -121,11 +113,11 @@ namespace SAGESharp.Slb
         {
             get
             {
-                throw new NotImplementedException();
+                return Value.GetByte(1);
             }
             set
             {
-                throw new NotImplementedException();
+                Value = Value.SetByte(1, value);
             }
         }
 
@@ -136,11 +128,11 @@ namespace SAGESharp.Slb
         {
             get
             {
-                throw new NotImplementedException();
+                return Value.GetByte(2);
             }
             set
             {
-                throw new NotImplementedException();
+                Value = Value.SetByte(2, value);
             }
         }
 
@@ -151,11 +143,11 @@ namespace SAGESharp.Slb
         {
             get
             {
-                throw new NotImplementedException();
+                return Value.GetByte(3);
             }
             set
             {
-                throw new NotImplementedException();
+                Value = Value.SetByte(3, value);
             }
         }
         #endregion
@@ -167,7 +159,37 @@ namespace SAGESharp.Slb
         /// <returns>The identifier as a (4 character) string.</returns>
         public override string ToString()
         {
-            throw new NotImplementedException();
+            return new string(new[] { C3, C2, C1, C0 });
+        }
+
+        private static char ByteToASCIIChar(byte b)
+        {
+            if (!IsASCIINumber(b) && !IsASCIIUppercaseLetter(b) && !IsASCIILowercaseLetter(b))
+            {
+                return EMPY_CHAR;
+            }
+
+            return Encoding.ASCII.GetChars(new[] { b })[0];
+        }
+
+        private static byte ASCIICharToByte(char c)
+        {
+            return Encoding.ASCII.GetBytes(new[] { c })[0];
+        }
+
+        private static bool IsASCIINumber(byte b)
+        {
+            return 0x30 <= b && b <= 0x39;
+        }
+
+        private static bool IsASCIIUppercaseLetter(byte b)
+        {
+            return 0x41 <= b && b <= 0x5A;
+        }
+
+        private static bool IsASCIILowercaseLetter(byte b)
+        {
+            return 0x61 <= b && b <= 0x7A;
         }
     }
 }
