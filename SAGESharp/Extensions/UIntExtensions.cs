@@ -24,7 +24,12 @@ namespace SAGESharp.Extensions
         /// <exception cref="ArgumentOutOfRangeException">If the byte position is out of range.</exception>
         public static byte GetByte(this uint value, byte bytePosition)
         {
-            throw new NotImplementedException();
+            if (bytePosition > 3)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            return (byte)(value >> (bytePosition * 8));
         }
 
         /// <summary>
@@ -44,7 +49,15 @@ namespace SAGESharp.Extensions
         /// <exception cref="ArgumentOutOfRangeException">If the byte position is out of range.</exception>
         public static uint SetByte(this uint value, byte bytePosition, byte byteValue)
         {
-            throw new NotImplementedException();
+            if (bytePosition > 3)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            var realBytePosition = bytePosition * 8;
+            uint zeroes = (uint)~(0xFF << realBytePosition);
+            uint finalByte = (uint)(byteValue << realBytePosition);
+            return (value & zeroes) | finalByte;
         }
     }
 }
