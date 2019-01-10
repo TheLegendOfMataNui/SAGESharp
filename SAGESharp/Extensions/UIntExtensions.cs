@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SAGESharp.Extensions
 {
-    public static class UIntExtensions
+    internal static class UIntExtensions
     {
         /// <summary>
         /// Gets an individual byte from the input value.
