@@ -1,6 +1,4 @@
 ﻿using SAGESharp.Extensions;
-using System;
-using System.Text;
 
 namespace SAGESharp.Slb
 {
@@ -38,11 +36,11 @@ namespace SAGESharp.Slb
         {
             get
             {
-                return ByteToASCIIChar(B0);
+                return GetReadableByte(0);
             }
             set
             {
-                Value = Value.SetByte(0, ASCIICharToByte(value));
+                SetByteValue(0, value);
             }
         }
 
@@ -53,11 +51,11 @@ namespace SAGESharp.Slb
         {
             get
             {
-                return ByteToASCIIChar(B1);
+                return GetReadableByte(1);
             }
             set
             {
-                Value = Value.SetByte(1, ASCIICharToByte(value));
+                SetByteValue(1, value);
             }
         }
 
@@ -68,11 +66,11 @@ namespace SAGESharp.Slb
         {
             get
             {
-                return ByteToASCIIChar(B2);
+                return GetReadableByte(2);
             }
             set
             {
-                Value = Value.SetByte(2, ASCIICharToByte(value));
+                SetByteValue(2, value);
             }
         }
 
@@ -83,11 +81,11 @@ namespace SAGESharp.Slb
         {
             get
             {
-                return ByteToASCIIChar(B3);
+                return GetReadableByte(3);
             }
             set
             {
-                Value = Value.SetByte(3, ASCIICharToByte(value));
+                SetByteValue(3, value);
             }
         }
 
@@ -162,34 +160,21 @@ namespace SAGESharp.Slb
             return new string(new[] { C3, C2, C1, C0 });
         }
 
-        private static char ByteToASCIIChar(byte b)
+        private char GetReadableByte(byte b)
         {
-            if (!IsASCIINumber(b) && !IsASCIIUppercaseLetter(b) && !IsASCIILowercaseLetter(b))
+            var result = Value.GetByte(b);
+
+            if (!result.IsASCIIDigit() && !result.IsASCIILowercaseLetter() && !result.IsASCIIUppercaseLetter())
             {
                 return EMPY_CHAR;
             }
 
-            return Encoding.ASCII.GetChars(new[] { b })[0];
+            return result.ToASCIIChar();
         }
 
-        private static byte ASCIICharToByte(char c)
+        private void SetByteValue(byte b, char value)
         {
-            return Encoding.ASCII.GetBytes(new[] { c })[0];
-        }
-
-        private static bool IsASCIINumber(byte b)
-        {
-            return 0x30 <= b && b <= 0x39;
-        }
-
-        private static bool IsASCIIUppercaseLetter(byte b)
-        {
-            return 0x41 <= b && b <= 0x5A;
-        }
-
-        private static bool IsASCIILowercaseLetter(byte b)
-        {
-            return 0x61 <= b && b <= 0x7A;
+            Value = Value.SetByte(b, value.ToASCIIByte());
         }
     }
 }
