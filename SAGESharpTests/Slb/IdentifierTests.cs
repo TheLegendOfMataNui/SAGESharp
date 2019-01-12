@@ -60,7 +60,30 @@ namespace SAGESharpTests.Slb
             };
 
             AssertIdentifierWithTestValue(identifier);
+        }
 
+        [Test]
+        public void TestCreateIdentifierFromStringSizeSmallerThan4()
+        {
+            var identifier = (Identifier)string.Empty;
+
+            AssertEmptyIdentifier(identifier);
+        }
+
+        [Test]
+        public void TestCreateIdentifierFromStringSize4()
+        {
+            var identifier = (Identifier)"ABCD";
+
+            AssertIdentifierWithTestValue(identifier);
+        }
+
+        [Test]
+        public void TestCreateIdentifierFromStringSizeGreaterThan4()
+        {
+            var identifier = (Identifier)"ABCDEFGH";
+
+            AssertIdentifierWithTestValue(identifier);
         }
 
         [Test]
