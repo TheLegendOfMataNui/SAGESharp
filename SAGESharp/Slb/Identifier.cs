@@ -36,6 +36,9 @@ namespace SAGESharp.Slb
 
         /// <summary>
         /// Creates a new instance initialize it with the input values.
+        /// 
+        /// If the byte array is shorter than 4, the rest of values will be set to zero.
+        /// If the byte array is bigger than 4, the leftover bytes will be ignored.
         /// </summary>
         /// 
         /// <param name="values">An array of bytes that will be used to initialize the identifier.</param>
@@ -52,6 +55,9 @@ namespace SAGESharp.Slb
 
         /// <summary>
         /// Creates a new instance initialize it with the input value.
+        /// 
+        /// If the string is shorter than 4, the rest of values will be set to zero.
+        /// If the string is bigger than 4, the leftover characters will be ignored.
         /// </summary>
         /// 
         /// <param name="value">A string that will be used to initialize the identifier.</param>
