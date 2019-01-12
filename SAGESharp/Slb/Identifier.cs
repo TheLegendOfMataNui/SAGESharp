@@ -1,4 +1,5 @@
 ﻿using SAGESharp.Extensions;
+using System.IO;
 
 namespace SAGESharp.Slb
 {
@@ -7,7 +8,7 @@ namespace SAGESharp.Slb
     /// 
     /// The identifier consist of 4 bytes/characters (a 32 bit integer).
     /// </summary>
-    public class Identifier
+    public class Identifier : ISlb
     {
         /// <summary>
         /// Char that will be shown if any invalid byte is used in the identifier.
@@ -242,6 +243,45 @@ namespace SAGESharp.Slb
         {
             return new string(new[] { C0, C1, C2, C3 });
         }
+
+        #region ISlb
+        /// <inheritdoc/>
+        public void ReadFrom(Stream stream)
+        {
+            byte readByteFromStream()
+            {
+                int value = stream.ReadByte();
+                if (value == -1)
+                {
+                    throw new EndOfStreamException();
+                }
+
+                return (byte)value;
+            }
+
+            var b0 = readByteFromStream();
+            var b1 = readByteFromStream();
+            var b2 = readByteFromStream();
+            var b3 = readByteFromStream();
+
+            // First read everything then write everything
+            // to prevent modifying the Identifier unless
+            // it has been completely read
+            B0 = b0;
+            B1 = b1;
+            B2 = b2;
+            B3 = b3;
+        }
+
+        /// <inheritdoc/>
+        public void WriteTo(Stream stream)
+        {
+            stream.WriteByte(B0);
+            stream.WriteByte(B1);
+            stream.WriteByte(B2);
+            stream.WriteByte(B3);
+        }
+        #endregion
 
         private char GetReadableByte(byte b)
         {
