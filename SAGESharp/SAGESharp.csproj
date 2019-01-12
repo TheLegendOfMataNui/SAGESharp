@@ -56,6 +56,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Slb\Identifier.cs" />
     <Compile Include="Slb\ISlbObject.cs" />
+    <Compile Include="Slb\Level\Conversation\Character.cs" />
+    <Compile Include="Slb\Level\Conversation\Frame.cs" />
+    <Compile Include="Slb\Level\Conversation\Info.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
