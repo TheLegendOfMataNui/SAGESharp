@@ -12,7 +12,6 @@ namespace SAGESharpTests.Slb
             var identifier = new Identifier();
             var expectedString = new string(Identifier.EMPY_CHAR, 4);
 
-            Assert.That(identifier.Value, Is.EqualTo(0));
             Assert.That(identifier.ToInteger(), Is.EqualTo(0));
             Assert.That(identifier.ToString(), Is.EqualTo(expectedString));
 
@@ -30,7 +29,7 @@ namespace SAGESharpTests.Slb
         [Test]
         public void TestCreateIdentifierFromInteger()
         {
-            var identifier = (Identifier) 0x44434241;
+            var identifier = (Identifier)0x44434241;
 
             AssertIdentifierWithTestValue(identifier);
         }
@@ -38,10 +37,7 @@ namespace SAGESharpTests.Slb
         [Test]
         public void TestSettingIdentifierValuesByValue()
         {
-            var identifier = new Identifier
-            {
-                Value = 0x44434241
-            };
+            var identifier = (Identifier)0x44434241;
 
             AssertIdentifierWithTestValue(identifier);
         }
@@ -100,7 +96,6 @@ namespace SAGESharpTests.Slb
             // Test value is the equivalent of:
             // C0 = 'A', C1 = 'B', C2 = 'C', C3 = 'D'
 
-            Assert.That(identifier.Value, Is.EqualTo(0x44434241));
             Assert.That(identifier.ToInteger(), Is.EqualTo(0x44434241));
             Assert.That(identifier.ToString(), Is.EqualTo("DCBA"));
 

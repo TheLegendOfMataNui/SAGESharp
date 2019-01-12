@@ -19,7 +19,6 @@ namespace SAGESharp.Slb
         /// </summary>
         public Identifier()
         {
-            Value = 0;
         }
 
         /// <summary>
@@ -31,14 +30,11 @@ namespace SAGESharp.Slb
         {
             return new Identifier
             {
-                Value = value
+                value = value
             };
         }
 
-        /// <summary>
-        /// The value of the identifier.
-        /// </summary>
-        public uint Value { get; set; }
+        private uint value = 0;
 
         #region Byte level access
         /// <summary>
@@ -108,7 +104,7 @@ namespace SAGESharp.Slb
         {
             get
             {
-                return Value.GetByte(0);
+                return value.GetByte(0);
             }
             set
             {
@@ -123,7 +119,7 @@ namespace SAGESharp.Slb
         {
             get
             {
-                return Value.GetByte(1);
+                return value.GetByte(1);
             }
             set
             {
@@ -138,7 +134,7 @@ namespace SAGESharp.Slb
         {
             get
             {
-                return Value.GetByte(2);
+                return value.GetByte(2);
             }
             set
             {
@@ -153,7 +149,7 @@ namespace SAGESharp.Slb
         {
             get
             {
-                return Value.GetByte(3);
+                return value.GetByte(3);
             }
             set
             {
@@ -169,7 +165,7 @@ namespace SAGESharp.Slb
         /// <returns>The identifer as an unsigned (32 bit) integer.</returns>
         public uint ToInteger()
         {
-            return Value;
+            return value;
         }
 
         /// <summary>
@@ -184,7 +180,7 @@ namespace SAGESharp.Slb
 
         private char GetReadableByte(byte b)
         {
-            var result = Value.GetByte(b);
+            var result = value.GetByte(b);
 
             if (!result.IsASCIIDigit() && !result.IsASCIILowercaseLetter() && !result.IsASCIIUppercaseLetter())
             {
@@ -201,7 +197,7 @@ namespace SAGESharp.Slb
 
         private void SetByteValue(byte bytePosition, byte value)
         {
-            Value = Value.SetByte(bytePosition, value);
+            this.value = this.value.SetByte(bytePosition, value);
         }
     }
 }
