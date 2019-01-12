@@ -10,20 +10,8 @@ namespace SAGESharpTests.Slb
         public void TestCreateEmptyIdentifier()
         {
             var identifier = new Identifier();
-            var expectedString = new string(Identifier.EMPY_CHAR, 4);
 
-            Assert.That(identifier.ToInteger(), Is.EqualTo(0));
-            Assert.That(identifier.ToString(), Is.EqualTo(expectedString));
-
-            Assert.That(identifier.C0, Is.EqualTo(Identifier.EMPY_CHAR));
-            Assert.That(identifier.C1, Is.EqualTo(Identifier.EMPY_CHAR));
-            Assert.That(identifier.C2, Is.EqualTo(Identifier.EMPY_CHAR));
-            Assert.That(identifier.C3, Is.EqualTo(Identifier.EMPY_CHAR));
-
-            Assert.That(identifier.B0, Is.EqualTo(0));
-            Assert.That(identifier.B1, Is.EqualTo(0));
-            Assert.That(identifier.B2, Is.EqualTo(0));
-            Assert.That(identifier.B3, Is.EqualTo(0));
+            AssertEmptyIdentifier(identifier);
         }
 
         [Test]
@@ -32,6 +20,47 @@ namespace SAGESharpTests.Slb
             var identifier = (Identifier)0x44434241;
 
             AssertIdentifierWithTestValue(identifier);
+        }
+
+        [Test]
+        public void TestCreateIdentifierFromArraySizeSmallerThan4()
+        {
+            var identifier = (Identifier)new byte[0];
+
+            AssertEmptyIdentifier(identifier);
+        }
+
+        [Test]
+        public void TestCreateIdentifierFromArraySize4()
+        {
+            var identifier = (Identifier)new byte[]
+            {
+                0x41,
+                0x42,
+                0x43,
+                0x44
+            };
+
+            AssertIdentifierWithTestValue(identifier);
+        }
+
+        [Test]
+        public void TestCreateIdentifierFromArraySizeGreaterThan4()
+        {
+            var identifier = (Identifier)new byte[]
+            {
+                0x41,
+                0x42,
+                0x43,
+                0x44,
+                0x45,
+                0x46,
+                0x47,
+                0x48
+            };
+
+            AssertIdentifierWithTestValue(identifier);
+
         }
 
         [Test]
@@ -89,6 +118,24 @@ namespace SAGESharpTests.Slb
 
             var expectedString = new string(Identifier.EMPY_CHAR, 4);
             Assert.That(identifier.ToString(), Is.EqualTo(expectedString));
+        }
+
+        private static void AssertEmptyIdentifier(Identifier identifier)
+        {
+            var expectedString = new string(Identifier.EMPY_CHAR, 4);
+
+            Assert.That(identifier.ToInteger(), Is.EqualTo(0));
+            Assert.That(identifier.ToString(), Is.EqualTo(expectedString));
+
+            Assert.That(identifier.C0, Is.EqualTo(Identifier.EMPY_CHAR));
+            Assert.That(identifier.C1, Is.EqualTo(Identifier.EMPY_CHAR));
+            Assert.That(identifier.C2, Is.EqualTo(Identifier.EMPY_CHAR));
+            Assert.That(identifier.C3, Is.EqualTo(Identifier.EMPY_CHAR));
+
+            Assert.That(identifier.B0, Is.EqualTo(0));
+            Assert.That(identifier.B1, Is.EqualTo(0));
+            Assert.That(identifier.B2, Is.EqualTo(0));
+            Assert.That(identifier.B3, Is.EqualTo(0));
         }
 
         private static void AssertIdentifierWithTestValue(Identifier identifier)

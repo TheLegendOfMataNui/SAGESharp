@@ -34,6 +34,22 @@ namespace SAGESharp.Slb
             };
         }
 
+        /// <summary>
+        /// Creates a new instance initialize it with the input values.
+        /// </summary>
+        /// 
+        /// <param name="values">An array of bytes that will be used to initialize the identifier.</param>
+        public static explicit operator Identifier(byte[] values)
+        {
+            return new Identifier
+            {
+                B0 = (values.Length > 0) ? values[0] : (byte)0,
+                B1 = (values.Length > 1) ? values[1] : (byte)0,
+                B2 = (values.Length > 2) ? values[2] : (byte)0,
+                B3 = (values.Length > 3) ? values[3] : (byte)0,
+            };
+        }
+
         private uint value = 0;
 
         #region Byte level access
