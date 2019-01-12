@@ -157,6 +157,16 @@ namespace SAGESharp.Slb
             }
         }
         #endregion
+        
+        /// <summary>
+        /// Gets the identifier as an unsigned (32 bit) integer.
+        /// </summary>
+        /// 
+        /// <returns>The identifer as an unsigned (32 bit) integer.</returns>
+        public uint ToInteger()
+        {
+            return Value;
+        }
 
         /// <summary>
         /// Gets the identifier as a (4 character) string.

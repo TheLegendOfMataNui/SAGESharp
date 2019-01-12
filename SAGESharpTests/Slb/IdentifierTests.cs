@@ -13,6 +13,7 @@ namespace SAGESharpTests.Slb
             var expectedString = new string(Identifier.EMPY_CHAR, 4);
 
             Assert.That(identifier.Value, Is.EqualTo(0));
+            Assert.That(identifier.ToInteger(), Is.EqualTo(0));
             Assert.That(identifier.ToString(), Is.EqualTo(expectedString));
 
             Assert.That(identifier.C0, Is.EqualTo(Identifier.EMPY_CHAR));
@@ -100,6 +101,7 @@ namespace SAGESharpTests.Slb
             // C0 = 'A', C1 = 'B', C2 = 'C', C3 = 'D'
 
             Assert.That(identifier.Value, Is.EqualTo(0x44434241));
+            Assert.That(identifier.ToInteger(), Is.EqualTo(0x44434241));
             Assert.That(identifier.ToString(), Is.EqualTo("DCBA"));
 
             Assert.That(identifier.C0, Is.EqualTo('A'));
