@@ -54,6 +54,7 @@
     <Compile Include="INIConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Slb\Identifier.cs" />
+    <Compile Include="Slb\ISlb.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
