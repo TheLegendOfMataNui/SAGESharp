@@ -191,7 +191,7 @@ namespace SAGESharp.Slb
         /// <returns>The identifier as a (4 character) string.</returns>
         public override string ToString()
         {
-            return new string(new[] { C3, C2, C1, C0 });
+            return new string(new[] { C0, C1, C2, C3 });
         }
 
         private char GetReadableByte(byte b)
