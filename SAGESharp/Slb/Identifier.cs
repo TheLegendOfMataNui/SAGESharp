@@ -108,7 +108,7 @@ namespace SAGESharp.Slb
             }
             set
             {
-                Value = Value.SetByte(0, value);
+                SetByteValue(0, value);
             }
         }
 
@@ -123,7 +123,7 @@ namespace SAGESharp.Slb
             }
             set
             {
-                Value = Value.SetByte(1, value);
+                SetByteValue(1, value);
             }
         }
 
@@ -138,7 +138,7 @@ namespace SAGESharp.Slb
             }
             set
             {
-                Value = Value.SetByte(2, value);
+                SetByteValue(2, value);
             }
         }
 
@@ -153,7 +153,7 @@ namespace SAGESharp.Slb
             }
             set
             {
-                Value = Value.SetByte(3, value);
+                SetByteValue(3, value);
             }
         }
         #endregion
@@ -180,9 +180,14 @@ namespace SAGESharp.Slb
             return result.ToASCIIChar();
         }
 
-        private void SetByteValue(byte b, char value)
+        private void SetByteValue(byte bytePosition, char value)
         {
-            Value = Value.SetByte(b, value.ToASCIIByte());
+            SetByteValue(bytePosition, value.ToASCIIByte());
+        }
+
+        private void SetByteValue(byte bytePosition, byte value)
+        {
+            Value = Value.SetByte(bytePosition, value);
         }
     }
 }
