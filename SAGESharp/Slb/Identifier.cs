@@ -28,10 +28,11 @@ namespace SAGESharp.Slb
         /// <param name="value">The input value to initalize the instance.</param>
         public static explicit operator Identifier(uint value)
         {
-            return new Identifier
-            {
-                value = value
-            };
+            var result = new Identifier();
+
+            result.SetFrom(value);
+
+            return result;
         }
 
         /// <summary>
@@ -44,13 +45,11 @@ namespace SAGESharp.Slb
         /// <param name="values">An array of bytes that will be used to initialize the identifier.</param>
         public static explicit operator Identifier(byte[] values)
         {
-            return new Identifier
-            {
-                B0 = (values.Length > 0) ? values[0] : (byte)0,
-                B1 = (values.Length > 1) ? values[1] : (byte)0,
-                B2 = (values.Length > 2) ? values[2] : (byte)0,
-                B3 = (values.Length > 3) ? values[3] : (byte)0,
-            };
+            var result = new Identifier();
+
+            result.SetFrom(values);
+
+            return result;
         }
 
         /// <summary>
@@ -63,13 +62,11 @@ namespace SAGESharp.Slb
         /// <param name="value">A string that will be used to initialize the identifier.</param>
         public static explicit operator Identifier(string value)
         {
-            return new Identifier
-            {
-                B0 = (value.Length > 0) ? value[0].ToASCIIByte() : (byte)0,
-                B1 = (value.Length > 1) ? value[1].ToASCIIByte() : (byte)0,
-                B2 = (value.Length > 2) ? value[2].ToASCIIByte() : (byte)0,
-                B3 = (value.Length > 3) ? value[3].ToASCIIByte() : (byte)0,
-            };
+            var result = new Identifier();
+
+            result.SetFrom(value);
+
+            return result;
         }
 
         private uint value = 0;
@@ -195,7 +192,49 @@ namespace SAGESharp.Slb
             }
         }
         #endregion
-        
+
+        /// <summary>
+        /// Set the value of the identifier to the input integer.
+        /// </summary>
+        /// 
+        /// <param name="value">The input integer that will be used to set the value of the identifier.</param>
+        public void SetFrom(uint value)
+        {
+            this.value = value;
+        }
+
+        /// <summary>
+        /// Sets the value of the identifier to the input array of bytes.
+        /// 
+        /// If the byte array is shorter than 4, the rest of values will be set to zero.
+        /// If the byte array is bigger than 4, the leftover bytes will be ignored.
+        /// </summary>
+        /// 
+        /// <param name="values">An array of bytes that will be used to set the value of the identifier.</param>
+        public void SetFrom(byte[] values)
+        {
+            B0 = (values.Length > 0) ? values[0] : (byte)0;
+            B1 = (values.Length > 1) ? values[1] : (byte)0;
+            B2 = (values.Length > 2) ? values[2] : (byte)0;
+            B3 = (values.Length > 3) ? values[3] : (byte)0;
+        }
+
+        /// <summary>
+        /// Sets the value of the identifier to the input string.
+        /// 
+        /// If the string is shorter than 4, the rest of values will be set to zero.
+        /// If the string is bigger than 4, the leftover characters will be ignored.
+        /// </summary>
+        /// 
+        /// <param name="value">A string that will be used to set the value of the identifier.</param>
+        public void SetFrom(string value)
+        {
+            B0 = (value.Length > 0) ? value[0].ToASCIIByte() : (byte)0;
+            B1 = (value.Length > 1) ? value[1].ToASCIIByte() : (byte)0;
+            B2 = (value.Length > 2) ? value[2].ToASCIIByte() : (byte)0;
+            B3 = (value.Length > 3) ? value[3].ToASCIIByte() : (byte)0;
+        }
+
         /// <summary>
         /// Gets the identifier as an unsigned (32 bit) integer.
         /// </summary>
