@@ -7,12 +7,20 @@ namespace SAGESharp.Slb
     /// 
     /// The identifier consist of 4 bytes/characters (a 32 bit integer).
     /// </summary>
-    public struct Identifier
+    public class Identifier
     {
         /// <summary>
         /// Char that will be shown if any invalid byte is used in the identifier.
         /// </summary>
         public const char EMPY_CHAR = '?';
+
+        /// <summary>
+        /// Creates a new instance with the value initialized to zero.
+        /// </summary>
+        public Identifier()
+        {
+            Value = 0;
+        }
 
         /// <summary>
         /// Creates a new instance initializing it with the input value.
