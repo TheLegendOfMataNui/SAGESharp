@@ -26,13 +26,9 @@ namespace SAGESharp.Slb
         /// </summary>
         /// 
         /// <param name="value">The input value to initalize the instance.</param>
-        public static explicit operator Identifier(uint value)
+        public Identifier(uint value)
         {
-            var result = new Identifier();
-
-            result.SetFrom(value);
-
-            return result;
+            SetFrom(value);
         }
 
         /// <summary>
@@ -43,13 +39,9 @@ namespace SAGESharp.Slb
         /// </summary>
         /// 
         /// <param name="values">An array of bytes that will be used to initialize the identifier.</param>
-        public static explicit operator Identifier(byte[] values)
+        public Identifier(byte[] values)
         {
-            var result = new Identifier();
-
-            result.SetFrom(values);
-
-            return result;
+            SetFrom(values);
         }
 
         /// <summary>
@@ -60,13 +52,9 @@ namespace SAGESharp.Slb
         /// </summary>
         /// 
         /// <param name="value">A string that will be used to initialize the identifier.</param>
-        public static explicit operator Identifier(string value)
+        public Identifier(string value)
         {
-            var result = new Identifier();
-
-            result.SetFrom(value);
-
-            return result;
+            SetFrom(value);
         }
 
         private uint value = 0;

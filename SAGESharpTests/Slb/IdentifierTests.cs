@@ -17,7 +17,7 @@ namespace SAGESharpTests.Slb
         [Test]
         public void TestCreateIdentifierFromInteger()
         {
-            var identifier = (Identifier)0x44434241;
+            var identifier = new Identifier(0x44434241);
 
             AssertIdentifierWithTestValue(identifier);
         }
@@ -25,7 +25,7 @@ namespace SAGESharpTests.Slb
         [Test]
         public void TestCreateIdentifierFromArraySizeSmallerThan4()
         {
-            var identifier = (Identifier)new byte[0];
+            var identifier = new Identifier(new byte[0]);
 
             AssertEmptyIdentifier(identifier);
         }
@@ -33,13 +33,13 @@ namespace SAGESharpTests.Slb
         [Test]
         public void TestCreateIdentifierFromArraySize4()
         {
-            var identifier = (Identifier)new byte[]
+            var identifier = new Identifier(new byte[]
             {
                 0x41,
                 0x42,
                 0x43,
                 0x44
-            };
+            });
 
             AssertIdentifierWithTestValue(identifier);
         }
@@ -47,7 +47,7 @@ namespace SAGESharpTests.Slb
         [Test]
         public void TestCreateIdentifierFromArraySizeGreaterThan4()
         {
-            var identifier = (Identifier)new byte[]
+            var identifier = new Identifier(new byte[]
             {
                 0x41,
                 0x42,
@@ -57,7 +57,7 @@ namespace SAGESharpTests.Slb
                 0x46,
                 0x47,
                 0x48
-            };
+            });
 
             AssertIdentifierWithTestValue(identifier);
         }
@@ -65,7 +65,7 @@ namespace SAGESharpTests.Slb
         [Test]
         public void TestCreateIdentifierFromStringSizeSmallerThan4()
         {
-            var identifier = (Identifier)string.Empty;
+            var identifier = new Identifier(string.Empty);
 
             AssertEmptyIdentifier(identifier);
         }
@@ -73,7 +73,7 @@ namespace SAGESharpTests.Slb
         [Test]
         public void TestCreateIdentifierFromStringSize4()
         {
-            var identifier = (Identifier)"ABCD";
+            var identifier = new Identifier("ABCD");
 
             AssertIdentifierWithTestValue(identifier);
         }
@@ -81,7 +81,7 @@ namespace SAGESharpTests.Slb
         [Test]
         public void TestCreateIdentifierFromStringSizeGreaterThan4()
         {
-            var identifier = (Identifier)"ABCDEFGH";
+            var identifier = new Identifier("ABCDEFGH");
 
             AssertIdentifierWithTestValue(identifier);
         }
@@ -89,7 +89,7 @@ namespace SAGESharpTests.Slb
         [Test]
         public void TestSettingIdentifierValuesByValue()
         {
-            var identifier = (Identifier)0x44434241;
+            var identifier = new Identifier(0x44434241);
 
             AssertIdentifierWithTestValue(identifier);
         }
