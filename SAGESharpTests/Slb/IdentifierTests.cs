@@ -30,7 +30,7 @@ namespace SAGESharpTests.Slb
         [Test]
         public void TestCreateIdentifierFromInteger()
         {
-            var identifier = new Identifier(0x44434241);
+            var identifier = (Identifier) 0x44434241;
 
             AssertIdentifierWithTestValue(identifier);
         }

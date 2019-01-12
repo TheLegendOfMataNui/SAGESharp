@@ -25,10 +25,14 @@ namespace SAGESharp.Slb
         /// <summary>
         /// Creates a new instance initializing it with the input value.
         /// </summary>
+        /// 
         /// <param name="value">The input value to initalize the instance.</param>
-        public Identifier(uint value)
+        public static explicit operator Identifier(uint value)
         {
-            Value = value;
+            return new Identifier
+            {
+                Value = value
+            };
         }
 
         /// <summary>
