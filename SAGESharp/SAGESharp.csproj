@@ -61,6 +61,7 @@
     <Compile Include="Slb\Level\Conversation\Info.cs" />
     <Compile Include="Slb\IO\ISlbReader.cs" />
     <Compile Include="Slb\Level\Conversation\IO\CharacterBinaryReader.cs" />
+    <Compile Include="Slb\Level\Conversation\IO\InfoBinaryReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
