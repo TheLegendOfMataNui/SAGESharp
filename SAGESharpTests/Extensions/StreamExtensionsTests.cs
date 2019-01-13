@@ -39,6 +39,36 @@ namespace SAGESharpTests.Extensions
         }
 
         [Test]
+        public void TestForceReadASCIICharSucceeds()
+        {
+            var streamMock = new Mock<Stream>();
+
+            streamMock
+                .Setup(stream => stream.ReadByte())
+                .Returns(0x61);
+
+            Assert.That(streamMock.Object.ForceReadASCIIChar(), Is.EqualTo('a'));
+
+            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(1));
+            streamMock.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public void TestForceReadASCIICharFails()
+        {
+            var streamMock = new Mock<Stream>();
+
+            streamMock
+                .Setup(stream => stream.ReadByte())
+                .Returns(-1);
+
+            Assert.That(() => streamMock.Object.ForceReadASCIIChar(), Throws.InstanceOf(typeof(EndOfStreamException)));
+
+            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(1));
+            streamMock.VerifyNoOtherCalls();
+        }
+
+        [Test]
         public void TestForceReadIntSucceeds()
         {
             var streamMock = new Mock<Stream>();

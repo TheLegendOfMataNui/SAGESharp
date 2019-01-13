@@ -26,6 +26,20 @@ namespace SAGESharp.Extensions
         }
 
         /// <summary>
+        /// Reads a single ASCII char from the stream or throws if the end of the stream was reached.
+        /// </summary>
+        /// 
+        /// <param name="stream">The stream to read</param>
+        /// 
+        /// <returns>The next ASCII char in the stream.</returns>
+        /// 
+        /// <exception cref="EndOfStreamException">If the stream was read completely.</exception>
+        public static char ForceReadASCIIChar(this Stream stream)
+        {
+            return ASCIIExtensions.ToASCIIChar(ForceReadByte(stream));
+        }
+
+        /// <summary>
         /// Reads a single integer from the stream or throws if the end of the stream was reached.
         /// </summary>
         /// 
@@ -68,5 +82,6 @@ namespace SAGESharp.Extensions
 
             return BitConverter.ToUInt32(bytes, 0);
         }
+
     }
 }
