@@ -62,14 +62,14 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
 
             var info = reader.ReadSLBObject();
 
-            Assert.AreEqual(info.LineSide, 0x11223344);
-            Assert.AreEqual(info.ConditionStart, 0x11223355);
-            Assert.AreEqual(info.ConditionEnd, 0x11223366);
-            Assert.AreEqual(info.StringLabel, stringLabel);
-            Assert.AreEqual(info.StringIndex, 0x11223377);
-            Assert.AreEqual(info.Frames.Count, 2);
-            Assert.IsTrue(info.Frames.Contains(frame1));
-            Assert.IsTrue(info.Frames.Contains(frame2));
+            Assert.That(info.LineSide, Is.EqualTo(0x11223344));
+            Assert.That(info.ConditionStart, Is.EqualTo(0x11223355));
+            Assert.That(info.ConditionEnd, Is.EqualTo(0x11223366));
+            Assert.That(info.StringLabel, Is.EqualTo(stringLabel));
+            Assert.That(info.StringIndex, Is.EqualTo(0x11223377));
+            Assert.That(info.Frames.Count, Is.EqualTo(2));
+            Assert.That(info.Frames, Contains.Item(frame1));
+            Assert.That(info.Frames, Contains.Item(frame2));
 
             streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(24));
             streamMock.VerifyGet(stream => stream.Position, Times.Once);
@@ -83,8 +83,6 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
             frameReaderMock.Verify(frameReader => frameReader.ReadSLBObject(), Times.Exactly(2));
             frameReaderMock.VerifyNoOtherCalls();
         }
-
-
 
         [Test]
         public static void TestReadCharacterSlbWithNoInfo()
@@ -122,12 +120,12 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
 
             var info = reader.ReadSLBObject();
 
-            Assert.AreEqual(info.LineSide, 0x11223344);
-            Assert.AreEqual(info.ConditionStart, 0x11223355);
-            Assert.AreEqual(info.ConditionEnd, 0x11223366);
-            Assert.AreEqual(info.StringLabel, stringLabel);
-            Assert.AreEqual(info.StringIndex, 0x11223377);
-            Assert.AreEqual(info.Frames.Count, 0);
+            Assert.That(info.LineSide, Is.EqualTo(0x11223344));
+            Assert.That(info.ConditionStart, Is.EqualTo(0x11223355));
+            Assert.That(info.ConditionEnd, Is.EqualTo(0x11223366));
+            Assert.That(info.StringLabel, Is.EqualTo(stringLabel));
+            Assert.That(info.StringIndex, Is.EqualTo(0x11223377));
+            Assert.That(info.Frames, Is.Empty);
 
             streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(20));
             streamMock.VerifyNoOtherCalls();
