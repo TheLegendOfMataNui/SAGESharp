@@ -84,6 +84,17 @@ namespace SAGESharp.Extensions
         }
 
         /// <summary>
+        /// Writes an ASCII character to the stream.
+        /// </summary>
+        /// 
+        /// <param name="stream">The stream to write</param>
+        /// <param name="value">The ASCII character to write in the stream</param>
+        public static void WriteASCIIChar(this Stream stream, char value)
+        {
+            stream.WriteByte(ASCIIExtensions.ToASCIIByte(value));
+        }
+
+        /// <summary>
         /// Writes an integer value to the stream.
         /// </summary>
         /// 

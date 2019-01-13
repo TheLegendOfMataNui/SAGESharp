@@ -137,6 +137,17 @@ namespace SAGESharpTests.Extensions
         }
 
         [Test]
+        public void TestWriteASCIIChar()
+        {
+            var streamMock = new Mock<Stream>();
+
+            streamMock.Object.WriteASCIIChar('A');
+
+            streamMock.Verify(stream => stream.WriteByte(0x41), Times.Once());
+            streamMock.VerifyNoOtherCalls();
+        }
+
+        [Test]
         public void TestWriteInt()
         {
             var streamMock = new Mock<Stream>();
