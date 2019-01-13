@@ -73,7 +73,7 @@ namespace SAGESharpTests.SLB
         [Test]
         public void TestCreateIdentifierFromStringSize4()
         {
-            var identifier = new Identifier("ABCD");
+            var identifier = new Identifier("DCBA");
 
             AssertIdentifierWithTestValue(identifier);
         }
@@ -81,7 +81,7 @@ namespace SAGESharpTests.SLB
         [Test]
         public void TestCreateIdentifierFromStringSizeGreaterThan4()
         {
-            var identifier = new Identifier("ABCDEFGH");
+            var identifier = new Identifier("HGFDCBA");
 
             AssertIdentifierWithTestValue(identifier);
         }
@@ -199,7 +199,7 @@ namespace SAGESharpTests.SLB
             // C0 = 'A', C1 = 'B', C2 = 'C', C3 = 'D'
 
             Assert.That(identifier.ToInteger(), Is.EqualTo(0x44434241));
-            Assert.That(identifier.ToString(), Is.EqualTo("ABCD"));
+            Assert.That(identifier.ToString(), Is.EqualTo("DCBA"));
 
             Assert.That(identifier.C0, Is.EqualTo('A'));
             Assert.That(identifier.C1, Is.EqualTo('B'));

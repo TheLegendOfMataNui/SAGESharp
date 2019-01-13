@@ -218,10 +218,10 @@ namespace SAGESharp.SLB
         /// <param name="value">A string that will be used to set the value of the identifier.</param>
         public void SetFrom(string value)
         {
-            B0 = (value.Length > 0) ? value[0].ToASCIIByte() : (byte)0;
-            B1 = (value.Length > 1) ? value[1].ToASCIIByte() : (byte)0;
-            B2 = (value.Length > 2) ? value[2].ToASCIIByte() : (byte)0;
-            B3 = (value.Length > 3) ? value[3].ToASCIIByte() : (byte)0;
+            B0 = (value.Length > 0) ? value[value.Length - 1].ToASCIIByte() : (byte)0;
+            B1 = (value.Length > 1) ? value[value.Length - 2].ToASCIIByte() : (byte)0;
+            B2 = (value.Length > 2) ? value[value.Length - 3].ToASCIIByte() : (byte)0;
+            B3 = (value.Length > 3) ? value[value.Length - 4].ToASCIIByte() : (byte)0;
         }
 
         /// <summary>
@@ -238,10 +238,12 @@ namespace SAGESharp.SLB
         /// Gets the identifier as a (4 character) string.
         /// </summary>
         /// 
+        /// <remarks>Byte 3 is the first element of the string, and so on.</remarks>
+        /// 
         /// <returns>The identifier as a (4 character) string.</returns>
         public override string ToString()
         {
-            return new string(new[] { C0, C1, C2, C3 });
+            return new string(new[] { C3, C2, C1, C0 });
         }
 
         /// <inheritdoc/>
