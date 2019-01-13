@@ -7,7 +7,7 @@ namespace SAGESharp.SLB.Level.Conversation.IO
     /// <summary>
     /// Class to read Info objects from binary SLB files.
     /// </summary>
-    public class InfoBinaryReader : ISLBBinaryReader<Info>
+    internal sealed class InfoBinaryReader : ISLBBinaryReader<Info>
     {
         private readonly Stream stream;
 

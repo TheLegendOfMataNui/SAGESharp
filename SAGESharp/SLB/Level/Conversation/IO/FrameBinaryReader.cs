@@ -8,7 +8,7 @@ namespace SAGESharp.SLB.Level.Conversation.IO
     /// <summary>
     /// Class to read Frame objects from binary SLB files.
     /// </summary>
-    public class FrameBinaryReader : ISLBBinaryReader<Frame>
+    internal sealed class FrameBinaryReader : ISLBBinaryReader<Frame>
     {
         private readonly Stream stream;
 

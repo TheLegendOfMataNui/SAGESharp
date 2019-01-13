@@ -8,7 +8,7 @@ namespace SAGESharp.SLB.Level.Conversation.IO
     /// <summary>
     /// Class to read a list of Character objects from binary SLB files.
     /// </summary>
-    public class ConversationBinaryReader : ISLBBinaryReader<IList<Character>>
+    internal sealed class ConversationBinaryReader : ISLBBinaryReader<IList<Character>>
     {
         private readonly Stream stream;
 
