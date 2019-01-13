@@ -4,6 +4,7 @@ using SAGESharp.Slb;
 using SAGESharp.Slb.IO;
 using SAGESharp.Slb.Level.Conversation;
 using SAGESharp.Slb.Level.Conversation.IO;
+using SAGESharpTests.Util;
 using System;
 using System.IO;
 
@@ -41,36 +42,12 @@ namespace SAGESharpTests.Slb.Level.Conversation.IO
 
             streamMock
                 .SetupSequence(stream => stream.ReadByte())
-                // Line side
-                .Returns(0x44)
-                .Returns(0x33)
-                .Returns(0x22)
-                .Returns(0x11)
-                // Condition start
-                .Returns(0x55)
-                .Returns(0x33)
-                .Returns(0x22)
-                .Returns(0x11)
-                // Condition end
-                .Returns(0x66)
-                .Returns(0x33)
-                .Returns(0x22)
-                .Returns(0x11)
-                // String index
-                .Returns(0x77)
-                .Returns(0x33)
-                .Returns(0x22)
-                .Returns(0x11)
-                // Frame count
-                .Returns(0x02)
-                .Returns(0x00)
-                .Returns(0x00)
-                .Returns(0x00)
-                // Frame position
-                .Returns(0x44)
-                .Returns(0x00)
-                .Returns(0x00)
-                .Returns(0x00);
+                .ReturnsIntBytes(0x11223344) // Line side
+                .ReturnsIntBytes(0x11223355) // Condition start
+                .ReturnsIntBytes(0x11223366) // Condition end
+                .ReturnsIntBytes(0x11223377) // String index
+                .ReturnsIntBytes(0x02) // Frame count
+                .ReturnsIntBytes(0x44); // Frame position
 
             streamMock
                 .Setup(stream => stream.Position)
@@ -126,31 +103,11 @@ namespace SAGESharpTests.Slb.Level.Conversation.IO
 
             streamMock
                 .SetupSequence(stream => stream.ReadByte())
-                // Line side
-                .Returns(0x44)
-                .Returns(0x33)
-                .Returns(0x22)
-                .Returns(0x11)
-                // Condition start
-                .Returns(0x55)
-                .Returns(0x33)
-                .Returns(0x22)
-                .Returns(0x11)
-                // Condition end
-                .Returns(0x66)
-                .Returns(0x33)
-                .Returns(0x22)
-                .Returns(0x11)
-                // String index
-                .Returns(0x77)
-                .Returns(0x33)
-                .Returns(0x22)
-                .Returns(0x11)
-                // Frame count
-                .Returns(0x00)
-                .Returns(0x00)
-                .Returns(0x00)
-                .Returns(0x00);
+                .ReturnsIntBytes(0x11223344) // Line side
+                .ReturnsIntBytes(0x11223355) // Condition start
+                .ReturnsIntBytes(0x11223366) // Condition end
+                .ReturnsIntBytes(0x11223377) // String index
+                .ReturnsIntBytes(0x00); // Frame count
 
             streamMock
                 .Setup(stream => stream.Position)

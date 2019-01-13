@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using SAGESharp.Slb;
 using SAGESharp.Slb.IO;
+using SAGESharpTests.Util;
 using System;
 using System.IO;
 
@@ -24,10 +25,7 @@ namespace SAGESharpTests.Slb.IO
 
             streamMock
                 .SetupSequence(stream => stream.ReadByte())
-                .Returns(0x41)
-                .Returns(0x42)
-                .Returns(0x43)
-                .Returns(0x44);
+                .ReturnsIntBytes(0x44434241);
 
             var identifier = reader.ReadSlbObject();
 

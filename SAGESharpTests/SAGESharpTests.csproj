@@ -68,6 +68,7 @@
     <Compile Include="Slb\IO\IdentifierBinaryReaderTests.cs" />
     <Compile Include="Slb\Level\Conversation\IO\CharacterBinaryReaderTests.cs" />
     <Compile Include="Slb\Level\Conversation\IO\InfoBinaryReaderTests.cs" />
+    <Compile Include="Util\MockingExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

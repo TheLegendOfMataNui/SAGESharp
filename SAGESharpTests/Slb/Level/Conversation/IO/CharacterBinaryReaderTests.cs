@@ -4,6 +4,7 @@ using SAGESharp.Slb;
 using SAGESharp.Slb.IO;
 using SAGESharp.Slb.Level.Conversation;
 using SAGESharp.Slb.Level.Conversation.IO;
+using SAGESharpTests.Util;
 using System;
 using System.IO;
 
@@ -46,15 +47,9 @@ namespace SAGESharpTests.Slb.Level.Conversation.IO
             streamMock
                 .SetupSequence(stream => stream.ReadByte())
                 // Info entry count
-                .Returns(0x02)
-                .Returns(0x00)
-                .Returns(0x00)
-                .Returns(0x00)
+                .ReturnsIntBytes(2)
                 // Info entries position
-                .Returns(0x44)
-                .Returns(0x00)
-                .Returns(0x00)
-                .Returns(0x00);
+                .ReturnsIntBytes(0x44);
 
             streamMock
                 .Setup(stream => stream.Position)
@@ -113,10 +108,7 @@ namespace SAGESharpTests.Slb.Level.Conversation.IO
             streamMock
                 .SetupSequence(stream => stream.ReadByte())
                 // Info entry count
-                .Returns(0x00)
-                .Returns(0x00)
-                .Returns(0x00)
-                .Returns(0x00);
+                .ReturnsIntBytes(0);
 
             var character = reader.ReadSlbObject();
 
