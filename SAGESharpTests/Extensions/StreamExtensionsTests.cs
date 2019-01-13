@@ -135,5 +135,16 @@ namespace SAGESharpTests.Extensions
             streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(2));
             streamMock.VerifyNoOtherCalls();
         }
+
+        [Test]
+        public void TestWriteInt()
+        {
+            var streamMock = new Mock<Stream>();
+
+            streamMock.Object.WriteInt(0x11223344);
+
+            streamMock.Verify(stream => stream.Write(new byte[] { 0x44, 0x33, 0x22, 0x11 }, 0, 4));
+            streamMock.VerifyNoOtherCalls();
+        }
     }
 }
