@@ -248,21 +248,10 @@ namespace SAGESharp.Slb
         /// <inheritdoc/>
         public void ReadFrom(Stream stream)
         {
-            byte readByteFromStream()
-            {
-                int value = stream.ReadByte();
-                if (value == -1)
-                {
-                    throw new EndOfStreamException();
-                }
-
-                return (byte)value;
-            }
-
-            var b0 = readByteFromStream();
-            var b1 = readByteFromStream();
-            var b2 = readByteFromStream();
-            var b3 = readByteFromStream();
+            var b0 = stream.ForceReadByte();
+            var b1 = stream.ForceReadByte();
+            var b2 = stream.ForceReadByte();
+            var b3 = stream.ForceReadByte();
 
             // First read everything then write everything
             // to prevent modifying the Identifier unless

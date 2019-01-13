@@ -50,6 +50,7 @@
     <Compile Include="BCLFile.cs" />
     <Compile Include="BHDFile.cs" />
     <Compile Include="Extensions\ASCIIExtensions.cs" />
+    <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Extensions\UIntExtensions.cs" />
     <Compile Include="INIConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
