@@ -93,5 +93,16 @@ namespace SAGESharp.Extensions
         {
             stream.Write(BitConverter.GetBytes(value), 0, 4);
         }
+
+        /// <summary>
+        /// Writes an unsigned integer value to the stream.
+        /// </summary>
+        /// 
+        /// <param name="stream">The stream to write</param>
+        /// <param name="value">The unsigned integer to write in the stream</param>
+        public static void WriteUInt(this Stream stream, uint value)
+        {
+            stream.Write(BitConverter.GetBytes(value), 0, 4);
+        }
     }
 }
