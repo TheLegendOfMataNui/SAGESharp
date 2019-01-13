@@ -23,6 +23,29 @@ namespace SAGESharp.Extensions
         }
 
         /// <summary>
+        /// Uptas the stream to the given position and performs the input function,
+        /// aftwards restors the original stream position and returns the result of the function.
+        /// </summary>
+        /// 
+        /// <typeparam name="TResult">The return type of the function.</typeparam>
+        /// 
+        /// <param name="stream">The stream that will get its positions swapped</param>
+        /// <param name="position">The position where the stream will be updated temporary</param>
+        /// <param name="action">The function to be executed</param>
+        /// 
+        /// <returns>The result of the function</returns>
+        public static TResult OnPositionDo<TResult>(this Stream stream, long position, Func<TResult> function)
+        {
+            var originalPosition = stream.Position;
+            stream.Position = position;
+
+            var result = function();
+            stream.Position = originalPosition;
+
+            return result;
+        }
+
+        /// <summary>
         /// Reads a single byte from the stream or throws if the end of the stream was reached.
         /// </summary>
         /// 

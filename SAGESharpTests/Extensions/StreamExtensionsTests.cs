@@ -26,6 +26,25 @@ namespace SAGESharpTests.Extensions
         }
 
         [Test]
+        public void TestDoOnPositionWithResult()
+        {
+            var streamMock = new Mock<Stream>();
+
+            streamMock
+                .Setup(stream => stream.Position)
+                .Returns(100);
+
+            var result = streamMock.Object.OnPositionDo(50, () => "ABCD");
+
+            Assert.That(result, Is.EqualTo("ABCD"));
+
+            streamMock.VerifyGet(stream => stream.Position, Times.Once);
+            streamMock.VerifySet(stream => stream.Position = 50, Times.Once);
+            streamMock.VerifySet(stream => stream.Position = 100, Times.Once);
+            streamMock.VerifyNoOtherCalls();
+        }
+
+        [Test]
         public void TestForceReadByteSucceeds()
         {
             var streamMock = new Mock<Stream>();
