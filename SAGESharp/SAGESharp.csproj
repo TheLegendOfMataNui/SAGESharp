@@ -58,6 +58,7 @@
     <Compile Include="SLB\Identifier.cs" />
     <Compile Include="SLB\IO\IdentifierBinaryReader.cs" />
     <Compile Include="SLB\Level\Conversation\Character.cs" />
+    <Compile Include="SLB\Level\Conversation\LineSide.cs" />
     <Compile Include="SLB\Level\Conversation\Frame.cs" />
     <Compile Include="SLB\Level\Conversation\Info.cs" />
     <Compile Include="SLB\Level\Conversation\IO\CharacterBinaryReader.cs" />

@@ -42,7 +42,7 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
 
             streamMock
                 .SetupSequence(stream => stream.ReadByte())
-                .ReturnsIntBytes(0x11223344) // Line side
+                .ReturnsIntBytes((int)LineSide.Right) // Line side
                 .ReturnsIntBytes(0x11223355) // Condition start
                 .ReturnsIntBytes(0x11223366) // Condition end
                 .ReturnsIntBytes(0x11223377) // String index
@@ -62,7 +62,7 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
 
             var info = reader.ReadSLBObject();
 
-            Assert.That(info.LineSide, Is.EqualTo(0x11223344));
+            Assert.That(info.LineSide, Is.EqualTo(LineSide.Right));
             Assert.That(info.ConditionStart, Is.EqualTo(0x11223355));
             Assert.That(info.ConditionEnd, Is.EqualTo(0x11223366));
             Assert.That(info.StringLabel, Is.EqualTo(stringLabel));
@@ -101,7 +101,7 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
 
             streamMock
                 .SetupSequence(stream => stream.ReadByte())
-                .ReturnsIntBytes(0x11223344) // Line side
+                .ReturnsIntBytes((int)LineSide.Right) // Line side
                 .ReturnsIntBytes(0x11223355) // Condition start
                 .ReturnsIntBytes(0x11223366) // Condition end
                 .ReturnsIntBytes(0x11223377) // String index
@@ -120,7 +120,7 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
 
             var info = reader.ReadSLBObject();
 
-            Assert.That(info.LineSide, Is.EqualTo(0x11223344));
+            Assert.That(info.LineSide, Is.EqualTo(LineSide.Right));
             Assert.That(info.ConditionStart, Is.EqualTo(0x11223355));
             Assert.That(info.ConditionEnd, Is.EqualTo(0x11223366));
             Assert.That(info.StringLabel, Is.EqualTo(stringLabel));

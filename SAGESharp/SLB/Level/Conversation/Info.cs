@@ -5,7 +5,7 @@ namespace SAGESharp.SLB.Level.Conversation
 {
     public class Info
     {
-        public uint LineSide { get; set; }
+        public LineSide LineSide { get; set; }
 
         public uint ConditionStart { get; set; }
 

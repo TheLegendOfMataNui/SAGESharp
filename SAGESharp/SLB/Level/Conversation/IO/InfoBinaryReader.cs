@@ -38,7 +38,7 @@ namespace SAGESharp.SLB.Level.Conversation.IO
         {
             var result = new Info()
             {
-                LineSide = stream.ForceReadUInt(),
+                LineSide = (LineSide)stream.ForceReadInt(),
                 ConditionStart = stream.ForceReadUInt(),
                 ConditionEnd = stream.ForceReadUInt(),
                 StringLabel = identifierReader.ReadSLBObject(),
