@@ -43,13 +43,22 @@ namespace SAGESharpTests.Slb.Level.Conversation.IO
                 .Returns(charName)
                 .Returns(charCont);
 
-            // Info entry count
             streamMock
                 .SetupSequence(stream => stream.ReadByte())
+                // Info entry count
                 .Returns(0x02)
                 .Returns(0x00)
                 .Returns(0x00)
+                .Returns(0x00)
+                // Info entries position
+                .Returns(0x44)
+                .Returns(0x00)
+                .Returns(0x00)
                 .Returns(0x00);
+
+            streamMock
+                .Setup(stream => stream.Position)
+                .Returns(0x20);
 
             var info1 = new Info();
             var info2 = new Info();
@@ -67,13 +76,61 @@ namespace SAGESharpTests.Slb.Level.Conversation.IO
             Assert.IsTrue(character.Entries.Contains(info1));
             Assert.IsTrue(character.Entries.Contains(info2));
 
-            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(4));
+            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(8));
+            streamMock.VerifyGet(stream => stream.Position, Times.Once);
+            streamMock.VerifySet(stream => stream.Position = 0x44, Times.Once);
+            streamMock.VerifySet(stream => stream.Position = 0x20, Times.Once);
             streamMock.VerifyNoOtherCalls();
 
             identifierReaderMock.Verify(identifierReader => identifierReader.ReadSlbObject(), Times.Exactly(3));
             identifierReaderMock.VerifyNoOtherCalls();
 
             infoReaderMock.Verify(infoReader => infoReader.ReadSlbObject(), Times.Exactly(2));
+            infoReaderMock.VerifyNoOtherCalls();
+        }
+
+
+
+        [Test]
+        public static void TestReadCharacterSlbWithNoInfo()
+        {
+            var streamMock = new Mock<Stream>();
+            var identifierReaderMock = new Mock<ISlbReader<Identifier>>();
+            var infoReaderMock = new Mock<ISlbReader<Info>>();
+
+            var reader = new CharacterBinaryReader(streamMock.Object, identifierReaderMock.Object, infoReaderMock.Object);
+
+            var toaName = new Identifier(0x11223344);
+            var charName = new Identifier(0x11223345);
+            var charCont = new Identifier(0x11223346);
+
+            identifierReaderMock
+                .SetupSequence(identifierReader => identifierReader.ReadSlbObject())
+                .Returns(toaName)
+                .Returns(charName)
+                .Returns(charCont);
+
+            streamMock
+                .SetupSequence(stream => stream.ReadByte())
+                // Info entry count
+                .Returns(0x00)
+                .Returns(0x00)
+                .Returns(0x00)
+                .Returns(0x00);
+
+            var character = reader.ReadSlbObject();
+
+            Assert.AreEqual(character.ToaName, toaName);
+            Assert.AreEqual(character.CharName, charName);
+            Assert.AreEqual(character.CharCont, charCont);
+            Assert.IsTrue(character.Entries.Count == 0);
+
+            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(4));
+            streamMock.VerifyNoOtherCalls();
+
+            identifierReaderMock.Verify(identifierReader => identifierReader.ReadSlbObject(), Times.Exactly(3));
+            identifierReaderMock.VerifyNoOtherCalls();
+
             infoReaderMock.VerifyNoOtherCalls();
         }
     }

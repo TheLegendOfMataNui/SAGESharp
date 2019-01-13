@@ -40,10 +40,17 @@ namespace SAGESharp.Slb.Level.Conversation.IO
             };
 
             var infoCount = stream.ForceReadUInt();
-            for (int n = 0; n < infoCount; ++n)
+            if (infoCount > 0)
             {
-                var info = infoReader.ReadSlbObject();
-                result.Entries.Add(info);
+                var infoPosition = stream.ForceReadUInt();
+
+                stream.OnPositionDo(infoPosition, () => {
+                    for (int n = 0; n < infoCount; ++n)
+                    {
+                        var info = infoReader.ReadSlbObject();
+                        result.Entries.Add(info);
+                    }
+                });
             }
 
             return result;
