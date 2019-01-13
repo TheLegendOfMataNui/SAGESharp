@@ -1,7 +1,5 @@
-﻿using Moq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using SAGESharp.Slb;
-using System.IO;
 
 namespace SAGESharpTests.Slb
 {
@@ -213,60 +211,5 @@ namespace SAGESharpTests.Slb
             Assert.That(identifier.B2, Is.EqualTo(0x43));
             Assert.That(identifier.B3, Is.EqualTo(0x44));
         }
-
-        #region ISlb
-        [Test]
-        public void TestReadIdentifierFromValidStream()
-        {
-            var identifier = new Identifier();
-            var streamMock = new Mock<Stream>();
-
-            streamMock
-                .SetupSequence(stream => stream.ReadByte())
-                .Returns(0x41)
-                .Returns(0x42)
-                .Returns(0x43)
-                .Returns(0x44);
-
-            identifier.ReadFrom(streamMock.Object);
-
-            AssertIdentifierWithTestValue(identifier);
-
-            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(4));
-        }
-
-        [Test]
-        public void TestReadIdentifierFromInvalidStream()
-        {
-            var identifier = new Identifier();
-            var streamMock = new Mock<Stream>();
-
-            streamMock
-                .SetupSequence(stream => stream.ReadByte())
-                .Returns(0x41)
-                .Returns(0x42)
-                .Returns(-1);
-
-            Assert.That(() => identifier.ReadFrom(streamMock.Object), Throws.InstanceOf(typeof(EndOfStreamException)));
-
-            AssertEmptyIdentifier(identifier);
-
-            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(3));
-        }
-
-        [Test]
-        public void TestWriteIdentifierIntoValidStream()
-        {
-            var identifier = new Identifier("ABCD");
-            var streamMock = new Mock<Stream>();
-
-            identifier.WriteTo(streamMock.Object);
-
-            streamMock.Verify(stream => stream.WriteByte(0x41));
-            streamMock.Verify(stream => stream.WriteByte(0x42));
-            streamMock.Verify(stream => stream.WriteByte(0x43));
-            streamMock.Verify(stream => stream.WriteByte(0x44));
-        }
-        #endregion
     }
 }
