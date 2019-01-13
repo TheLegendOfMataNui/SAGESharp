@@ -6,6 +6,23 @@ namespace SAGESharp.Extensions
     public static class StreamExtensions
     {
         /// <summary>
+        /// Updates the stream to the given position and performs the action,
+        /// aftwards restores the original stream position.
+        /// </summary>
+        /// 
+        /// <param name="stream">The stream that will get its positions swapped</param>
+        /// <param name="position">The position where the stream will be updated temporary</param>
+        /// <param name="action">The action to be executed</param>
+        public static void OnPositionDo(this Stream stream, long position, Action action)
+        {
+            var originalPosition = stream.Position;
+            stream.Position = position;
+
+            action();
+            stream.Position = originalPosition;
+        }
+
+        /// <summary>
         /// Reads a single byte from the stream or throws if the end of the stream was reached.
         /// </summary>
         /// 

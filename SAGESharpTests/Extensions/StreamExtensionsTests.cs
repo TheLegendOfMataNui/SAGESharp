@@ -9,6 +9,23 @@ namespace SAGESharpTests.Extensions
     public class StreamExtensionsTests
     {
         [Test]
+        public void TestDoOnPosition()
+        {
+            var streamMock = new Mock<Stream>();
+
+            streamMock
+                .Setup(stream => stream.Position)
+                .Returns(100);
+
+            streamMock.Object.OnPositionDo(50, () => { });
+
+            streamMock.VerifyGet(stream => stream.Position, Times.Once);
+            streamMock.VerifySet(stream => stream.Position = 50, Times.Once);
+            streamMock.VerifySet(stream => stream.Position = 100, Times.Once);
+            streamMock.VerifyNoOtherCalls();
+        }
+
+        [Test]
         public void TestForceReadByteSucceeds()
         {
             var streamMock = new Mock<Stream>();
