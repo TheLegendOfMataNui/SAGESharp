@@ -5,6 +5,9 @@ using System.IO;
 
 namespace SAGESharp.Slb.Level.Conversation.IO
 {
+    /// <summary>
+    /// Class to read Character objects from binary SLB files.
+    /// </summary>
     public class CharacterBinaryReader : ISlbReader<Character>
     {
         private readonly Stream stream;
@@ -13,13 +16,14 @@ namespace SAGESharp.Slb.Level.Conversation.IO
 
         private readonly ISlbReader<Info> infoReader;
 
-        // TODO: Use the correct info reader class here.
-        public CharacterBinaryReader(Stream stream) : this(stream, new IdentifierBinaryReader(stream), null)
-        {
-        }
-
-        // For unit testing
-        internal CharacterBinaryReader(
+        /// <summary>
+        /// Crates a new reader with the input objects that will be used to read the character data.
+        /// </summary>
+        /// 
+        /// <param name="stream">The input stream</param>
+        /// <param name="identifierReader">An identifier reader</param>
+        /// <param name="infoReader">An info reader</param>
+        public CharacterBinaryReader(
             Stream stream,
             ISlbReader<Identifier> identifierReader,
             ISlbReader<Info> infoReader
