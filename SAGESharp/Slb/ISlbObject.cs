@@ -5,7 +5,7 @@ namespace SAGESharp.Slb
     /// <summary>
     /// Interface that represents an object in a SLB file.
     /// </summary>
-    interface ISlb
+    interface ISlbObject
     {
         /// <summary>
         /// Reads the data from the given stream into the SLB object.

@@ -8,7 +8,7 @@ namespace SAGESharp.Slb
     /// 
     /// The identifier consist of 4 bytes/characters (a 32 bit integer).
     /// </summary>
-    public class Identifier : ISlb
+    public class Identifier : ISlbObject
     {
         /// <summary>
         /// Char that will be shown if any invalid byte is used in the identifier.
