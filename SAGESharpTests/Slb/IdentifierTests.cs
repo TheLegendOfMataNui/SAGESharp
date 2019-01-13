@@ -219,7 +219,7 @@ namespace SAGESharpTests.Slb
 
             AssertEmptyIdentifier(identifier);
 
-            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(4));
+            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(3));
         }
 
         [Test]
