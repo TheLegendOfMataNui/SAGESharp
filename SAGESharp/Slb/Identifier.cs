@@ -1,4 +1,5 @@
 ﻿using SAGESharp.Extensions;
+using System;
 using System.IO;
 
 namespace SAGESharp.Slb
@@ -8,7 +9,7 @@ namespace SAGESharp.Slb
     /// 
     /// The identifier consist of 4 bytes/characters (a 32 bit integer).
     /// </summary>
-    public class Identifier : ISlbObject
+    public class Identifier : IEquatable<Identifier>, ISlbObject
     {
         /// <summary>
         /// Char that will be shown if any invalid byte is used in the identifier.
@@ -242,6 +243,55 @@ namespace SAGESharp.Slb
         public override string ToString()
         {
             return new string(new[] { C0, C1, C2, C3 });
+        }
+
+        /// <inheritdoc/>
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Identifier identifier))
+            {
+                return false;
+            }
+
+            return Equals(identifier);
+        }
+
+        /// <inheritdoc/>
+        public bool Equals(Identifier identifier)
+        {
+            return identifier.value == value;
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            return (int)value;
+        }
+
+        /// <summary>
+        /// Returns true if both identifiers are equals, false otherwise.
+        /// </summary>
+        /// 
+        /// <param name="a">The first identifier to compare</param>
+        /// <param name="b">The second identifier to compare</param>
+        /// 
+        /// <returns>True if both are equal, false otherwise.</returns>
+        public static bool operator ==(Identifier a, Identifier b)
+        {
+            return a.Equals(b);
+        }
+
+        /// <summary>
+        /// Returns true if both identifiers are not equals, false otherwise.
+        /// </summary>
+        /// 
+        /// <param name="a">The first identifier to compare</param>
+        /// <param name="b">The second identifier to compare</param>
+        /// 
+        /// <returns>True if both are not equal, false otherwise.</returns>
+        public static bool operator !=(Identifier a, Identifier b)
+        {
+            return !(a == b);
         }
 
         #region ISlb

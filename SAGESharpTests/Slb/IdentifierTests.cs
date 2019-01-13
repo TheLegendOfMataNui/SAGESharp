@@ -145,6 +145,38 @@ namespace SAGESharpTests.Slb
             Assert.That(identifier.ToString(), Is.EqualTo(expectedString));
         }
 
+        [Test]
+        public void TestComparingTwoEqualIdentifiers()
+        {
+            var a = new Identifier("ABCD");
+            var b = new Identifier("ABCD");
+
+            Assert.IsTrue(a.Equals((object)b));
+            Assert.IsTrue(a.Equals(b));
+            Assert.IsTrue(a == b);
+            Assert.IsFalse(a != b);
+        }
+
+        [Test]
+        public void TestComparingTwoInequalIdentifiers()
+        {
+            var a = new Identifier("ABCD");
+            var b = new Identifier(0xAABBCCDD);
+
+            Assert.IsFalse(a.Equals((object)b));
+            Assert.IsFalse(a.Equals(b));
+            Assert.IsFalse(a == b);
+            Assert.IsTrue(a != b);
+        }
+
+        [Test]
+        public void TestIdentifierHashCode()
+        {
+            var a = new Identifier(0x11223344);
+
+            Assert.AreEqual(a.GetHashCode(), 0x11223344);
+        }
+
         private static void AssertEmptyIdentifier(Identifier identifier)
         {
             var expectedString = new string(Identifier.EMPY_CHAR, 4);
