@@ -59,7 +59,7 @@
     <Compile Include="Slb\Level\Conversation\Character.cs" />
     <Compile Include="Slb\Level\Conversation\Frame.cs" />
     <Compile Include="Slb\Level\Conversation\Info.cs" />
-    <Compile Include="Slb\ISlbReader.cs" />
+    <Compile Include="Slb\IO\ISlbReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
