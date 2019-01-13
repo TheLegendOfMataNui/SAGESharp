@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace SAGESharp.Extensions
 {
@@ -22,6 +23,28 @@ namespace SAGESharp.Extensions
             }
 
             return (byte)result;
+        }
+
+        /// <summary>
+        /// Reads a single integer from the stream or throws if the end of the stream was reached.
+        /// </summary>
+        /// 
+        /// <param name="stream">The stream to read</param>
+        /// 
+        /// <returns>The next integer in the stream.</returns>
+        /// 
+        /// <exception cref="EndOfStreamException">If the stream was read completely.</exception>
+        public static int ForceReadInt(this Stream stream)
+        {
+            var bytes = new byte[]
+            {
+                ForceReadByte(stream),
+                ForceReadByte(stream),
+                ForceReadByte(stream),
+                ForceReadByte(stream)
+            };
+
+            return BitConverter.ToInt32(bytes, 0);
         }
     }
 }
