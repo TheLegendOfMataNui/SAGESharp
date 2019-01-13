@@ -64,11 +64,11 @@
     <Compile Include="Extensions\StreamExtensionsTests.cs" />
     <Compile Include="Extensions\UIntExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Slb\IdentifierTests.cs" />
-    <Compile Include="Slb\IO\IdentifierBinaryReaderTests.cs" />
-    <Compile Include="Slb\Level\Conversation\IO\CharacterBinaryReaderTests.cs" />
-    <Compile Include="Slb\Level\Conversation\IO\FrameBinaryReaderTests.cs" />
-    <Compile Include="Slb\Level\Conversation\IO\InfoBinaryReaderTests.cs" />
+    <Compile Include="SLB\IdentifierTests.cs" />
+    <Compile Include="SLB\IO\IdentifierBinaryReaderTests.cs" />
+    <Compile Include="SLB\Level\Conversation\IO\CharacterBinaryReaderTests.cs" />
+    <Compile Include="SLB\Level\Conversation\IO\FrameBinaryReaderTests.cs" />
+    <Compile Include="SLB\Level\Conversation\IO\InfoBinaryReaderTests.cs" />
     <Compile Include="Util\MockingExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,7 @@
 ﻿using SAGESharp.Extensions;
 using System;
 
-namespace SAGESharp.Slb
+namespace SAGESharp.SLB
 {
     /// <summary>
     /// Class that represents an identifier within SLB files.

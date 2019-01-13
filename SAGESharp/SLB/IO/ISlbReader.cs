@@ -1,4 +1,4 @@
-﻿namespace SAGESharp.Slb.IO
+﻿namespace SAGESharp.SLB.IO
 {
     /// <summary>
     /// Interface representing an object that reads SLB objects.

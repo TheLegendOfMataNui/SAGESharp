@@ -1,4 +1,4 @@
-﻿namespace SAGESharp.Slb.Level.Conversation
+﻿namespace SAGESharp.SLB.Level.Conversation
 {
     public class Frame
     {

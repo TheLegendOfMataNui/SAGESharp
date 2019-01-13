@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
-using SAGESharp.Slb;
+using SAGESharp.SLB;
 
-namespace SAGESharpTests.Slb
+namespace SAGESharpTests.SLB
 {
     [TestFixture]
     public class IdentifierTests
