@@ -46,5 +46,27 @@ namespace SAGESharp.Extensions
 
             return BitConverter.ToInt32(bytes, 0);
         }
+
+        /// <summary>
+        /// Reads a single unsigned integer from the stream or throws if the end of the stream was reached.
+        /// </summary>
+        /// 
+        /// <param name="stream">Thre stream to read</param>
+        /// 
+        /// <returns>The next unsigned integer in the stream.</returns>
+        /// 
+        /// <exception cref="EndOfStreamException">If the stream was read completely.</exception>
+        public static uint ForceReadUInt(this Stream stream)
+        {
+            var bytes = new byte[]
+            {
+                ForceReadByte(stream),
+                ForceReadByte(stream),
+                ForceReadByte(stream),
+                ForceReadByte(stream)
+            };
+
+            return BitConverter.ToUInt32(bytes, 0);
+        }
     }
 }

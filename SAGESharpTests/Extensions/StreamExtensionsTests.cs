@@ -71,5 +71,39 @@ namespace SAGESharpTests.Extensions
             streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(2));
             streamMock.VerifyNoOtherCalls();
         }
+
+        [Test]
+        public void TestForceReadUIntSucceeds()
+        {
+            var streamMock = new Mock<Stream>();
+
+            streamMock
+                .SetupSequence(stream => stream.ReadByte())
+                .Returns(0xAA)
+                .Returns(0xBB)
+                .Returns(0xCC)
+                .Returns(0xDD);
+
+            Assert.That(streamMock.Object.ForceReadUInt(), Is.EqualTo(0xDDCCBBAA));
+
+            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(4));
+            streamMock.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public void TestForceReadUIntFails()
+        {
+            var streamMock = new Mock<Stream>();
+
+            streamMock
+                .SetupSequence(stream => stream.ReadByte())
+                .Returns(0xAA)
+                .Returns(-1);
+
+            Assert.That(() => streamMock.Object.ForceReadUInt(), Throws.InstanceOf(typeof(EndOfStreamException)));
+
+            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(2));
+            streamMock.VerifyNoOtherCalls();
+        }
     }
 }
