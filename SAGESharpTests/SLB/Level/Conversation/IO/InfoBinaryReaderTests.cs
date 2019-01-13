@@ -17,8 +17,8 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
         public static void TestInfoBinaryReaderConstructor()
         {
             var stream = new Mock<Stream>().Object;
-            var identifierReader = new Mock<ISlbReader<Identifier>>().Object;
-            var frameReader = new Mock<ISlbReader<Frame>>().Object;
+            var identifierReader = new Mock<ISLBBinaryReader<Identifier>>().Object;
+            var frameReader = new Mock<ISLBBinaryReader<Frame>>().Object;
 
             Assert.That(() => new InfoBinaryReader(null, identifierReader, frameReader), Throws.InstanceOf<ArgumentNullException>());
             Assert.That(() => new InfoBinaryReader(stream, null, frameReader), Throws.InstanceOf<ArgumentNullException>());
@@ -29,15 +29,15 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
         public static void TestReadInfoSlb()
         {
             var streamMock = new Mock<Stream>();
-            var identifierReaderMock = new Mock<ISlbReader<Identifier>>();
-            var frameReaderMock = new Mock<ISlbReader<Frame>>();
+            var identifierReaderMock = new Mock<ISLBBinaryReader<Identifier>>();
+            var frameReaderMock = new Mock<ISLBBinaryReader<Frame>>();
 
             var reader = new InfoBinaryReader(streamMock.Object, identifierReaderMock.Object, frameReaderMock.Object);
 
             var stringLabel = new Identifier(0x11223300);
 
             identifierReaderMock
-                .SetupSequence(identifierReader => identifierReader.ReadSlbObject())
+                .SetupSequence(identifierReader => identifierReader.ReadSLBObject())
                 .Returns(stringLabel);
 
             streamMock
@@ -56,11 +56,11 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
             var frame1 = new Frame();
             var frame2 = new Frame();
             frameReaderMock
-                .SetupSequence(infoReader => infoReader.ReadSlbObject())
+                .SetupSequence(infoReader => infoReader.ReadSLBObject())
                 .Returns(frame1)
                 .Returns(frame2);
 
-            var info = reader.ReadSlbObject();
+            var info = reader.ReadSLBObject();
 
             Assert.AreEqual(info.LineSide, 0x11223344);
             Assert.AreEqual(info.ConditionStart, 0x11223355);
@@ -77,10 +77,10 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
             streamMock.VerifySet(stream => stream.Position = 0x20, Times.Once);
             streamMock.VerifyNoOtherCalls();
 
-            identifierReaderMock.Verify(identifierReader => identifierReader.ReadSlbObject(), Times.Once);
+            identifierReaderMock.Verify(identifierReader => identifierReader.ReadSLBObject(), Times.Once);
             identifierReaderMock.VerifyNoOtherCalls();
 
-            frameReaderMock.Verify(frameReader => frameReader.ReadSlbObject(), Times.Exactly(2));
+            frameReaderMock.Verify(frameReader => frameReader.ReadSLBObject(), Times.Exactly(2));
             frameReaderMock.VerifyNoOtherCalls();
         }
 
@@ -90,15 +90,15 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
         public static void TestReadCharacterSlbWithNoInfo()
         {
             var streamMock = new Mock<Stream>();
-            var identifierReaderMock = new Mock<ISlbReader<Identifier>>();
-            var frameReaderMock = new Mock<ISlbReader<Frame>>();
+            var identifierReaderMock = new Mock<ISLBBinaryReader<Identifier>>();
+            var frameReaderMock = new Mock<ISLBBinaryReader<Frame>>();
 
             var reader = new InfoBinaryReader(streamMock.Object, identifierReaderMock.Object, frameReaderMock.Object);
 
             var stringLabel = new Identifier(0x11223300);
 
             identifierReaderMock
-                .SetupSequence(identifierReader => identifierReader.ReadSlbObject())
+                .SetupSequence(identifierReader => identifierReader.ReadSLBObject())
                 .Returns(stringLabel);
 
             streamMock
@@ -116,11 +116,11 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
             var frame1 = new Frame();
             var frame2 = new Frame();
             frameReaderMock
-                .SetupSequence(infoReader => infoReader.ReadSlbObject())
+                .SetupSequence(infoReader => infoReader.ReadSLBObject())
                 .Returns(frame1)
                 .Returns(frame2);
 
-            var info = reader.ReadSlbObject();
+            var info = reader.ReadSLBObject();
 
             Assert.AreEqual(info.LineSide, 0x11223344);
             Assert.AreEqual(info.ConditionStart, 0x11223355);
@@ -132,7 +132,7 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
             streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(20));
             streamMock.VerifyNoOtherCalls();
 
-            identifierReaderMock.Verify(identifierReader => identifierReader.ReadSlbObject(), Times.Once);
+            identifierReaderMock.Verify(identifierReader => identifierReader.ReadSLBObject(), Times.Once);
             identifierReaderMock.VerifyNoOtherCalls();
 
             frameReaderMock.VerifyNoOtherCalls();

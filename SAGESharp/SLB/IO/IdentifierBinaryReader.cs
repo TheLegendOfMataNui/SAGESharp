@@ -7,7 +7,7 @@ namespace SAGESharp.SLB.IO
     /// <summary>
     /// Class to read an binary Identifier from a stream.
     /// </summary>
-    public class IdentifierBinaryReader : ISlbReader<Identifier>
+    public class IdentifierBinaryReader : ISLBBinaryReader<Identifier>
     {
         private readonly Stream stream;
 
@@ -22,7 +22,7 @@ namespace SAGESharp.SLB.IO
         }
 
         /// <inheritdoc/>
-        public Identifier ReadSlbObject()
+        public Identifier ReadSLBObject()
         {
             return new Identifier(new byte[]
             {

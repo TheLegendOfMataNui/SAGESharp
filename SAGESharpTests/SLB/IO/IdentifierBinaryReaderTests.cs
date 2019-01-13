@@ -21,13 +21,13 @@ namespace SAGESharpTests.SLB.IO
         public void TestReadingAnIdentifierSuccessfully()
         {
             var streamMock = new Mock<Stream>();
-            ISlbReader<Identifier> reader = new IdentifierBinaryReader(streamMock.Object);
+            ISLBBinaryReader<Identifier> reader = new IdentifierBinaryReader(streamMock.Object);
 
             streamMock
                 .SetupSequence(stream => stream.ReadByte())
                 .ReturnsIntBytes(0x44434241);
 
-            var identifier = reader.ReadSlbObject();
+            var identifier = reader.ReadSLBObject();
 
             Assert.That(identifier.ToInteger(), Is.EqualTo(0x44434241));
 

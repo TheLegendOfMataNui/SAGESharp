@@ -49,7 +49,7 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
                 .Setup(stream => stream.Position)
                 .Returns(0x20);
 
-            var frame = reader.ReadSlbObject();
+            var frame = reader.ReadSLBObject();
 
             Assert.AreEqual(frame.ToaAnimation, toaAnimation);
             Assert.AreEqual(frame.CharAnimation, charAnimation);
@@ -95,7 +95,7 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
                 .Setup(stream => stream.Position)
                 .Returns(0x20);
 
-            var frame = reader.ReadSlbObject();
+            var frame = reader.ReadSLBObject();
 
             Assert.AreEqual(frame.ToaAnimation, toaAnimation);
             Assert.AreEqual(frame.CharAnimation, charAnimation);

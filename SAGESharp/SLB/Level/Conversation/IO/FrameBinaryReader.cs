@@ -1,5 +1,4 @@
 ﻿using SAGESharp.Extensions;
-using SAGESharp.SLB.IO;
 using System;
 using System.IO;
 using System.Text;
@@ -9,7 +8,7 @@ namespace SAGESharp.SLB.Level.Conversation.IO
     /// <summary>
     /// Class to read Frame objects from binary SLB files.
     /// </summary>
-    public class FrameBinaryReader : ISlbReader<Frame>
+    public class FrameBinaryReader : ISLBBinaryReader<Frame>
     {
         private readonly Stream stream;
 
@@ -24,7 +23,7 @@ namespace SAGESharp.SLB.Level.Conversation.IO
         }
 
         /// <inheritdoc/>
-        public Frame ReadSlbObject()
+        public Frame ReadSLBObject()
         {
             return new Frame()
             {

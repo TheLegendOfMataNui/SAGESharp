@@ -17,8 +17,8 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
         public static void TestCharacterBinaryReaderConstructor()
         {
             var stream = new Mock<Stream>().Object;
-            var identifierReader = new Mock<ISlbReader<Identifier>>().Object;
-            var infoReader = new Mock<ISlbReader<Info>>().Object;
+            var identifierReader = new Mock<ISLBBinaryReader<Identifier>>().Object;
+            var infoReader = new Mock<ISLBBinaryReader<Info>>().Object;
 
             Assert.That(() => new CharacterBinaryReader(null, identifierReader, infoReader), Throws.InstanceOf<ArgumentNullException>());
             Assert.That(() => new CharacterBinaryReader(stream, null, infoReader), Throws.InstanceOf<ArgumentNullException>());
@@ -29,8 +29,8 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
         public static void TestReadCharacterSlb()
         {
             var streamMock = new Mock<Stream>();
-            var identifierReaderMock = new Mock<ISlbReader<Identifier>>();
-            var infoReaderMock = new Mock<ISlbReader<Info>>();
+            var identifierReaderMock = new Mock<ISLBBinaryReader<Identifier>>();
+            var infoReaderMock = new Mock<ISLBBinaryReader<Info>>();
 
             var reader = new CharacterBinaryReader(streamMock.Object, identifierReaderMock.Object, infoReaderMock.Object);
 
@@ -39,7 +39,7 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
             var charCont = new Identifier(0x11223346);
 
             identifierReaderMock
-                .SetupSequence(identifierReader => identifierReader.ReadSlbObject())
+                .SetupSequence(identifierReader => identifierReader.ReadSLBObject())
                 .Returns(toaName)
                 .Returns(charName)
                 .Returns(charCont);
@@ -58,11 +58,11 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
             var info1 = new Info();
             var info2 = new Info();
             infoReaderMock
-                .SetupSequence(infoReader => infoReader.ReadSlbObject())
+                .SetupSequence(infoReader => infoReader.ReadSLBObject())
                 .Returns(info1)
                 .Returns(info2);
 
-            var character = reader.ReadSlbObject();
+            var character = reader.ReadSLBObject();
 
             Assert.AreEqual(character.ToaName, toaName);
             Assert.AreEqual(character.CharName, charName);
@@ -77,10 +77,10 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
             streamMock.VerifySet(stream => stream.Position = 0x20, Times.Once);
             streamMock.VerifyNoOtherCalls();
 
-            identifierReaderMock.Verify(identifierReader => identifierReader.ReadSlbObject(), Times.Exactly(3));
+            identifierReaderMock.Verify(identifierReader => identifierReader.ReadSLBObject(), Times.Exactly(3));
             identifierReaderMock.VerifyNoOtherCalls();
 
-            infoReaderMock.Verify(infoReader => infoReader.ReadSlbObject(), Times.Exactly(2));
+            infoReaderMock.Verify(infoReader => infoReader.ReadSLBObject(), Times.Exactly(2));
             infoReaderMock.VerifyNoOtherCalls();
         }
 
@@ -90,8 +90,8 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
         public static void TestReadCharacterSlbWithNoInfo()
         {
             var streamMock = new Mock<Stream>();
-            var identifierReaderMock = new Mock<ISlbReader<Identifier>>();
-            var infoReaderMock = new Mock<ISlbReader<Info>>();
+            var identifierReaderMock = new Mock<ISLBBinaryReader<Identifier>>();
+            var infoReaderMock = new Mock<ISLBBinaryReader<Info>>();
 
             var reader = new CharacterBinaryReader(streamMock.Object, identifierReaderMock.Object, infoReaderMock.Object);
 
@@ -100,7 +100,7 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
             var charCont = new Identifier(0x11223346);
 
             identifierReaderMock
-                .SetupSequence(identifierReader => identifierReader.ReadSlbObject())
+                .SetupSequence(identifierReader => identifierReader.ReadSLBObject())
                 .Returns(toaName)
                 .Returns(charName)
                 .Returns(charCont);
@@ -110,7 +110,7 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
                 // Info entry count
                 .ReturnsIntBytes(0);
 
-            var character = reader.ReadSlbObject();
+            var character = reader.ReadSLBObject();
 
             Assert.AreEqual(character.ToaName, toaName);
             Assert.AreEqual(character.CharName, charName);
@@ -120,7 +120,7 @@ namespace SAGESharpTests.SLB.Level.Conversation.IO
             streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(4));
             streamMock.VerifyNoOtherCalls();
 
-            identifierReaderMock.Verify(identifierReader => identifierReader.ReadSlbObject(), Times.Exactly(3));
+            identifierReaderMock.Verify(identifierReader => identifierReader.ReadSLBObject(), Times.Exactly(3));
             identifierReaderMock.VerifyNoOtherCalls();
 
             infoReaderMock.VerifyNoOtherCalls();

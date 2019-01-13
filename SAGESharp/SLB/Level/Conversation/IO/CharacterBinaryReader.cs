@@ -1,5 +1,4 @@
 ﻿using SAGESharp.Extensions;
-using SAGESharp.SLB.IO;
 using System;
 using System.IO;
 
@@ -8,13 +7,13 @@ namespace SAGESharp.SLB.Level.Conversation.IO
     /// <summary>
     /// Class to read Character objects from binary SLB files.
     /// </summary>
-    public class CharacterBinaryReader : ISlbReader<Character>
+    public class CharacterBinaryReader : ISLBBinaryReader<Character>
     {
         private readonly Stream stream;
 
-        private readonly ISlbReader<Identifier> identifierReader;
+        private readonly ISLBBinaryReader<Identifier> identifierReader;
 
-        private readonly ISlbReader<Info> infoReader;
+        private readonly ISLBBinaryReader<Info> infoReader;
 
         /// <summary>
         /// Crates a new reader with the input objects that will be used to read the character data.
@@ -25,8 +24,8 @@ namespace SAGESharp.SLB.Level.Conversation.IO
         /// <param name="infoReader">An info reader</param>
         public CharacterBinaryReader(
             Stream stream,
-            ISlbReader<Identifier> identifierReader,
-            ISlbReader<Info> infoReader
+            ISLBBinaryReader<Identifier> identifierReader,
+            ISLBBinaryReader<Info> infoReader
         ) {
             this.stream = stream ?? throw new ArgumentNullException("Input stream cannot be null.");
             this.identifierReader = identifierReader ?? throw new ArgumentNullException("Input stream cannot be null.");
@@ -34,13 +33,13 @@ namespace SAGESharp.SLB.Level.Conversation.IO
         }
 
         /// <inheritdoc/>
-        public Character ReadSlbObject()
+        public Character ReadSLBObject()
         {
             var result = new Character()
             {
-                ToaName = identifierReader.ReadSlbObject(),
-                CharName = identifierReader.ReadSlbObject(),
-                CharCont = identifierReader.ReadSlbObject()
+                ToaName = identifierReader.ReadSLBObject(),
+                CharName = identifierReader.ReadSLBObject(),
+                CharCont = identifierReader.ReadSLBObject()
             };
 
             var infoCount = stream.ForceReadUInt();
@@ -51,7 +50,7 @@ namespace SAGESharp.SLB.Level.Conversation.IO
                 stream.OnPositionDo(infoPosition, () => {
                     for (int n = 0; n < infoCount; ++n)
                     {
-                        var info = infoReader.ReadSlbObject();
+                        var info = infoReader.ReadSLBObject();
                         result.Entries.Add(info);
                     }
                 });
