@@ -9,6 +9,9 @@ namespace ShoefitterDX
     public class Project : SAGESharp.INIConfig
     {
         public const string PROJECT_EXTENSION = "sfdx";
+        public const string SUBDIRECTORY_SCRIPT = "src";
+        public const string SUBDIRECTORY_DATA = "data";
+        public const string SUBDIRECTORY_OUTPUT = "build";
 
         /// <summary>
         /// A string property of a <see cref="Project"/>, with an event which is fired when the value is set via the <see cref="Value"/> property.
@@ -70,6 +73,7 @@ namespace ShoefitterDX
         public ProjectProperty Name;
         public ProjectProperty GameDirectory;
         public ProjectProperty GameExecutable;
+        public ProjectProperty CompressOutput;
 
         public string Filename { get; private set; } = "";
 
@@ -91,6 +95,7 @@ namespace ShoefitterDX
             this.Name = new ProjectProperty(this, "Project", "Name", "");
             this.GameDirectory = new ProjectProperty(this, "Project", "GameDirectory", "");
             this.GameExecutable = new ProjectProperty(this, "Project", "GameExecutable", "");
+            this.CompressOutput = new ProjectProperty(this, "Project", "CompressOutput", "False");
         }
 
         public void Save(string filename = null)

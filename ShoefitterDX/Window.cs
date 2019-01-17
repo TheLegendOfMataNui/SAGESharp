@@ -78,6 +78,22 @@ namespace ShoefitterDX
         {
             if (!EnsureCloseAllowed())
                 return;
+
+            ShoefitterDX.Dialogs.CreateProjectDialog dialog = new Dialogs.CreateProjectDialog();
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                Project newProject = new Project(dialog.ProjectName, dialog.GameDirectory, dialog.GameExecutable);
+                string projectDirectory = System.IO.Path.Combine(dialog.ContainingDirectory, dialog.ProjectName);
+                string projectFilename = System.IO.Path.Combine(projectDirectory, dialog.ProjectName + "." + Project.PROJECT_EXTENSION);
+
+                System.IO.Directory.CreateDirectory(projectDirectory);
+                System.IO.Directory.CreateDirectory(System.IO.Path.Combine(projectDirectory, Project.SUBDIRECTORY_DATA));
+                System.IO.Directory.CreateDirectory(System.IO.Path.Combine(projectDirectory, Project.SUBDIRECTORY_SCRIPT));
+                System.IO.Directory.CreateDirectory(System.IO.Path.Combine(projectDirectory, Project.SUBDIRECTORY_OUTPUT));
+
+                newProject.Save(projectFilename);
+                Program.Project = newProject;
+            }
         }
 
         public void ShowOpenProject()
