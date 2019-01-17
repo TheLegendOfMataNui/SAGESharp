@@ -82,9 +82,18 @@ namespace ShoefitterDX
             ShoefitterDX.Dialogs.CreateProjectDialog dialog = new Dialogs.CreateProjectDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
+                Dialogs.ProjectTemplate template = dialog.Template;
+                if (template == null)
+                {
+                    MessageBox.Show("No template selected.");
+                    return;
+                }
+
                 Project newProject = new Project(dialog.ProjectName, dialog.GameDirectory, dialog.GameExecutable);
                 string projectDirectory = System.IO.Path.Combine(dialog.ContainingDirectory, dialog.ProjectName);
                 string projectFilename = System.IO.Path.Combine(projectDirectory, dialog.ProjectName + "." + Project.PROJECT_EXTENSION);
+
+                template.Apply(newProject);
 
                 System.IO.Directory.CreateDirectory(projectDirectory);
                 System.IO.Directory.CreateDirectory(System.IO.Path.Combine(projectDirectory, Project.SUBDIRECTORY_DATA));

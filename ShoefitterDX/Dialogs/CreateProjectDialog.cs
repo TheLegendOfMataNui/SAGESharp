@@ -69,10 +69,14 @@ namespace ShoefitterDX.Dialogs
                 this.GameDirectoryTextBox.Text = this.GameDirectory;
             if (this.GameExecutable != null)
                 this.GameExecutableTextBox.Text = this.GameExecutable;
+            this.ProjectTypeListView.SelectedIndices.Clear();
             if (this.Template != null && Templates.Contains(this.Template))
             {
-                this.ProjectTypeListView.SelectedIndices.Clear();
                 this.ProjectTypeListView.SelectedIndices.Add(Templates.IndexOf(this.Template));
+            }
+            else if (Templates.Count > 0)
+            {
+                this.ProjectTypeListView.SelectedIndices.Add(0);
             }
         }
     }

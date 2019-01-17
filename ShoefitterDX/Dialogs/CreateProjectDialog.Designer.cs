@@ -73,6 +73,7 @@
             this.ProjectTypeListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.ProjectTypeListView.HideSelection = false;
             this.ProjectTypeListView.LargeImageList = this.ProjectIconImageList;
             this.ProjectTypeListView.Location = new System.Drawing.Point(12, 12);
             this.ProjectTypeListView.MultiSelect = false;
