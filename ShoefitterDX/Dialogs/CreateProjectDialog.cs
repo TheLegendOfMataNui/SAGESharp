@@ -79,6 +79,28 @@ namespace ShoefitterDX.Dialogs
                 this.ProjectTypeListView.SelectedIndices.Add(0);
             }
         }
+
+        // Hack to prevent the user from selecting no template.
+        int LastSelectedIndex = -1;
+        private void ProjectTypeListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ProjectTypeListView.SelectedIndices.Count == 0 && LastSelectedIndex > -1 && LastSelectedIndex < ProjectTypeListView.Items.Count)
+            {
+                //ProjectTypeListView.SelectedIndices.Add(LastSelectedIndex); // Cannot be done here because there are zero selected indices for a moment when selecting an item.
+            }
+            else
+            {
+                LastSelectedIndex = ProjectTypeListView.SelectedIndices[0];
+            }
+        }
+
+        private void ProjectTypeListView_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (ProjectTypeListView.SelectedIndices.Count == 0 && LastSelectedIndex > -1 && LastSelectedIndex < ProjectTypeListView.Items.Count)
+            {
+                ProjectTypeListView.SelectedIndices.Add(LastSelectedIndex);
+            }
+        }
     }
 
     public class ProjectTemplate

@@ -83,6 +83,8 @@
             this.ProjectTypeListView.TabIndex = 2;
             this.ProjectTypeListView.TileSize = new System.Drawing.Size(96, 128);
             this.ProjectTypeListView.UseCompatibleStateImageBehavior = false;
+            this.ProjectTypeListView.SelectedIndexChanged += new System.EventHandler(this.ProjectTypeListView_SelectedIndexChanged);
+            this.ProjectTypeListView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ProjectTypeListView_MouseUp);
             // 
             // ProjectIconImageList
             // 
