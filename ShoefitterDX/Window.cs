@@ -13,6 +13,7 @@ namespace ShoefitterDX
     public partial class Window : Form
     {
         public Panes.GameExplorerPane GameExplorer;
+        public Panes.OutputPane Output;
 
         public Window()
         {
@@ -20,6 +21,11 @@ namespace ShoefitterDX
 
             GameExplorer = new Panes.GameExplorerPane();
             GameExplorer.Show(dockPanel1, WeifenLuo.WinFormsUI.Docking.DockState.DockRight);
+
+            Output = new Panes.OutputPane();
+            Output.Show(dockPanel1, WeifenLuo.WinFormsUI.Docking.DockState.DockBottom);
+
+            Program.WriteOutput("Shoefitter-DX v" + System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString());
         }
 
         /// <summary>

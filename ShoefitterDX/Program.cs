@@ -37,6 +37,12 @@ namespace ShoefitterDX
             }
         }
 
+        public static event EventHandler<string> OutputWritten;
+        public static void WriteOutput(string output)
+        {
+            OutputWritten?.Invoke(null, output);
+        }
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -44,6 +50,8 @@ namespace ShoefitterDX
         static void Main()
         {
             Config = new SAGESharp.INIConfig(INIFilename);
+
+            OutputWritten += (_, output) => System.Diagnostics.Debug.Write(output);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
