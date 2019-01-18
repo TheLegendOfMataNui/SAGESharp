@@ -85,6 +85,9 @@
     <Compile Include="Panes\GameExplorerPane.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Panes\OutputPane.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Project.cs" />
     <Compile Include="LSSInteractive.cs">
       <SubType>Form</SubType>
@@ -115,11 +118,8 @@
     <EmbeddedResource Include="Panes\GameExplorerPane.resx">
       <DependentUpon>GameExplorerPane.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LSSInteractive.resx">
-      <DependentUpon>LSSInteractive.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="OSIBrowser.resx">
-      <DependentUpon>OSIBrowser.cs</DependentUpon>
+    <EmbeddedResource Include="Panes\OutputPane.resx">
+      <DependentUpon>OutputPane.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -129,6 +129,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <EmbeddedResource Include="Window.resx">
       <DependentUpon>Window.cs</DependentUpon>
@@ -152,6 +153,9 @@
       <Project>{ca7ebe43-febb-49f4-ad76-04075fba3b13}</Project>
       <Name>SAGESharp</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CleanData_16x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
