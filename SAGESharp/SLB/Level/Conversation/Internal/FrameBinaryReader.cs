@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace SAGESharp.SLB.Level.Conversation.IO
+namespace SAGESharp.SLB.Level.Conversation.Internal
 {
     /// <summary>
     /// Class to read Frame objects from binary SLB files.

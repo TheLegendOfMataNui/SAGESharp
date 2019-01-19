@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace SAGESharp.SLB.IO
+namespace SAGESharp.SLB.Internal
 {
     /// <summary>
     /// Class to read an binary Identifier from a stream.

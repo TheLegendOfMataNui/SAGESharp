@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace SAGESharp.SLB.Level.Conversation.IO
+namespace SAGESharp.SLB.Level.Conversation.Internal
 {
     /// <summary>
     /// Class to read a list of Character objects from binary SLB files.

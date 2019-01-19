@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace SAGESharp.SLB.Level.Conversation.IO
+namespace SAGESharp.SLB.Level.Conversation.Internal
 {
     /// <summary>
     /// Class to read Info objects from binary SLB files.
