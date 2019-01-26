@@ -247,52 +247,63 @@ namespace SAGESharp.SLB
         }
 
         /// <inheritdoc/>
-        public override bool Equals(object obj)
+        public override bool Equals(object other)
         {
-            if (!(obj is Identifier identifier))
+            return Equals(other as Identifier);
+        }
+
+        /// <inheritdoc/>
+        public bool Equals(Identifier other)
+        {
+            if (other is null)
             {
                 return false;
             }
 
-            return Equals(identifier);
-        }
-
-        /// <inheritdoc/>
-        public bool Equals(Identifier identifier)
-        {
-            return identifier.value == value;
+            return value == other.value;
         }
 
         /// <inheritdoc/>
         public override int GetHashCode()
         {
-            return (int)value;
+            return value.GetHashCode();
         }
 
         /// <summary>
         /// Returns true if both identifiers are equals, false otherwise.
         /// </summary>
         /// 
-        /// <param name="a">The first identifier to compare</param>
-        /// <param name="b">The second identifier to compare</param>
+        /// <param name="left">The left side of the comparision.</param>
+        /// <param name="right">The right side of the comparision.</param>
         /// 
         /// <returns>True if both are equal, false otherwise.</returns>
-        public static bool operator ==(Identifier a, Identifier b)
+        public static bool operator ==(Identifier left, Identifier right)
         {
-            return a.Equals(b);
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
+            else if (left is null)
+            {
+                return right.Equals(left);
+            }
+            else
+            {
+                return left.Equals(right);
+            }
         }
 
         /// <summary>
         /// Returns true if both identifiers are not equals, false otherwise.
         /// </summary>
         /// 
-        /// <param name="a">The first identifier to compare</param>
-        /// <param name="b">The second identifier to compare</param>
+        /// <param name="left">The left side of the comparision.</param>
+        /// <param name="right">The right side of the comparision.</param>
         /// 
         /// <returns>True if both are not equal, false otherwise.</returns>
-        public static bool operator !=(Identifier a, Identifier b)
+        public static bool operator !=(Identifier left, Identifier right)
         {
-            return !(a == b);
+            return !(left == right);
         }
 
         private char GetReadableByte(byte b)

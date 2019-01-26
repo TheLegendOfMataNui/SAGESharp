@@ -64,6 +64,7 @@
     <Compile Include="Extensions\StreamExtensionsTests.cs" />
     <Compile Include="Extensions\UIntExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SLB\IdentifierEqualityTests.cs" />
     <Compile Include="SLB\IdentifierTests.cs" />
     <Compile Include="SLB\Internal\EqualityUtilsTests.cs" />
     <Compile Include="SLB\Internal\IdentifierBinaryReaderTests.cs" />
