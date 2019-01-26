@@ -28,12 +28,10 @@ namespace SAGESharpTests.Util
     /// }
     /// </code>
     /// </example>
-    internal class ParameterGroup
+    internal class ParameterGroup : AbstractParameterGroup
     {
-        private readonly List<object> group = new List<object>();
-
         /// <summary>
-        /// Add the list of parameters to the parameter group, least one is required.
+        /// Add the list of parameters to the parameter group, at least one is required.
         /// </summary>
         /// 
         /// <param name="paramater">The first parameter to add.</param>
@@ -47,8 +45,74 @@ namespace SAGESharpTests.Util
             allParameters[0] = paramater;
             Array.Copy(parameters, 0, allParameters, 1, parameters.Length);
 
-            group.Add(allParameters);
+            AddParameters(allParameters);
+            
             return this;
+        }
+    }
+
+    /// <summary>
+    /// Type safe version of <see cref="ParameterGroup"/>.
+    /// </summary>
+    /// 
+    /// <typeparam name="T">The type of the parameter.</typeparam>
+    /// 
+    /// <seealso cref="ParameterGroup"/>
+    internal class ParameterGroup<T> : AbstractParameterGroup
+    {
+        /// <summary>
+        /// Adds a new entry to the parameter group.
+        /// </summary>
+        /// 
+        /// <param name="parameter">The parameter to add.</param>
+        /// 
+        /// <returns>The same parameter group to chain calls.</returns>
+        /// 
+        /// <seealso cref="ParameterGroup.Parameters(object, object[])"/>
+        public ParameterGroup<T> Parameters(T parameter)
+        {
+            AddParameters(new object[] { parameter });
+            return this;
+        }
+    }
+
+    /// <summary>
+    /// Type safe version of <see cref="ParameterGroup"/>.
+    /// </summary>
+    /// 
+    /// <typeparam name="T1">The type of the first parameter.</typeparam>
+    /// <typeparam name="T2">The type of the second parameter.</typeparam>
+    /// 
+    /// <seealso cref="ParameterGroup"/>
+    internal class ParameterGroup<T1, T2> : AbstractParameterGroup
+    {
+        /// <summary>
+        /// Adds a new entry to the parameter group.
+        /// </summary>
+        /// 
+        /// <param name="parameter1">The first parameter to add.</param>
+        /// <param name="parameter2">The second parameter to add.</param>
+        /// 
+        /// <returns>The same parameter group to chain calls.</returns>
+        /// 
+        /// <seealso cref="ParameterGroup.Parameters(object, object[])"/>
+        public ParameterGroup<T1,T2> Parameters(T1 parameter1, T2 parameter2)
+        {
+            AddParameters(new object[] { parameter1, parameter2 });
+            return this;
+        }
+    }
+
+    /// <summary>
+    /// Class To facilitate some methods when writing <see cref="ParameterGroup"/> classes.
+    /// </summary>
+    internal abstract class AbstractParameterGroup
+    {
+        private readonly List<object> group = new List<object>();
+
+        protected void AddParameters(object[] parameters)
+        {
+            group.Add(parameters);
         }
 
         /// <summary>
@@ -61,4 +125,6 @@ namespace SAGESharpTests.Util
             return group.ToArray();
         }
     }
+
+
 }
