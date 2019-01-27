@@ -15,7 +15,7 @@ namespace SAGESharp.SLB.Level.Conversation
 
         public int StringIndex { get; set; }
 
-        public IList<Frame> Frames { get; } = new List<Frame>();
+        public IList<Frame> Frames { get; set; }
 
         public override string ToString()
         {
@@ -26,7 +26,11 @@ namespace SAGESharp.SLB.Level.Conversation
             result.AppendFormat("ConditionEnd={0}", ConditionEnd).Append(", ");
             result.AppendFormat("StringLabel={0}", StringLabel).Append(", ");
             result.AppendFormat("StringIndex={0}", StringIndex).Append(", ");
-            if (Frames.Count != 0)
+            if (Frames == null)
+            {
+                result.Append("Frames=null");
+            }
+            else if (Frames.Count != 0)
             {
                 result.AppendFormat("Frames=[({0})]", string.Join("), (", Frames));
             }

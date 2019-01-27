@@ -1,5 +1,6 @@
 ﻿using SAGESharp.Extensions;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace SAGESharp.SLB.Level.Conversation.Internal
@@ -42,7 +43,8 @@ namespace SAGESharp.SLB.Level.Conversation.Internal
                 ConditionStart = stream.ForceReadUInt(),
                 ConditionEnd = stream.ForceReadUInt(),
                 StringLabel = identifierReader.ReadSLBObject(),
-                StringIndex = stream.ForceReadInt()
+                StringIndex = stream.ForceReadInt(),
+                Frames = new List<Frame>()
             };
 
             var frameCount = stream.ForceReadInt();
