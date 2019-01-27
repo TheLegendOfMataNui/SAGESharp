@@ -181,28 +181,28 @@ namespace SAGESharpTests.Util
 
         private void AssertSameHashCode(T a, T b)
         {
-            Assert.That(a.GetHashCode() == b.GetHashCode(), Is.True);
+            Assert.That(a.GetHashCode() == b.GetHashCode(), Is.True, "{0} should have the same hash code of {1}", a, b);
         }
 
         private void AssertAreEqual(T a, T b)
         {
-            Assert.That((a as IEquatable<T>).Equals(b), Is.True);
-            Assert.That((a as object).Equals(b), Is.True);
-            Assert.That(EqualsOperator(a, b), Is.True);
-            Assert.That(NotEqualsOperator(a, b), Is.False);
+            Assert.That((a as IEquatable<T>).Equals(b), Is.True, "{0} should be equals to {1}", a, b);
+            Assert.That((a as object).Equals(b), Is.True, "{0} should be equals to {1}", a, b);
+            Assert.That(EqualsOperator(a, b), Is.True, "{0} should be equals to {1}", a, b);
+            Assert.That(NotEqualsOperator(a, b), Is.False, "{0} should be equals to {1}", a, b);
         }
 
         private void AssertDifferentHashCode(T a, T b)
         {
-            Assert.That(a.GetHashCode() != b.GetHashCode(), Is.True);
+            Assert.That(a.GetHashCode() != b.GetHashCode(), Is.True, "{0} should have different hash code to {1}", a, b);
         }
 
         private void AssertAreNotEqual(T a, T b)
         {
-            Assert.That((a as IEquatable<T>).Equals(b), Is.False);
-            Assert.That((a as object).Equals(b), Is.False);
-            Assert.That(EqualsOperator(a, b), Is.False);
-            Assert.That(NotEqualsOperator(a, b), Is.True);
+            Assert.That((a as IEquatable<T>).Equals(b), Is.False, "{0} shouldn't be equals to {1}", a, b);
+            Assert.That((a as object).Equals(b), Is.False, "{0} shouldn't be equals to {1}", a, b);
+            Assert.That(EqualsOperator(a, b), Is.False, "{0} shouldn't be equals to {1}", a, b);
+            Assert.That(NotEqualsOperator(a, b), Is.True, "{0} shouldn't be equals to {1}", a, b);
         }
     }
 }
