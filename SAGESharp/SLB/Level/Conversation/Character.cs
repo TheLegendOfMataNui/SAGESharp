@@ -11,7 +11,7 @@ namespace SAGESharp.SLB.Level.Conversation
 
         public Identifier CharCont { get; set; }
 
-        public IList<Info> Entries { get; } = new List<Info>();
+        public IList<Info> Entries { get; set; }
 
         public override string ToString()
         {
@@ -20,7 +20,11 @@ namespace SAGESharp.SLB.Level.Conversation
             result.AppendFormat("ToaName={0}", ToaName).Append(", ");
             result.AppendFormat("CharName={0}", ToaName).Append(", ");
             result.AppendFormat("CharCont={0}", ToaName).Append(", ");
-            if (Entries.Count != 0)
+            if (Entries == null)
+            {
+                result.Append("Entries=null");
+            }
+            else if (Entries.Count != 0)
             {
                 result.AppendFormat("Entries=[({0})]", string.Join("), (", Entries));
             }
