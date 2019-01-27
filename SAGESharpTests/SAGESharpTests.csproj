@@ -68,6 +68,7 @@
     <Compile Include="SLB\IdentifierTests.cs" />
     <Compile Include="SLB\Internal\EqualityUtilsTests.cs" />
     <Compile Include="SLB\Internal\IdentifierBinaryReaderTests.cs" />
+    <Compile Include="SLB\Level\Conversation\CharacterEqualityTests.cs" />
     <Compile Include="SLB\Level\Conversation\Defaults.cs" />
     <Compile Include="SLB\Level\Conversation\FrameEqualityTests.cs" />
     <Compile Include="SLB\Level\Conversation\InfoEqualityTests.cs" />

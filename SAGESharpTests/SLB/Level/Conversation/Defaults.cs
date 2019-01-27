@@ -25,5 +25,13 @@ namespace SAGESharpTests.SLB.Level.Conversation
             StringIndex = 4,
             Frames =  new List<Frame>() { DefaultFrame() }
         };
+
+        public static Character DefaultCharacter() => new Character()
+        {
+            ToaName = new Identifier("TOA1"),
+            CharName = new Identifier("CHA1"),
+            CharCont = new Identifier("CON1"),
+            Entries = new List<Info>() { DefaultInfo() }
+        };
     }
 }
