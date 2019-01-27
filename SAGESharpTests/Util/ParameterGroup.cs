@@ -104,6 +104,35 @@ namespace SAGESharpTests.Util
     }
 
     /// <summary>
+    /// Type safe version of <see cref="ParameterGroup"/>.
+    /// </summary>
+    /// 
+    /// <typeparam name="T1">The type of the first parameter.</typeparam>
+    /// <typeparam name="T2">The type of the second parameter.</typeparam>
+    /// <typeparam name="T3">The type of the third parameter.</typeparam>
+    /// 
+    /// <seealso cref="ParameterGroup"/>
+    internal class ParameterGroup<T1, T2, T3> : AbstractParameterGroup
+    {
+        /// <summary>
+        /// Adds a new entry to the parameter group.
+        /// </summary>
+        /// 
+        /// <param name="parameter1">The first parameter to add.</param>
+        /// <param name="parameter2">The second parameter to add.</param>
+        /// <param name="parameter3">The third parameter to add.</param>
+        /// 
+        /// <returns>The same parameter group to chain calls.</returns>
+        /// 
+        /// <seealso cref="ParameterGroup.Parameters(object, object[])"/>
+        public ParameterGroup<T1, T2, T3> Parameters(T1 parameter1, T2 parameter2, T3 parameter3)
+        {
+            AddParameters(new object[] { parameter1, parameter2, parameter3 });
+            return this;
+        }
+    }
+
+    /// <summary>
     /// Class To facilitate some methods when writing <see cref="ParameterGroup"/> classes.
     /// </summary>
     internal abstract class AbstractParameterGroup
@@ -125,6 +154,4 @@ namespace SAGESharpTests.Util
             return group.ToArray();
         }
     }
-
-
 }

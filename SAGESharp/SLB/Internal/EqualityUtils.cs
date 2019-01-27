@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace SAGESharp.SLB.Internal
 {
@@ -24,6 +25,57 @@ namespace SAGESharp.SLB.Internal
         public static bool SafeEquals<T>(this T obj, T other) where T : class
         {
             return obj?.Equals(other) ?? other == null;
+        }
+
+        /// <summary>
+        /// Convenience method to safely compare sequences of objects.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">The type of the objects.</typeparam>
+        /// 
+        /// <param name="values">The sequence to compare.</param>
+        /// <param name="otherValues">The other sequence to compare.</param>
+        /// 
+        /// <returns>True if both sequences have the same elements (using <see cref="object.Equals(object)"/>).</returns>
+        public static bool SafeSequenceEquals<T>(this IEnumerable<T> values, IEnumerable<T> otherValues) where T : class
+        {
+            if (ReferenceEquals(values, otherValues))
+            {
+                return true;
+            }
+            else if (values == null || otherValues == null)
+            {
+                return false;
+            }
+
+            using (var enumerator1 = values.GetEnumerator())
+            {
+                using (var enumerator2 = otherValues.GetEnumerator())
+                {
+                    while (enumerator1.MoveNext())
+                    {
+                        // "otherValues" has less objects than "values"
+                        if (!enumerator2.MoveNext())
+                        {
+                            return false;
+                        }
+
+                        // If both values are not equals
+                        if (!enumerator1.Current.SafeEquals(enumerator2.Current))
+                        {
+                            return false;
+                        }
+                    }
+
+                    // "otherValues" has more objects than "values"
+                    if (enumerator2.MoveNext())
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         /// <summary>

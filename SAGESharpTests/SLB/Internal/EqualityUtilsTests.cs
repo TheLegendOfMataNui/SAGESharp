@@ -26,6 +26,33 @@ namespace SAGESharpTests.SLB.Internal
             return a.SafeEquals(b);
         }
 
+        [TestCaseSource(nameof(SequencesToCompare))]
+        public void Test_SafeSequenceEquals(IEnumerable<string> values, IEnumerable<string> otherValues, bool expectedResult)
+        {
+            Assert.That(values.SafeSequenceEquals(otherValues), Is.EqualTo(expectedResult));
+        }
+
+        static object[] SequencesToCompare() => new ParameterGroup<IEnumerable<string>, IEnumerable<string>, bool>()
+            // Test SafeSequenceEquals with two equals sequences
+            .Parameters(null, null, true)
+            .Parameters(new string[] { }, new string[] { }, true)
+            .Parameters(new string[] { null }, new string[] { null }, true)
+            .Parameters(new string[] { STRING1 }, new string[] { STRING1 }, true)
+            .Parameters(new string[] { STRING1, STRING2 }, new string[] { STRING1, STRING2 }, true)
+            .Parameters(new string[] { STRING1, null }, new string[] { STRING1, null }, true)
+            .Parameters(new string[] { null, STRING1 }, new string[] { null, STRING1 }, true)
+            // Test SafeSequenceEquals with an existing sequence and a null
+            .Parameters(new string[] { }, null, false)
+            .Parameters(null, new string[] { }, false)
+            // Test SafeSequenceEquals with sequences of different size
+            .Parameters(new string[] { STRING1 }, new string[] { }, false)
+            .Parameters(new string[] { }, new string[] { STRING1 }, false)
+            // Test SafeSequenceEquals with sequences of the same size but with different values
+            .Parameters(new string[] { null }, new string[] { STRING1 }, false)
+            .Parameters(new string[] { STRING1 }, new string[] { null }, false)
+            .Parameters(new string[] { STRING1 }, new string[] { STRING2 }, false)
+            .Build();
+
         [TestCaseSource(nameof(SingleReferences))]
         public void Test_AddHashCodeByRef_For_A_Single_Reference(string value, int hash, int prime, int expectedHash)
         {
