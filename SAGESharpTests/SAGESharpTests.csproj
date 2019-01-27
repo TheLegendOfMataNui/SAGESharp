@@ -70,6 +70,7 @@
     <Compile Include="SLB\Internal\IdentifierBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\Defaults.cs" />
     <Compile Include="SLB\Level\Conversation\FrameEqualityTests.cs" />
+    <Compile Include="SLB\Level\Conversation\InfoEqualityTests.cs" />
     <Compile Include="SLB\Level\Conversation\Internal\CharacterBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\Internal\ConversationBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\Internal\FrameBinaryReaderTests.cs" />

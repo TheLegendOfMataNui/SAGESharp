@@ -1,4 +1,6 @@
-﻿using SAGESharp.SLB.Level.Conversation;
+﻿using SAGESharp.SLB;
+using SAGESharp.SLB.Level.Conversation;
+using System.Collections.Generic;
 
 namespace SAGESharpTests.SLB.Level.Conversation
 {
@@ -12,6 +14,16 @@ namespace SAGESharpTests.SLB.Level.Conversation
             CameraDistance = 4,
             StringIndex = 5,
             ConversationSounds = "sounds"
+        };
+
+        public static Info DefaultInfo() => new Info()
+        {
+            LineSide = LineSide.Right,
+            ConditionStart = 1,
+            ConditionEnd = 2,
+            StringLabel = new Identifier(3),
+            StringIndex = 4,
+            Frames =  new List<Frame>() { DefaultFrame() }
         };
     }
 }

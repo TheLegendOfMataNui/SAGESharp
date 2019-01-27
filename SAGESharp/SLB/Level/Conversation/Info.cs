@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using SAGESharp.SLB.Internal;
+using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace SAGESharp.SLB.Level.Conversation
 {
-    public class Info
+    public class Info : IEquatable<Info>
     {
         public LineSide LineSide { get; set; }
 
@@ -16,6 +18,21 @@ namespace SAGESharp.SLB.Level.Conversation
         public int StringIndex { get; set; }
 
         public IList<Frame> Frames { get; set; }
+
+        public bool Equals(Info other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            return LineSide == other.LineSide &&
+                ConditionStart == other.ConditionStart &&
+                ConditionEnd == other.ConditionEnd &&
+                StringLabel == other.StringLabel &&
+                StringIndex == other.StringIndex &&
+                Frames.SafeSequenceEquals(other.Frames);
+        }
 
         public override string ToString()
         {
@@ -40,6 +57,45 @@ namespace SAGESharp.SLB.Level.Conversation
             }
 
             return result.ToString();
+        }
+
+        public override bool Equals(object other)
+        {
+            return Equals(other as Info);
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 17;
+            LineSide.AddHashCodeByVal(ref hash, 73);
+            ConditionStart.AddHashCodeByVal(ref hash, 73);
+            ConditionEnd.AddHashCodeByVal(ref hash, 73);
+            StringLabel.AddHashCodeByVal(ref hash, 73);
+            StringIndex.AddHashCodeByVal(ref hash, 73);
+            Frames.AddHashCodesByRef(ref hash, 73, 37);
+
+            return hash;
+        }
+
+        public static bool operator ==(Info left, Info right)
+        {
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
+            else if (left is null)
+            {
+                return right.Equals(left);
+            }
+            else
+            {
+                return left.Equals(right);
+            }
+        }
+
+        public static bool operator !=(Info left, Info right)
+        {
+            return !(left == right);
         }
     }
 }
