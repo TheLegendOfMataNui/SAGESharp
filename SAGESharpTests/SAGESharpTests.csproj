@@ -74,7 +74,7 @@
     <Compile Include="SLB\Level\Conversation\Internal\ConversationBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\Internal\FrameBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\Internal\InfoBinaryReaderTests.cs" />
-    <Compile Include="Util\AbstractEqualityTests.cs" />
+    <Compile Include="Util\AbstractEqualityByRefTests.cs" />
     <Compile Include="Util\MockingExtensions.cs" />
     <Compile Include="Util\ParameterGroup.cs" />
   </ItemGroup>

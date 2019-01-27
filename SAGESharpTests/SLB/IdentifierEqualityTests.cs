@@ -5,7 +5,7 @@ using System;
 
 namespace SAGESharpTests.SLB
 {
-    class IdentifierEqualityTests : AbstractEqualityTests<Identifier>
+    class IdentifierEqualityTests : AbstractEqualityByRefTests<Identifier>
     {
         protected override Identifier GetDefault() => new Identifier("ABCD");
 

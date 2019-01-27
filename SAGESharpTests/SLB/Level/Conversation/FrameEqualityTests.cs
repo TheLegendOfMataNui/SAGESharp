@@ -7,7 +7,7 @@ using static SAGESharpTests.SLB.Level.Conversation.Defaults;
 
 namespace SAGESharpTests.SLB.Level.Conversation
 {
-    class FrameEqualityTests : AbstractEqualityTests<Frame>
+    class FrameEqualityTests : AbstractEqualityByRefTests<Frame>
     {
         protected override Frame GetDefault() => DefaultFrame();
 

@@ -18,7 +18,7 @@ namespace SAGESharpTests.Util
     /// </remarks>
     /// 
     /// <typeparam name="T">The class to test.</typeparam>
-    internal abstract class AbstractEqualityTests<T> where T : class, IEquatable<T>
+    internal abstract class AbstractEqualityByRefTests<T> where T : class, IEquatable<T>
     {
         /// <summary>
         /// Method to generate a default instance of <see cref="T"/>.
@@ -75,10 +75,14 @@ namespace SAGESharpTests.Util
         [Test]
         public void Test_Compare_Two_Default_Objects()
         {
-            var obj = GetDefault();
+            var a = GetDefault();
+            var b = GetDefault();
 
-            AssertSameHashCode(obj, obj);
-            AssertAreEqual(obj, obj);
+            AssertSameHashCode(a, b);
+            AssertAreEqual(a, b);
+
+            AssertSameHashCode(b, a);
+            AssertAreEqual(b, a);
         }
 
         /// <summary>
@@ -110,7 +114,7 @@ namespace SAGESharpTests.Util
         /// Things become easier leveraging NUnit's <see cref="TestCaseSourceAttribute"/>.
         /// 
         /// <code>
-        /// class MyClassEqualityTests : AbstractEqualityTests<MyClass>
+        /// class MyClassEqualityTests : AbstractEqualityByRefTests<MyClass>
         /// {
         ///     // ...
         ///     
@@ -146,7 +150,7 @@ namespace SAGESharpTests.Util
         /// Things become easier leveraging NUnit's <see cref="TestCaseSourceAttribute"/>.
         /// 
         /// <code>
-        /// class MyClassEqualityTests : AbstractEqualityTests<MyClass>
+        /// class MyClassEqualityTests : AbstractEqualityByRefTests<MyClass>
         /// {
         ///     // ...
         ///     
