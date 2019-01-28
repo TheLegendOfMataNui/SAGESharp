@@ -1,8 +1,9 @@
 ﻿using SAGESharp.Extensions;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
-namespace SAGESharp.SLB.Level.Conversation.IO
+namespace SAGESharp.SLB.Level.Conversation.Internal
 {
     /// <summary>
     /// Class to read Character objects from binary SLB files.
@@ -39,7 +40,8 @@ namespace SAGESharp.SLB.Level.Conversation.IO
             {
                 ToaName = identifierReader.ReadSLBObject(),
                 CharName = identifierReader.ReadSLBObject(),
-                CharCont = identifierReader.ReadSLBObject()
+                CharCont = identifierReader.ReadSLBObject(),
+                Entries = new List<Info>()
             };
 
             var infoCount = stream.ForceReadUInt();

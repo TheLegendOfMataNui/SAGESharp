@@ -2,12 +2,12 @@
 using NUnit.Framework;
 using SAGESharp.SLB;
 using SAGESharp.SLB.Level.Conversation;
-using SAGESharp.SLB.Level.Conversation.IO;
+using SAGESharp.SLB.Level.Conversation.Internal;
 using SAGESharpTests.Util;
 using System;
 using System.IO;
 
-namespace SAGESharpTests.SLB.Level.Conversation.IO
+namespace SAGESharpTests.SLB.Level.Conversation.Internal
 {
     public static class ConversationBinaryReaderTests
     {

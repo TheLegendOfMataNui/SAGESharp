@@ -8,7 +8,7 @@ namespace SAGESharp.SLB
     /// 
     /// The identifier consist of 4 bytes/characters (a 32 bit integer).
     /// </summary>
-    public class Identifier : IEquatable<Identifier>
+    public struct Identifier : IEquatable<Identifier>
     {
         /// <summary>
         /// Char that will be shown if any invalid byte is used in the identifier.
@@ -16,18 +16,11 @@ namespace SAGESharp.SLB
         public const char EMPY_CHAR = '?';
 
         /// <summary>
-        /// Creates a new instance with the value initialized to zero.
-        /// </summary>
-        public Identifier()
-        {
-        }
-
-        /// <summary>
         /// Creates a new instance initializing it with the input value.
         /// </summary>
         /// 
         /// <param name="value">The input value to initalize the instance.</param>
-        public Identifier(uint value)
+        public Identifier(uint value) : this()
         {
             SetFrom(value);
         }
@@ -40,7 +33,7 @@ namespace SAGESharp.SLB
         /// </summary>
         /// 
         /// <param name="values">An array of bytes that will be used to initialize the identifier.</param>
-        public Identifier(byte[] values)
+        public Identifier(byte[] values) : this()
         {
             SetFrom(values);
         }
@@ -53,12 +46,12 @@ namespace SAGESharp.SLB
         /// </summary>
         /// 
         /// <param name="value">A string that will be used to initialize the identifier.</param>
-        public Identifier(string value)
+        public Identifier(string value) : this()
         {
             SetFrom(value);
         }
 
-        private uint value = 0;
+        private uint value;
 
         #region Byte level access
         /// <summary>
@@ -247,9 +240,9 @@ namespace SAGESharp.SLB
         }
 
         /// <inheritdoc/>
-        public override bool Equals(object obj)
+        public override bool Equals(object other)
         {
-            if (!(obj is Identifier identifier))
+            if (!(other is Identifier identifier))
             {
                 return false;
             }
@@ -258,41 +251,41 @@ namespace SAGESharp.SLB
         }
 
         /// <inheritdoc/>
-        public bool Equals(Identifier identifier)
+        public bool Equals(Identifier other)
         {
-            return identifier.value == value;
+            return value == other.value;
         }
 
         /// <inheritdoc/>
         public override int GetHashCode()
         {
-            return (int)value;
+            return value.GetHashCode();
         }
 
         /// <summary>
         /// Returns true if both identifiers are equals, false otherwise.
         /// </summary>
         /// 
-        /// <param name="a">The first identifier to compare</param>
-        /// <param name="b">The second identifier to compare</param>
+        /// <param name="left">The left side of the comparision.</param>
+        /// <param name="right">The right side of the comparision.</param>
         /// 
         /// <returns>True if both are equal, false otherwise.</returns>
-        public static bool operator ==(Identifier a, Identifier b)
+        public static bool operator ==(Identifier left, Identifier right)
         {
-            return a.Equals(b);
+            return left.Equals(right);
         }
 
         /// <summary>
         /// Returns true if both identifiers are not equals, false otherwise.
         /// </summary>
         /// 
-        /// <param name="a">The first identifier to compare</param>
-        /// <param name="b">The second identifier to compare</param>
+        /// <param name="left">The left side of the comparision.</param>
+        /// <param name="right">The right side of the comparision.</param>
         /// 
         /// <returns>True if both are not equal, false otherwise.</returns>
-        public static bool operator !=(Identifier a, Identifier b)
+        public static bool operator !=(Identifier left, Identifier right)
         {
-            return !(a == b);
+            return !(left == right);
         }
 
         private char GetReadableByte(byte b)
