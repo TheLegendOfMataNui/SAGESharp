@@ -132,6 +132,11 @@ namespace ShoefitterDX
             }
         }
 
+        public void ShowContent(WeifenLuo.WinFormsUI.Docking.DockContent content)
+        {
+            content.Show(dockPanel1, WeifenLuo.WinFormsUI.Docking.DockState.Document);
+        }
+
         //
         // UI Event Handlers
         //

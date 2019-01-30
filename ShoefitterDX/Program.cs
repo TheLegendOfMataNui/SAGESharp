@@ -14,8 +14,11 @@ namespace ShoefitterDX
     static class Program
     {
         private const string INIFilename = "ShoefitterDX.ini";
+        private const string GAME_DATA_DIRECTORY = "data";
 
         public static SAGESharp.INIConfig Config { get; private set; }
+        public static IO.AssetManager AssetManager { get; private set; }
+        public static Window Window { get; private set; }
 
         public static event EventHandler<Project> ProjectClosed;
         public static event EventHandler<Project> ProjectOpened;
@@ -30,8 +33,10 @@ namespace ShoefitterDX
                     ProjectClosed?.Invoke(null, Project);
                 }
                 _project = value;
+                AssetManager = null;
                 if (Project != null)
                 {
+                    AssetManager = new IO.AssetManager(System.IO.Path.Combine(Project.GameDirectory, GAME_DATA_DIRECTORY), System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Project.Filename), Project.SUBDIRECTORY_DATA));
                     ProjectOpened?.Invoke(null, Project);
                 }
             }
@@ -55,7 +60,8 @@ namespace ShoefitterDX
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Window());
+            Window = new Window();
+            Application.Run(Window);
             Config.Write(INIFilename);
         }
     }

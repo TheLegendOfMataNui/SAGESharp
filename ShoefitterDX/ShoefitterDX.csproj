@@ -73,6 +73,16 @@
     <Compile Include="Dialogs\CreateProjectDialog.Designer.cs">
       <DependentUpon>CreateProjectDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Editors\AssetEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Editors\Editor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IO\AssetManager.cs" />
+    <Compile Include="IO\AssetType.cs" />
+    <Compile Include="IO\GameAsset.cs" />
+    <Compile Include="IO\GameFile.cs" />
     <Compile Include="Panes\GameExplorerPane.cs">
       <SubType>Form</SubType>
     </Compile>
