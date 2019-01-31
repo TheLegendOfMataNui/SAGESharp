@@ -1,5 +1,5 @@
 ﻿using Moq.Language;
-using SAGESharp.Extensions;
+using SAGESharp.SLB;
 using System;
 
 namespace SAGESharpTests.Util

@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
-using SAGESharp.Extensions;
+using SAGESharp.SLB;
 
-namespace SAGESharpTests.Extensions
+namespace SAGESharpTests.SLB
 {
     [TestFixture]
     public class ASCIIExtensionsTests

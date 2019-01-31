@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace SAGESharp.Extensions
+namespace SAGESharp.SLB
 {
     internal static class ASCIIExtensions
     {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 
-namespace SAGESharp.Extensions
+namespace SAGESharp.SLB
 {
-    public static class StreamExtensions
+    internal static class StreamExtensions
     {
         /// <summary>
         /// Updates the stream to the given position and performs the action,

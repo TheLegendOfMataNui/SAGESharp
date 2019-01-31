@@ -1,9 +1,9 @@
 ﻿using Moq;
 using NUnit.Framework;
-using SAGESharp.Extensions;
+using SAGESharp.SLB;
 using System.IO;
 
-namespace SAGESharpTests.Extensions
+namespace SAGESharpTests.SLB
 {
     [TestFixture]
     public class StreamExtensionsTests

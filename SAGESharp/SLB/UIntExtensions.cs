@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SAGESharp.Extensions
+namespace SAGESharp.SLB
 {
     internal static class UIntExtensions
     {

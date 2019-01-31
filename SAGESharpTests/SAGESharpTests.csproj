@@ -60,10 +60,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\ASCIIExtensionsTests.cs" />
-    <Compile Include="Extensions\StreamExtensionsTests.cs" />
-    <Compile Include="Extensions\UIntExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SLB\ASCIIExtensionsTests.cs" />
     <Compile Include="SLB\IdentifierEqualityTests.cs" />
     <Compile Include="SLB\IdentifierTests.cs" />
     <Compile Include="SLB\Internal\EqualityUtilsTests.cs" />
@@ -76,6 +74,8 @@
     <Compile Include="SLB\Level\Conversation\Internal\ConversationBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\Internal\FrameBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\Internal\InfoBinaryReaderTests.cs" />
+    <Compile Include="SLB\StreamExtensionsTests.cs" />
+    <Compile Include="SLB\UIntExtensionsTests.cs" />
     <Compile Include="Util\AbstractEqualityByRefTests.cs" />
     <Compile Include="Util\AbstractEqualityByValTests.cs" />
     <Compile Include="Util\MockingExtensions.cs" />
