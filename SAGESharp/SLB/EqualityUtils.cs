@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
-namespace SAGESharp.SLB.Internal
+namespace SAGESharp.SLB
 {
     /// <summary>
     /// Class with extension methods so is easier to implement the Equals() and GetHashCode() methods.
@@ -9,7 +8,7 @@ namespace SAGESharp.SLB.Internal
     /// For details on why this hash code implementation see the following StackOverflow answer:
     /// https://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
     /// </summary>
-    internal static class ClassEqualityUtils
+    internal static class EqualityUtils
     {
         /// <summary>
         /// Convenience method to compare a nullable object against other

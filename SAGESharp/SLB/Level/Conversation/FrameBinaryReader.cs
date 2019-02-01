@@ -1,9 +1,8 @@
-﻿using SAGESharp.Extensions;
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 
-namespace SAGESharp.SLB.Level.Conversation.Internal
+namespace SAGESharp.SLB.Level.Conversation
 {
     /// <summary>
     /// Class to read Frame objects from binary SLB files.

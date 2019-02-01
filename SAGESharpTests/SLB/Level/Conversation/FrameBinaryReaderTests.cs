@@ -1,11 +1,10 @@
 ﻿using Moq;
 using NUnit.Framework;
-using SAGESharp.SLB.Level.Conversation.Internal;
-using SAGESharpTests.Util;
+using SAGESharp.SLB.Level.Conversation;
 using System;
 using System.IO;
 
-namespace SAGESharpTests.SLB.Level.Conversation.Internal
+namespace SAGESharpTests.SLB.Level.Conversation
 {
     [TestFixture]
     public static class FrameBinaryReaderTests

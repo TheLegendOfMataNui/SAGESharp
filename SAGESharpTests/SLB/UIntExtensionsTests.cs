@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
-using SAGESharp.Extensions;
+using SAGESharp.SLB;
 using System;
 
-namespace SAGESharpTests.Extensions
+namespace SAGESharpTests.SLB
 {
     [TestFixture]
     public class UIntExtensionsTests

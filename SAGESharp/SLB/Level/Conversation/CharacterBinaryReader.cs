@@ -1,9 +1,8 @@
-﻿using SAGESharp.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace SAGESharp.SLB.Level.Conversation.Internal
+namespace SAGESharp.SLB.Level.Conversation
 {
     /// <summary>
     /// Class to read Character objects from binary SLB files.

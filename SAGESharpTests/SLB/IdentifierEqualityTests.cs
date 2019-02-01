@@ -1,7 +1,5 @@
 ﻿using NUnit.Framework;
 using SAGESharp.SLB;
-using SAGESharpTests.Util;
-using System;
 
 namespace SAGESharpTests.SLB
 {
