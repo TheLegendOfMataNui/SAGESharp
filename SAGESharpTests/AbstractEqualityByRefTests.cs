@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 
-namespace SAGESharpTests.Util
+namespace SAGESharpTests
 {
     /// <summary>
     /// Class to facilitate testing the equality methods of another class.

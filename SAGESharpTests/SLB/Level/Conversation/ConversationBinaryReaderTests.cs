@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using SAGESharp.SLB;
 using SAGESharp.SLB.Level.Conversation;
-using SAGESharpTests.Util;
 using System;
 using System.IO;
 

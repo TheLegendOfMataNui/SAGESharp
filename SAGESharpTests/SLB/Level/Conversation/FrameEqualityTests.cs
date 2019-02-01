@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using SAGESharp.SLB.Level.Conversation;
-using SAGESharpTests.Util;
 using System;
 
 using static SAGESharpTests.SLB.Level.Conversation.Defaults;

@@ -2,7 +2,7 @@
 using SAGESharp.SLB;
 using System;
 
-namespace SAGESharpTests.Util
+namespace SAGESharpTests
 {
     internal static class MockingExtensions
     {

@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharpTests.Util
+namespace SAGESharpTests
 {
     /// <summary>
     /// Convenience class to use when creating arguments for a <see cref="TestCaseSourceAttribute"/>
