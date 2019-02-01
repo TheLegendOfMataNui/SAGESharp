@@ -1,5 +1,4 @@
-﻿using SAGESharp.SLB.Internal;
-using SAGESharp.SLB.Level.Conversation;
+﻿using SAGESharp.SLB.Level.Conversation;
 using SAGESharp.SLB.Level.Conversation.Internal;
 using System.IO;
 using System.Collections.Generic;

@@ -1,5 +1,4 @@
-﻿using SAGESharp.SLB.Internal;
-using System;
+﻿using System;
 using System.Text;
 
 namespace SAGESharp.SLB.Level.Conversation

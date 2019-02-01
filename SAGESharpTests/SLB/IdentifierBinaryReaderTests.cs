@@ -1,12 +1,11 @@
 ﻿using Moq;
 using NUnit.Framework;
 using SAGESharp.SLB;
-using SAGESharp.SLB.Internal;
 using SAGESharpTests.Util;
 using System;
 using System.IO;
 
-namespace SAGESharpTests.SLB.Internal
+namespace SAGESharpTests.SLB
 {
     [TestFixture]
     public class IdentifierBinaryReaderTests
