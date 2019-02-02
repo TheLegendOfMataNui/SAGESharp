@@ -12,7 +12,7 @@ namespace SAGESharp.OSI
         public class FunctionInfo
         {
             public string Name { get; }
-            public List<OSIInstruction> Instructions { get; }
+            public List<Instruction> Instructions { get; }
             public uint BytecodeOffset { get; }
             public ushort ParameterCount { get; }
 
@@ -34,8 +34,8 @@ namespace SAGESharp.OSI
 
         public class MethodInfo
         {
-            public ushort NameSymbol;
-            public List<OSIInstruction> Instructions { get; }
+            public ushort NameSymbol { get; }
+            public List<Instruction> Instructions { get; }
             public uint BytecodeOffset { get; }
 
             public MethodInfo(ushort nameSymbol)
@@ -91,14 +91,26 @@ namespace SAGESharp.OSI
             }
         }
 
-        ushort VersionMajor;
-        ushort VersionMinor;
-        public List<string> StringTable;
-        public List<string> GlobalTable;
-        public List<FunctionInfo> FunctionTable;
-        public List<ClassInfo> ClassTable;
-        public List<string> SymbolTable;
-        public List<string> SourceTable;
+        ushort VersionMajor { get; }
+        ushort VersionMinor { get; }
+        public List<string> Strings { get; }
+        public List<string> Globals { get; }
+        public List<FunctionInfo> Functions { get; }
+        public List<ClassInfo> Classes { get; }
+        public List<string> Symbols { get; }
+        public List<string> SourceFilenames { get; }
+
+        public OSIFile(ushort versionMajor = 4, ushort versionMinor = 1)
+        {
+            this.VersionMajor = versionMajor;
+            this.VersionMinor = versionMinor;
+            this.Strings = new List<string>();
+            this.Globals = new List<string>();
+            this.Functions = new List<FunctionInfo>();
+            this.Classes = new List<ClassInfo>();
+            this.Symbols = new List<string>();
+            this.SourceFilenames = new List<string>();
+        }
 
         public OSIFile(BinaryReader reader)
         {
@@ -112,53 +124,53 @@ namespace SAGESharp.OSI
 
             // String table
             ushort stringCount = reader.ReadUInt16();
-            StringTable = new List<string>();
+            Strings = new List<string>();
             for (int i = 0; i < stringCount; i++)
             {
                 byte length = reader.ReadByte();
-                StringTable.Add(Encoding.ASCII.GetString(reader.ReadBytes(length)));
+                Strings.Add(Encoding.ASCII.GetString(reader.ReadBytes(length)));
                 reader.ReadByte(); // Null terminator
             }
 
             // Global table
             ushort globalCount = reader.ReadUInt16();
-            GlobalTable = new List<string>();
+            Globals = new List<string>();
             for (int i = 0; i < globalCount; i++)
             {
                 byte length = reader.ReadByte();
-                GlobalTable.Add(Encoding.ASCII.GetString(reader.ReadBytes(length)));
+                Globals.Add(Encoding.ASCII.GetString(reader.ReadBytes(length)));
                 reader.ReadByte(); // Null terminator
             }
 
             // Function table
             ushort functionCount = reader.ReadUInt16();
-            FunctionTable = new List<FunctionInfo>();
+            Functions = new List<FunctionInfo>();
             for (int i = 0; i < functionCount; i++)
             {
-                FunctionTable.Add(new FunctionInfo(reader));
+                Functions.Add(new FunctionInfo(reader));
             }
 
             // Class table
             ushort classCount = reader.ReadUInt16();
-            ClassTable = new List<ClassInfo>();
+            Classes = new List<ClassInfo>();
             for (int i = 0; i < classCount; i++)
             {
-                ClassTable.Add(new ClassInfo(reader, VersionMajor));
+                Classes.Add(new ClassInfo(reader, VersionMajor));
             }
             for (int i = 0; i < classCount; i++)
             {
                 byte length = reader.ReadByte();
-                ClassTable[i].LoadName(Encoding.ASCII.GetString(reader.ReadBytes(length)));
+                Classes[i].LoadName(Encoding.ASCII.GetString(reader.ReadBytes(length)));
                 reader.ReadByte(); // Null terminator
             }
 
             // Symbol table
             ushort symbolCount = reader.ReadUInt16();
-            SymbolTable = new List<string>();
+            Symbols = new List<string>();
             for (int i = 0; i < symbolCount; i++)
             {
                 byte length = reader.ReadByte();
-                SymbolTable.Add(Encoding.ASCII.GetString(reader.ReadBytes(length)));
+                Symbols.Add(Encoding.ASCII.GetString(reader.ReadBytes(length)));
                 reader.ReadByte(); // Null terminator
             }
 
@@ -166,19 +178,19 @@ namespace SAGESharp.OSI
             if (VersionMajor == 4)
             {
                 ushort sourceCount = reader.ReadUInt16();
-                SourceTable = new List<string>();
+                SourceFilenames = new List<string>();
                 for (int i = 0; i < sourceCount; i++)
                 {
                     byte length = reader.ReadByte();
-                    SourceTable.Add(Encoding.ASCII.GetString(reader.ReadBytes(length)));
+                    SourceFilenames.Add(Encoding.ASCII.GetString(reader.ReadBytes(length)));
                     reader.ReadByte(); // Null terminator
                 }
             }
         }
 
-        private static List<OSIInstruction> ReadBytecode(BinaryReader reader, uint startOffset)
+        private static List<Instruction> ReadBytecode(BinaryReader reader, uint startOffset)
         {
-            List<OSIInstruction> result = new List<OSIInstruction>();
+            List<Instruction> result = new List<Instruction>();
             // Read bytecode until the last return
             long offset = reader.BaseStream.Position;
 
@@ -186,7 +198,7 @@ namespace SAGESharp.OSI
 
             long lastBranchTarget = 0;
             bool keepReading = true;
-            result = new List<OSIInstruction>();
+            result = new List<Instruction>();
             while (keepReading)
             {
                 BCLInstruction instruction = new BCLInstruction((BCLOpcode)reader.ReadByte(), reader);

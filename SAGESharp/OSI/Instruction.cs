@@ -128,7 +128,7 @@ namespace SAGESharp.OSI
         }
     }
 
-    public abstract class OSIInstruction
+    public abstract class Instruction
     {
         public abstract uint Size { get; }
         public IReadOnlyList<OSIGenericInstructionArgument> Arguments { get; protected set; }

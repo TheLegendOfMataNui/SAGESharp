@@ -8,9 +8,9 @@ namespace SAGESharp.OSI.ControlFlow
 {
     public class OSINode : Node
     {
-        public List<OSIInstruction> Instructions { get; }
+        public List<Instruction> Instructions { get; }
 
-        public OSINode(List<OSIInstruction> instructions) : base()
+        public OSINode(List<Instruction> instructions) : base()
         {
             this.Instructions = instructions;
         }

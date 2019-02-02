@@ -29,7 +29,7 @@ namespace ShoefitterDX
             treeView1.Nodes.Clear();
 
             TreeNode functions = new TreeNode("Functions");
-            foreach (OSIFile.FunctionInfo info in osi.FunctionTable)
+            foreach (OSIFile.FunctionInfo info in osi.Functions)
             {
                 TreeNode node = new TreeNode(info.Name);
                 node.Tag = info;
@@ -38,13 +38,13 @@ namespace ShoefitterDX
             treeView1.Nodes.Add(functions);
 
             TreeNode classes = new TreeNode("Classes");
-            foreach (OSIFile.ClassInfo classInfo in osi.ClassTable)
+            foreach (OSIFile.ClassInfo classInfo in osi.Classes)
             {
                 TreeNode classNode = new TreeNode(classInfo.Name);
 
                 foreach (OSIFile.MethodInfo methodInfo in classInfo.Methods)
                 {
-                    TreeNode methodNode = new TreeNode(osi.SymbolTable[methodInfo.NameSymbol]);
+                    TreeNode methodNode = new TreeNode(osi.Symbols[methodInfo.NameSymbol]);
                     methodNode.Tag = methodInfo;
                     classNode.Nodes.Add(methodNode);
                 }
@@ -65,32 +65,36 @@ namespace ShoefitterDX
             {
                 if (CurrentInspector != null)
                 {
-                    this.splitContainer1.Panel2.Controls.Remove(CurrentInspector);
+                    this.splitContainer2.Panel1.Controls.Remove(CurrentInspector);
                 }
 
                 CurrentInspector = new OSISubroutineInspector(func.Instructions, func.BytecodeOffset);
 
-                this.splitContainer1.Panel2.Controls.Add(CurrentInspector);
+                this.splitContainer2.Panel1.Controls.Add(CurrentInspector);
                 CurrentInspector.Dock = DockStyle.Fill;
+
+                textBox1.Text = new SAGESharp.LSS.Compiler().DecompileInstructions(OSI, func.Instructions, func.BytecodeOffset);
             }
             else if (e.Node.Tag is OSIFile.MethodInfo meth)
             {
                 if (CurrentInspector != null)
                 {
-                    this.splitContainer1.Panel2.Controls.Remove(CurrentInspector);
+                    this.splitContainer2.Panel1.Controls.Remove(CurrentInspector);
                 }
 
                 CurrentInspector = new OSISubroutineInspector(meth.Instructions, meth.BytecodeOffset);
 
-                this.splitContainer1.Panel2.Controls.Add(CurrentInspector);
+                this.splitContainer2.Panel1.Controls.Add(CurrentInspector);
                 CurrentInspector.Dock = DockStyle.Fill;
+
+                textBox1.Text = new SAGESharp.LSS.Compiler().DecompileInstructions(OSI, meth.Instructions, meth.BytecodeOffset);
             }
         }
     }
 
     public class OSISubroutineInspector : Control
     {
-        public List<OSIInstruction> Instructions { get; }
+        public List<Instruction> Instructions { get; }
         public SubroutineGraph Graph { get; }
 
         private Dictionary<Node, Rectangle> NodeLocations = new Dictionary<Node, Rectangle>();
@@ -100,7 +104,7 @@ namespace ShoefitterDX
 
         private const int NodePadding = 30;
 
-        public OSISubroutineInspector(List<OSIInstruction> instructions, uint bytecodeOffset)
+        public OSISubroutineInspector(List<Instruction> instructions, uint bytecodeOffset)
         {
             this.Instructions = instructions;
             this.Graph = new SubroutineGraph(instructions, bytecodeOffset);
@@ -140,7 +144,7 @@ namespace ShoefitterDX
             if (n is OSINode osiNode)
             {
                 StringBuilder builder = new StringBuilder();
-                foreach (OSIInstruction ins in osiNode.Instructions)
+                foreach (Instruction ins in osiNode.Instructions)
                     builder.AppendLine(ins.ToString());
                 content = builder.ToString();
                 content = content.TrimEnd();

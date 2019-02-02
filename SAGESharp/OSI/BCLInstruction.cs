@@ -107,7 +107,7 @@ namespace SAGESharp.OSI
         Halt = 0xFF,
     }
 
-    public class BCLInstruction : OSIInstruction
+    public class BCLInstruction : Instruction
     {
         public BCLOpcode Opcode { get; }
 
