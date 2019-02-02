@@ -56,8 +56,6 @@ namespace ShoefitterDX
         {
             Config = new SAGESharp.INIConfig(INIFilename);
 
-            OutputWritten += (_, output) => System.Diagnostics.Debug.Write(output);
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Window = new Window();

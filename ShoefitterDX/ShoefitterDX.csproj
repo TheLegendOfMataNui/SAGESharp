@@ -67,29 +67,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dialogs\CreateProjectDialog.cs">
+    <Compile Include="OSIBrowser.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\CreateProjectDialog.Designer.cs">
-      <DependentUpon>CreateProjectDialog.cs</DependentUpon>
+    <Compile Include="OSIBrowser.Designer.cs">
+      <DependentUpon>OSIBrowser.cs</DependentUpon>
     </Compile>
-    <Compile Include="Editors\AssetEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Editors\Editor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="IO\AssetManager.cs" />
-    <Compile Include="IO\AssetType.cs" />
-    <Compile Include="IO\GameAsset.cs" />
-    <Compile Include="IO\GameFile.cs" />
-    <Compile Include="Panes\GameExplorerPane.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Panes\OutputPane.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Project.cs" />
     <Compile Include="Window.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -98,14 +81,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Dialogs\CreateProjectDialog.resx">
-      <DependentUpon>CreateProjectDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Panes\GameExplorerPane.resx">
-      <DependentUpon>GameExplorerPane.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Panes\OutputPane.resx">
-      <DependentUpon>OutputPane.cs</DependentUpon>
+    <EmbeddedResource Include="OSIBrowser.resx">
+      <DependentUpon>OSIBrowser.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

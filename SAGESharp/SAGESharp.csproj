@@ -53,6 +53,14 @@
     <Compile Include="BCLFile.cs" />
     <Compile Include="BHDFile.cs" />
     <Compile Include="INIConfig.cs" />
+    <Compile Include="OSI\BCLInstruction.cs" />
+    <Compile Include="OSI\ControlFlow\Analyzer.cs" />
+    <Compile Include="OSI\ControlFlow\OSINode.cs" />
+    <Compile Include="OSI\ControlFlow\SubroutineGraph.cs" />
+    <Compile Include="OSI\ControlFlow\Jump.cs" />
+    <Compile Include="OSI\ControlFlow\Node.cs" />
+    <Compile Include="OSI\OSIFile.cs" />
+    <Compile Include="OSI\OSIInstruction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SLB\ASCIIExtensions.cs" />
     <Compile Include="SLB\Cinematic\Camera\Camera.cs" />
