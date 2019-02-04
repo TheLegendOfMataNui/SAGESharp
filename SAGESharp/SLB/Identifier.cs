@@ -19,42 +19,6 @@ namespace SAGESharp.SLB
         /// </summary>
         public static readonly Identifier ZERO = 0;
 
-        /// <summary>
-        /// Creates a new instance initializing it with the input value.
-        /// </summary>
-        /// 
-        /// <param name="value">The input value to initalize the instance.</param>
-        public Identifier(uint value) : this()
-        {
-            SetFrom(value);
-        }
-
-        /// <summary>
-        /// Creates a new instance initialize it with the input values.
-        /// 
-        /// If the byte array is shorter than 4, the rest of values will be set to zero.
-        /// If the byte array is bigger than 4, the leftover bytes will be ignored.
-        /// </summary>
-        /// 
-        /// <param name="values">An array of bytes that will be used to initialize the identifier.</param>
-        public Identifier(byte[] values) : this()
-        {
-            SetFrom(values);
-        }
-
-        /// <summary>
-        /// Creates a new instance initialize it with the input value.
-        /// 
-        /// If the string is shorter than 4, the rest of values will be set to zero.
-        /// If the string is bigger than 4, the leftover characters will be ignored.
-        /// </summary>
-        /// 
-        /// <param name="value">A string that will be used to initialize the identifier.</param>
-        public Identifier(string value) : this()
-        {
-            SetFrom(value);
-        }
-
         private uint value;
 
         #region Conversions to Identifier
@@ -269,7 +233,7 @@ namespace SAGESharp.SLB
         /// </summary>
         /// 
         /// <param name="values">An array of bytes that will be used to set the value of the identifier.</param>
-        public void SetFrom(byte[] values)
+        private void SetFrom(byte[] values)
         {
             B0 = (values.Length > 0) ? values[0] : (byte)0;
             B1 = (values.Length > 1) ? values[1] : (byte)0;
@@ -285,7 +249,7 @@ namespace SAGESharp.SLB
         /// </summary>
         /// 
         /// <param name="value">A string that will be used to set the value of the identifier.</param>
-        public void SetFrom(string value)
+        private void SetFrom(string value)
         {
             B0 = (value.Length > 0) ? value[value.Length - 1].ToASCIIByte() : (byte)0;
             B1 = (value.Length > 1) ? value[value.Length - 2].ToASCIIByte() : (byte)0;

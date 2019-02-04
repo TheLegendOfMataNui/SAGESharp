@@ -31,9 +31,9 @@ namespace SAGESharpTests.SLB.Level.Conversation
 
             var reader = new CharacterBinaryReader(streamMock.Object, identifierReaderMock.Object, infoReaderMock.Object);
 
-            var toaName = new Identifier(0x11223344);
-            var charName = new Identifier(0x11223345);
-            var charCont = new Identifier(0x11223346);
+            var toaName = (Identifier)0x11223344;
+            var charName = (Identifier)0x11223345;
+            var charCont = (Identifier)0x11223346;
 
             identifierReaderMock
                 .SetupSequence(identifierReader => identifierReader.ReadSLBObject())
@@ -92,9 +92,9 @@ namespace SAGESharpTests.SLB.Level.Conversation
 
             var reader = new CharacterBinaryReader(streamMock.Object, identifierReaderMock.Object, infoReaderMock.Object);
 
-            var toaName = new Identifier(0x11223344);
-            var charName = new Identifier(0x11223345);
-            var charCont = new Identifier(0x11223346);
+            var toaName = (Identifier)0x11223344;
+            var charName = (Identifier)0x11223345;
+            var charCont = (Identifier)0x11223346;
 
             identifierReaderMock
                 .SetupSequence(identifierReader => identifierReader.ReadSLBObject())

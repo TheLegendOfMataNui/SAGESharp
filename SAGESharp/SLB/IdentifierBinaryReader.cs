@@ -23,7 +23,7 @@ namespace SAGESharp.SLB
         /// <inheritdoc/>
         public Identifier ReadSLBObject()
         {
-            return new Identifier(new byte[]
+            return Identifier.From(new byte[]
             {
                 stream.ForceReadByte(),
                 stream.ForceReadByte(),
