@@ -15,6 +15,11 @@ namespace SAGESharp.SLB
         public const char EMPY_CHAR = '?';
 
         /// <summary>
+        /// A constant identifier object with value zero.
+        /// </summary>
+        public static readonly Identifier ZERO = 0;
+
+        /// <summary>
         /// Creates a new instance initializing it with the input value.
         /// </summary>
         /// 
@@ -51,6 +56,78 @@ namespace SAGESharp.SLB
         }
 
         private uint value;
+
+        #region Conversions to Identifier
+        /// <summary>
+        /// Creates an <see cref="Identifier"/> implictly from an integer.
+        /// </summary>
+        /// 
+        /// <param name="value">The integer that will be used to create the identifier.</param>
+        public static implicit operator Identifier(int value)
+            => new Identifier
+            {
+                value = (uint)value
+            };
+
+        /// <summary>
+        /// Creates an <see cref="Identifier"/> from an array of bytes.
+        /// </summary>
+        /// 
+        /// Only the first four elements from the array will be used to
+        /// set the bytes of the identifier, if the array is shorter than
+        /// four bytes the missing ones are set to zero, if is larger than
+        /// four the remaining are ignored.
+        /// 
+        /// <param name="values">The array of bytes that will be used to create the identifier.</param>
+        /// 
+        /// <returns>An identifier created from the input values.</returns>
+        /// 
+        /// <exception cref="ArgumentNullException">If the array of bytes is null.</exception>
+        public static Identifier From(byte[] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            var result = (Identifier)0;
+
+            result.SetFrom(values);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates an <see cref="Identifier"/> from a string.
+        /// </summary>
+        /// 
+        /// Only the first for characters from the string will be used to
+        /// set the bytes of the identifier, if the array is shorter than
+        /// four chars the missing bytes are set to zero, if is larger then
+        /// four the remaining are ignored.
+        /// 
+        /// Any character from the string is interpreted as an ASCII value
+        /// and that's stored into the identifier.
+        /// 
+        /// <param name="value">The string that will be used to create the identifier.</param>
+        /// 
+        /// <returns>An identifier created from the input string.</returns>
+        /// 
+        /// <exception cref="ArgumentNullException">If the string is null.</exception>
+        public static Identifier From(string value)
+        {
+            if (value == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            var result = (Identifier)0;
+
+            result.SetFrom(value);
+
+            return result;
+        }
+        #endregion
 
         #region Byte level access
         /// <summary>

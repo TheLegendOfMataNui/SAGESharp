@@ -1,5 +1,49 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using Konvenience;
+using NUnit.Framework;
 using SAGESharp.SLB;
+using SAGESharpTests;
+using System;
+
+namespace SAGESharp.SLB.Tests
+{
+    class IdentifierTests
+    {
+        [Test]
+        public void Test_Cast_Integer_To_Identifier()
+            => 0x11223344.Let(i => (Identifier)i).ToInteger().Should().Be(0x11223344);
+
+        [TestCaseSource(nameof(ByteArraysAndIdentifiers))]
+        public void Test_Create_Identifier_From_Byte_Array(byte[] values, Identifier expected)
+            => Identifier.From(values).Should().Be(expected);
+
+        static object[] ByteArraysAndIdentifiers() => new ParameterGroup<byte[], Identifier>()
+            .Parameters(new byte[0], 0)
+            .Parameters(new byte[] { 0x11 }, 0x11)
+            .Parameters(new byte[] { 0x11, 0x22, 0x33, 0x44 }, 0x44332211)
+            .Parameters(new byte[] { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66 }, 0x44332211)
+            .Build();
+
+        [Test]
+        public void Test_Create_Identifier_From_Null_Byte_Array_Should_Throw_ArgumentNullException()
+            => ((byte[])null).Invoking(nullByteArray => Identifier.From(nullByteArray)).Should().Throw<ArgumentNullException>();
+
+        [TestCaseSource(nameof(StringsAndIdentifiers))]
+        public void Test_Create_Identifier_From_String(string value, Identifier expected)
+            => Identifier.From(value).Should().Be(expected);
+
+        static object[] StringsAndIdentifiers() => new ParameterGroup<string, Identifier>()
+            .Parameters(string.Empty, Identifier.ZERO)
+            .Parameters("A", 0x41)
+            .Parameters("DCBA", 0x44434241)
+            .Parameters("FEDCBA", 0x44434241)
+            .Build();
+
+        [Test]
+        public void Test_Create_Identifier_From_Null_String_Should_Throw_ArgumentNullException()
+            => ((string)null).Invoking(nullString => Identifier.From(nullString)).Should().Throw<ArgumentNullException>();
+    }
+}
 
 namespace SAGESharpTests.SLB
 {
