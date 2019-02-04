@@ -46,6 +46,9 @@
     <Reference Include="FluentAssertions, Version=5.6.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
       <HintPath>..\packages\FluentAssertions.5.6.0\lib\net45\FluentAssertions.dll</HintPath>
     </Reference>
+    <Reference Include="Konvenience, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Konvenience.1.0.0\lib\net461\Konvenience.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Moq, Version=4.10.0.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>..\packages\Moq.4.10.1\lib\net45\Moq.dll</HintPath>
