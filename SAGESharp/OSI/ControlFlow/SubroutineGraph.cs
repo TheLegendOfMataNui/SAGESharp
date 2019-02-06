@@ -8,15 +8,17 @@ namespace SAGESharp.OSI.ControlFlow
 {
     public class SubroutineGraph
     {
-        public Node StartNode { get; }
-        public Node EndNode { get; }
+        public TextNode StartNode { get; }
+        public TextNode EndNode { get; }
         public List<Node> Nodes { get; }
 
         public SubroutineGraph()
         {
-            StartNode = new Node();
-            EndNode = new Node();
             Nodes = new List<Node>();
+            StartNode = new TextNode("<Start>");
+            Nodes.Add(StartNode);
+            EndNode = new TextNode("<End>");
+            Nodes.Add(EndNode);
         }
 
         public SubroutineGraph(IEnumerable<Instruction> instructions, uint bytecodeBaseOffset) : this()
@@ -30,7 +32,6 @@ namespace SAGESharp.OSI.ControlFlow
             OSINode currentNode = new OSINode(new List<Instruction>());
             StartNode.CreateJumpTo(currentNode, Jump.JumpType.Always);
 
-            Nodes.Add(StartNode);
 
             uint offset = bytecodeBaseOffset;
 
@@ -153,7 +154,6 @@ namespace SAGESharp.OSI.ControlFlow
                 Nodes.Remove(currentNode);
             }
 
-            Nodes.Add(EndNode);
         }
     }
 }

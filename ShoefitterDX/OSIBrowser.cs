@@ -109,6 +109,8 @@ namespace ShoefitterDX
             this.Instructions = instructions;
             this.Graph = new SubroutineGraph(instructions, bytecodeOffset);
 
+            this.Graph = Analyzer.ReconstructControlFlow(this.Graph);
+
             this.Font = new Font("Consolas", 12);
 
             LayoutNode(Graph.StartNode, 0, 0);
@@ -140,8 +142,8 @@ namespace ShoefitterDX
 
             string content = "<unknown node>";
 
-            
-            if (n is OSINode osiNode)
+
+            /*if (n is OSINode osiNode)
             {
                 StringBuilder builder = new StringBuilder();
                 foreach (Instruction ins in osiNode.Instructions)
@@ -156,7 +158,8 @@ namespace ShoefitterDX
             else if (n == Graph.EndNode)
             {
                 content = "<End>";
-            }
+            }*/
+            content = n.ToString();
 
             NodeContents.Add(n, content);
 
@@ -170,7 +173,7 @@ namespace ShoefitterDX
                 // TODO: Block infinite loops
                 foreach (Jump j in n.OutJumps.Values)
                 {
-                    //if (!NodeLocations.ContainsKey(j.Destination))
+                    if (!NodeLocations.ContainsKey(j.Destination))
                         childrenWidth += LayoutNode(j.Destination, x + childrenWidth, y + textSize.Height + NodePadding);
                     //else
                     //    childrenWidth += NodeLocations[j.Destination].Width;
@@ -282,6 +285,8 @@ namespace ShoefitterDX
         {
             base.OnMouseUp(e);
             MouseButtonCount--;
+            if (MouseButtonCount < 0)
+                MouseButtonCount = 0;
             DragNode = null;
         }
     }
