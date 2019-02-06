@@ -61,40 +61,41 @@ namespace ShoefitterDX
 
         private void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
+            SubroutineGraph g = null;
             if (e.Node.Tag is OSIFile.FunctionInfo func)
             {
-                if (CurrentInspector != null)
-                {
-                    this.splitContainer2.Panel1.Controls.Remove(CurrentInspector);
-                }
-
-                CurrentInspector = new OSISubroutineInspector(func.Instructions, func.BytecodeOffset);
-
-                this.splitContainer2.Panel1.Controls.Add(CurrentInspector);
-                CurrentInspector.Dock = DockStyle.Fill;
-
-                textBox1.Text = new SAGESharp.LSS.Compiler().DecompileInstructions(OSI, func.Instructions, func.BytecodeOffset);
+                g = new SubroutineGraph(func.Instructions, func.BytecodeOffset);
             }
             else if (e.Node.Tag is OSIFile.MethodInfo meth)
             {
+                g = new SubroutineGraph(meth.Instructions, meth.BytecodeOffset);
+            }
+
+            if (g != null)
+            {
                 if (CurrentInspector != null)
                 {
                     this.splitContainer2.Panel1.Controls.Remove(CurrentInspector);
                 }
-
-                CurrentInspector = new OSISubroutineInspector(meth.Instructions, meth.BytecodeOffset);
+                CurrentInspector = new OSISubroutineInspector(g);
+                g = Analyzer.ReconstructControlFlow(g);
 
                 this.splitContainer2.Panel1.Controls.Add(CurrentInspector);
                 CurrentInspector.Dock = DockStyle.Fill;
-
-                textBox1.Text = new SAGESharp.LSS.Compiler().DecompileInstructions(OSI, meth.Instructions, meth.BytecodeOffset);
+                if (g.Nodes.Count == 3)
+                {
+                    textBox1.Text = g.StartNode.OutAlwaysJump.Destination.ToString().Replace("\n", "\r\n");
+                }
+                else
+                {
+                    textBox1.Text = "<Not fully decompilable, contact benji>";
+                }
             }
         }
     }
 
     public class OSISubroutineInspector : Control
     {
-        public List<Instruction> Instructions { get; }
         public SubroutineGraph Graph { get; }
 
         private Dictionary<Node, Rectangle> NodeLocations = new Dictionary<Node, Rectangle>();
@@ -104,12 +105,9 @@ namespace ShoefitterDX
 
         private const int NodePadding = 30;
 
-        public OSISubroutineInspector(List<Instruction> instructions, uint bytecodeOffset)
+        public OSISubroutineInspector(SubroutineGraph graph)
         {
-            this.Instructions = instructions;
-            this.Graph = new SubroutineGraph(instructions, bytecodeOffset);
-
-            this.Graph = Analyzer.ReconstructControlFlow(this.Graph);
+            this.Graph = graph;
 
             this.Font = new Font("Consolas", 12);
 

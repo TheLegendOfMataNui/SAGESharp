@@ -123,7 +123,7 @@ namespace SAGESharp.OSI.ControlFlow
                 }
             }
 
-            if (node.OutJumps.Count == 1 && node.OutAlwaysJump.Destination.InJumps.Count == 1)
+            if (node.OutJumps.Count == 1 && node.OutAlwaysJump.Destination.InJumps.Count == 1 && node != graph.StartNode && node.OutAlwaysJump.Destination != graph.EndNode)
             {
                 // Merge with following node
                 Node follower = node.OutAlwaysJump.Destination;
