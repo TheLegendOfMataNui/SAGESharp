@@ -224,9 +224,9 @@ namespace ShoefitterDX
                     else if (j.Type == Jump.JumpType.ConditionalFalse)
                         p = falseJumpPen;
 
-                    //e.Graphics.DrawLine(p, r.X + r.Width / 2 - CameraX, r.Y + r.Height - CameraY, r2.X + r2.Width / 2 - CameraX, r2.Y - CameraY); // Diagonal
+                    e.Graphics.DrawLine(p, r.X + r.Width / 2 - CameraX, r.Y + r.Height - CameraY, r2.X + r2.Width / 2 - CameraX, r2.Y - CameraY); // Diagonal
                     //DrawZigZag(e.Graphics, p, r.X + r.Width / 2 - CameraX, r.Y + r.Height - CameraY, r2.X + r2.Width / 2 - CameraX, r2.Y - CameraY, (r.Y + r.Height - CameraY + r2.Y - CameraY) * 0.5f); // Mid-Y
-                    DrawZigZag(e.Graphics, p, r.X + r.Width / 2 - CameraX, r.Y + r.Height - CameraY, r2.X + r2.Width / 2 - CameraX, r2.Y - CameraY, (int)(r.Y + r.Height + NodePadding * 0.5f - CameraY)); // Top-Y
+                    //DrawZigZag(e.Graphics, p, r.X + r.Width / 2 - CameraX, r.Y + r.Height - CameraY, r2.X + r2.Width / 2 - CameraX, r2.Y - CameraY, (int)(r.Y + r.Height + NodePadding * 0.5f - CameraY)); // Top-Y
                 }
             }
             alwaysJumpPen.Dispose();

@@ -23,8 +23,9 @@ namespace SAGESharp.OSI.ControlFlow
 
         public SubroutineGraph(IEnumerable<Instruction> instructions, uint bytecodeBaseOffset) : this()
         {
-            Dictionary<long, Instruction> instructionLocations = new Dictionary<long, Instruction>();
             Dictionary<long, Node> nodeLocations = new Dictionary<long, Node>();
+            Dictionary<Node, long> nodeStarts = new Dictionary<Node, long>();
+            Dictionary<Node, long> nodeLengths = new Dictionary<Node, long>();
 
             // For making jumps to nodes that might now exist yet
             List<Tuple<Node, long, Jump.JumpType>> delayedJumps = new List<Tuple<Node, long, Jump.JumpType>>();
@@ -36,6 +37,7 @@ namespace SAGESharp.OSI.ControlFlow
             uint offset = bytecodeBaseOffset;
 
             nodeLocations.Add(offset, currentNode);
+            nodeStarts.Add(currentNode, offset);
             Nodes.Add(currentNode);
 
             foreach (Instruction ins in instructions)
@@ -47,7 +49,9 @@ namespace SAGESharp.OSI.ControlFlow
                         OSINode nextNode = new OSINode(new List<Instruction>());
                         Nodes.Add(nextNode);
                         nodeLocations.Add(offset, nextNode);
+                        nodeStarts.Add(nextNode, offset);
                         currentNode.CreateJumpTo(nextNode, Jump.JumpType.Always);
+                        nodeLengths.Add(currentNode, offset + ins.Size - nodeStarts[currentNode]);
 
                         currentNode = nextNode;
                     }
@@ -56,12 +60,14 @@ namespace SAGESharp.OSI.ControlFlow
                     if (bcl.Opcode == BCLOpcode.Return)
                     {
                         currentNode.Instructions.Add(bcl);
+                        nodeLengths.Add(currentNode, offset + ins.Size - nodeStarts[currentNode]);
 
                         currentNode.CreateJumpTo(EndNode, Jump.JumpType.Always);
 
                         currentNode = new OSINode(new List<Instruction>());
                         Nodes.Add(currentNode);
                         nodeLocations.Add(offset + ins.Size, currentNode);
+                        nodeStarts.Add(currentNode, offset + ins.Size);
                     }
                     else if (bcl.Opcode == BCLOpcode.CompareAndBranchIfFalse)
                     {
@@ -69,7 +75,11 @@ namespace SAGESharp.OSI.ControlFlow
 
                         short delta = bcl.Arguments[0].GetValue<short>();
 
-                        if (delta == 0)
+                        /*if (delta < 0)
+                        {
+                            throw new NotImplementedException();
+                        }
+                        else */if (delta == 0)
                         {
                             // An empty node...
                             OSINode trueNode = new OSINode(new List<Instruction>());
@@ -81,6 +91,8 @@ namespace SAGESharp.OSI.ControlFlow
                             currentNode.CreateJumpTo(falseNode, Jump.JumpType.ConditionalFalse);
                             Nodes.Add(falseNode);
                             nodeLocations.Add(offset + ins.Size, falseNode);
+                            nodeStarts.Add(falseNode, offset + ins.Size);
+                            nodeLengths.Add(currentNode, offset + ins.Size - nodeStarts[currentNode]);
 
                             trueNode.CreateJumpTo(falseNode, Jump.JumpType.Always);
 
@@ -91,35 +103,50 @@ namespace SAGESharp.OSI.ControlFlow
                             delayedJumps.Add(new Tuple<Node, long, Jump.JumpType>(currentNode, offset + delta + ins.Size, Jump.JumpType.ConditionalFalse));
 
                             OSINode trueNode = new OSINode(new List<Instruction>());
+                            nodeLengths.Add(currentNode, offset + ins.Size - nodeStarts[currentNode]);
                             Nodes.Add(trueNode);
                             nodeLocations.Add(offset + ins.Size, trueNode);
+                            nodeStarts.Add(trueNode, offset + ins.Size);
                             currentNode.CreateJumpTo(trueNode, Jump.JumpType.ConditionalTrue);
 
                             currentNode = trueNode;
                         }
                     }
-#if true
                     else if (bcl.Opcode == BCLOpcode.BranchAlways)
                     {
                         currentNode.Instructions.Add(bcl);
 
                         short delta = bcl.Arguments[0].GetValue<short>();
 
-                        if (delta == 0)
+                        /*if (delta < 0)
                         {
-                            throw new NotImplementedException();
+                            //throw new NotImplementedException();
+                            nodeLengths.Add(currentNode, offset + ins.Size - nodeStarts[currentNode]);
+
+                            // Continue reading instructions into a new node
+                            currentNode = new OSINode(new List<Instruction>());
+                            Nodes.Add(currentNode);
+                            nodeLocations.Add(offset + ins.Size, currentNode);
+                            nodeStarts.Add(currentNode, offset + ins.Size);
+                        }
+                        else */if (delta == 0)
+                        {
+                            //throw new NotImplementedException();
+                            // Simply ignore the jump!
                         }
                         else
                         {
                             delayedJumps.Add(new Tuple<Node, long, Jump.JumpType>(currentNode, offset + delta + ins.Size, Jump.JumpType.Always));
+                            nodeLengths.Add(currentNode, offset + ins.Size - nodeStarts[currentNode]);
 
+                            // Continue reading instructions into a new node
                             currentNode = new OSINode(new List<Instruction>());
                             Nodes.Add(currentNode);
                             nodeLocations.Add(offset + ins.Size, currentNode);
+                            nodeStarts.Add(currentNode, offset + ins.Size);
                         }
 
                     }
-#endif
                     else 
                     {
                         currentNode.Instructions.Add(bcl);
@@ -132,10 +159,60 @@ namespace SAGESharp.OSI.ControlFlow
 
                 offset += ins.Size;
             }
+            nodeLengths.Add(currentNode, offset - nodeStarts[currentNode]);
 
             foreach (Tuple<Node, long, Jump.JumpType> j in delayedJumps)
             {
-                Node dest = nodeLocations[j.Item2];
+                Node dest = null;
+                if (nodeLocations.ContainsKey(j.Item2))
+                {
+                    // Jump to the beginning of the node! EZ!
+                    dest = nodeLocations[j.Item2];
+                }
+                else
+                {
+                    // Find the containing node and split it
+                    foreach (Node n in Nodes)
+                    {
+                        if (n is OSINode node)
+                        {
+                            if (j.Item2 >= nodeStarts[n] && j.Item2 < nodeStarts[n] + nodeLengths[n])
+                            {
+                                // Time to split j
+                                long targetLength = j.Item2 - nodeStarts[n];
+                                OSINode secondPart = new OSINode(new List<Instruction>());
+                                Nodes.Add(secondPart);
+
+                                // Transfer instructions to secondPart
+                                long l = nodeLengths[n];
+                                while (l > targetLength)
+                                {
+                                    Instruction ins = node.Instructions[node.Instructions.Count - 1];
+                                    node.Instructions.RemoveAt(node.Instructions.Count - 1);
+                                    secondPart.Instructions.Insert(0, ins);
+                                    l -= ins.Size;
+                                }
+
+                                // Transfer outjumps to secondPart
+                                foreach (Jump outJump in n.OutJumps.Values)
+                                {
+                                    secondPart.CreateJumpTo(outJump.Destination, outJump.Type);
+                                    outJump.Destination.InJumps.Remove(n);
+                                }
+                                n.OutJumps.Clear();
+                                n.CreateJumpTo(secondPart, Jump.JumpType.Always);
+
+                                nodeLengths.Add(secondPart, nodeLengths[n] - l);
+                                nodeLengths[n] = l;
+                                nodeStarts.Add(secondPart, nodeStarts[n] + l);
+
+                                dest = secondPart;
+
+                                break;
+                            }
+                        }
+                    }
+                }
                 if (j.Item1.OutJumps.ContainsKey(dest))
                 {
                     if (j.Item1.OutJumps[dest].Type != j.Item3)
@@ -153,7 +230,6 @@ namespace SAGESharp.OSI.ControlFlow
             {
                 Nodes.Remove(currentNode);
             }
-
         }
     }
 }
