@@ -32,6 +32,14 @@ namespace SAGESharp.SLB
             => new Identifier { value = (uint)value };
 
         /// <summary>
+        /// Creates an <see cref="Identifier"/> implictly from an unsigned integer.
+        /// </summary>
+        /// 
+        /// <param name="value">The unsigned integer that will be used to create the identifier.</param>
+        public static implicit operator Identifier(uint value)
+            => new Identifier { value = value };
+
+        /// <summary>
         /// Creates an <see cref="Identifier"/> from an array of bytes.
         /// </summary>
         /// 
@@ -294,6 +302,13 @@ namespace SAGESharp.SLB
         /// 
         /// <param name="identifier">The integer value of the identifier.</param>
         public static implicit operator int(Identifier identifier) => (int)identifier.value;
+
+        /// <summary>
+        /// Implicitly converts the <see cref="Identifier"/> to an unsigned integer.
+        /// </summary>
+        /// 
+        /// <param name="identifier">The unsigned integer value of the identifier.</param>
+        public static implicit operator uint(Identifier identifier) => identifier.value;
 
         /// <summary>
         /// Gets the identifier as a (4 character) string.

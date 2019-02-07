@@ -12,7 +12,8 @@ namespace SAGESharp.SLB.Tests
         [Test]
         public void Test_Cast_Integer_To_Identifier()
         {
-            var identifier = (Identifier)0x11223344;
+            int value = 0x11223344;
+            Identifier identifier = value;
             // For the nature of the "Identifier" type
             // we make an exception here testing private members
             // to ensure the correct behavior of the casting operator
@@ -20,7 +21,22 @@ namespace SAGESharp.SLB.Tests
                 .GetType()
                 .GetField("value", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            field.GetValue(identifier).Should().Be(0x11223344);
+            field.GetValue(identifier).Should().Be(value);
+        }
+
+        [Test]
+        public void Test_Case_Unsigned_Integer_To_Identifier()
+        {
+            uint value = 0x44434241;
+            Identifier identifier = value;
+            // For the nature of the "Identifier" type
+            // we make an exception here testing private members
+            // to ensure the correct behavior of the casting operator
+            var field = identifier
+                .GetType()
+                .GetField("value", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            field.GetValue(identifier).Should().Be(value);
         }
 
         [TestCaseSource(nameof(ByteArraysAndIdentifiers))]
@@ -56,6 +72,10 @@ namespace SAGESharp.SLB.Tests
         [Test]
         public void Test_Cast_Identifier_To_Integer()
             => ((Identifier)0x11223344).Let(i => (int)i).Should().Be(0x11223344);
+
+        [Test]
+        public void Test_Cast_Identifier_To_Unsigned_Integer()
+            => ((Identifier)0x44434241).Let(i => (uint)i).Should().Be(0x44434241);
 
         [TestCaseSource(nameof(IdentifierWithString))]
         public void Test_Identifier_To_String(Identifier identifier, string expected)
