@@ -99,20 +99,6 @@ namespace SAGESharpTests.SLB
             AssertEmptyIdentifier(identifier);
         }
 
-        [Test]
-        public void TestSettingIdentifierValuesByChars()
-        {
-            var identifier = new Identifier
-            {
-                C0 = 'A',
-                C1 = 'B',
-                C2 = 'C',
-                C3 = 'D'
-            };
-
-            AssertIdentifierWithTestValue(identifier);
-        }
-
         private static void AssertEmptyIdentifier(Identifier identifier)
         {
             var expectedString = new string(Identifier.EMPY_CHAR, 4);

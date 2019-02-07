@@ -104,10 +104,6 @@ namespace SAGESharp.SLB
             {
                 return GetReadableByte(0);
             }
-            set
-            {
-                SetByteValue(0, value);
-            }
         }
 
         /// <summary>
@@ -118,10 +114,6 @@ namespace SAGESharp.SLB
             get
             {
                 return GetReadableByte(1);
-            }
-            set
-            {
-                SetByteValue(1, value);
             }
         }
 
@@ -134,10 +126,6 @@ namespace SAGESharp.SLB
             {
                 return GetReadableByte(2);
             }
-            set
-            {
-                SetByteValue(2, value);
-            }
         }
 
         /// <summary>
@@ -148,10 +136,6 @@ namespace SAGESharp.SLB
             get
             {
                 return GetReadableByte(3);
-            }
-            set
-            {
-                SetByteValue(3, value);
             }
         }
 
