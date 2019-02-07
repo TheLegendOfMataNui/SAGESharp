@@ -14,10 +14,10 @@ namespace SAGESharpTests.SLB
             TestCompareNonEqualsDefaultValueAndNonDefaultValue(value);
 
         static object[] Modifiers() => new ParameterGroup<Identifier>()
-            .Parameters(new Identifier { B0 = 0x01 })
-            .Parameters(new Identifier { B1 = 0x01 })
-            .Parameters(new Identifier { B2 = 0x01 })
-            .Parameters(new Identifier { B3 = 0x01 })
+            .Parameters(Identifier.ZERO.WithB0(0x01))
+            .Parameters(Identifier.ZERO.WithB1(0x01))
+            .Parameters(Identifier.ZERO.WithB2(0x01))
+            .Parameters(Identifier.ZERO.WithB3(0x01))
             .Parameters(new Identifier { C0 = 'A' })
             .Parameters(new Identifier { C1 = 'B' })
             .Parameters(new Identifier { C2 = 'C' })

@@ -164,10 +164,6 @@ namespace SAGESharp.SLB
             {
                 return value.GetByte(0);
             }
-            set
-            {
-                SetByteValue(0, value);
-            }
         }
 
         /// <summary>
@@ -178,10 +174,6 @@ namespace SAGESharp.SLB
             get
             {
                 return value.GetByte(1);
-            }
-            set
-            {
-                SetByteValue(1, value);
             }
         }
 
@@ -194,10 +186,6 @@ namespace SAGESharp.SLB
             {
                 return value.GetByte(2);
             }
-            set
-            {
-                SetByteValue(2, value);
-            }
         }
 
         /// <summary>
@@ -208,10 +196,6 @@ namespace SAGESharp.SLB
             get
             {
                 return value.GetByte(3);
-            }
-            set
-            {
-                SetByteValue(3, value);
             }
         }
         #endregion

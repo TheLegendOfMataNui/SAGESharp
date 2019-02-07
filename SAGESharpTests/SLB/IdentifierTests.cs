@@ -113,41 +113,6 @@ namespace SAGESharpTests.SLB
             AssertIdentifierWithTestValue(identifier);
         }
 
-        [Test]
-        public void TestSettingIdentifierValuesByBytes()
-        {
-            var identifier = new Identifier
-            {
-                B0 = 0x41,
-                B1 = 0x42,
-                B2 = 0x43,
-                B3 = 0x44
-            };
-
-            AssertIdentifierWithTestValue(identifier);
-        }
-
-        [Test]
-        public void TestSettingInvalidCharsShouldReturnEmptyChar()
-        {
-            var identifier = new Identifier();
-
-            identifier.B0 = 0x7B; // This is ASCII for '{'
-            Assert.That(identifier.C0, Is.EqualTo(Identifier.EMPY_CHAR));
-
-            identifier.B0 = 0x7C; // This is ASCII for '|'
-            Assert.That(identifier.C0, Is.EqualTo(Identifier.EMPY_CHAR));
-
-            identifier.B0 = 0x7D; // This is ASCII for '}'
-            Assert.That(identifier.C0, Is.EqualTo(Identifier.EMPY_CHAR));
-
-            identifier.B0 = 0x7E; // This is ASCII for '~'
-            Assert.That(identifier.C0, Is.EqualTo(Identifier.EMPY_CHAR));
-
-            var expectedString = new string(Identifier.EMPY_CHAR, 4);
-            Assert.That(identifier.ToString(), Is.EqualTo(expectedString));
-        }
-
         private static void AssertEmptyIdentifier(Identifier identifier)
         {
             var expectedString = new string(Identifier.EMPY_CHAR, 4);
