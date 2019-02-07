@@ -53,6 +53,10 @@ namespace SAGESharp.SLB.Tests
         [Test]
         public void Test_Create_Identifier_From_Null_String_Should_Throw_ArgumentNullException()
             => ((string)null).Invoking(nullString => Identifier.From(nullString)).Should().Throw<ArgumentNullException>();
+
+        [Test]
+        public void Test_Cast_Identifier_To_Integer()
+            => ((Identifier)0x11223344).Let(i => (int)i).Should().Be(0x11223344);
     }
 }
 

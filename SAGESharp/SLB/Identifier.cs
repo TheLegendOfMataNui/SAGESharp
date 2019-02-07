@@ -257,15 +257,13 @@ namespace SAGESharp.SLB
             B3 = (value.Length > 3) ? value[value.Length - 4].ToASCIIByte() : (byte)0;
         }
 
+        #region Conversion from Identifier
         /// <summary>
-        /// Gets the identifier as an unsigned (32 bit) integer.
+        /// Implicitly converts the <see cref="Identifier"/> to an integer.
         /// </summary>
         /// 
-        /// <returns>The identifer as an unsigned (32 bit) integer.</returns>
-        public uint ToInteger()
-        {
-            return value;
-        }
+        /// <param name="identifier">The integer value of the identifier.</param>
+        public static implicit operator int(Identifier identifier) => (int)identifier.value;
 
         /// <summary>
         /// Gets the identifier as a (4 character) string.
@@ -278,6 +276,7 @@ namespace SAGESharp.SLB
         {
             return new string(new[] { C3, C2, C1, C0 });
         }
+        #endregion
 
         /// <inheritdoc/>
         public override bool Equals(object other)
