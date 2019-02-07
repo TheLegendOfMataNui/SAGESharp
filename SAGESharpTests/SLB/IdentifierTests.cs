@@ -57,6 +57,10 @@ namespace SAGESharp.SLB.Tests
         [Test]
         public void Test_Cast_Identifier_To_Integer()
             => ((Identifier)0x11223344).Let(i => (int)i).Should().Be(0x11223344);
+
+        [Test]
+        public void Test_Identifier_To_String()
+            => ((Identifier)0x44434241).Let(i => i.ToString()).Should().Be("DCBA");
     }
 }
 
@@ -126,7 +130,6 @@ namespace SAGESharpTests.SLB
         {
             var expectedString = new string(Identifier.EMPY_CHAR, 4);
 
-            Assert.That(identifier.ToInteger(), Is.EqualTo(0));
             Assert.That(identifier.ToString(), Is.EqualTo(expectedString));
 
             Assert.That(identifier.C0, Is.EqualTo(Identifier.EMPY_CHAR));
@@ -145,9 +148,7 @@ namespace SAGESharpTests.SLB
             // Test value is the equivalent of:
             // C0 = 'A', C1 = 'B', C2 = 'C', C3 = 'D'
 
-            Assert.That(identifier.ToInteger(), Is.EqualTo(0x44434241));
             Assert.That(identifier.ToString(), Is.EqualTo("DCBA"));
-
             Assert.That(identifier.C0, Is.EqualTo('A'));
             Assert.That(identifier.C1, Is.EqualTo('B'));
             Assert.That(identifier.C2, Is.EqualTo('C'));
