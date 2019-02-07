@@ -29,10 +29,7 @@ namespace SAGESharp.SLB
         /// 
         /// <param name="value">The integer that will be used to create the identifier.</param>
         public static implicit operator Identifier(int value)
-            => new Identifier
-            {
-                value = (uint)value
-            };
+            => new Identifier { value = (uint)value };
 
         /// <summary>
         /// Creates an <see cref="Identifier"/> from an array of bytes.
@@ -94,7 +91,7 @@ namespace SAGESharp.SLB
         }
         #endregion
 
-        #region Byte level access
+        #region Access individual bytes as chars
         /// <summary>
         /// Byte 0 of the id in character form.
         /// </summary>
@@ -138,7 +135,9 @@ namespace SAGESharp.SLB
                 return GetReadableByte(3);
             }
         }
+        #endregion
 
+        #region Access individual bytes
         /// <summary>
         /// Byte 0 of the id in numeric form.
         /// </summary>
@@ -183,16 +182,6 @@ namespace SAGESharp.SLB
             }
         }
         #endregion
-
-        /// <summary>
-        /// Set the value of the identifier to the input integer.
-        /// </summary>
-        /// 
-        /// <param name="value">The input integer that will be used to set the value of the identifier.</param>
-        public void SetFrom(uint value)
-        {
-            this.value = value;
-        }
 
         #region Copy modifying a byte
         /// <summary>
@@ -319,6 +308,7 @@ namespace SAGESharp.SLB
         }
         #endregion
 
+        #region Equality
         /// <inheritdoc/>
         public override bool Equals(object other)
         {
@@ -367,6 +357,7 @@ namespace SAGESharp.SLB
         {
             return !(left == right);
         }
+        #endregion
 
         private char GetReadableByte(byte b)
         {
@@ -378,11 +369,6 @@ namespace SAGESharp.SLB
             }
 
             return result.ToASCIIChar();
-        }
-
-        private void SetByteValue(byte bytePosition, char value)
-        {
-            SetByteValue(bytePosition, value.ToASCIIByte());
         }
 
         private void SetByteValue(byte bytePosition, byte value)
