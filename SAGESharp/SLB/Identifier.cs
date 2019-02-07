@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace SAGESharp.SLB
 {
@@ -54,11 +55,11 @@ namespace SAGESharp.SLB
                 throw new ArgumentNullException();
             }
 
-            var result = (Identifier)0;
-
-            result.SetFrom(values);
-
-            return result;
+            return ZERO
+                .WithB0(values.ElementAtOrDefault(0))
+                .WithB1(values.ElementAtOrDefault(1))
+                .WithB2(values.ElementAtOrDefault(2))
+                .WithB3(values.ElementAtOrDefault(3));
         }
 
         /// <summary>
@@ -223,22 +224,6 @@ namespace SAGESharp.SLB
         public void SetFrom(uint value)
         {
             this.value = value;
-        }
-
-        /// <summary>
-        /// Sets the value of the identifier to the input array of bytes.
-        /// 
-        /// If the byte array is shorter than 4, the rest of values will be set to zero.
-        /// If the byte array is bigger than 4, the leftover bytes will be ignored.
-        /// </summary>
-        /// 
-        /// <param name="values">An array of bytes that will be used to set the value of the identifier.</param>
-        private void SetFrom(byte[] values)
-        {
-            B0 = (values.Length > 0) ? values[0] : (byte)0;
-            B1 = (values.Length > 1) ? values[1] : (byte)0;
-            B2 = (values.Length > 2) ? values[2] : (byte)0;
-            B3 = (values.Length > 3) ? values[3] : (byte)0;
         }
 
         /// <summary>
