@@ -86,11 +86,11 @@ namespace SAGESharp.SLB
                 throw new ArgumentNullException();
             }
 
-            var result = (Identifier)0;
-
-            result.SetFrom(value);
-
-            return result;
+            return ZERO
+                .WithB0((value.Length > 0) ? value[value.Length - 1].ToASCIIByte() : (byte)0)
+                .WithB1((value.Length > 1) ? value[value.Length - 2].ToASCIIByte() : (byte)0)
+                .WithB2((value.Length > 2) ? value[value.Length - 3].ToASCIIByte() : (byte)0)
+                .WithB3((value.Length > 3) ? value[value.Length - 4].ToASCIIByte() : (byte)0);
         }
         #endregion
 
@@ -224,22 +224,6 @@ namespace SAGESharp.SLB
         public void SetFrom(uint value)
         {
             this.value = value;
-        }
-
-        /// <summary>
-        /// Sets the value of the identifier to the input string.
-        /// 
-        /// If the string is shorter than 4, the rest of values will be set to zero.
-        /// If the string is bigger than 4, the leftover characters will be ignored.
-        /// </summary>
-        /// 
-        /// <param name="value">A string that will be used to set the value of the identifier.</param>
-        private void SetFrom(string value)
-        {
-            B0 = (value.Length > 0) ? value[value.Length - 1].ToASCIIByte() : (byte)0;
-            B1 = (value.Length > 1) ? value[value.Length - 2].ToASCIIByte() : (byte)0;
-            B2 = (value.Length > 2) ? value[value.Length - 3].ToASCIIByte() : (byte)0;
-            B3 = (value.Length > 3) ? value[value.Length - 4].ToASCIIByte() : (byte)0;
         }
 
         #region Copy modifying a byte
