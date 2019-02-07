@@ -69,6 +69,34 @@ namespace SAGESharp.SLB.Tests
         public void Test_Create_Identifier_From_Null_String_Should_Throw_ArgumentNullException()
             => ((string)null).Invoking(nullString => Identifier.From(nullString)).Should().Throw<ArgumentNullException>();
 
+        [TestCaseSource(nameof(IdentifierAndBytes))]
+        public void Test_Getting_Identifier_Individual_Bytes(Identifier identifier, byte b0, byte b1, byte b2, byte b3)
+        {
+            identifier.B0.Should().Be(b0);
+            identifier.B1.Should().Be(b1);
+            identifier.B2.Should().Be(b2);
+            identifier.B3.Should().Be(b3);
+        }
+
+        static object[] IdentifierAndBytes() => new ParameterGroup<Identifier, byte, byte, byte, byte>()
+            .Parameters(0, 0, 0, 0, 0)
+            .Parameters(0x44434241, 0x41, 0x42, 0x43, 0x44)
+            .Build();
+
+        [TestCaseSource(nameof(IdentifierAndChars))]
+        public void Test_Getting_Identifier_Individual_Bytes_As_Chars(Identifier identifier, char c0, char c1, char c2, char c3)
+        {
+            identifier.C0.Should().Be(c0);
+            identifier.C1.Should().Be(c1);
+            identifier.C2.Should().Be(c2);
+            identifier.C3.Should().Be(c3);
+        }
+
+        static object[] IdentifierAndChars() => new ParameterGroup<Identifier, char, char, char, char>()
+            .Parameters(0, Identifier.EMPY_CHAR, Identifier.EMPY_CHAR, Identifier.EMPY_CHAR, Identifier.EMPY_CHAR)
+            .Parameters(0x44434241, 'A', 'B', 'C', 'D')
+            .Build();
+
         [Test]
         public void Test_Cast_Identifier_To_Integer()
             => ((Identifier)0x11223344).Let(i => (int)i).Should().Be(0x11223344);

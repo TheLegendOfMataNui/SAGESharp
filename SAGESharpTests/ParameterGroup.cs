@@ -133,6 +133,70 @@ namespace SAGESharpTests
     }
 
     /// <summary>
+    /// Type safe version of <see cref="ParameterGroup"/>.
+    /// </summary>
+    /// 
+    /// <typeparam name="T1">The type of the first parameter.</typeparam>
+    /// <typeparam name="T2">The type of the second parameter.</typeparam>
+    /// <typeparam name="T3">The type of the third parameter.</typeparam>
+    /// <typeparam name="T4">The type of the fourth parameter.</typeparam>
+    /// 
+    /// <seealso cref="ParameterGroup"/>
+    internal class ParameterGroup<T1, T2, T3, T4> : AbstractParameterGroup
+    {
+        /// <summary>
+        /// Adds a new entry to the parameter group.
+        /// </summary>
+        /// 
+        /// <param name="parameter1">The first parameter to add.</param>
+        /// <param name="parameter2">The second parameter to add.</param>
+        /// <param name="parameter3">The third parameter to add.</param>
+        /// <param name="parameter4">The fourth parameter to add.</typeparam>
+        /// 
+        /// <returns>The same parameter group to chain calls.</returns>
+        /// 
+        /// <seealso cref="ParameterGroup.Parameters(object, object[])"/>
+        public ParameterGroup<T1, T2, T3, T4> Parameters(T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4)
+        {
+            AddParameters(new object[] { parameter1, parameter2, parameter3, parameter4 });
+            return this;
+        }
+    }
+
+    /// <summary>
+    /// Type safe version of <see cref="ParameterGroup"/>.
+    /// </summary>
+    /// 
+    /// <typeparam name="T1">The type of the first parameter.</typeparam>
+    /// <typeparam name="T2">The type of the second parameter.</typeparam>
+    /// <typeparam name="T3">The type of the third parameter.</typeparam>
+    /// <typeparam name="T4">The type of the fourth parameter.</typeparam>
+    /// <typeparam name="T5">The type of the fifth parameter.</typeparam>
+    /// 
+    /// <seealso cref="ParameterGroup"/>
+    internal class ParameterGroup<T1, T2, T3, T4, T5> : AbstractParameterGroup
+    {
+        /// <summary>
+        /// Adds a new entry to the parameter group.
+        /// </summary>
+        /// 
+        /// <param name="parameter1">The first parameter to add.</param>
+        /// <param name="parameter2">The second parameter to add.</param>
+        /// <param name="parameter3">The third parameter to add.</param>
+        /// <param name="parameter4">The fourth parameter to add.</typeparam>
+        /// <param name="parameter5">The fifth parameter to add.</typeparam>
+        /// 
+        /// <returns>The same parameter group to chain calls.</returns>
+        /// 
+        /// <seealso cref="ParameterGroup.Parameters(object, object[])"/>
+        public ParameterGroup<T1, T2, T3, T4, T5> Parameters(T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5)
+        {
+            AddParameters(new object[] { parameter1, parameter2, parameter3, parameter4, parameter5 });
+            return this;
+        }
+    }
+
+    /// <summary>
     /// Class To facilitate some methods when writing <see cref="ParameterGroup"/> classes.
     /// </summary>
     internal abstract class AbstractParameterGroup
