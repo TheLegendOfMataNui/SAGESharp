@@ -257,6 +257,72 @@ namespace SAGESharp.SLB
             B3 = (value.Length > 3) ? value[value.Length - 4].ToASCIIByte() : (byte)0;
         }
 
+        #region Copy modifying a byte
+        /// <summary>
+        /// Creates a copy with the byte 0 set to the input value.
+        /// </summary>
+        /// 
+        /// <param name="value">The new value of the byte 0.</param>
+        /// 
+        /// <returns>A copy with the byte 0 set to the input value.</returns>
+        public Identifier WithB0(byte value)
+        {
+            var result = new Identifier() { value = this.value };
+
+            result.SetByteValue(0, value);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a copy with the byte 1 set to the input value.
+        /// </summary>
+        /// 
+        /// <param name="value">The new value of the byte 1.</param>
+        /// 
+        /// <returns>A copy with the byte 1 set to the input value.</returns>
+        public Identifier WithB1(byte value)
+        {
+            var result = new Identifier() { value = this.value };
+
+            result.SetByteValue(1, value);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a copy with the byte 2 set to the input value.
+        /// </summary>
+        /// 
+        /// <param name="value">The new value of the byte 2.</param>
+        /// 
+        /// <returns>A copy with the byte 2 set to the input value.</returns>
+        public Identifier WithB2(byte value)
+        {
+            var result = new Identifier() { value = this.value };
+
+            result.SetByteValue(2, value);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a copy with the byte 3 set to the input value.
+        /// </summary>
+        /// 
+        /// <param name="value">The new value of the byte 3.</param>
+        /// 
+        /// <returns>A copy with the byte 3 set to the input value.</returns>
+        public Identifier WithB3(byte value)
+        {
+            var result = new Identifier() { value = this.value };
+
+            result.SetByteValue(3, value);
+
+            return result;
+        }
+        #endregion
+
         #region Conversion from Identifier
         /// <summary>
         /// Implicitly converts the <see cref="Identifier"/> to an integer.

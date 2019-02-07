@@ -61,6 +61,17 @@ namespace SAGESharp.SLB.Tests
         [Test]
         public void Test_Identifier_To_String()
             => ((Identifier)0x44434241).Let(i => i.ToString()).Should().Be("DCBA");
+
+        [TestCaseSource(nameof(IdentifiersToTestSettingBytes))]
+        public void Test_Modify_A_Byte_From_An_Identifier(Func<Identifier, Identifier> function, Identifier expected)
+            => Identifier.ZERO.Let(function).Should().Be(expected);
+
+        static object[] IdentifiersToTestSettingBytes() => new ParameterGroup<Func<Identifier, Identifier>, Identifier>()
+            .Parameters(i => i.WithB0(0x11), 0x00000011)
+            .Parameters(i => i.WithB1(0x11), 0x00001100)
+            .Parameters(i => i.WithB2(0x11), 0x00110000)
+            .Parameters(i => i.WithB3(0x11), 0x11000000)
+            .Build();
     }
 }
 
