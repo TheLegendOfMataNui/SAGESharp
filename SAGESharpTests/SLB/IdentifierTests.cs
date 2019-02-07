@@ -4,6 +4,7 @@ using NUnit.Framework;
 using SAGESharp.SLB;
 using SAGESharpTests;
 using System;
+using System.Reflection;
 
 namespace SAGESharp.SLB.Tests
 {
@@ -11,7 +12,17 @@ namespace SAGESharp.SLB.Tests
     {
         [Test]
         public void Test_Cast_Integer_To_Identifier()
-            => 0x11223344.Let(i => (Identifier)i).ToInteger().Should().Be(0x11223344);
+        {
+            var identifier = (Identifier)0x11223344;
+            // For the nature of the "Identifier" type
+            // we make an exception here testing private members
+            // to ensure the correct behavior of the casting operator
+            var field = identifier
+                .GetType()
+                .GetField("value", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            field.GetValue(identifier).Should().Be(0x11223344);
+        }
 
         [TestCaseSource(nameof(ByteArraysAndIdentifiers))]
         public void Test_Create_Identifier_From_Byte_Array(byte[] values, Identifier expected)
