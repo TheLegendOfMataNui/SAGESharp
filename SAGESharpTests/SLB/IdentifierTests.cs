@@ -72,6 +72,17 @@ namespace SAGESharp.SLB.Tests
             .Parameters(i => i.WithB2(0x11), 0x00110000)
             .Parameters(i => i.WithB3(0x11), 0x11000000)
             .Build();
+
+        [TestCaseSource(nameof(IdentifiersToTestSettingBytesWithChars))]
+        public void Test_Modify_A_Byte_From_An_Identifier_With_A_Char(Func<Identifier, Identifier> function, Identifier expected)
+            => Identifier.ZERO.Let(function).Should().Be(expected);
+
+        static object[] IdentifiersToTestSettingBytesWithChars() => new ParameterGroup<Func<Identifier, Identifier>, Identifier>()
+            .Parameters(i => i.WithC0('A'), 0x00000041)
+            .Parameters(i => i.WithC1('A'), 0x00004100)
+            .Parameters(i => i.WithC2('A'), 0x00410000)
+            .Parameters(i => i.WithC3('A'), 0x41000000)
+            .Build();
     }
 }
 

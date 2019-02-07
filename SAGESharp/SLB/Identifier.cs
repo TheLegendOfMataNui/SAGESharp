@@ -308,6 +308,44 @@ namespace SAGESharp.SLB
         }
         #endregion
 
+        #region Copy modifying a byte as a char
+        /// <summary>
+        /// Creates a copy with the byte 0 set to the ASCII value of the input character.
+        /// </summary>
+        /// 
+        /// <param name="value">The new value of the byte 0 as an ASCII character.</param>
+        /// 
+        /// <returns>A copy with the byte 0 set to the input ASCII character.</returns>
+        public Identifier WithC0(char value) => WithB0(value.ToASCIIByte());
+
+        /// <summary>
+        /// Creates a copy with the byte 1 set to the ASCII value of the input character.
+        /// </summary>
+        /// 
+        /// <param name="value">The new value of the byte 1 as an ASCII character.</param>
+        /// 
+        /// <returns>A copy with the byte 1 set to the input ASCII character.</returns>
+        public Identifier WithC1(char value) => WithB1(value.ToASCIIByte());
+
+        /// <summary>
+        /// Creates a copy with the byte 2 set to the ASCII value of the input character.
+        /// </summary>
+        /// 
+        /// <param name="value">The new value of the byte 2 as an ASCII character.</param>
+        /// 
+        /// <returns>A copy with the byte 0 set to the input ASCII character.</returns>
+        public Identifier WithC2(char value) => WithB2(value.ToASCIIByte());
+
+        /// <summary>
+        /// Creates a copy with the byte 3 set to the ASCII value of the input character.
+        /// </summary>
+        /// 
+        /// <param name="value">The new value of the byte 3 as an ASCII character.</param>
+        /// 
+        /// <returns>A copy with the byte 3 set to the input ASCII character.</returns>
+        public Identifier WithC3(char value) => WithB3(value.ToASCIIByte());
+        #endregion
+
         #region Conversion from Identifier
         /// <summary>
         /// Implicitly converts the <see cref="Identifier"/> to an integer.
