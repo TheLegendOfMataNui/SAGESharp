@@ -183,7 +183,7 @@ namespace ShoefitterDX
             //}
 
             NodeLocations.Remove(n);
-            NodeLocations.Add(n, new Rectangle(x + contentWidth / 2 - textSize.Width / 2, y, textSize.Width, textSize.Height));
+            NodeLocations.Add(n, new Rectangle(x + contentWidth / 2 - textSize.Width / 2, y, textSize.Width < 100 ? 100 : textSize.Width, textSize.Height < 20 ? 20 : textSize.Height));
             //NodeLocations.Add(n, new Rectangle(x, y, contentWidth, textSize.Height));
 
             return contentWidth;

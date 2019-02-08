@@ -174,7 +174,7 @@ namespace SAGESharp.OSI.ControlFlow
                     // Find the containing node and split it
                     foreach (Node n in Nodes)
                     {
-                        if (n is OSINode node)
+                        if (n is OSINode node && nodeStarts.ContainsKey(n))
                         {
                             if (j.Item2 >= nodeStarts[n] && j.Item2 < nodeStarts[n] + nodeLengths[n])
                             {
