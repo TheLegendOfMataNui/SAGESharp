@@ -21,16 +21,16 @@ namespace SAGESharpTests.SLB.Level.Conversation
             LineSide = LineSide.Right,
             ConditionStart = 1,
             ConditionEnd = 2,
-            StringLabel = new Identifier(3),
+            StringLabel = 3,
             StringIndex = 4,
             Frames =  new List<Frame>() { DefaultFrame() }
         };
 
         public static Character DefaultCharacter() => new Character()
         {
-            ToaName = new Identifier("TOA1"),
-            CharName = new Identifier("CHA1"),
-            CharCont = new Identifier("CON1"),
+            ToaName = Identifier.From("TOA1"),
+            CharName = Identifier.From("CHA1"),
+            CharCont = Identifier.From("CON1"),
             Entries = new List<Info>() { DefaultInfo() }
         };
     }

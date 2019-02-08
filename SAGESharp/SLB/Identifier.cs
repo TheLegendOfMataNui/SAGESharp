@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace SAGESharp.SLB
 {
@@ -15,44 +16,90 @@ namespace SAGESharp.SLB
         public const char EMPY_CHAR = '?';
 
         /// <summary>
-        /// Creates a new instance initializing it with the input value.
+        /// A constant identifier object with value zero.
         /// </summary>
-        /// 
-        /// <param name="value">The input value to initalize the instance.</param>
-        public Identifier(uint value) : this()
-        {
-            SetFrom(value);
-        }
-
-        /// <summary>
-        /// Creates a new instance initialize it with the input values.
-        /// 
-        /// If the byte array is shorter than 4, the rest of values will be set to zero.
-        /// If the byte array is bigger than 4, the leftover bytes will be ignored.
-        /// </summary>
-        /// 
-        /// <param name="values">An array of bytes that will be used to initialize the identifier.</param>
-        public Identifier(byte[] values) : this()
-        {
-            SetFrom(values);
-        }
-
-        /// <summary>
-        /// Creates a new instance initialize it with the input value.
-        /// 
-        /// If the string is shorter than 4, the rest of values will be set to zero.
-        /// If the string is bigger than 4, the leftover characters will be ignored.
-        /// </summary>
-        /// 
-        /// <param name="value">A string that will be used to initialize the identifier.</param>
-        public Identifier(string value) : this()
-        {
-            SetFrom(value);
-        }
+        public static readonly Identifier ZERO = 0;
 
         private uint value;
 
-        #region Byte level access
+        #region Conversions to Identifier
+        /// <summary>
+        /// Creates an <see cref="Identifier"/> implictly from an integer.
+        /// </summary>
+        /// 
+        /// <param name="value">The integer that will be used to create the identifier.</param>
+        public static implicit operator Identifier(int value)
+            => new Identifier { value = (uint)value };
+
+        /// <summary>
+        /// Creates an <see cref="Identifier"/> implictly from an unsigned integer.
+        /// </summary>
+        /// 
+        /// <param name="value">The unsigned integer that will be used to create the identifier.</param>
+        public static implicit operator Identifier(uint value)
+            => new Identifier { value = value };
+
+        /// <summary>
+        /// Creates an <see cref="Identifier"/> from an array of bytes.
+        /// </summary>
+        /// 
+        /// Only the first four elements from the array will be used to
+        /// set the bytes of the identifier, if the array is shorter than
+        /// four bytes the missing ones are set to zero, if is larger than
+        /// four the remaining are ignored.
+        /// 
+        /// <param name="values">The array of bytes that will be used to create the identifier.</param>
+        /// 
+        /// <returns>An identifier created from the input values.</returns>
+        /// 
+        /// <exception cref="ArgumentNullException">If the array of bytes is null.</exception>
+        public static Identifier From(byte[] values)
+        {
+            if (values == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            return ZERO
+                .WithB0(values.ElementAtOrDefault(0))
+                .WithB1(values.ElementAtOrDefault(1))
+                .WithB2(values.ElementAtOrDefault(2))
+                .WithB3(values.ElementAtOrDefault(3));
+        }
+
+        /// <summary>
+        /// Creates an <see cref="Identifier"/> from a string.
+        /// </summary>
+        /// 
+        /// Only the first for characters from the string will be used to
+        /// set the bytes of the identifier, if the array is shorter than
+        /// four chars the missing bytes are set to zero, if is larger then
+        /// four the remaining are ignored.
+        /// 
+        /// Any character from the string is interpreted as an ASCII value
+        /// and that's stored into the identifier.
+        /// 
+        /// <param name="value">The string that will be used to create the identifier.</param>
+        /// 
+        /// <returns>An identifier created from the input string.</returns>
+        /// 
+        /// <exception cref="ArgumentNullException">If the string is null.</exception>
+        public static Identifier From(string value)
+        {
+            if (value == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            return ZERO
+                .WithB0((value.Length > 0) ? value[value.Length - 1].ToASCIIByte() : (byte)0)
+                .WithB1((value.Length > 1) ? value[value.Length - 2].ToASCIIByte() : (byte)0)
+                .WithB2((value.Length > 2) ? value[value.Length - 3].ToASCIIByte() : (byte)0)
+                .WithB3((value.Length > 3) ? value[value.Length - 4].ToASCIIByte() : (byte)0);
+        }
+        #endregion
+
+        #region Access individual bytes as chars
         /// <summary>
         /// Byte 0 of the id in character form.
         /// </summary>
@@ -61,10 +108,6 @@ namespace SAGESharp.SLB
             get
             {
                 return GetReadableByte(0);
-            }
-            set
-            {
-                SetByteValue(0, value);
             }
         }
 
@@ -77,10 +120,6 @@ namespace SAGESharp.SLB
             {
                 return GetReadableByte(1);
             }
-            set
-            {
-                SetByteValue(1, value);
-            }
         }
 
         /// <summary>
@@ -91,10 +130,6 @@ namespace SAGESharp.SLB
             get
             {
                 return GetReadableByte(2);
-            }
-            set
-            {
-                SetByteValue(2, value);
             }
         }
 
@@ -107,12 +142,10 @@ namespace SAGESharp.SLB
             {
                 return GetReadableByte(3);
             }
-            set
-            {
-                SetByteValue(3, value);
-            }
         }
+        #endregion
 
+        #region Access individual bytes
         /// <summary>
         /// Byte 0 of the id in numeric form.
         /// </summary>
@@ -121,10 +154,6 @@ namespace SAGESharp.SLB
             get
             {
                 return value.GetByte(0);
-            }
-            set
-            {
-                SetByteValue(0, value);
             }
         }
 
@@ -137,10 +166,6 @@ namespace SAGESharp.SLB
             {
                 return value.GetByte(1);
             }
-            set
-            {
-                SetByteValue(1, value);
-            }
         }
 
         /// <summary>
@@ -151,10 +176,6 @@ namespace SAGESharp.SLB
             get
             {
                 return value.GetByte(2);
-            }
-            set
-            {
-                SetByteValue(2, value);
             }
         }
 
@@ -167,64 +188,127 @@ namespace SAGESharp.SLB
             {
                 return value.GetByte(3);
             }
-            set
-            {
-                SetByteValue(3, value);
-            }
         }
         #endregion
 
+        #region Copy modifying a byte
         /// <summary>
-        /// Set the value of the identifier to the input integer.
+        /// Creates a copy with the byte 0 set to the input value.
         /// </summary>
         /// 
-        /// <param name="value">The input integer that will be used to set the value of the identifier.</param>
-        public void SetFrom(uint value)
+        /// <param name="value">The new value of the byte 0.</param>
+        /// 
+        /// <returns>A copy with the byte 0 set to the input value.</returns>
+        public Identifier WithB0(byte value)
         {
-            this.value = value;
+            var result = new Identifier() { value = this.value };
+
+            result.SetByteValue(0, value);
+
+            return result;
         }
 
         /// <summary>
-        /// Sets the value of the identifier to the input array of bytes.
-        /// 
-        /// If the byte array is shorter than 4, the rest of values will be set to zero.
-        /// If the byte array is bigger than 4, the leftover bytes will be ignored.
+        /// Creates a copy with the byte 1 set to the input value.
         /// </summary>
         /// 
-        /// <param name="values">An array of bytes that will be used to set the value of the identifier.</param>
-        public void SetFrom(byte[] values)
+        /// <param name="value">The new value of the byte 1.</param>
+        /// 
+        /// <returns>A copy with the byte 1 set to the input value.</returns>
+        public Identifier WithB1(byte value)
         {
-            B0 = (values.Length > 0) ? values[0] : (byte)0;
-            B1 = (values.Length > 1) ? values[1] : (byte)0;
-            B2 = (values.Length > 2) ? values[2] : (byte)0;
-            B3 = (values.Length > 3) ? values[3] : (byte)0;
+            var result = new Identifier() { value = this.value };
+
+            result.SetByteValue(1, value);
+
+            return result;
         }
 
         /// <summary>
-        /// Sets the value of the identifier to the input string.
-        /// 
-        /// If the string is shorter than 4, the rest of values will be set to zero.
-        /// If the string is bigger than 4, the leftover characters will be ignored.
+        /// Creates a copy with the byte 2 set to the input value.
         /// </summary>
         /// 
-        /// <param name="value">A string that will be used to set the value of the identifier.</param>
-        public void SetFrom(string value)
+        /// <param name="value">The new value of the byte 2.</param>
+        /// 
+        /// <returns>A copy with the byte 2 set to the input value.</returns>
+        public Identifier WithB2(byte value)
         {
-            B0 = (value.Length > 0) ? value[value.Length - 1].ToASCIIByte() : (byte)0;
-            B1 = (value.Length > 1) ? value[value.Length - 2].ToASCIIByte() : (byte)0;
-            B2 = (value.Length > 2) ? value[value.Length - 3].ToASCIIByte() : (byte)0;
-            B3 = (value.Length > 3) ? value[value.Length - 4].ToASCIIByte() : (byte)0;
+            var result = new Identifier() { value = this.value };
+
+            result.SetByteValue(2, value);
+
+            return result;
         }
 
         /// <summary>
-        /// Gets the identifier as an unsigned (32 bit) integer.
+        /// Creates a copy with the byte 3 set to the input value.
         /// </summary>
         /// 
-        /// <returns>The identifer as an unsigned (32 bit) integer.</returns>
-        public uint ToInteger()
+        /// <param name="value">The new value of the byte 3.</param>
+        /// 
+        /// <returns>A copy with the byte 3 set to the input value.</returns>
+        public Identifier WithB3(byte value)
         {
-            return value;
+            var result = new Identifier() { value = this.value };
+
+            result.SetByteValue(3, value);
+
+            return result;
         }
+        #endregion
+
+        #region Copy modifying a byte as a char
+        /// <summary>
+        /// Creates a copy with the byte 0 set to the ASCII value of the input character.
+        /// </summary>
+        /// 
+        /// <param name="value">The new value of the byte 0 as an ASCII character.</param>
+        /// 
+        /// <returns>A copy with the byte 0 set to the input ASCII character.</returns>
+        public Identifier WithC0(char value) => WithB0(value.ToASCIIByte());
+
+        /// <summary>
+        /// Creates a copy with the byte 1 set to the ASCII value of the input character.
+        /// </summary>
+        /// 
+        /// <param name="value">The new value of the byte 1 as an ASCII character.</param>
+        /// 
+        /// <returns>A copy with the byte 1 set to the input ASCII character.</returns>
+        public Identifier WithC1(char value) => WithB1(value.ToASCIIByte());
+
+        /// <summary>
+        /// Creates a copy with the byte 2 set to the ASCII value of the input character.
+        /// </summary>
+        /// 
+        /// <param name="value">The new value of the byte 2 as an ASCII character.</param>
+        /// 
+        /// <returns>A copy with the byte 0 set to the input ASCII character.</returns>
+        public Identifier WithC2(char value) => WithB2(value.ToASCIIByte());
+
+        /// <summary>
+        /// Creates a copy with the byte 3 set to the ASCII value of the input character.
+        /// </summary>
+        /// 
+        /// <param name="value">The new value of the byte 3 as an ASCII character.</param>
+        /// 
+        /// <returns>A copy with the byte 3 set to the input ASCII character.</returns>
+        public Identifier WithC3(char value) => WithB3(value.ToASCIIByte());
+        #endregion
+
+        #region Conversion from Identifier
+        /// <summary>
+        /// Implicitly converts the <see cref="Identifier"/> to an integer.
+        /// </summary>
+        /// 
+        /// <param name="identifier">The integer value of the identifier.</param>
+        public static implicit operator int(Identifier identifier) => (int)identifier.value;
+
+        /// <summary>
+        /// Implicitly converts the <see cref="Identifier"/> to an unsigned integer.
+        /// </summary>
+        /// 
+        /// <param name="identifier">The unsigned integer value of the identifier.</param>
+        public static implicit operator uint(Identifier identifier) => identifier.value;
 
         /// <summary>
         /// Gets the identifier as a (4 character) string.
@@ -237,7 +321,9 @@ namespace SAGESharp.SLB
         {
             return new string(new[] { C3, C2, C1, C0 });
         }
+        #endregion
 
+        #region Equality
         /// <inheritdoc/>
         public override bool Equals(object other)
         {
@@ -286,6 +372,7 @@ namespace SAGESharp.SLB
         {
             return !(left == right);
         }
+        #endregion
 
         private char GetReadableByte(byte b)
         {
@@ -297,11 +384,6 @@ namespace SAGESharp.SLB
             }
 
             return result.ToASCIIChar();
-        }
-
-        private void SetByteValue(byte bytePosition, char value)
-        {
-            SetByteValue(bytePosition, value.ToASCIIByte());
         }
 
         private void SetByteValue(byte bytePosition, byte value)

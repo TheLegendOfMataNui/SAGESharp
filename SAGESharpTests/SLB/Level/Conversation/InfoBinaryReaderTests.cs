@@ -31,7 +31,7 @@ namespace SAGESharpTests.SLB.Level.Conversation
 
             var reader = new InfoBinaryReader(streamMock.Object, identifierReaderMock.Object, frameReaderMock.Object);
 
-            var stringLabel = new Identifier(0x11223300);
+            var stringLabel = (Identifier)0x11223300;
 
             identifierReaderMock
                 .SetupSequence(identifierReader => identifierReader.ReadSLBObject())
@@ -90,7 +90,7 @@ namespace SAGESharpTests.SLB.Level.Conversation
 
             var reader = new InfoBinaryReader(streamMock.Object, identifierReaderMock.Object, frameReaderMock.Object);
 
-            var stringLabel = new Identifier(0x11223300);
+            var stringLabel = (Identifier)0x11223300;
 
             identifierReaderMock
                 .SetupSequence(identifierReader => identifierReader.ReadSLBObject())

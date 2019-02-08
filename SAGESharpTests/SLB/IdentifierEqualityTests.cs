@@ -14,17 +14,17 @@ namespace SAGESharpTests.SLB
             TestCompareNonEqualsDefaultValueAndNonDefaultValue(value);
 
         static object[] Modifiers() => new ParameterGroup<Identifier>()
-            .Parameters(new Identifier { B0 = 0x01 })
-            .Parameters(new Identifier { B1 = 0x01 })
-            .Parameters(new Identifier { B2 = 0x01 })
-            .Parameters(new Identifier { B3 = 0x01 })
-            .Parameters(new Identifier { C0 = 'A' })
-            .Parameters(new Identifier { C1 = 'B' })
-            .Parameters(new Identifier { C2 = 'C' })
-            .Parameters(new Identifier { C3 = 'D' })
-            .Parameters(new Identifier(1))
-            .Parameters(new Identifier(new byte[] { 0x01, 0x02, 0x03, 0x04 }))
-            .Parameters(new Identifier("DCBA"))
+            .Parameters(Identifier.ZERO.WithB0(0x01))
+            .Parameters(Identifier.ZERO.WithB1(0x01))
+            .Parameters(Identifier.ZERO.WithB2(0x01))
+            .Parameters(Identifier.ZERO.WithB3(0x01))
+            .Parameters(Identifier.ZERO.WithC0('A'))
+            .Parameters(Identifier.ZERO.WithC1('B'))
+            .Parameters(Identifier.ZERO.WithC2('C'))
+            .Parameters(Identifier.ZERO.WithC3('D'))
+            .Parameters(1)
+            .Parameters(Identifier.From(new byte[] { 0x01, 0x02, 0x03, 0x04 }))
+            .Parameters(Identifier.From("DCBA"))
             .Build();
 
         [TestCaseSource(nameof(DualModifiers))]
@@ -32,7 +32,7 @@ namespace SAGESharpTests.SLB
             TestCompareNonEqualsNonDefaultValues(a, b);
 
         static object[] DualModifiers() => new ParameterGroup<Identifier, Identifier>()
-            .Parameters(new Identifier(0x11223344), new Identifier(0x11121314))
+            .Parameters(0x11223344, 0x11121314)
             .Build();
     }
 }

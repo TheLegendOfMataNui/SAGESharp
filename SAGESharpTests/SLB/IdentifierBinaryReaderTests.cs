@@ -27,7 +27,7 @@ namespace SAGESharpTests.SLB
 
             var identifier = reader.ReadSLBObject();
 
-            Assert.That(identifier.ToInteger(), Is.EqualTo(0x44434241));
+            Assert.That((int)identifier, Is.EqualTo(0x44434241));
 
             streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(4));
         }

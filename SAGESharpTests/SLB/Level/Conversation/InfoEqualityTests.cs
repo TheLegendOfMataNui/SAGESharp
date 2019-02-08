@@ -23,7 +23,7 @@ namespace SAGESharpTests.SLB.Level.Conversation
             .Parameters(info => info.LineSide = LineSide.None)
             .Parameters(info => info.ConditionStart++)
             .Parameters(info => info.ConditionEnd++)
-            .Parameters(info => info.StringLabel = new Identifier(info.StringLabel.ToInteger() + 1))
+            .Parameters(info => info.StringLabel = info.StringLabel + 1)
             .Parameters(info => info.StringIndex++)
             .Parameters(info => info.Frames = null)
             .Parameters(info => info.Frames.Clear())

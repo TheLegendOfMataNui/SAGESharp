@@ -20,9 +20,9 @@ namespace SAGESharpTests.SLB.Level.Conversation
             TestCompareDefaultObjectWithModifiedObject(modifier);
 
         static object[] Modifiers() => new ParameterGroup<Action<Character>>()
-            .Parameters(character => character.ToaName = new Identifier("TOAX"))
-            .Parameters(character => character.CharName = new Identifier("CHAX"))
-            .Parameters(character => character.CharCont = new Identifier("CONX"))
+            .Parameters(character => character.ToaName = Identifier.From("TOAX"))
+            .Parameters(character => character.CharName = Identifier.From("CHAX"))
+            .Parameters(character => character.CharCont = Identifier.From("CONX"))
             .Parameters(character => character.Entries = null)
             .Parameters(character => character.Entries.Clear())
             .Parameters(character => character.Entries[0].LineSide = LineSide.None)
