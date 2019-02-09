@@ -37,3 +37,4 @@ using System.Runtime.InteropServices;
 
 // Make any internal class visible only to tests
 [assembly: InternalsVisibleTo("SAGESharpTests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
