@@ -42,6 +42,12 @@ namespace SAGESharp.SLB.Level.Conversation
         }
 
         static object[] FileNamesAndConversations() => new ParameterGroup<string, Func<IList<Character>>>()
+            .Parameters(TestDataPath("EmptyConversation.slb"), TestData.EmptyConversation)
+            .Parameters(TestDataPath("SimpleConversation.slb"), TestData.SimpleConversation)
+            .Parameters(TestDataPath("ComplexConversation.slb"), TestData.ComplexConversation)
             .Build();
+
+        private static string TestDataPath(string fileName)
+            => $@"{TestContext.CurrentContext.TestDirectory}\Test Data\SLB\Level\Conversation\{fileName}";
     }
 }

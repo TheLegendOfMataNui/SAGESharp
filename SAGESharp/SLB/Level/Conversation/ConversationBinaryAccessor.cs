@@ -26,7 +26,20 @@ namespace SAGESharp.SLB.Level.Conversation
         /// <inheritdoc/>
         public IList<Character> ReadConversation()
         {
-            throw new NotImplementedException();
+            ISLBBinaryReader<Identifier> identifierBinaryReader = new IdentifierBinaryReader(stream);
+
+            return new ConversationBinaryReader(
+                stream,
+                new CharacterBinaryReader(
+                    stream,
+                    identifierBinaryReader,
+                    new InfoBinaryReader(
+                        stream,
+                        identifierBinaryReader,
+                        new FrameBinaryReader(stream)
+                    )
+                )
+            ).ReadSLBObject();
         }
 
         /// <inheritdoc/>
