@@ -16,27 +16,26 @@ namespace SAGESharp.SLB.Level.Conversation
         }
 
         [TestCaseSource(nameof(FileNamesAndConversations))]
-        public void Test_Reading_A_File_Successfully(string testFilePath, Func<IList<Character>> expected)
+        public void Test_Reading_A_File_Successfully(string testFilePath, Func<IList<Character>> expectedProvider)
         {
+            var expected = expectedProvider();
             using (var stream = new FileStream(testFilePath, FileMode.Open))
             {
-                var accessor = new ConversationBinaryAccessor(stream);
+                var result = new ConversationBinaryAccessor(stream).ReadConversation();
 
-                var result = accessor.ReadConversation();
-
-                accessor.ReadConversation().Should().BeEquivalentTo(expected());
+                result.Should().BeEquivalentTo(expected);
             }
         }
 
+        [Ignore("Not implemented yet")]
         [TestCaseSource(nameof(FileNamesAndConversations))]
         public void Test_Writing_A_File_Successfully(string expectedOutput, IList<Character> conversation)
         {
             var expected = File.ReadAllBytes(expectedOutput);
             using (var stream = new MemoryStream())
             {
-                var accessor = new ConversationBinaryAccessor(stream);
-
-                accessor.WriteConversation(conversation as IReadOnlyList<Character> ?? new List<Character>(conversation));
+                new ConversationBinaryAccessor(stream)
+                    .WriteConversation(conversation as IReadOnlyList<Character> ?? new List<Character>(conversation));
 
                 stream.ToArray().Should().BeEquivalentTo(expected);
             }
