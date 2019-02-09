@@ -96,12 +96,22 @@
     <Compile Include="SLB\Level\Conversation\FrameEqualityTests.cs" />
     <Compile Include="SLB\Level\Conversation\InfoBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\InfoEqualityTests.cs" />
+    <Compile Include="SLB\Level\Conversation\TestData.cs" />
     <Compile Include="SLB\StreamExtensionsTests.cs" />
     <Compile Include="SLB\UIntExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Test Data\SLB\Level\Conversation\ComplexConversation.slb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Test Data\SLB\Level\Conversation\EmptyConversation.slb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Test Data\SLB\Level\Conversation\SimpleConversation.slb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SAGESharp\SAGESharp.csproj">
