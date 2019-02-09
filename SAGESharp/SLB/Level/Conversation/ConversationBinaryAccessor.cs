@@ -7,25 +7,24 @@ namespace SAGESharp.SLB.Level.Conversation
     /// <summary>
     /// Class to read and write level's conversations into binary files (.SLB).
     /// </summary>
-    class ConversationBinaryAccessor : IConversationAccessor
+    public static class ConversationBinaryAccessor
     {
-        private readonly Stream stream;
-
         /// <summary>
-        /// Creates a new accessor that will read or write to the given stream.
+        /// Reads a level conversation in binary form from the input stream.
         /// </summary>
         /// 
-        /// <param name="stream">The stream that will be used to read or write conversation data.</param>
+        /// <param name="stream">The input stream to be read.</param>
+        /// 
+        /// <returns>A conversation (list of <see cref="Character"/> objects).</returns>
         /// 
         /// <exception cref="ArgumentNullException">If <paramref name="stream"/> is null.</exception>
-        public ConversationBinaryAccessor(Stream stream)
+        public static IList<Character> ReadConversation(Stream stream)
         {
-            this.stream = stream ?? throw new ArgumentNullException();
-        }
+            if (stream == null)
+            {
+                throw new ArgumentNullException();
+            }
 
-        /// <inheritdoc/>
-        public IList<Character> ReadConversation()
-        {
             ISLBBinaryReader<Identifier> identifierBinaryReader = new IdentifierBinaryReader(stream);
 
             return new ConversationBinaryReader(
@@ -42,8 +41,15 @@ namespace SAGESharp.SLB.Level.Conversation
             ).ReadSLBObject();
         }
 
-        /// <inheritdoc/>
-        public void WriteConversation(IReadOnlyList<Character> characters)
+        /// <summary>
+        /// Writes a conversation in binary form into the output stream.
+        /// </summary>
+        /// 
+        /// <param name="stream">The output stream.</param>
+        /// <param name="characters">The conversation to be writen.</param>
+        /// 
+        /// <exception cref="ArgumentNullException">If <paramref name="stream"/> is null.</exception>
+        public static void WriteConversation(Stream stream, IReadOnlyList<Character> characters)
         {
             throw new NotImplementedException();
         }

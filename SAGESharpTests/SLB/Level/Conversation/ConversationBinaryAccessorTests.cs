@@ -9,19 +9,13 @@ namespace SAGESharp.SLB.Level.Conversation
 {
     class ConversationBinaryAccessorTests
     {
-        [TestCase]
-        public void Test_Creating_An_Accessor_With_Null_Throws()
-        {
-            ((Stream)null).Invoking(s => new ConversationBinaryAccessor(s)).Should().Throw<ArgumentNullException>();
-        }
-
         [TestCaseSource(nameof(FileNamesAndConversations))]
         public void Test_Reading_A_File_Successfully(string testFilePath, Func<IList<Character>> expectedProvider)
         {
             var expected = expectedProvider();
             using (var stream = new FileStream(testFilePath, FileMode.Open))
             {
-                var result = new ConversationBinaryAccessor(stream).ReadConversation();
+                var result = ConversationBinaryAccessor.ReadConversation(stream);
 
                 result.Should().BeEquivalentTo(expected);
             }
@@ -34,8 +28,8 @@ namespace SAGESharp.SLB.Level.Conversation
             var expected = File.ReadAllBytes(expectedOutput);
             using (var stream = new MemoryStream())
             {
-                new ConversationBinaryAccessor(stream)
-                    .WriteConversation(conversation as IReadOnlyList<Character> ?? new List<Character>(conversation));
+                ConversationBinaryAccessor
+                    .WriteConversation(stream, conversation as IReadOnlyList<Character> ?? new List<Character>(conversation));
 
                 stream.ToArray().Should().BeEquivalentTo(expected);
             }
