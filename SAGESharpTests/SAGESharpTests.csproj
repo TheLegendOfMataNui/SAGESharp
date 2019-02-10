@@ -88,6 +88,7 @@
     <Compile Include="SLB\IdentifierTests.cs" />
     <Compile Include="SLB\IdentifierBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\CharacterBinaryReaderTests.cs" />
+    <Compile Include="SLB\Level\Conversation\CharacterBinaryWriterTests.cs" />
     <Compile Include="SLB\Level\Conversation\CharacterEqualityTests.cs" />
     <Compile Include="SLB\Level\Conversation\ConversationBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\ConversationBinaryAccessorTests.cs" />
