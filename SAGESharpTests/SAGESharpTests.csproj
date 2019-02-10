@@ -96,6 +96,7 @@
     <Compile Include="SLB\Level\Conversation\FrameBinaryWriterTests.cs" />
     <Compile Include="SLB\Level\Conversation\FrameEqualityTests.cs" />
     <Compile Include="SLB\Level\Conversation\InfoBinaryReaderTests.cs" />
+    <Compile Include="SLB\Level\Conversation\InfoBinaryWriterTests.cs" />
     <Compile Include="SLB\Level\Conversation\InfoEqualityTests.cs" />
     <Compile Include="SLB\Level\Conversation\TestData.cs" />
     <Compile Include="SLB\StringBinaryWriterTests.cs" />
