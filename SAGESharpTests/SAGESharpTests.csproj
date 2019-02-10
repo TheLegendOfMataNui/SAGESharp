@@ -97,6 +97,7 @@
     <Compile Include="SLB\Level\Conversation\InfoBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\InfoEqualityTests.cs" />
     <Compile Include="SLB\Level\Conversation\TestData.cs" />
+    <Compile Include="SLB\StringBinaryWriterTests.cs" />
     <Compile Include="SLB\StreamExtensionsTests.cs" />
     <Compile Include="SLB\UIntExtensionsTests.cs" />
   </ItemGroup>
