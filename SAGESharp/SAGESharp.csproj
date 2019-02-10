@@ -66,6 +66,7 @@
     <Compile Include="SLB\Level\Conversation\ConversationBinaryReader.cs" />
     <Compile Include="SLB\Level\Conversation\Frame.cs" />
     <Compile Include="SLB\Level\Conversation\FrameBinaryReader.cs" />
+    <Compile Include="SLB\Level\Conversation\FrameBinaryWriter.cs" />
     <Compile Include="SLB\Level\Conversation\Info.cs" />
     <Compile Include="SLB\Level\Conversation\InfoBinaryReader.cs" />
     <Compile Include="SLB\Level\Conversation\LineSide.cs" />

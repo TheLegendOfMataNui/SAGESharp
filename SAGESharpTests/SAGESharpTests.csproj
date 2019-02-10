@@ -93,6 +93,7 @@
     <Compile Include="SLB\Level\Conversation\ConversationBinaryAccessorTests.cs" />
     <Compile Include="SLB\Level\Conversation\Defaults.cs" />
     <Compile Include="SLB\Level\Conversation\FrameBinaryReaderTests.cs" />
+    <Compile Include="SLB\Level\Conversation\FrameBinaryWriterTests.cs" />
     <Compile Include="SLB\Level\Conversation\FrameEqualityTests.cs" />
     <Compile Include="SLB\Level\Conversation\InfoBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\InfoEqualityTests.cs" />
