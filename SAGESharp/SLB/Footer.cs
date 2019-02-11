@@ -79,7 +79,17 @@ namespace SAGESharp.SLB
                 stream.WriteUInt(entry.Value);
             }
 
-            stream.Seek(0, SeekOrigin.End);
+            // Jump to the end and align the footer
+            var end = (int)stream.Seek(0, SeekOrigin.End);
+            // We get the amount of bytes that are unaligned
+            // by getting bytes after the last aligned integer (end % 4)
+            // and counting the amount of additional bytes needed
+            // to be aligned (4 - bytes after las aligned integer)
+            int bytesToFill = 4 - (end % 4);
+            if (bytesToFill != 4)
+            {
+                stream.Write(new byte[bytesToFill], 0, bytesToFill);
+            }
 
             // Entries in the table (4 bytes/1 32 bit number per entry)
             // + table size (4 bytes/1 32 bit number)
