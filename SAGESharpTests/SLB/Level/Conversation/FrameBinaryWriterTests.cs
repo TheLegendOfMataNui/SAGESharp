@@ -3,7 +3,6 @@ using NSubstitute;
 using NUnit.Framework;
 using System;
 using System.IO;
-using System.Linq;
 
 namespace SAGESharp.SLB.Level.Conversation
 {
@@ -55,7 +54,7 @@ namespace SAGESharp.SLB.Level.Conversation
 
             writer.WriteSLBObject(input);
 
-            stream.Received().Write(Arg.Is<byte[]>(bytes => bytes.SequenceEqual(expected)), 0, expected.Length);
+            stream.Received().Write(Matcher.ForEquivalentArray(expected), 0, expected.Length);
         }
 
         [Test]
