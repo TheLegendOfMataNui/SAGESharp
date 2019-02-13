@@ -101,7 +101,7 @@
     <Compile Include="SLB\Level\Conversation\InfoBinaryWriterTests.cs" />
     <Compile Include="SLB\Level\Conversation\InfoEqualityTests.cs" />
     <Compile Include="SLB\Level\Conversation\TestData.cs" />
-    <Compile Include="SLB\SLBWriterTests.cs" />
+    <Compile Include="SLB\SLBFooterWriterTests.cs" />
     <Compile Include="SLB\StringBinaryWriterTests.cs" />
     <Compile Include="SLB\StreamExtensionsTests.cs" />
     <Compile Include="SLB\UIntExtensionsTests.cs" />

@@ -7,7 +7,7 @@ using System.IO;
 
 namespace SAGESharp.SLB
 {
-    class SLBWriterTests
+    class SLBFooterWriterTests
     {
         private readonly Stream stream;
 
@@ -15,7 +15,7 @@ namespace SAGESharp.SLB
 
         private readonly ISLBFooterWriter<object> footerWriter;
 
-        public SLBWriterTests()
+        public SLBFooterWriterTests()
         {
             stream = Substitute.For<Stream>();
             footerGenerator = Substitute.For<ISLBFooterGenerator<object>>();
