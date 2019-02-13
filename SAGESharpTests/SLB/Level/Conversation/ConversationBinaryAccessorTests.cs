@@ -10,9 +10,8 @@ namespace SAGESharp.SLB.Level.Conversation
     class ConversationBinaryAccessorTests
     {
         [TestCaseSource(nameof(FileNamesAndConversations))]
-        public void Test_Reading_A_File_Successfully(string testFilePath, Func<IList<Character>> expectedProvider)
+        public void Test_Reading_A_File_Successfully(string testFilePath, IList<Character> expected)
         {
-            var expected = expectedProvider();
             using (var stream = new FileStream(testFilePath, FileMode.Open))
             {
                 var result = ConversationBinaryAccessor.ReadConversation(stream);
@@ -29,16 +28,16 @@ namespace SAGESharp.SLB.Level.Conversation
             using (var stream = new MemoryStream())
             {
                 ConversationBinaryAccessor
-                    .WriteConversation(stream, conversation as IReadOnlyList<Character> ?? new List<Character>(conversation));
+                    .WriteConversation(stream, conversation);
 
                 stream.ToArray().Should().BeEquivalentTo(expected);
             }
         }
 
-        static object[] FileNamesAndConversations() => new ParameterGroup<string, Func<IList<Character>>>()
-            .Parameters(TestDataPath("EmptyConversation.slb"), TestData.EmptyConversation)
-            .Parameters(TestDataPath("SimpleConversation.slb"), TestData.SimpleConversation)
-            .Parameters(TestDataPath("ComplexConversation.slb"), TestData.ComplexConversation)
+        static object[] FileNamesAndConversations() => new ParameterGroup<string, IList<Character>>()
+            .Parameters(TestDataPath("EmptyConversation.slb"), TestData.EmptyConversation())
+            .Parameters(TestDataPath("SimpleConversation.slb"), TestData.SimpleConversation())
+            .Parameters(TestDataPath("ComplexConversation.slb"), TestData.ComplexConversation())
             .Build();
 
         private static string TestDataPath(string fileName)

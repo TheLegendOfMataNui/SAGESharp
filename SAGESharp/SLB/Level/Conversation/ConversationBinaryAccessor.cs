@@ -16,15 +16,8 @@ namespace SAGESharp.SLB.Level.Conversation
         /// <param name="stream">The input stream to be read.</param>
         /// 
         /// <returns>A conversation (list of <see cref="Character"/> objects).</returns>
-        /// 
-        /// <exception cref="ArgumentNullException">If <paramref name="stream"/> is null.</exception>
         public static IList<Character> ReadConversation(Stream stream)
         {
-            if (stream == null)
-            {
-                throw new ArgumentNullException();
-            }
-
             ISLBBinaryReader<Identifier> identifierBinaryReader = new IdentifierBinaryReader(stream);
 
             return new ConversationBinaryReader(
@@ -47,9 +40,7 @@ namespace SAGESharp.SLB.Level.Conversation
         /// 
         /// <param name="stream">The output stream.</param>
         /// <param name="characters">The conversation to be writen.</param>
-        /// 
-        /// <exception cref="ArgumentNullException">If <paramref name="stream"/> is null.</exception>
-        public static void WriteConversation(Stream stream, IReadOnlyList<Character> characters)
+        public static void WriteConversation(Stream stream, IList<Character> characters)
         {
             throw new NotImplementedException();
         }
