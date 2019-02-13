@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-
+using System.Linq;
 using static System.BitConverter;
 
 namespace SAGESharp.SLB
@@ -29,11 +29,29 @@ namespace SAGESharp.SLB
     internal interface ISLBFooterGenerator<T>
     {
         /// <summary>
-        /// Generates the footer.
+        /// Generates the a footer from the input object.
         /// </summary>
-        /// <returns>The footer.</returns>
-        /// <param name="slbObject">Slb object.</param>
-        IDictionary<uint, uint> GenerateFooter(T slbObject);
+        /// 
+        /// <param name="slbObject">The SLB object that will be used to generate the footer.</param>
+        /// 
+        /// <returns>The footer generated from the input object.</returns>
+        IReadOnlyList<FooterEntry> GenerateFooter(T slbObject);
+    }
+
+    /// <summary>
+    /// Object that represents an entry in the footer table.
+    /// </summary>
+    internal struct FooterEntry
+    {
+        /// <summary>
+        /// The position of the offset.
+        /// </summary>
+        public uint OffsetPosition { get; set; }
+
+        /// <summary>
+        /// The offset value.
+        /// </summary>
+        public uint Offset { get; set; }
     }
 
     /// <summary>
@@ -75,8 +93,8 @@ namespace SAGESharp.SLB
 
             foreach (var entry in offsets)
             {
-                stream.Position = entry.Key;
-                stream.WriteUInt(entry.Value);
+                stream.Position = entry.OffsetPosition;
+                stream.WriteUInt(entry.Offset);
             }
 
             // Jump to the end and align the footer
@@ -98,7 +116,7 @@ namespace SAGESharp.SLB
             var footer = new byte[footerSize];
 
             var pos = 0;
-            foreach (var offset in offsets.Keys)
+            foreach (var offset in offsets.Select(o => o.OffsetPosition))
             {
                 GetBytes(offset).CopyTo(footer, pos);
                 pos += 4;

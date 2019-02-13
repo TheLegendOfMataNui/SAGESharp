@@ -46,11 +46,11 @@ namespace SAGESharp.SLB
         {
             var dummy = new object();
 
-            footerGenerator.GenerateFooter(dummy).Returns(new Dictionary<uint, uint>()
+            footerGenerator.GenerateFooter(dummy).Returns(new List<FooterEntry>()
             {
-                { 0x01020304, 0x0A0B0C0D },
-                { 0x11121314, 0x1A1B1C1D },
-                { 0x21222324, 0x2A2B2C2D }
+                new FooterEntry { OffsetPosition = 0x01020304, Offset = 0x0A0B0C0D },
+                new FooterEntry { OffsetPosition = 0x11121314, Offset = 0x1A1B1C1D },
+                new FooterEntry { OffsetPosition = 0x21222324, Offset = 0x2A2B2C2D }
             });
 
             footerWriter.WriteFooter(dummy);
@@ -86,11 +86,11 @@ namespace SAGESharp.SLB
         {
             var dummy = new object();
 
-            footerGenerator.GenerateFooter(dummy).Returns(new Dictionary<uint, uint>()
+            footerGenerator.GenerateFooter(dummy).Returns(new List<FooterEntry>()
             {
-                { 0x01020304, 0x0A0B0C0D },
-                { 0x11121314, 0x1A1B1C1D },
-                { 0x21222324, 0x2A2B2C2D }
+                new FooterEntry { OffsetPosition = 0x01020304, Offset = 0x0A0B0C0D },
+                new FooterEntry { OffsetPosition = 0x11121314, Offset = 0x1A1B1C1D },
+                new FooterEntry { OffsetPosition = 0x21222324, Offset = 0x2A2B2C2D }
             });
 
             stream.Seek(0, SeekOrigin.End).Returns(29);
