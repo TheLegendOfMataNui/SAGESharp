@@ -41,7 +41,7 @@ namespace SAGESharp.SLB
     /// <summary>
     /// Object that represents an entry in the footer table.
     /// </summary>
-    internal struct FooterEntry
+    internal struct FooterEntry : IEquatable<FooterEntry>
     {
         /// <summary>
         /// The position of the offset.
@@ -52,6 +52,58 @@ namespace SAGESharp.SLB
         /// The offset value.
         /// </summary>
         public uint Offset { get; set; }
+
+        /// <inheritdoc />
+        public override string ToString()
+            => $"OffsetPosition=0x{OffsetPosition:X2}, Offset=0x{Offset:X2}";
+
+        #region Equality
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            if (!(obj is FooterEntry footerEntry))
+            {
+                return false;
+            }
+
+            return Equals(footerEntry);
+        }
+
+        /// <inheritdoc />
+        public bool Equals(FooterEntry other)
+            => OffsetPosition == other.OffsetPosition && Offset == other.Offset;
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            var hash = 67;
+            OffsetPosition.AddHashCodeByVal(ref hash, 41);
+            Offset.AddHashCodeByVal(ref hash, 41);
+            return hash;
+        }
+
+        /// <summary>
+        /// Returns true if both footer entries are equals, false otherwise.
+        /// </summary>
+        /// 
+        /// <param name="left">The left side of the comparision.</param>
+        /// <param name="right">The right side of the comparision.</param>
+        /// 
+        /// <returns>True if both are equal, false otherwise.</returns>
+        public static bool operator ==(FooterEntry left, FooterEntry right)
+            => left.Equals(right);
+
+        /// <summary>
+        /// Returns true if both footer entries are not equals, false otherwise.
+        /// </summary>
+        /// 
+        /// <param name="left">The left side of the comparision.</param>
+        /// <param name="right">The right side of the comparision.</param>
+        /// 
+        /// <returns>True if both are not equal, false otherwise.</returns>
+        public static bool operator !=(FooterEntry left, FooterEntry right)
+            => !(left == right);
+        #endregion
     }
 
     /// <summary>

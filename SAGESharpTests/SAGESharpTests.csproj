@@ -85,6 +85,7 @@
     <Compile Include="ParameterGroup.cs" />
     <Compile Include="SLB\ASCIIExtensionsTests.cs" />
     <Compile Include="SLB\EqualityUtilsTests.cs" />
+    <Compile Include="SLB\FooterEntryTests.cs" />
     <Compile Include="SLB\IdentifierEqualityTests.cs" />
     <Compile Include="SLB\IdentifierTests.cs" />
     <Compile Include="SLB\IdentifierBinaryReaderTests.cs" />
