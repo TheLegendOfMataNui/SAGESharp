@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace SAGESharp.SLB.Level.Conversation
@@ -10,21 +9,29 @@ namespace SAGESharp.SLB.Level.Conversation
     public static class ConversationBinaryAccessor
     {
         /// <summary>
+        /// Reads a level conversation in binary form from the input file.
+        /// </summary>
+        /// 
+        /// <param name="filename">The file name to read for be read.</param>
+        /// 
+        /// <returns>A conversation (list of <see cref="Character"/> objects) in the stream.</returns>
+        public static IList<Character> ReadConversation(string filename)
+        {
+            using (var stream = new FileStream(filename, FileMode.Open))
+            {
+                return ReadConversation(stream);
+            }
+        }
+
+        /// <summary>
         /// Reads a level conversation in binary form from the input stream.
         /// </summary>
         /// 
         /// <param name="stream">The input stream to be read.</param>
         /// 
-        /// <returns>A conversation (list of <see cref="Character"/> objects).</returns>
-        /// 
-        /// <exception cref="ArgumentNullException">If <paramref name="stream"/> is null.</exception>
+        /// <returns>A conversation (list of <see cref="Character"/> objects) in the stream.</returns>
         public static IList<Character> ReadConversation(Stream stream)
         {
-            if (stream == null)
-            {
-                throw new ArgumentNullException();
-            }
-
             ISLBBinaryReader<Identifier> identifierBinaryReader = new IdentifierBinaryReader(stream);
 
             return new ConversationBinaryReader(
@@ -42,16 +49,33 @@ namespace SAGESharp.SLB.Level.Conversation
         }
 
         /// <summary>
+        /// Writes a level conversation in binary form into the output file.
+        /// </summary>
+        /// 
+        /// <param name="filename">The output file name.</param>
+        /// <param name="characters">The conversation to be writen.</param>
+        public static void WriteConversation(string filename, IList<Character> characters)
+        {
+            using (var stream = new FileStream(filename, FileMode.Create))
+            {
+                WriteConversation(stream, characters);
+            }
+        }
+
+        /// <summary>
         /// Writes a conversation in binary form into the output stream.
         /// </summary>
         /// 
         /// <param name="stream">The output stream.</param>
         /// <param name="characters">The conversation to be writen.</param>
-        /// 
-        /// <exception cref="ArgumentNullException">If <paramref name="stream"/> is null.</exception>
-        public static void WriteConversation(Stream stream, IReadOnlyList<Character> characters)
-        {
-            throw new NotImplementedException();
-        }
+        public static void WriteConversation(Stream stream, IList<Character> characters)
+            => new ConversationBinaryWriter(
+                stream,
+                new CharacterBinaryWriter(stream),
+                new InfoBinaryWriter(stream),
+                new FrameBinaryWriter(stream),
+                new StringBinaryWriter(stream),
+                new SLBFooterWriter<IList<Character>>(stream, new ConversationFooterGenerator())
+            ).WriteSLBObject(characters);
     }
 }
