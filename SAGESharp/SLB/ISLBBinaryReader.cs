@@ -5,7 +5,7 @@
     /// </summary>
     /// 
     /// <typeparam name="T">The type of SLB data that is going to be read.</typeparam>
-    public interface ISLBBinaryReader<T>
+    internal interface ISLBBinaryReader<T>
     {
         /// <summary>
         /// Reads a new SLB object from the binary data in the underlying storage.
