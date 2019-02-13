@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
 using SAGESharpTests;
-using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -20,7 +19,6 @@ namespace SAGESharp.SLB.Level.Conversation
             }
         }
 
-        [Ignore("Not implemented yet")]
         [TestCaseSource(nameof(FileNamesAndConversations))]
         public void Test_Writing_A_File_Successfully(string expectedOutput, IList<Character> conversation)
         {

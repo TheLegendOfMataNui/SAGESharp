@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace SAGESharp.SLB.Level.Conversation
@@ -41,8 +40,13 @@ namespace SAGESharp.SLB.Level.Conversation
         /// <param name="stream">The output stream.</param>
         /// <param name="characters">The conversation to be writen.</param>
         public static void WriteConversation(Stream stream, IList<Character> characters)
-        {
-            throw new NotImplementedException();
-        }
+            => new ConversationBinaryWriter(
+                stream,
+                new CharacterBinaryWriter(stream),
+                new InfoBinaryWriter(stream),
+                new FrameBinaryWriter(stream),
+                new StringBinaryWriter(stream),
+                new SLBFooterWriter<IList<Character>>(stream, new ConversationFooterGenerator())
+            ).WriteSLBObject(characters);
     }
 }
