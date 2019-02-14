@@ -54,6 +54,9 @@
     <Compile Include="BHDFile.cs" />
     <Compile Include="INIConfig.cs" />
     <Compile Include="LSS\Compiler.cs" />
+    <Compile Include="LSS\Scanner.cs" />
+    <Compile Include="LSS\SyntaxError.cs" />
+    <Compile Include="LSS\Token.cs" />
     <Compile Include="OSI\BCLInstruction.cs" />
     <Compile Include="OSI\ControlFlow\Analyzer.cs" />
     <Compile Include="OSI\ControlFlow\OSINode.cs" />

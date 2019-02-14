@@ -14,10 +14,8 @@ namespace ShoefitterDX
     static class Program
     {
         private const string INIFilename = "ShoefitterDX.ini";
-        private const string GAME_DATA_DIRECTORY = "data";
 
         public static SAGESharp.INIConfig Config { get; private set; }
-        public static IO.AssetManager AssetManager { get; private set; }
         public static Window Window { get; private set; }
 
         public static event EventHandler<Project> ProjectClosed;
@@ -42,12 +40,7 @@ namespace ShoefitterDX
             }
         }
 
-        public static event EventHandler<string> OutputWritten;
-        public static void WriteOutput(string output)
-        {
-            OutputWritten?.Invoke(null, output);
-        }
-
+           
         /// <summary>
         /// The main entry point for the application.
         /// </summary>

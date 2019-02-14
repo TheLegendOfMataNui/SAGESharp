@@ -67,6 +67,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LSSInteractive.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LSSInteractive.Designer.cs">
+      <DependentUpon>LSSInteractive.cs</DependentUpon>
+    </Compile>
     <Compile Include="OSIBrowser.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -81,6 +87,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="LSSInteractive.resx">
+      <DependentUpon>LSSInteractive.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="OSIBrowser.resx">
       <DependentUpon>OSIBrowser.cs</DependentUpon>
     </EmbeddedResource>
