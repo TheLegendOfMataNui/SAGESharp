@@ -4,6 +4,7 @@ namespace SAGESharp.SLB
 {
     internal static class NumericExtensions
     {
+        #region Byte manipulation
         /// <summary>
         /// Gets an individual byte from the input value.
         /// </summary>
@@ -55,5 +56,19 @@ namespace SAGESharp.SLB
             uint finalByte = (uint)(byteValue << realBytePosition);
             return (value & zeroes) | finalByte;
         }
+        #endregion
+
+        #region Byte array conversions
+        /// <summary>
+        /// Converts the input byte array to an <see cref="int"/> reading 4 bytes starting from <paramref name="startIndex"/>.
+        /// </summary>
+        /// 
+        /// <param name="bytes">The bytes to convert.</param>
+        /// <param name="startIndex">The position where the conversion will start.</param>
+        /// 
+        /// <returns>An <see cref="int"/> with the values from the bytes.</returns>
+        public static int ToInt32(this byte[] bytes, int startIndex = 0)
+            => BitConverter.ToInt32(bytes, startIndex);
+        #endregion
     }
 }
