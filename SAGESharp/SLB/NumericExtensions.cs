@@ -58,7 +58,7 @@ namespace SAGESharp.SLB
         }
         #endregion
 
-        #region Byte array conversions
+        #region Conversions from byte array
         /// <summary>
         /// Converts the input byte array to an <see cref="int"/> reading 4 bytes starting from <paramref name="startIndex"/>.
         /// </summary>
@@ -80,6 +80,28 @@ namespace SAGESharp.SLB
         /// <returns>An <see cref="uint"/> with the values from the bytes.</returns>
         public static uint ToUInt32(this byte[] bytes, int startIndex = 0)
             => BitConverter.ToUInt32(bytes, startIndex);
+        #endregion
+
+        #region Conversions to byte array
+        /// <summary>
+        /// Gets the bytes from <paramref name="value"/> as an array.
+        /// </summary>
+        /// 
+        /// <param name="value">The value to convert to an array.</param>
+        /// 
+        /// <returns>The bytes form <paramref name="value"/> in array form.</returns>
+        public static byte[] ToByteArray(this int value)
+            => BitConverter.GetBytes(value);
+
+        /// <summary>
+        /// Gets the bytes from <paramref name="value"/> as an array.
+        /// </summary>
+        /// 
+        /// <param name="value">The value to convert to an array.</param>
+        /// 
+        /// <returns>The bytes form <paramref name="value"/> in array form.</returns>
+        public static byte[] ToByteArray(this uint value)
+            => BitConverter.GetBytes(value);
         #endregion
     }
 }

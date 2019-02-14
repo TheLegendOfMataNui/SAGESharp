@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
+using SAGESharpTests;
 using System;
 
 namespace SAGESharp.SLB
@@ -41,5 +42,11 @@ namespace SAGESharp.SLB
         [TestCase(3, ExpectedResult = 0xF9FAFBFC)]
         public uint Test_Convert_An_Array_To_An_UInt32(int startIndex)
             => new byte[] { 0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xFA, 0xF9 }.ToUInt32(startIndex);
+
+        public void Test_Convert_An_Int32_To_An_Array()
+            => 0x11223344.ToByteArray().Should().Equal(new byte[] { 0x44, 0x33, 0x22, 0x11 });
+
+        public void Test_Convert_An_UInt32_To_An_Array()
+            => 0xAABBCCDD.ToByteArray().Should().Equal(new byte[] { 0xDD, 0xCC, 0xBB, 0xAA });
     }
 }
