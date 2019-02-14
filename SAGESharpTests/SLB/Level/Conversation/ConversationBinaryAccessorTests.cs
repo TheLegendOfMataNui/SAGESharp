@@ -31,6 +31,6 @@ namespace SAGESharp.SLB.Level.Conversation
             .Build();
 
         private static string TestDataPath(string fileName)
-            => $@"{TestContext.CurrentContext.TestDirectory}\Test Data\SLB\Level\Conversation\{fileName}";
+            => Path.Combine(TestContext.CurrentContext.TestDirectory, "Test Data", "SLB", "Level", "Conversation", fileName);
     }
 }
