@@ -1,7 +1,47 @@
-﻿using Moq;
+﻿using FluentAssertions;
+using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using SAGESharp.SLB;
 using System.IO;
+
+namespace SAGESharp.SLB
+{
+    class StreamExtensionsTessts
+    {
+        private readonly Stream stream = Substitute.For<Stream>();
+
+        [SetUp]
+        public void Setup()
+        {
+            stream.ClearReceivedCalls();
+        }
+
+        [Test]
+        public void Test_ForceReadBytes_Succeed()
+        {
+            var expected = new byte[] { 0x11, 0x22, 0x33 };
+
+            stream
+                .Read(Arg.Do<byte[]>(buffer => expected.CopyTo(buffer, 0)), 0, expected.Length)
+                .Returns(expected.Length);
+
+            stream.ForceReadBytes(expected.Length).Should().Equal(expected);
+        }
+
+        [Test]
+        public void Test_ForceReadBytes_Fails()
+        {
+            var count = 3;
+
+            stream.Read(Arg.Any<byte[]>(), 0, count).Returns(0);
+
+            stream.Invoking(s => s.ForceReadBytes(count))
+                .Should()
+                .Throw<EndOfStreamException>();
+        }
+    }
+}
 
 namespace SAGESharpTests.SLB
 {

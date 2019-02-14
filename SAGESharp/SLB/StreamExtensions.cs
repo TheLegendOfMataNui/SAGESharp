@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Konvenience;
 
 namespace SAGESharp.SLB
 {
@@ -64,6 +65,19 @@ namespace SAGESharp.SLB
 
             return (byte)result;
         }
+
+        /// <summary>
+        /// Reads the amount of bytes from the stream or throws if less than <paramref name="count"/> bytes were read.
+        /// </summary>
+        /// 
+        /// <param name="stream">The sstream to read.</param>
+        /// <param name="count">The amount of bytes to read.</param>
+        /// 
+        /// <returns>An array with the read bytes.</returns>
+        public static byte[] ForceReadBytes(this Stream stream, int count)
+            => new byte[count]
+                .TakeReferenceIf(buffer => stream.Read(buffer, 0, count) == count)
+                ?? throw new EndOfStreamException();
 
         /// <summary>
         /// Reads a single integer from the stream or throws if the end of the stream was reached.
