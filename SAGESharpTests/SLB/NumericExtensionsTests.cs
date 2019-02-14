@@ -5,7 +5,7 @@ using System;
 namespace SAGESharpTests.SLB
 {
     [TestFixture]
-    public class UIntExtensionsTests
+    public class NumericExtensionsTests
     {
         private const uint INPUT_NUMBER = 0xAABBCCDD;
 

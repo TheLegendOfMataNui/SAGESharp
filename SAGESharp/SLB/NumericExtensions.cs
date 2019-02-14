@@ -2,7 +2,7 @@
 
 namespace SAGESharp.SLB
 {
-    internal static class UIntExtensions
+    internal static class NumericExtensions
     {
         /// <summary>
         /// Gets an individual byte from the input value.

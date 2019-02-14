@@ -75,9 +75,9 @@
     <Compile Include="SLB\Level\Conversation\InfoBinaryReader.cs" />
     <Compile Include="SLB\Level\Conversation\InfoBinaryWriter.cs" />
     <Compile Include="SLB\Level\Conversation\LineSide.cs" />
+    <Compile Include="SLB\NumericExtensions.cs" />
     <Compile Include="SLB\StreamExtensions.cs" />
     <Compile Include="SLB\StringBinaryWriter.cs" />
-    <Compile Include="SLB\UIntExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
