@@ -69,6 +69,17 @@ namespace SAGESharp.SLB
         /// <returns>An <see cref="int"/> with the values from the bytes.</returns>
         public static int ToInt32(this byte[] bytes, int startIndex = 0)
             => BitConverter.ToInt32(bytes, startIndex);
+
+        /// <summary>
+        /// Converts the input byte array to an <see cref="uint"/> reading 4 bytes starting from <paramref name="startIndex"/>.
+        /// </summary>
+        /// 
+        /// <param name="bytes">The bytes to convert.</param>
+        /// <param name="startIndex">The position where the conversion will start.</param>
+        /// 
+        /// <returns>An <see cref="uint"/> with the values from the bytes.</returns>
+        public static uint ToUInt32(this byte[] bytes, int startIndex = 0)
+            => BitConverter.ToUInt32(bytes, startIndex);
         #endregion
     }
 }

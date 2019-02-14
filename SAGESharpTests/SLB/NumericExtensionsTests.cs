@@ -34,5 +34,12 @@ namespace SAGESharp.SLB
         [TestCase(3, ExpectedResult = 0x10111213)]
         public int Test_Convert_An_Array_To_An_Int32(int startIndex)
             => new byte[] { 0x16, 0x15, 0x14, 0x13, 0x12, 0x11, 0x10 }.ToInt32(startIndex);
+
+        [TestCase(0, ExpectedResult = 0xFCFDFEFF)]
+        [TestCase(1, ExpectedResult = 0xFBFCFDFE)]
+        [TestCase(2, ExpectedResult = 0xFAFBFCFD)]
+        [TestCase(3, ExpectedResult = 0xF9FAFBFC)]
+        public uint Test_Convert_An_Array_To_An_UInt32(int startIndex)
+            => new byte[] { 0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xFA, 0xF9 }.ToUInt32(startIndex);
     }
 }
