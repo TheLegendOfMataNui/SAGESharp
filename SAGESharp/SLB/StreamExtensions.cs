@@ -66,20 +66,6 @@ namespace SAGESharp.SLB
         }
 
         /// <summary>
-        /// Reads a single ASCII char from the stream or throws if the end of the stream was reached.
-        /// </summary>
-        /// 
-        /// <param name="stream">The stream to read</param>
-        /// 
-        /// <returns>The next ASCII char in the stream.</returns>
-        /// 
-        /// <exception cref="EndOfStreamException">If the stream was read completely.</exception>
-        public static char ForceReadASCIIChar(this Stream stream)
-        {
-            return ASCIIExtensions.ToASCIIChar(ForceReadByte(stream));
-        }
-
-        /// <summary>
         /// Reads a single integer from the stream or throws if the end of the stream was reached.
         /// </summary>
         /// 
@@ -121,17 +107,6 @@ namespace SAGESharp.SLB
             };
 
             return BitConverter.ToUInt32(bytes, 0);
-        }
-
-        /// <summary>
-        /// Writes an ASCII character to the stream.
-        /// </summary>
-        /// 
-        /// <param name="stream">The stream to write</param>
-        /// <param name="value">The ASCII character to write in the stream</param>
-        public static void WriteASCIIChar(this Stream stream, char value)
-        {
-            stream.WriteByte(ASCIIExtensions.ToASCIIByte(value));
         }
 
         /// <summary>

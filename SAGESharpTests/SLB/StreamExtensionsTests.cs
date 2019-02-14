@@ -75,36 +75,6 @@ namespace SAGESharpTests.SLB
         }
 
         [Test]
-        public void TestForceReadASCIICharSucceeds()
-        {
-            var streamMock = new Mock<Stream>();
-
-            streamMock
-                .Setup(stream => stream.ReadByte())
-                .Returns(0x61);
-
-            Assert.That(streamMock.Object.ForceReadASCIIChar(), Is.EqualTo('a'));
-
-            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(1));
-            streamMock.VerifyNoOtherCalls();
-        }
-
-        [Test]
-        public void TestForceReadASCIICharFails()
-        {
-            var streamMock = new Mock<Stream>();
-
-            streamMock
-                .Setup(stream => stream.ReadByte())
-                .Returns(-1);
-
-            Assert.That(() => streamMock.Object.ForceReadASCIIChar(), Throws.InstanceOf(typeof(EndOfStreamException)));
-
-            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(1));
-            streamMock.VerifyNoOtherCalls();
-        }
-
-        [Test]
         public void TestForceReadIntSucceeds()
         {
             var streamMock = new Mock<Stream>();
@@ -169,17 +139,6 @@ namespace SAGESharpTests.SLB
             Assert.That(() => streamMock.Object.ForceReadUInt(), Throws.InstanceOf(typeof(EndOfStreamException)));
 
             streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(2));
-            streamMock.VerifyNoOtherCalls();
-        }
-
-        [Test]
-        public void TestWriteASCIIChar()
-        {
-            var streamMock = new Mock<Stream>();
-
-            streamMock.Object.WriteASCIIChar('A');
-
-            streamMock.Verify(stream => stream.WriteByte(0x41), Times.Once());
             streamMock.VerifyNoOtherCalls();
         }
 

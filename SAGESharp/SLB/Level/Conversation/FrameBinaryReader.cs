@@ -45,7 +45,7 @@ namespace SAGESharp.SLB.Level.Conversation
                 var result = new StringBuilder();
                 for (int n = 0; n < stringSize; ++n)
                 {
-                    result.Append(stream.ForceReadASCIIChar());
+                    result.Append(stream.ForceReadByte().ToASCIIChar());
                 }
 
                 // Read end of string character
