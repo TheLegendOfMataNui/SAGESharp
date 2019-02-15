@@ -8,8 +8,6 @@ namespace SAGESharp.SLB.Level.Conversation
     /// </summary>
     class ConversationFooterGenerator : ISLBFooterGenerator<IList<Character>>
     {
-        private const int CHARACTER_LENGTH = 20;
-
         private const int INFO_LENGTH = 28;
 
         private const int FRAME_LENGTH = 24;
@@ -34,12 +32,12 @@ namespace SAGESharp.SLB.Level.Conversation
             var cursor1 = (uint)0x00000018;
             // Cursor2 is the position afte the list of all "Character" objects plus
             // the header of the list (size + offset at the beginning of the file)
-            var cursor2 = (uint)(CHARACTER_LENGTH * slbObject.Count) + 8;
+            var cursor2 = (uint)(Character.BINARY_SIZE * slbObject.Count) + 8;
             foreach (var character in slbObject)
             {
                 result.Add(new FooterEntry { OffsetPosition = cursor1, Offset = cursor2 });
 
-                cursor1 += CHARACTER_LENGTH;
+                cursor1 += Character.BINARY_SIZE;
                 cursor2 += (uint)(INFO_LENGTH * character.Entries.Count);
             }
 

@@ -6,6 +6,16 @@ namespace SAGESharp.SLB.Level.Conversation
 {
     public class Character : IEquatable<Character>
     {
+        /// <summary>
+        /// The size of a <see cref="Character"/> entry in a binary SLB file.
+        /// </summary>
+        /// 
+        /// This includes only <see cref="ToaName"/>, <see cref="CharName"/>,
+        /// <see cref="CharCont"/>, the size of <see cref="Entries"/> and the
+        /// position (offset) for all the entries (not represented in <see cref="Character"/>)
+        /// in that order.
+        internal const int BINARY_SIZE = 20;
+
         public Identifier ToaName { get; set; }
 
         public Identifier CharName { get; set; }
