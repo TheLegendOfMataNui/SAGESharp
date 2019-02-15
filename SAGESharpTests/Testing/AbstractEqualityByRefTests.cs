@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 
-namespace SAGESharpTests
+namespace SAGESharp.Testing
 {
     /// <summary>
     /// Class to facilitate testing the equality methods of another class.
@@ -18,7 +18,7 @@ namespace SAGESharpTests
     /// </remarks>
     /// 
     /// <typeparam name="T">The class to test.</typeparam>
-    internal abstract class AbstractEqualityByRefTests<T> where T : class, IEquatable<T>
+    abstract class AbstractEqualityByRefTests<T> where T : class, IEquatable<T>
     {
         /// <summary>
         /// Method to generate a default instance of <see cref="T"/>.
