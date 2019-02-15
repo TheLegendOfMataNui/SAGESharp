@@ -1,7 +1,7 @@
 ﻿using NSubstitute;
 using System.Linq;
 
-namespace SAGESharp
+namespace SAGESharp.Testing
 {
     static class Matcher
     {
