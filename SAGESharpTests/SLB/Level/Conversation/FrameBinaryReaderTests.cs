@@ -1,6 +1,7 @@
 ﻿using Moq;
 using NUnit.Framework;
 using SAGESharp.SLB.Level.Conversation;
+using SAGESharp.Testing;
 using System;
 using System.IO;
 
