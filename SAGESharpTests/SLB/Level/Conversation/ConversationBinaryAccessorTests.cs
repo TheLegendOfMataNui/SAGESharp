@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using SAGESharpTests;
+using SAGESharp.Testing;
 using System.Collections.Generic;
 using System.IO;
 

@@ -81,7 +81,6 @@
     <Compile Include="AbstractEqualityByRefTests.cs" />
     <Compile Include="AbstractEqualityByValTests.cs" />
     <Compile Include="MockingExtensions.cs" />
-    <Compile Include="ParameterGroup.cs" />
     <Compile Include="SLB\ASCIIExtensionsTests.cs" />
     <Compile Include="SLB\EqualityUtilsTests.cs" />
     <Compile Include="SLB\FooterEntryTests.cs" />
@@ -108,6 +107,7 @@
     <Compile Include="SLB\StreamExtensionsTests.cs" />
     <Compile Include="SLB\UIntExtensionsTests.cs" />
     <Compile Include="Testing\Matchers.cs" />
+    <Compile Include="Testing\ParameterGroup.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
