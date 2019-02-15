@@ -1,8 +1,7 @@
 ﻿using NUnit.Framework;
-using SAGESharp.SLB;
 using SAGESharp.Testing;
 
-namespace SAGESharpTests.SLB
+namespace SAGESharp.SLB
 {
     class IdentifierEqualityTests : AbstractEqualityByValTests<Identifier>
     {
