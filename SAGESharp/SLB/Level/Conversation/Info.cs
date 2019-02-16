@@ -6,6 +6,15 @@ namespace SAGESharp.SLB.Level.Conversation
 {
     public class Info : IEquatable<Info>
     {
+        /// <summary>
+        /// The size in bytes of an <see cref="Info"/> object in a binary SLB file.
+        /// </summary>
+        /// 
+        /// This include all the properties (as 32 bit numbers) except by
+        /// <see cref="Frames"/>, for those the size and an offset for the
+        /// actual entries are saved instead.
+        internal const int BINARY_SIZE = 28;
+
         public LineSide LineSide { get; set; }
 
         public uint ConditionStart { get; set; }
