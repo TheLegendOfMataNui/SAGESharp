@@ -40,7 +40,6 @@ namespace SAGESharp.SLB.Level.Conversation
                     stream,
                     new InfoBinaryReader(
                         stream,
-                        identifierBinaryReader,
                         new FrameBinaryReader(stream)
                     )
                 )
