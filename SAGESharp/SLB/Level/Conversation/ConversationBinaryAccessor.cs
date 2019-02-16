@@ -32,7 +32,8 @@ namespace SAGESharp.SLB.Level.Conversation
         /// 
         /// <returns>A conversation (list of <see cref="Character"/> objects) in the stream.</returns>
         public static IList<Character> ReadConversation(Stream stream)
-            => new FrameBinaryReader(stream)
+            => new StringBinaryReader(stream)
+                .Let(stringReader => new FrameBinaryReader(stream, stringReader))
                 .Let(frameReader => new InfoBinaryReader(stream, frameReader))
                 .Let(infoReader => new CharacterBinaryReader(stream, infoReader))
                 .Let(characterReader => new ConversationBinaryReader(stream, characterReader))
