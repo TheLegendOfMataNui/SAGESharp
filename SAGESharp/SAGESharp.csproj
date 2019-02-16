@@ -58,7 +58,6 @@
     <Compile Include="SLB\EqualityUtils.cs" />
     <Compile Include="SLB\Footer.cs" />
     <Compile Include="SLB\Identifier.cs" />
-    <Compile Include="SLB\IdentifierBinaryReader.cs" />
     <Compile Include="SLB\ISLBBinaryReader.cs" />
     <Compile Include="SLB\ISLBBinaryWriter.cs" />
     <Compile Include="SLB\Level\Conversation\Character.cs" />

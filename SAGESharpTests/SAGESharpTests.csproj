@@ -83,7 +83,6 @@
     <Compile Include="SLB\FooterEntryTests.cs" />
     <Compile Include="SLB\IdentifierEqualityTests.cs" />
     <Compile Include="SLB\IdentifierTests.cs" />
-    <Compile Include="SLB\IdentifierBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\CharacterBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\CharacterBinaryWriterTests.cs" />
     <Compile Include="SLB\Level\Conversation\CharacterEqualityTests.cs" />
