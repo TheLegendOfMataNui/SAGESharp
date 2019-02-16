@@ -77,6 +77,7 @@
     <Compile Include="SLB\NumericExtensions.cs" />
     <Compile Include="SLB\StreamExtensions.cs" />
     <Compile Include="SLB\StringBinaryWriter.cs" />
+    <Compile Include="SLB\StringBinaryReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
