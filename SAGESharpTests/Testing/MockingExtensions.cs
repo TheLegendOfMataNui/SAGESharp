@@ -2,9 +2,9 @@
 using SAGESharp.SLB;
 using System;
 
-namespace SAGESharpTests
+namespace SAGESharp.Testing
 {
-    internal static class MockingExtensions
+    static class MockingExtensions
     {
         // To simplify setting up the results of a stream
         public static ISetupSequentialResult<int> ReturnsIntBytes(

@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharpTests
+namespace SAGESharp.Testing
 {
     /// <summary>
     /// Convenience class to use when creating arguments for a <see cref="TestCaseSourceAttribute"/>
@@ -28,7 +28,7 @@ namespace SAGESharpTests
     /// }
     /// </code>
     /// </example>
-    internal class ParameterGroup : AbstractParameterGroup
+    class ParameterGroup : AbstractParameterGroup
     {
         /// <summary>
         /// Add the list of parameters to the parameter group, at least one is required.
@@ -58,7 +58,7 @@ namespace SAGESharpTests
     /// <typeparam name="T">The type of the parameter.</typeparam>
     /// 
     /// <seealso cref="ParameterGroup"/>
-    internal class ParameterGroup<T> : AbstractParameterGroup
+    class ParameterGroup<T> : AbstractParameterGroup
     {
         /// <summary>
         /// Adds a new entry to the parameter group.
@@ -84,7 +84,7 @@ namespace SAGESharpTests
     /// <typeparam name="T2">The type of the second parameter.</typeparam>
     /// 
     /// <seealso cref="ParameterGroup"/>
-    internal class ParameterGroup<T1, T2> : AbstractParameterGroup
+    class ParameterGroup<T1, T2> : AbstractParameterGroup
     {
         /// <summary>
         /// Adds a new entry to the parameter group.
@@ -112,7 +112,7 @@ namespace SAGESharpTests
     /// <typeparam name="T3">The type of the third parameter.</typeparam>
     /// 
     /// <seealso cref="ParameterGroup"/>
-    internal class ParameterGroup<T1, T2, T3> : AbstractParameterGroup
+    class ParameterGroup<T1, T2, T3> : AbstractParameterGroup
     {
         /// <summary>
         /// Adds a new entry to the parameter group.
@@ -142,7 +142,7 @@ namespace SAGESharpTests
     /// <typeparam name="T4">The type of the fourth parameter.</typeparam>
     /// 
     /// <seealso cref="ParameterGroup"/>
-    internal class ParameterGroup<T1, T2, T3, T4> : AbstractParameterGroup
+    class ParameterGroup<T1, T2, T3, T4> : AbstractParameterGroup
     {
         /// <summary>
         /// Adds a new entry to the parameter group.
@@ -174,7 +174,7 @@ namespace SAGESharpTests
     /// <typeparam name="T5">The type of the fifth parameter.</typeparam>
     /// 
     /// <seealso cref="ParameterGroup"/>
-    internal class ParameterGroup<T1, T2, T3, T4, T5> : AbstractParameterGroup
+    class ParameterGroup<T1, T2, T3, T4, T5> : AbstractParameterGroup
     {
         /// <summary>
         /// Adds a new entry to the parameter group.
@@ -199,7 +199,7 @@ namespace SAGESharpTests
     /// <summary>
     /// Class To facilitate some methods when writing <see cref="ParameterGroup"/> classes.
     /// </summary>
-    internal abstract class AbstractParameterGroup
+    abstract class AbstractParameterGroup
     {
         private readonly List<object> group = new List<object>();
 

@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using NSubstitute;
 using NUnit.Framework;
+using SAGESharp.Testing;
 using System;
 using System.IO;
 

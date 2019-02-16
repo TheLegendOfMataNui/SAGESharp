@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 
-namespace SAGESharpTests
+namespace SAGESharp.Testing
 {
     /// <summary>
     /// Class to facilitate testing the equality methods of a struct.
@@ -18,7 +18,7 @@ namespace SAGESharpTests
     /// </remarks>
     /// 
     /// <typeparam name="T">The class to test.</typeparam>
-    internal abstract class AbstractEqualityByValTests<T> where T : struct, IEquatable<T>
+    abstract class AbstractEqualityByValTests<T> where T : struct, IEquatable<T>
     {
         /// <summary>
         /// Method to call equals operator on the input values.

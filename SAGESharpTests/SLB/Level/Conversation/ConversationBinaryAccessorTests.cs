@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using SAGESharpTests;
+using SAGESharp.Testing;
 using System.Collections.Generic;
 using System.IO;
 
@@ -31,6 +31,6 @@ namespace SAGESharp.SLB.Level.Conversation
             .Build();
 
         private static string TestDataPath(string fileName)
-            => $@"{TestContext.CurrentContext.TestDirectory}\Test Data\SLB\Level\Conversation\{fileName}";
+            => Path.Combine(TestContext.CurrentContext.TestDirectory, "Test Data", "SLB", "Level", "Conversation", fileName);
     }
 }

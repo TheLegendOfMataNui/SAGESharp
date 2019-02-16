@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
 using Konvenience;
 using NUnit.Framework;
-using SAGESharpTests;
+using SAGESharp.Testing;
 using System;
 using System.Reflection;
 
-namespace SAGESharp.SLB.Tests
+namespace SAGESharp.SLB
 {
     class IdentifierTests
     {
