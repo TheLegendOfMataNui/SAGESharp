@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using FluentAssertions;
 using NSubstitute;
 using NUnit.Framework;
@@ -34,9 +33,17 @@ namespace SAGESharp.SLB
         [Test]
         public void Test_Reading_A_String()
         {
-            var expected = "A string"
-                .Select(c => c.ToASCIIByte())
-                .ToArray();
+            var expected = new byte[]
+            {
+                0x41, // 'A' in ASCII
+                0x20, // ' ' in ASCII
+                0x73, // 's' in ASCII
+                0x74, // 't' in ASCII
+                0x72, // 'r' in ASCII
+                0x69, // 'i' in ASCII
+                0x6E, // 'n' in ASCII
+                0x67  // 'g' in ASCII
+            };
             var length = expected.Length;
 
             stream.ReadByte().Returns(length);

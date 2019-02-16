@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
+using System.Text;
 using Konvenience;
 
 namespace SAGESharp.SLB
@@ -26,7 +26,7 @@ namespace SAGESharp.SLB
         public string ReadSLBObject() => stream
             .ForceReadByte()
             .Let(length => stream.ForceReadBytes(length))
-            .Select(b => b.ToASCIIChar())
+            .Let(Encoding.ASCII.GetChars)
             .Let(buffer => string.Concat(buffer));
     }
 }
