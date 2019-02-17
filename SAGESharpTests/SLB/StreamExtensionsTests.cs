@@ -100,45 +100,61 @@ namespace SAGESharp.SLB
         [Test]
         public void Test_ForceReadInt_Succeeds()
         {
-            stream.ReadByte().Returns(_ => 0x11, _ => 0x22, _ => 0x33, _ => 0x44);
+            void SetBytes(byte[] bytes)
+            {
+                bytes[0] = 0x11;
+                bytes[1] = 0x22;
+                bytes[2] = 0x33;
+                bytes[3] = 0x44;
+            }
 
-            stream.ForceReadInt().Should().Be(0x44332211);
+            stream.Read(Arg.Do<byte[]>(SetBytes), 0, 4).Returns(4);
 
-            stream.Received(4).ReadByte();
+            stream.ForceReadInt32().Should().Be(0x44332211);
+
+            stream.Received().Read(Arg.Any<byte[]>(), 0, 4);
         }
 
         [Test]
         public void Test_ForceReadInt_Fails()
         {
-            stream.ReadByte().Returns(-1);
+            stream.Read(Arg.Any<byte[]>(), 0, 4).Returns(0);
 
-            stream.Invoking(s => s.ForceReadInt())
+            stream.Invoking(s => s.ForceReadInt32())
                 .Should()
                 .Throw<EndOfStreamException>();
 
-            stream.Received().ReadByte();
+            stream.Received().Read(Arg.Any<byte[]>(), 0, 4);
         }
 
         [Test]
         public void Test_ForceReadUInt_Succeeds()
         {
-            stream.ReadByte().Returns(_ => 0xAA, _ => 0xBB, _ => 0xCC, _ => 0xDD);
+            void SetBytes(byte[] bytes)
+            {
+                bytes[0] = 0xAA;
+                bytes[1] = 0xBB;
+                bytes[2] = 0xCC;
+                bytes[3] = 0xDD;
+            }
 
-            stream.ForceReadUInt().Should().Be(0xDDCCBBAA);
+            stream.Read(Arg.Do<byte[]>(SetBytes), 0, 4).Returns(4);
 
-            stream.Received(4).ReadByte();
+            stream.ForceReadUInt32().Should().Be(0xDDCCBBAA);
+
+            stream.Received().Read(Arg.Any<byte[]>(), 0, 4);
         }
 
         [Test]
         public void Test_ForceReadUInt_Fails()
         {
-            stream.ReadByte().Returns(-1);
+            stream.Read(Arg.Any<byte[]>(), 0, 4).Returns(0);
 
-            stream.Invoking(s => s.ForceReadUInt())
+            stream.Invoking(s => s.ForceReadUInt32())
                 .Should()
                 .Throw<EndOfStreamException>();
 
-            stream.Received().ReadByte();
+            stream.Received().Read(Arg.Any<byte[]>(), 0, 4);
         }
 
         [Test]

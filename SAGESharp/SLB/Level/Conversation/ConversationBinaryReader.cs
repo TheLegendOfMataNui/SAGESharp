@@ -30,7 +30,7 @@ namespace SAGESharp.SLB.Level.Conversation
         /// <inheritdoc/>
         public IList<Character> ReadSLBObject()
         {
-            var characterCount = stream.ForceReadUInt();
+            var characterCount = stream.ForceReadUInt32();
 
             var result = new List<Character>();
             if (characterCount == 0)
@@ -38,7 +38,7 @@ namespace SAGESharp.SLB.Level.Conversation
                 return result;
             }
 
-            var position = stream.ForceReadUInt();
+            var position = stream.ForceReadUInt32();
             stream.OnPositionDo(position, () =>
             {
                 for (int n = 0; n < characterCount; ++n)

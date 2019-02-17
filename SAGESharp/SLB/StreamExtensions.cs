@@ -88,18 +88,8 @@ namespace SAGESharp.SLB
         /// <returns>The next integer in the stream.</returns>
         /// 
         /// <exception cref="EndOfStreamException">If the stream was read completely.</exception>
-        public static int ForceReadInt(this Stream stream)
-        {
-            var bytes = new byte[]
-            {
-                ForceReadByte(stream),
-                ForceReadByte(stream),
-                ForceReadByte(stream),
-                ForceReadByte(stream)
-            };
-
-            return BitConverter.ToInt32(bytes, 0);
-        }
+        public static int ForceReadInt32(this Stream stream)
+            => stream.ForceReadBytes(4).ToInt32();
 
         /// <summary>
         /// Reads a single unsigned integer from the stream or throws if the end of the stream was reached.
@@ -110,18 +100,8 @@ namespace SAGESharp.SLB
         /// <returns>The next unsigned integer in the stream.</returns>
         /// 
         /// <exception cref="EndOfStreamException">If the stream was read completely.</exception>
-        public static uint ForceReadUInt(this Stream stream)
-        {
-            var bytes = new byte[]
-            {
-                ForceReadByte(stream),
-                ForceReadByte(stream),
-                ForceReadByte(stream),
-                ForceReadByte(stream)
-            };
-
-            return BitConverter.ToUInt32(bytes, 0);
-        }
+        public static uint ForceReadUInt32(this Stream stream)
+            => stream.ForceReadBytes(4).ToUInt32();
 
         /// <summary>
         /// Writes an integer value to the stream.

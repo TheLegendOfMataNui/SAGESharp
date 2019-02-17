@@ -49,19 +49,21 @@ namespace SAGESharp.SLB.Level.Conversation
                 new Character { ToaName = 3 }
             };
 
-            // Amount of entries
-            stream.ReadByte().Returns(
-                _ => 0x03, _ => 0x00, _ => 0x00, _ => 0x00, // Character count
-                _ => 0x1C, _ => 0x00, _ => 0x00, _ => 0x00  // Offset of first character
-            );
+            // Character count
+            var callNo = 0;
+            stream.Read(Arg.Do<byte[]>(bytes =>
+            {
+                // Use 0x03 (the amount of entires) for the first call
+                // Use 0x1C (the offset of the entires) for all the other calls
+                bytes[0] = (byte)((callNo++ == 0) ? 0x03 : 0x1C);
+                bytes[1] = 0x00;
+                bytes[2] = 0x00;
+                bytes[3] = 0x00;
+            }), 0, 4).Returns(04);
 
             stream.Position.Returns(0xA0);
 
-            characterReader.ReadSLBObject().Returns(
-                _ => expected[0],
-                _ => expected[1],
-                _ => expected[2]
-            );
+            characterReader.ReadSLBObject().Returns(expected[0], expected[1], expected[2]);
 
             reader.ReadSLBObject().Should().Equal(expected);
 
@@ -78,10 +80,14 @@ namespace SAGESharp.SLB.Level.Conversation
         [Test]
         public void Test_Reading_An_Empty_Conversation()
         {
-            // Three entries located at 0x1C
-            stream.ReadByte().Returns(
-                _ => 0x00, _ => 0x00, _ => 0x00, _ => 0x00
-            );
+            // Character count
+            stream.Read(Arg.Do<byte[]>(bytes =>
+            {
+                bytes[0] = 0x00;
+                bytes[1] = 0x00;
+                bytes[2] = 0x00;
+                bytes[3] = 0x00;
+            }), 0, 4).Returns(04);
 
             reader.ReadSLBObject().Should().BeEmpty();
 
