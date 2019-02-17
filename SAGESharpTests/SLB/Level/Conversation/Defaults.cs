@@ -2,7 +2,7 @@
 using SAGESharp.SLB.Level.Conversation;
 using System.Collections.Generic;
 
-namespace SAGESharpTests.SLB.Level.Conversation
+namespace SAGESharp.SLB.Level.Conversation
 {
     static class Defaults
     {

@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace SAGESharp.SLB
 {
-    public class StringBinaryReaderTests
+    class StringBinaryReaderTests
     {
         private readonly Stream stream = Substitute.For<Stream>();
 

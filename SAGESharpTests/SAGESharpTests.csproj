@@ -9,7 +9,7 @@
     <ProjectGuid>{62E3C5E4-4C83-48FF-8C4E-4547A13DB764}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SAGESharpTests</RootNamespace>
+    <RootNamespace>SAGESharp</RootNamespace>
     <AssemblyName>SAGESharpTests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

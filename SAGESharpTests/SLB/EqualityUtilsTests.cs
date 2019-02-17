@@ -1,9 +1,8 @@
 ﻿using NUnit.Framework;
-using SAGESharp.SLB;
 using SAGESharp.Testing;
 using System.Collections.Generic;
 
-namespace SAGESharpTests.SLB
+namespace SAGESharp.SLB
 {
     class EqualityUtilsTests
     {
