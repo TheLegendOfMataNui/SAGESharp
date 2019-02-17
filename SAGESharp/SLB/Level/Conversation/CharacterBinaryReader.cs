@@ -11,8 +11,6 @@ namespace SAGESharp.SLB.Level.Conversation
     {
         private readonly Stream stream;
 
-        private readonly ISLBBinaryReader<Identifier> identifierReader;
-
         private readonly ISLBBinaryReader<Info> infoReader;
 
         /// <summary>
@@ -20,33 +18,29 @@ namespace SAGESharp.SLB.Level.Conversation
         /// </summary>
         /// 
         /// <param name="stream">The input stream</param>
-        /// <param name="identifierReader">An identifier reader</param>
         /// <param name="infoReader">An info reader</param>
-        public CharacterBinaryReader(
-            Stream stream,
-            ISLBBinaryReader<Identifier> identifierReader,
-            ISLBBinaryReader<Info> infoReader
-        ) {
+        public CharacterBinaryReader(Stream stream, ISLBBinaryReader<Info> infoReader) {
             this.stream = stream ?? throw new ArgumentNullException("Input stream cannot be null.");
-            this.identifierReader = identifierReader ?? throw new ArgumentNullException("Input stream cannot be null.");
             this.infoReader = infoReader ?? throw new ArgumentNullException("Input stream cannot be null.");
         }
 
         /// <inheritdoc/>
         public Character ReadSLBObject()
         {
+            var buffer = stream.ForceReadBytes(Character.BINARY_SIZE);
+
             var result = new Character()
             {
-                ToaName = identifierReader.ReadSLBObject(),
-                CharName = identifierReader.ReadSLBObject(),
-                CharCont = identifierReader.ReadSLBObject(),
+                ToaName = buffer.ToInt32(),
+                CharName = buffer.ToInt32(4),
+                CharCont = buffer.ToInt32(8),
                 Entries = new List<Info>()
             };
 
-            var infoCount = stream.ForceReadUInt();
+            var infoCount = buffer.ToInt32(12);
             if (infoCount > 0)
             {
-                var infoPosition = stream.ForceReadUInt();
+                var infoPosition = buffer.ToInt32(16);
 
                 stream.OnPositionDo(infoPosition, () => {
                     for (int n = 0; n < infoCount; ++n)

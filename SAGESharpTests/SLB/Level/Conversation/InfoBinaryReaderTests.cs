@@ -1,137 +1,110 @@
-﻿using Moq;
+﻿using FluentAssertions;
+using NSubstitute;
 using NUnit.Framework;
-using SAGESharp.SLB;
-using SAGESharp.SLB.Level.Conversation;
-using SAGESharp.Testing;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
-namespace SAGESharpTests.SLB.Level.Conversation
+namespace SAGESharp.SLB.Level.Conversation
 {
-    [TestFixture]
-    public static class InfoBinaryReaderTests
+    class InfoBinaryReaderTests
     {
-        [Test]
-        public static void TestInfoBinaryReaderConstructor()
-        {
-            var stream = new Mock<Stream>().Object;
-            var identifierReader = new Mock<ISLBBinaryReader<Identifier>>().Object;
-            var frameReader = new Mock<ISLBBinaryReader<Frame>>().Object;
+        private readonly Stream stream = Substitute.For<Stream>();
 
-            Assert.That(() => new InfoBinaryReader(null, identifierReader, frameReader), Throws.InstanceOf<ArgumentNullException>());
-            Assert.That(() => new InfoBinaryReader(stream, null, frameReader), Throws.InstanceOf<ArgumentNullException>());
-            Assert.That(() => new InfoBinaryReader(stream, identifierReader, null), Throws.InstanceOf<ArgumentNullException>());
+        private readonly ISLBBinaryReader<Frame> frameReader = Substitute.For<ISLBBinaryReader<Frame>>();
+
+        private readonly ISLBBinaryReader<Info> reader;
+
+        public InfoBinaryReaderTests()
+        {
+            reader = new InfoBinaryReader(stream, frameReader);
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            stream.ClearReceivedCalls();
+            frameReader.ClearReceivedCalls();
         }
 
         [Test]
-        public static void TestReadInfoSlb()
+        public void Test_Creating_An_InfoBinaryReader_With_Null_Dependency()
         {
-            var streamMock = new Mock<Stream>();
-            var identifierReaderMock = new Mock<ISLBBinaryReader<Identifier>>();
-            var frameReaderMock = new Mock<ISLBBinaryReader<Frame>>();
-
-            var reader = new InfoBinaryReader(streamMock.Object, identifierReaderMock.Object, frameReaderMock.Object);
-
-            var stringLabel = (Identifier)0x11223300;
-
-            identifierReaderMock
-                .SetupSequence(identifierReader => identifierReader.ReadSLBObject())
-                .Returns(stringLabel);
-
-            streamMock
-                .SetupSequence(stream => stream.ReadByte())
-                .ReturnsIntBytes((int)LineSide.Right) // Line side
-                .ReturnsIntBytes(0x11223355) // Condition start
-                .ReturnsIntBytes(0x11223366) // Condition end
-                .ReturnsIntBytes(0x11223377) // String index
-                .ReturnsIntBytes(0x02) // Frame count
-                .ReturnsIntBytes(0x44); // Frame position
-
-            streamMock
-                .Setup(stream => stream.Position)
-                .Returns(0x20);
-
-            var frame1 = new Frame();
-            var frame2 = new Frame();
-            frameReaderMock
-                .SetupSequence(infoReader => infoReader.ReadSLBObject())
-                .Returns(frame1)
-                .Returns(frame2);
-
-            var info = reader.ReadSLBObject();
-
-            Assert.That(info.LineSide, Is.EqualTo(LineSide.Right));
-            Assert.That(info.ConditionStart, Is.EqualTo(0x11223355));
-            Assert.That(info.ConditionEnd, Is.EqualTo(0x11223366));
-            Assert.That(info.StringLabel, Is.EqualTo(stringLabel));
-            Assert.That(info.StringIndex, Is.EqualTo(0x11223377));
-            Assert.That(info.Frames.Count, Is.EqualTo(2));
-            Assert.That(info.Frames, Contains.Item(frame1));
-            Assert.That(info.Frames, Contains.Item(frame2));
-
-            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(24));
-            streamMock.VerifyGet(stream => stream.Position, Times.Once);
-            streamMock.VerifySet(stream => stream.Position = 0x44, Times.Once);
-            streamMock.VerifySet(stream => stream.Position = 0x20, Times.Once);
-            streamMock.VerifyNoOtherCalls();
-
-            identifierReaderMock.Verify(identifierReader => identifierReader.ReadSLBObject(), Times.Once);
-            identifierReaderMock.VerifyNoOtherCalls();
-
-            frameReaderMock.Verify(frameReader => frameReader.ReadSLBObject(), Times.Exactly(2));
-            frameReaderMock.VerifyNoOtherCalls();
+            this.Invoking(_ => new InfoBinaryReader(null, frameReader)).Should().Throw<ArgumentNullException>();
+            this.Invoking(_ => new InfoBinaryReader(stream, null)).Should().Throw<ArgumentNullException>();
         }
 
         [Test]
-        public static void TestReadCharacterSlbWithNoInfo()
+        public void Test_Reading_An_Info_Object_With_Frames()
         {
-            var streamMock = new Mock<Stream>();
-            var identifierReaderMock = new Mock<ISLBBinaryReader<Identifier>>();
-            var frameReaderMock = new Mock<ISLBBinaryReader<Frame>>();
+            var expected = new byte[]
+            {
+                0x02, 0x00, 0x00, 0x00,
+                0x04, 0x03, 0x02, 0x01,
+                0x14, 0x13, 0x12, 0x11,
+                0x24, 0x23, 0x22, 0x21,
+                0x34, 0x33, 0x32, 0x31,
+                0x02, 0x00, 0x00, 0x00,
+                0x1C, 0x00, 0x00, 0x00
+            };
 
-            var reader = new InfoBinaryReader(streamMock.Object, identifierReaderMock.Object, frameReaderMock.Object);
+            stream
+                .Read(Arg.Do<byte[]>(bytes => expected.CopyTo(bytes, 0)), 0, Info.BINARY_SIZE)
+                .Returns(Info.BINARY_SIZE);
 
-            var stringLabel = (Identifier)0x11223300;
+            stream.Position.Returns(0xA0);
 
-            identifierReaderMock
-                .SetupSequence(identifierReader => identifierReader.ReadSLBObject())
-                .Returns(stringLabel);
+            frameReader.ReadSLBObject().Returns(_ => new Frame());
 
-            streamMock
-                .SetupSequence(stream => stream.ReadByte())
-                .ReturnsIntBytes((int)LineSide.Right) // Line side
-                .ReturnsIntBytes(0x11223355) // Condition start
-                .ReturnsIntBytes(0x11223366) // Condition end
-                .ReturnsIntBytes(0x11223377) // String index
-                .ReturnsIntBytes(0x00); // Frame count
+            reader.ReadSLBObject().Should().Be(new Info
+            {
+                LineSide = LineSide.Left,
+                ConditionStart = 0x01020304,
+                ConditionEnd = 0x11121314,
+                StringLabel = 0x21222324,
+                StringIndex = 0x31323334,
+                Frames = new List<Frame> { new Frame(), new Frame() }
+            });
 
-            streamMock
-                .Setup(stream => stream.Position)
-                .Returns(0x20);
+            Received.InOrder(() =>
+            {
+                stream.Position = 0x1C;
+                frameReader.ReadSLBObject();
+                frameReader.ReadSLBObject();
+                stream.Position = 0xA0;
+            });
+        }
 
-            var frame1 = new Frame();
-            var frame2 = new Frame();
-            frameReaderMock
-                .SetupSequence(infoReader => infoReader.ReadSLBObject())
-                .Returns(frame1)
-                .Returns(frame2);
+        [Test]
+        public void Test_Reading_An_Info_Object_Without_Frames()
+        {
+            var expected = new byte[]
+            {
+                0x02, 0x00, 0x00, 0x00,
+                0x04, 0x03, 0x02, 0x01,
+                0x14, 0x13, 0x12, 0x11,
+                0x24, 0x23, 0x22, 0x21,
+                0x34, 0x33, 0x32, 0x31,
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00
+            };
 
-            var info = reader.ReadSLBObject();
+            stream
+                .Read(Arg.Do<byte[]>(bytes => expected.CopyTo(bytes, 0)), 0, Info.BINARY_SIZE)
+                .Returns(Info.BINARY_SIZE);
 
-            Assert.That(info.LineSide, Is.EqualTo(LineSide.Right));
-            Assert.That(info.ConditionStart, Is.EqualTo(0x11223355));
-            Assert.That(info.ConditionEnd, Is.EqualTo(0x11223366));
-            Assert.That(info.StringLabel, Is.EqualTo(stringLabel));
-            Assert.That(info.StringIndex, Is.EqualTo(0x11223377));
-            Assert.That(info.Frames, Is.Empty);
+            reader.ReadSLBObject().Should().Be(new Info
+            {
+                LineSide = LineSide.Left,
+                ConditionStart = 0x01020304,
+                ConditionEnd = 0x11121314,
+                StringLabel = 0x21222324,
+                StringIndex = 0x31323334,
+                Frames = new List<Frame> { }
+            });
 
-            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(20));
-            streamMock.VerifyNoOtherCalls();
-
-            identifierReaderMock.Verify(identifierReader => identifierReader.ReadSLBObject(), Times.Once);
-            identifierReaderMock.VerifyNoOtherCalls();
-
-            frameReaderMock.VerifyNoOtherCalls();
+            stream.DidNotReceive().Position = Arg.Any<long>();
+            frameReader.DidNotReceive().ReadSLBObject();
         }
     }
 }

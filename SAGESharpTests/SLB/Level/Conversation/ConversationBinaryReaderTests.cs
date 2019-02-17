@@ -1,83 +1,99 @@
-﻿using Moq;
+﻿using FluentAssertions;
+using NSubstitute;
 using NUnit.Framework;
-using SAGESharp.SLB;
-using SAGESharp.SLB.Level.Conversation;
-using SAGESharp.Testing;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
-namespace SAGESharpTests.SLB.Level.Conversation
+namespace SAGESharp.SLB.Level.Conversation
 {
-    public static class ConversationBinaryReaderTests
+    class ConversationBinaryReaderTests
     {
-        [Test]
-        public static void TestConversationBinaryReaderConstructor()
-        {
-            var stream = new Mock<Stream>().Object;
-            var characterReader = new Mock<ISLBBinaryReader<Character>>().Object;
+        private readonly Stream stream = Substitute.For<Stream>();
 
-            Assert.That(() => new ConversationBinaryReader(null, characterReader), Throws.InstanceOf<ArgumentNullException>());
-            Assert.That(() => new ConversationBinaryReader(stream, null), Throws.InstanceOf<ArgumentNullException>());
+        private readonly ISLBBinaryReader<Character> characterReader = Substitute.For<ISLBBinaryReader<Character>>();
+
+        private readonly ISLBBinaryReader<IList<Character>> reader;
+
+        public ConversationBinaryReaderTests()
+        {
+            reader = new ConversationBinaryReader(stream, characterReader);
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            stream.ClearReceivedCalls();
+            characterReader.ClearReceivedCalls();
         }
 
         [Test]
-        public static void TestReadCharacterSlb()
+        public void Creating_A_ConversationBinaryReader_With_Null_Dependencies()
         {
-            var streamMock = new Mock<Stream>();
-            var characterReaderMock = new Mock<ISLBBinaryReader<Character>>();
+            this.Invoking(_ => new ConversationBinaryReader(null, characterReader))
+                .Should()
+                .Throw<ArgumentNullException>();
 
-            var reader = new ConversationBinaryReader(streamMock.Object, characterReaderMock.Object);
-
-            streamMock
-                .SetupSequence(stream => stream.ReadByte())
-                // Character entry count
-                .ReturnsIntBytes(2)
-                // Character entries position
-                .ReturnsIntBytes(0x44);
-
-            streamMock
-                .Setup(stream => stream.Position)
-                .Returns(0x20);
-
-            var character1 = new Character();
-            var character2 = new Character();
-            characterReaderMock
-                .SetupSequence(infoReader => infoReader.ReadSLBObject())
-                .Returns(character1)
-                .Returns(character2);
-
-            var characters = reader.ReadSLBObject();
-
-            Assert.AreEqual(characters.Count, 2);
-            Assert.IsTrue(characters.Contains(character1));
-            Assert.IsTrue(characters.Contains(character2));
-
-            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(8));
-            streamMock.VerifyGet(stream => stream.Position, Times.Once);
-            streamMock.VerifySet(stream => stream.Position = 0x44, Times.Once);
-            streamMock.VerifySet(stream => stream.Position = 0x20, Times.Once);
-            streamMock.VerifyNoOtherCalls();
+            this.Invoking(_ => new ConversationBinaryReader(stream, null))
+                .Should()
+                .Throw<ArgumentNullException>();
         }
 
         [Test]
-        public static void TestReadCharacterSlbWithNoInfo()
+        public void Test_Reading_A_Non_Empty_Conversation()
         {
+            var expected = new List<Character>()
+            {
+                new Character { ToaName = 1 },
+                new Character { ToaName = 2 },
+                new Character { ToaName = 3 }
+            };
 
-            var streamMock = new Mock<Stream>();
-            var characterReaderMock = new Mock<ISLBBinaryReader<Character>>();
+            // Character count
+            var callNo = 0;
+            stream.Read(Arg.Do<byte[]>(bytes =>
+            {
+                // Use 0x03 (the amount of entires) for the first call
+                // Use 0x1C (the offset of the entires) for all the other calls
+                bytes[0] = (byte)((callNo++ == 0) ? 0x03 : 0x1C);
+                bytes[1] = 0x00;
+                bytes[2] = 0x00;
+                bytes[3] = 0x00;
+            }), 0, 4).Returns(04);
 
-            var reader = new ConversationBinaryReader(streamMock.Object, characterReaderMock.Object);
+            stream.Position.Returns(0xA0);
 
-            streamMock
-                .SetupSequence(stream => stream.ReadByte())
-                .ReturnsIntBytes(0);
+            characterReader.ReadSLBObject().Returns(expected[0], expected[1], expected[2]);
 
-            var characters = reader.ReadSLBObject();
+            reader.ReadSLBObject().Should().Equal(expected);
 
-            Assert.AreEqual(characters.Count, 0);
-
-            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(4));
-            streamMock.VerifyNoOtherCalls(); ;
+            Received.InOrder(() =>
+            {
+                stream.Position = 0x1C;
+                characterReader.ReadSLBObject();
+                characterReader.ReadSLBObject();
+                characterReader.ReadSLBObject();
+                stream.Position = 0xA0;
+            });
         }
+
+        [Test]
+        public void Test_Reading_An_Empty_Conversation()
+        {
+            // Character count
+            stream.Read(Arg.Do<byte[]>(bytes =>
+            {
+                bytes[0] = 0x00;
+                bytes[1] = 0x00;
+                bytes[2] = 0x00;
+                bytes[3] = 0x00;
+            }), 0, 4).Returns(04);
+
+            reader.ReadSLBObject().Should().BeEmpty();
+
+            stream.DidNotReceive().Position = Arg.Any<long>();
+            characterReader.DidNotReceive().ReadSLBObject();
+        }
+
     }
 }

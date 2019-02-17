@@ -1,115 +1,80 @@
-﻿using Moq;
+﻿using FluentAssertions;
+using NSubstitute;
 using NUnit.Framework;
-using SAGESharp.SLB.Level.Conversation;
-using SAGESharp.Testing;
 using System;
 using System.IO;
 
-namespace SAGESharpTests.SLB.Level.Conversation
+namespace SAGESharp.SLB.Level.Conversation
 {
-    [TestFixture]
-    public static class FrameBinaryReaderTests
+    class FrameBinaryReaderTests
     {
-        [Test]
-        public static void TestFrameBinaryReaderConstructor()
-        {
-            var stream = new Mock<Stream>().Object;
+        private readonly Stream stream = Substitute.For<Stream>();
 
-            Assert.That(() => new FrameBinaryReader(null), Throws.InstanceOf<ArgumentNullException>());
+        private readonly ISLBBinaryReader<string> stringReader = Substitute.For<ISLBBinaryReader<string>>();
+
+        private readonly ISLBBinaryReader<Frame> reader;
+
+        public FrameBinaryReaderTests()
+        {
+            reader = new FrameBinaryReader(stream, stringReader);
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            stream.ClearReceivedCalls();
         }
 
         [Test]
-        public static void TestReadFrameSlb()
+        public void Test_Creating_A_FrameBinaryReader_With_Null_Dependencies()
         {
-            var streamMock = new Mock<Stream>();
+            this.Invoking(_ => new FrameBinaryReader(null, stringReader))
+                .Should()
+                .Throw<ArgumentNullException>();
 
-            var reader = new FrameBinaryReader(streamMock.Object);
-
-            var toaAnimation = 0x11223344;
-            var charAnimation = 0x11223355;
-            var cameraPositionTarget = 0x11223366;
-            var cameraDistance = 0x11223377;
-            var stringIndex = 0x11223388;
-            var conversationSounds = "ABCDE";
-
-            streamMock
-                .SetupSequence(stream => stream.ReadByte())
-                .ReturnsIntBytes(toaAnimation)
-                .ReturnsIntBytes(charAnimation)
-                .ReturnsIntBytes(cameraPositionTarget)
-                .ReturnsIntBytes(cameraDistance)
-                .ReturnsIntBytes(stringIndex)
-                // Conversation sounds position
-                .ReturnsIntBytes(0x44)
-                // Conversation sounds size
-                .Returns(conversationSounds.Length)
-                .ReturnsASCIIBytes(conversationSounds);
-
-            streamMock
-                .Setup(stream => stream.Position)
-                .Returns(0x20);
-
-            var frame = reader.ReadSLBObject();
-
-            Assert.AreEqual(frame.ToaAnimation, toaAnimation);
-            Assert.AreEqual(frame.CharAnimation, charAnimation);
-            Assert.AreEqual(frame.CameraPositionTarget, cameraPositionTarget);
-            Assert.AreEqual(frame.CameraDistance, cameraDistance);
-            Assert.AreEqual(frame.StringIndex, stringIndex);
-            Assert.AreEqual(frame.ConversationSounds, conversationSounds);
-
-            // 6 integers (4 bytes each) + length (1 byte) + length + null character (1 byte)
-            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(26 + conversationSounds.Length));
-            streamMock.VerifyGet(stream => stream.Position, Times.Once);
-            streamMock.VerifySet(stream => stream.Position = 0x44, Times.Once);
-            streamMock.VerifySet(stream => stream.Position = 0x20, Times.Once);
-            streamMock.VerifyNoOtherCalls();
+            this.Invoking(_ => new FrameBinaryReader(stream, null))
+                .Should()
+                .Throw<ArgumentNullException>();
         }
 
         [Test]
-        public static void TestReadCharacterSlbWithNoConversationSounds()
+        public void Test_Reading_A_Frame()
         {
-            var streamMock = new Mock<Stream>();
+            var expected = new byte[]
+            {
+                0x04, 0x03, 0x02, 0x01,
+                0x14, 0x13, 0x12, 0x11,
+                0x24, 0x23, 0x22, 0x21,
+                0x34, 0x33, 0x32, 0x31,
+                0x44, 0x43, 0x42, 0x41,
+                0x1C, 0x00, 0x00, 0x00
+            };
 
-            var reader = new FrameBinaryReader(streamMock.Object);
+            stream
+                .Read(Arg.Do<byte[]>(bytes => expected.CopyTo(bytes, 0)), 0, Frame.BINARY_SIZE)
+                .Returns(Frame.BINARY_SIZE);
 
-            var toaAnimation = 0x11223344;
-            var charAnimation = 0x11223355;
-            var cameraPositionTarget = 0x11223366;
-            var cameraDistance = 0x11223377;
-            var stringIndex = 0x11223388;
+            stream.Position.Returns(0xA0);
 
-            streamMock
-                .SetupSequence(stream => stream.ReadByte())
-                .ReturnsIntBytes(toaAnimation)
-                .ReturnsIntBytes(charAnimation)
-                .ReturnsIntBytes(cameraPositionTarget)
-                .ReturnsIntBytes(cameraDistance)
-                .ReturnsIntBytes(stringIndex)
-                // Conversation sounds position
-                .ReturnsIntBytes(0x44)
-                // Conversation sounds size
-                .Returns(0);
+            stringReader.ReadSLBObject().Returns("SOUNDS1");
 
-            streamMock
-                .Setup(stream => stream.Position)
-                .Returns(0x20);
+            reader.ReadSLBObject().Should().Be(new Frame
+            {
+                ToaAnimation = 0x01020304,
+                CharAnimation = 0x11121314,
+                CameraPositionTarget = 0x21222324,
+                CameraDistance = 0x31323334,
+                StringIndex = 0x41424344,
+                ConversationSounds = "SOUNDS1"
+            });
 
-            var frame = reader.ReadSLBObject();
-
-            Assert.AreEqual(frame.ToaAnimation, toaAnimation);
-            Assert.AreEqual(frame.CharAnimation, charAnimation);
-            Assert.AreEqual(frame.CameraPositionTarget, cameraPositionTarget);
-            Assert.AreEqual(frame.CameraDistance, cameraDistance);
-            Assert.AreEqual(frame.StringIndex, stringIndex);
-            Assert.AreEqual(frame.ConversationSounds, string.Empty);
-
-            // 6 integers (4 bytes each) + length (1 byte) + null character (1 byte)
-            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(26));
-            streamMock.VerifyGet(stream => stream.Position, Times.Once);
-            streamMock.VerifySet(stream => stream.Position = 0x44, Times.Once);
-            streamMock.VerifySet(stream => stream.Position = 0x20, Times.Once);
-            streamMock.VerifyNoOtherCalls();
+            Received.InOrder(() =>
+            {
+                stream.Read(Arg.Any<byte[]>(), 0, Frame.BINARY_SIZE);
+                stream.Position = 0x1C;
+                stringReader.ReadSLBObject();
+                stream.Position = 0xA0;
+            });
         }
     }
 }

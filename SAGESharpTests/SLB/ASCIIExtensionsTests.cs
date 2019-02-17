@@ -1,67 +1,35 @@
-﻿using NUnit.Framework;
-using SAGESharp.SLB;
+﻿using FluentAssertions;
+using NUnit.Framework;
 
-namespace SAGESharpTests.SLB
+namespace SAGESharp.SLB
 {
-    [TestFixture]
-    public class ASCIIExtensionsTests
+    class ASCIIExtensionsTests
     {
-        private const byte RANDOM_BYTE = 0x2B;
+        private const byte TEST_BYTE = 0x2B;
 
-        private const char RANDOM_CHAR = '+';
-
-        [Test]
-        public void TestConvertingAByteToAnASCIIChar()
-        {
-            Assert.That(RANDOM_BYTE.ToASCIIChar(), Is.EqualTo(RANDOM_CHAR));
-        }
+        private const char TEST_CHAR = '+';
 
         [Test]
-        public void TestConvertingACharToAnASCIIByte()
-        {
-            Assert.That(RANDOM_CHAR.ToASCIIByte(), Is.EqualTo(RANDOM_BYTE));
-        }
+        public void Test_Converting_A_Byte_To_An_ASCII_Char()
+            => TEST_BYTE.ToASCIIChar().Should().Be(TEST_CHAR);
 
         [Test]
-        public void TestIsAnASCIIDigitWithADigit()
-        {
-            byte value = 0x34;
+        public void Test_Converting_A_Char_To_An_ASCII_Byte()
+            => TEST_CHAR.ToASCIIByte().Should().Be(TEST_BYTE);
 
-            Assert.That(value.IsASCIIDigit(), Is.True);
-        }
+        [TestCase(0x34, ExpectedResult = true)] // '4' in ASCII
+        [TestCase(0x41, ExpectedResult = false)] // 'A' in ASCII
+        public bool Test_IsASCIIDigit(byte value)
+            => value.IsASCIIDigit();
 
-        [Test]
-        public void TestIsAnASCIIDigitWithANonDigit()
-        {
-            Assert.That(RANDOM_BYTE.IsASCIIDigit(), Is.False);
-        }
+        [TestCase(0x41, ExpectedResult = true)] // 'A' in ASCII
+        [TestCase(0x61, ExpectedResult = false)] // 'a' in ASCII
+        public bool Test_IsASCIIUppercaseLetter(byte value)
+            => value.IsASCIIUppercaseLetter();
 
-        [Test]
-        public void TestIsAnASCIIUppercaseLetterWithAnUppercaseLatter()
-        {
-            byte value = 0x48;
-
-            Assert.That(value.IsASCIIUppercaseLetter(), Is.True);
-        }
-
-        [Test]
-        public void TestIsAnASCIIUppercaseLetterWithANonUppercaseLatter()
-        {
-            Assert.That(RANDOM_BYTE.IsASCIIUppercaseLetter(), Is.False);
-        }
-
-        [Test]
-        public void TestIsAnASCIILowercaseLetterWithALowercaseLatter()
-        {
-            byte value = 0x70;
-
-            Assert.That(value.IsASCIILowercaseLetter(), Is.True);
-        }
-
-        [Test]
-        public void TestIsAnASCIILowerrcaseLetterWithANonUppercaseLatter()
-        {
-            Assert.That(RANDOM_BYTE.IsASCIILowercaseLetter(), Is.False);
-        }
+        [TestCase(0x61, ExpectedResult = true)] // 'a' in ASCII
+        [TestCase(0x41, ExpectedResult = false)] // 'A' in ASCII
+        public bool Test_IsASCIILowercaseLetter(byte value)
+            => value.IsASCIILowercaseLetter();
     }
 }

@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
 using SAGESharp.Testing;
-using SAGESharpTests;
 
 namespace SAGESharp.SLB
 {

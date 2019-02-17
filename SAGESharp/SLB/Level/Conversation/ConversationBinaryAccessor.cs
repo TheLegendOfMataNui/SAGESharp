@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Konvenience;
 
 namespace SAGESharp.SLB.Level.Conversation
 {
@@ -31,22 +32,12 @@ namespace SAGESharp.SLB.Level.Conversation
         /// 
         /// <returns>A conversation (list of <see cref="Character"/> objects) in the stream.</returns>
         public static IList<Character> ReadConversation(Stream stream)
-        {
-            ISLBBinaryReader<Identifier> identifierBinaryReader = new IdentifierBinaryReader(stream);
-
-            return new ConversationBinaryReader(
-                stream,
-                new CharacterBinaryReader(
-                    stream,
-                    identifierBinaryReader,
-                    new InfoBinaryReader(
-                        stream,
-                        identifierBinaryReader,
-                        new FrameBinaryReader(stream)
-                    )
-                )
-            ).ReadSLBObject();
-        }
+            => new StringBinaryReader(stream)
+                .Let(stringReader => new FrameBinaryReader(stream, stringReader))
+                .Let(frameReader => new InfoBinaryReader(stream, frameReader))
+                .Let(infoReader => new CharacterBinaryReader(stream, infoReader))
+                .Let(characterReader => new ConversationBinaryReader(stream, characterReader))
+                .ReadSLBObject();
 
         /// <summary>
         /// Writes a level conversation in binary form into the output file.

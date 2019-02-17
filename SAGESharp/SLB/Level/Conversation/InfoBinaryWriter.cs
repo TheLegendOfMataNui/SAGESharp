@@ -10,8 +10,6 @@ namespace SAGESharp.SLB.Level.Conversation
     /// </summary>
     class InfoBinaryWriter : ISLBBinaryWriter<Info>
     {
-        private const int ENTRY_LENGTH = 28;
-
         private readonly Stream stream;
 
         /// <summary>
@@ -36,7 +34,7 @@ namespace SAGESharp.SLB.Level.Conversation
                 throw new ArgumentNullException();
             }
 
-            var buffer = new byte[ENTRY_LENGTH];
+            var buffer = new byte[Info.BINARY_SIZE];
 
             GetBytes((int)slbObject.LineSide).CopyTo(buffer, 0);
             GetBytes(slbObject.ConditionStart).CopyTo(buffer, 4);
@@ -45,7 +43,7 @@ namespace SAGESharp.SLB.Level.Conversation
             GetBytes(slbObject.StringIndex).CopyTo(buffer, 16);
             GetBytes(slbObject.Frames.Count).CopyTo(buffer, 20);
 
-            stream.Write(buffer, 0, ENTRY_LENGTH);
+            stream.Write(buffer, 0, Info.BINARY_SIZE);
         }
     }
 }

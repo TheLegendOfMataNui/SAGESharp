@@ -4,7 +4,6 @@ using NUnit.Framework;
 using SAGESharp.Testing;
 using System;
 using System.IO;
-using System.Linq;
 
 namespace SAGESharp.SLB
 {
@@ -38,7 +37,7 @@ namespace SAGESharp.SLB
         {
             writer.WriteSLBObject(input);
 
-            stream.Received().Write(Arg.Is<byte[]>(bytes => bytes.SequenceEqual(expected)), 0, expected.Length);
+            stream.Received().Write(Matcher.ForEquivalentArray(expected), 0, expected.Length);
         }
 
         static object[] StringsWithByteRepresentation() => new ParameterGroup<string, byte[]>()

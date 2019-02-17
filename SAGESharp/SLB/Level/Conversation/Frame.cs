@@ -3,8 +3,17 @@ using System.Text;
 
 namespace SAGESharp.SLB.Level.Conversation
 {
-    public class Frame : IEquatable<Frame>
+    public sealed class Frame : IEquatable<Frame>
     {
+        /// <summary>
+        /// The size in bytes of an <see cref="Frame"/> in a binary SLB file.
+        /// </summary>
+        /// 
+        /// This includes all the properties (as 32 bit numbers) except by
+        /// <see cref="ConversationSounds"/>, for that property the only the
+        /// offset where the actual string is located is stored instead.
+        internal const int BINARY_SIZE = 24;
+
         public int ToaAnimation { get; set;  }
 
         public int CharAnimation { get; set; }

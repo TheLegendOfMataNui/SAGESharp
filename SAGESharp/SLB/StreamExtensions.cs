@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Konvenience;
 
 namespace SAGESharp.SLB
 {
@@ -66,18 +67,17 @@ namespace SAGESharp.SLB
         }
 
         /// <summary>
-        /// Reads a single ASCII char from the stream or throws if the end of the stream was reached.
+        /// Reads the amount of bytes from the stream or throws if less than <paramref name="count"/> bytes were read.
         /// </summary>
         /// 
-        /// <param name="stream">The stream to read</param>
+        /// <param name="stream">The sstream to read.</param>
+        /// <param name="count">The amount of bytes to read.</param>
         /// 
-        /// <returns>The next ASCII char in the stream.</returns>
-        /// 
-        /// <exception cref="EndOfStreamException">If the stream was read completely.</exception>
-        public static char ForceReadASCIIChar(this Stream stream)
-        {
-            return ASCIIExtensions.ToASCIIChar(ForceReadByte(stream));
-        }
+        /// <returns>An array with the read bytes.</returns>
+        public static byte[] ForceReadBytes(this Stream stream, int count)
+            => new byte[count]
+                .TakeReferenceIf(buffer => stream.Read(buffer, 0, count) == count)
+                ?? throw new EndOfStreamException();
 
         /// <summary>
         /// Reads a single integer from the stream or throws if the end of the stream was reached.
@@ -88,18 +88,8 @@ namespace SAGESharp.SLB
         /// <returns>The next integer in the stream.</returns>
         /// 
         /// <exception cref="EndOfStreamException">If the stream was read completely.</exception>
-        public static int ForceReadInt(this Stream stream)
-        {
-            var bytes = new byte[]
-            {
-                ForceReadByte(stream),
-                ForceReadByte(stream),
-                ForceReadByte(stream),
-                ForceReadByte(stream)
-            };
-
-            return BitConverter.ToInt32(bytes, 0);
-        }
+        public static int ForceReadInt32(this Stream stream)
+            => stream.ForceReadBytes(4).ToInt32();
 
         /// <summary>
         /// Reads a single unsigned integer from the stream or throws if the end of the stream was reached.
@@ -110,29 +100,8 @@ namespace SAGESharp.SLB
         /// <returns>The next unsigned integer in the stream.</returns>
         /// 
         /// <exception cref="EndOfStreamException">If the stream was read completely.</exception>
-        public static uint ForceReadUInt(this Stream stream)
-        {
-            var bytes = new byte[]
-            {
-                ForceReadByte(stream),
-                ForceReadByte(stream),
-                ForceReadByte(stream),
-                ForceReadByte(stream)
-            };
-
-            return BitConverter.ToUInt32(bytes, 0);
-        }
-
-        /// <summary>
-        /// Writes an ASCII character to the stream.
-        /// </summary>
-        /// 
-        /// <param name="stream">The stream to write</param>
-        /// <param name="value">The ASCII character to write in the stream</param>
-        public static void WriteASCIIChar(this Stream stream, char value)
-        {
-            stream.WriteByte(ASCIIExtensions.ToASCIIByte(value));
-        }
+        public static uint ForceReadUInt32(this Stream stream)
+            => stream.ForceReadBytes(4).ToUInt32();
 
         /// <summary>
         /// Writes an integer value to the stream.

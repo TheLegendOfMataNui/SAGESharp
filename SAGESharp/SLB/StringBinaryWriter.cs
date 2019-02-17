@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Konvenience;
+using System;
 using System.IO;
+using System.Text;
 
 namespace SAGESharp.SLB
 {
@@ -38,11 +40,10 @@ namespace SAGESharp.SLB
             var buffer = new byte[bufferSize];
 
             buffer[0] = (byte)slbObject.Length;
-            for (int n = 0; n < slbObject.Length; ++n)
-            {
-                buffer[n + 1] = slbObject[n].ToASCIIByte();
-            }
-            buffer[bufferSize - 1] = 0;
+            slbObject
+                .ToCharArray()
+                .Let(Encoding.ASCII.GetBytes)
+                .Also(bytes => bytes.CopyTo(buffer, 1));
 
             stream.Write(buffer, 0, bufferSize);
         }
