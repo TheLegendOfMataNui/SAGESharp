@@ -1,8 +1,7 @@
 ﻿using FluentAssertions;
-using Moq;
 using NSubstitute;
 using NUnit.Framework;
-using SAGESharp.SLB;
+using SAGESharp.Testing;
 using System.IO;
 
 namespace SAGESharp.SLB
@@ -18,7 +17,60 @@ namespace SAGESharp.SLB
         }
 
         [Test]
-        public void Test_ForceReadBytes_Succeed()
+        public void Test_DoOnPosition_With_No_Result()
+        {
+            stream.Position.Returns(0xA0);
+
+            stream.OnPositionDo(0x1C, () => { stream.ReadByte(); });
+
+            Received.InOrder(() =>
+            {
+                stream.Position = 0x1C;
+                stream.ReadByte();
+                stream.Position = 0xA0;
+            });
+        }
+
+        [Test]
+        public void Test_DoOnPosition_With_Result()
+        {
+            stream.Position.Returns(0xA0);
+            stream.ReadByte().Returns(1);
+
+            stream.OnPositionDo(0x1C, () => stream.ReadByte()).Should().Be(1);
+
+            Received.InOrder(() =>
+            {
+                stream.Position = 0x1C;
+                stream.ReadByte();
+                stream.Position = 0xA0;
+            });
+        }
+
+        [Test]
+        public void Test_ForceReadByte_Succeeds()
+        {
+            stream.ReadByte().Returns(1);
+
+            stream.ForceReadByte().Should().Be(1);
+
+            stream.Received().ReadByte();
+        }
+
+        [Test]
+        public void Test_ForceReadByte_Fails()
+        {
+            stream.ReadByte().Returns(-1);
+
+            stream.Invoking(s => s.ForceReadByte())
+                .Should()
+                .Throw<EndOfStreamException>();
+
+            stream.Received().ReadByte();
+        }
+
+        [Test]
+        public void Test_ForceReadBytes_Succeeds()
         {
             var expected = new byte[] { 0x11, 0x22, 0x33 };
 
@@ -27,6 +79,8 @@ namespace SAGESharp.SLB
                 .Returns(expected.Length);
 
             stream.ForceReadBytes(expected.Length).Should().Equal(expected);
+
+            stream.Received().Read(Arg.Any<byte[]>(), 0, expected.Length);
         }
 
         [Test]
@@ -39,169 +93,68 @@ namespace SAGESharp.SLB
             stream.Invoking(s => s.ForceReadBytes(count))
                 .Should()
                 .Throw<EndOfStreamException>();
-        }
-    }
-}
 
-namespace SAGESharpTests.SLB
-{
-    [TestFixture]
-    public class StreamExtensionsTests
-    {
-        [Test]
-        public void TestDoOnPosition()
-        {
-            var streamMock = new Mock<Stream>();
-
-            streamMock
-                .Setup(stream => stream.Position)
-                .Returns(100);
-
-            streamMock.Object.OnPositionDo(50, () => { });
-
-            streamMock.VerifyGet(stream => stream.Position, Times.Once);
-            streamMock.VerifySet(stream => stream.Position = 50, Times.Once);
-            streamMock.VerifySet(stream => stream.Position = 100, Times.Once);
-            streamMock.VerifyNoOtherCalls();
+            stream.Received().Read(Arg.Any<byte[]>(), 0, count);
         }
 
         [Test]
-        public void TestDoOnPositionWithResult()
+        public void Test_ForceReadInt_Succeeds()
         {
-            var streamMock = new Mock<Stream>();
+            stream.ReadByte().Returns(_ => 0x11, _ => 0x22, _ => 0x33, _ => 0x44);
 
-            streamMock
-                .Setup(stream => stream.Position)
-                .Returns(100);
+            stream.ForceReadInt().Should().Be(0x44332211);
 
-            var result = streamMock.Object.OnPositionDo(50, () => "ABCD");
-
-            Assert.That(result, Is.EqualTo("ABCD"));
-
-            streamMock.VerifyGet(stream => stream.Position, Times.Once);
-            streamMock.VerifySet(stream => stream.Position = 50, Times.Once);
-            streamMock.VerifySet(stream => stream.Position = 100, Times.Once);
-            streamMock.VerifyNoOtherCalls();
+            stream.Received(4).ReadByte();
         }
 
         [Test]
-        public void TestForceReadByteSucceeds()
+        public void Test_ForceReadInt_Fails()
         {
-            var streamMock = new Mock<Stream>();
+            stream.ReadByte().Returns(-1);
 
-            streamMock
-                .Setup(stream => stream.ReadByte())
-                .Returns(0xAA);
+            stream.Invoking(s => s.ForceReadInt())
+                .Should()
+                .Throw<EndOfStreamException>();
 
-            Assert.That(streamMock.Object.ForceReadByte(), Is.EqualTo(0xAA));
-
-            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(1));
-            streamMock.VerifyNoOtherCalls();
+            stream.Received().ReadByte();
         }
 
         [Test]
-        public void TestForceReadByteFails()
+        public void Test_ForceReadUInt_Succeeds()
         {
-            var streamMock = new Mock<Stream>();
+            stream.ReadByte().Returns(_ => 0xAA, _ => 0xBB, _ => 0xCC, _ => 0xDD);
 
-            streamMock
-                .Setup(stream => stream.ReadByte())
-                .Returns(-1);
+            stream.ForceReadUInt().Should().Be(0xDDCCBBAA);
 
-            Assert.That(() => streamMock.Object.ForceReadByte(), Throws.InstanceOf(typeof(EndOfStreamException)));
-
-            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(1));
-            streamMock.VerifyNoOtherCalls();
+            stream.Received(4).ReadByte();
         }
 
         [Test]
-        public void TestForceReadIntSucceeds()
+        public void Test_ForceReadUInt_Fails()
         {
-            var streamMock = new Mock<Stream>();
+            stream.ReadByte().Returns(-1);
 
-            streamMock
-                .SetupSequence(stream => stream.ReadByte())
-                .Returns(0x44)
-                .Returns(0x33)
-                .Returns(0x22)
-                .Returns(0x11);
+            stream.Invoking(s => s.ForceReadUInt())
+                .Should()
+                .Throw<EndOfStreamException>();
 
-            Assert.That(streamMock.Object.ForceReadInt(), Is.EqualTo(0x11223344));
-
-            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(4));
-            streamMock.VerifyNoOtherCalls();
+            stream.Received().ReadByte();
         }
 
         [Test]
-        public void TestForceReadIntFails()
+        public void Test_WriteInt()
         {
-            var streamMock = new Mock<Stream>();
+            stream.WriteInt(0x44332211);
 
-            streamMock
-                .SetupSequence(stream => stream.ReadByte())
-                .Returns(0xAA)
-                .Returns(-1);
-
-            Assert.That(() => streamMock.Object.ForceReadInt(), Throws.InstanceOf(typeof(EndOfStreamException)));
-
-            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(2));
-            streamMock.VerifyNoOtherCalls();
+            stream.Received().Write(Matcher.ForEquivalentArray(new byte[] { 0x11, 0x22, 0x33, 0x44 }), 0, 4);
         }
 
         [Test]
-        public void TestForceReadUIntSucceeds()
+        public void Test_WriteUInt()
         {
-            var streamMock = new Mock<Stream>();
+            stream.WriteUInt(0xDDCCBBAA);
 
-            streamMock
-                .SetupSequence(stream => stream.ReadByte())
-                .Returns(0xAA)
-                .Returns(0xBB)
-                .Returns(0xCC)
-                .Returns(0xDD);
-
-            Assert.That(streamMock.Object.ForceReadUInt(), Is.EqualTo(0xDDCCBBAA));
-
-            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(4));
-            streamMock.VerifyNoOtherCalls();
-        }
-
-        [Test]
-        public void TestForceReadUIntFails()
-        {
-            var streamMock = new Mock<Stream>();
-
-            streamMock
-                .SetupSequence(stream => stream.ReadByte())
-                .Returns(0xAA)
-                .Returns(-1);
-
-            Assert.That(() => streamMock.Object.ForceReadUInt(), Throws.InstanceOf(typeof(EndOfStreamException)));
-
-            streamMock.Verify(stream => stream.ReadByte(), Times.Exactly(2));
-            streamMock.VerifyNoOtherCalls();
-        }
-
-        [Test]
-        public void TestWriteInt()
-        {
-            var streamMock = new Mock<Stream>();
-
-            streamMock.Object.WriteInt(0x11223344);
-
-            streamMock.Verify(stream => stream.Write(new byte[] { 0x44, 0x33, 0x22, 0x11 }, 0, 4));
-            streamMock.VerifyNoOtherCalls();
-        }
-
-        [Test]
-        public void TestWriteUInt()
-        {
-            var streamMock = new Mock<Stream>();
-
-            streamMock.Object.WriteUInt(0x11223344);
-
-            streamMock.Verify(stream => stream.Write(new byte[] { 0x44, 0x33, 0x22, 0x11 }, 0, 4));
-            streamMock.VerifyNoOtherCalls();
+            stream.Received().Write(Matcher.ForEquivalentArray(new byte[] { 0xAA, 0xBB, 0xCC, 0xDD }), 0, 4);
         }
     }
 }
