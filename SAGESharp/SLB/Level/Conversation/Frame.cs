@@ -3,7 +3,7 @@ using System.Text;
 
 namespace SAGESharp.SLB.Level.Conversation
 {
-    public class Frame : IEquatable<Frame>
+    public sealed class Frame : IEquatable<Frame>
     {
         /// <summary>
         /// The size in bytes of an <see cref="Frame"/> in a binary SLB file.

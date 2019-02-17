@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SAGESharp.SLB.Level.Conversation
 {
-    public class Info : IEquatable<Info>
+    public sealed class Info : IEquatable<Info>
     {
         /// <summary>
         /// The size in bytes of an <see cref="Info"/> object in a binary SLB file.

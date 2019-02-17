@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SAGESharp.SLB.Level.Conversation
 {
-    public class Character : IEquatable<Character>
+    public sealed class Character : IEquatable<Character>
     {
         /// <summary>
         /// The size of a <see cref="Character"/> entry in a binary SLB file.
