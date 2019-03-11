@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Konvenience;
+using System;
+using System.Text;
 
 namespace SAGESharp.SLB.IO
 {
@@ -38,5 +40,27 @@ namespace SAGESharp.SLB.IO
         /// A single class/struct should not have two or more properties with the same value for Order.
         /// </remarks>
         public byte Order { get; private set; }
+    }
+
+    internal sealed class StringBinarySerializer : IBinarySerializer
+    {
+        public object Read(IBinaryReader binaryReader)
+        {
+            if (binaryReader == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            var offset = binaryReader.ReadUInt32();
+
+            return binaryReader.OnPositionDo(offset, () =>
+            {
+                var count = binaryReader.ReadByte();
+                return binaryReader
+                    .ReadBytes(count)
+                    .Let(Encoding.ASCII.GetChars)
+                    .Let(bs => string.Concat(bs));
+            });
+        }
     }
 }
