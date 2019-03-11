@@ -127,13 +127,30 @@ namespace SAGESharp.SLB.IO
     internal static class IBinaryReaderExtensions
     {
         /// <summary>
-        /// Returns the result of the <paramref name="function"/> while temporarily moving the reader to <paramref name= "position" />.
+        /// Executes <paramref name="action"/> while temporarily moving the reader to <paramref name= "position" />.
+        /// </summary>
+        /// 
+        /// <param name="reader">The reader that w</param>
+        /// <param name="position">The position where the reader will be moved temporarily.</param>
+        /// <param name="action">The action to execute.</param>
+        public static void OnPositionDo(this IBinaryReader reader, uint position, Action action)
+        {
+            var originalPosition = reader.Position;
+            reader.Position = position;
+
+            action();
+            reader.Position = originalPosition;
+        }
+
+        /// <summary>
+        /// Returns the result of <paramref name="function"/> while temporarily moving the reader to <paramref name= "position" />.
         /// </summary>
         /// 
         /// <typeparam name="TResult">The type that will be returned.</typeparam>
         /// 
+        /// <param name="reader">The reader that will be changed temproarily.</param>
         /// <param name="position">The position where the reader will be moved temporarily.</param>
-        /// <param name="function">The function action to execute.</param>
+        /// <param name="function">The action to execute.</param>
         /// 
         /// <returns>The result of <paramref name="function"/>.</returns>
         public static TResult OnPositionDo<TResult>(this IBinaryReader reader, uint position, Func<TResult> function)

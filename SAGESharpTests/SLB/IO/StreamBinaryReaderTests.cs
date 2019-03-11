@@ -103,7 +103,7 @@ namespace SAGESharp.SLB.IO
         }
 
         [TestCase]
-        public void Test_OnPositionDo()
+        public void Test_OnPositionDo_With_Result()
         {
             stream.Position.Returns(20);
             stream.ReadByte().Returns(100);
@@ -117,6 +117,21 @@ namespace SAGESharp.SLB.IO
             {
                 stream.Position = 40;
                 stream.ReadByte();
+                stream.Position = 20;
+            });
+        }
+
+        [TestCase]
+        public void Test_OnPositionDo_Without_Result()
+        {
+            stream.Position.Returns(20);
+
+            reader.OnPositionDo(40, () => stream.WriteByte(0));
+
+            Received.InOrder(() =>
+            {
+                stream.Position = 40;
+                stream.WriteByte(0);
                 stream.Position = 20;
             });
         }
