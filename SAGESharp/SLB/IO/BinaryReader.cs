@@ -123,4 +123,28 @@ namespace SAGESharp.SLB.IO
         public double ReadDouble()
             => BitConverter.ToDouble(ReadBytes(8), 0);
     }
+
+    internal static class IBinaryReaderExtensions
+    {
+        /// <summary>
+        /// Returns the result of the <paramref name="function"/> while temporarily moving the reader to <paramref name= "position" />.
+        /// </summary>
+        /// 
+        /// <typeparam name="TResult">The type that will be returned.</typeparam>
+        /// 
+        /// <param name="position">The position where the reader will be moved temporarily.</param>
+        /// <param name="function">The function action to execute.</param>
+        /// 
+        /// <returns>The result of <paramref name="function"/>.</returns>
+        public static TResult OnPositionDo<TResult>(this IBinaryReader reader, uint position, Func<TResult> function)
+        {
+            var originalPosition = reader.Position;
+            reader.Position = position;
+
+            var result = function();
+            reader.Position = originalPosition;
+
+            return result;
+        }
+    }
 }

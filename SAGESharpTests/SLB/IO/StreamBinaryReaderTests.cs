@@ -102,6 +102,25 @@ namespace SAGESharp.SLB.IO
             stream.Received().Read(Arg.Any<byte[]>(), 0, testData.BytesToRead);
         }
 
+        [TestCase]
+        public void Test_OnPositionDo()
+        {
+            stream.Position.Returns(20);
+            stream.ReadByte().Returns(100);
+
+            reader
+                .OnPositionDo(40, () => stream.ReadByte())
+                .Should()
+                .Be(100);
+
+            Received.InOrder(() =>
+            {
+                stream.Position = 40;
+                stream.ReadByte();
+                stream.Position = 20;
+            });
+        }
+
         static object[] TEST_CASES_DATA() => new object[]
         {
             new TestCaseData<byte>(
