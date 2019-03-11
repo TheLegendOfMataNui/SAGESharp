@@ -59,6 +59,8 @@
     <Compile Include="SLB\Footer.cs" />
     <Compile Include="SLB\Identifier.cs" />
     <Compile Include="SLB\IO\BinaryReader.cs" />
+    <Compile Include="SLB\IO\BinarySerializerFactory.cs" />
+    <Compile Include="SLB\IO\BinarySerializers.cs" />
     <Compile Include="SLB\ISLBBinaryReader.cs" />
     <Compile Include="SLB\ISLBBinaryWriter.cs" />
     <Compile Include="SLB\Level\Conversation\Character.cs" />
