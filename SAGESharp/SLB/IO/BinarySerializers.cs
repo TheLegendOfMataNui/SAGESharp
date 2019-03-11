@@ -1,5 +1,7 @@
 ﻿using Konvenience;
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace SAGESharp.SLB.IO
@@ -61,6 +63,48 @@ namespace SAGESharp.SLB.IO
                     .Let(Encoding.ASCII.GetChars)
                     .Let(bs => string.Concat(bs));
             });
+        }
+    }
+
+    internal sealed class ListBinarySerializer : IBinarySerializer
+    {
+        private readonly ConstructorInfo constructor;
+
+        private readonly MethodInfo addMethod;
+
+        private readonly IBinarySerializer serializer;
+
+        public ListBinarySerializer(Type type, IBinarySerializer serializer)
+        {
+            var listType = typeof(List<>).MakeGenericType(type);
+
+            constructor = listType.GetConstructor(Array.Empty<Type>());
+            addMethod = listType.GetMethod(nameof(List<object>.Add));
+            this.serializer = serializer;
+        }
+
+        public object Read(IBinaryReader binaryReader)
+        {
+            if (binaryReader == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            var count = binaryReader.ReadUInt32();
+            var offset = binaryReader.ReadUInt32();
+
+            var result = constructor.Invoke(Array.Empty<object>());
+            var args = new object[1];
+            binaryReader.OnPositionDo(offset, () =>
+            {
+                for (int n = 0; n < count; ++n)
+                {
+                    args[0] = serializer.Read(binaryReader);
+                    addMethod.Invoke(result, args);
+                }
+            });
+
+            return result;
         }
     }
 }
