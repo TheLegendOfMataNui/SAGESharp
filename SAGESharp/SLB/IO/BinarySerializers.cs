@@ -1,6 +1,7 @@
 ﻿using Konvenience;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -105,6 +106,112 @@ namespace SAGESharp.SLB.IO
             });
 
             return result;
+        }
+    }
+
+    /*
+     * This class deserves some documentation:
+     * 
+     * The way it works is:
+     *     - From the input type get the default constructor.
+     *     - For each property in the type, create a `PropertySetter` with
+     *       `PropertySetter.From` unless the property is not annotated
+     *       with `SLBElementAttribute` in that case it will be null.
+     *     - Filter all the null `PropertySetter`
+     *     - Order by `SLBElementAttribute.Order`
+     *     - Create an array from there
+     *     - Assert that:
+     *         1. The input type has at least one property with `SLBElementAttribute`
+     *         2. No two properties have the same value for `SLBElementAttribute.Order`
+     * 
+     * At the time of reading (`Read` method) from the `IBinaryReader`,
+     * the `PropertySetter` is used to use the correct method (or object)
+     * in the reader and set the value in the property of the object result
+     * of `Read`.
+     */
+    internal sealed class DefaultBinarySerializer : IBinarySerializer
+    {
+        private readonly ConstructorInfo constructor;
+
+        private readonly PropertySetter[] setters;
+
+        public DefaultBinarySerializer(Type type, IBinarySerializerFactory factory)
+        {
+            constructor = type.GetConstructor(Array.Empty<Type>())
+                ?? throw new ArgumentException($"Type {type.Name} lacks a public constructor with no arguments");
+            setters = type.GetProperties()
+                .Select(p => PropertySetter.From(p, factory))
+                .Where(ss => ss != null)
+                .OrderBy(ss => ss.Order)
+                .ToArray()
+                .Also(ss => AssertValidSetters(ss, type));
+        }
+
+        public object Read(IBinaryReader binaryReader)
+        {
+            var result = constructor.Invoke(Array.Empty<object>());
+
+            foreach (var setter in setters)
+            {
+                setter.ReadAndSet(binaryReader, result);
+            }
+
+            return result;
+        }
+
+        private static void AssertValidSetters(PropertySetter[] setters, Type type)
+        {
+            if (setters.Length == 0)
+            {
+                throw new ArgumentException($"Type {type.Name} doesn't have any attribute marked with {nameof(SLBElementAttribute)}");
+            }
+
+            if (setters.Length != setters.Select(s => s.Order).Distinct().Count())
+            {
+                throw new ArgumentException($"Type {type.Name} has more than one {nameof(SLBElementAttribute)} with the same order");
+            }
+        }
+
+        private class PropertySetter
+        {
+            private PropertySetter(PropertyInfo property, int order, Func<IBinaryReader, object> readFunction)
+            {
+                Property = property;
+                Order = order;
+                ReadFunction = readFunction;
+            }
+
+            private PropertyInfo Property { get; }
+
+            public int Order { get; }
+
+            private Func<IBinaryReader, object> ReadFunction { get; }
+
+            public void ReadAndSet(IBinaryReader reader, object obj)
+            {
+                var value = ReadFunction(reader);
+                Property.SetValue(obj, value);
+            }
+
+            public static PropertySetter From(PropertyInfo property, IBinarySerializerFactory factory) => property
+                .GetCustomAttribute<SLBElementAttribute>()
+                ?.Also(_ => AssertWritableProperty(property))
+                ?.Let(a => new PropertySetter(property, a.Order, GetReadFunction(property.PropertyType, factory)));
+
+            private static void AssertWritableProperty(PropertyInfo property)
+            {
+                if (property.GetSetMethod() == null)
+                {
+                    throw new ArgumentException($"Property {property.Name} in type " +
+                        property.DeclaringType.Name + " doesn't have a setter");
+                }
+            }
+
+            private static Func<IBinaryReader, object> GetReadFunction(Type type, IBinarySerializerFactory factory)
+            {
+                var serializer = factory.GetSerializerForType(type);
+                return r => serializer.Read(r);
+            }
         }
     }
 }
