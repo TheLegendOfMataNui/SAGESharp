@@ -21,6 +21,22 @@ namespace SAGESharp.SLB.IO
         }
 
         [TestCase]
+        public void Test_FuncBasedBinarySerializer()
+        {
+            var expected = "expected";
+            object func(IBinaryReader reader)
+            {
+                reader.Should().BeSameAs(this.reader);
+                return expected;
+            }
+
+            new FuncBasedBinarySerializer(func)
+                .Read(reader)
+                .Should()
+                .BeSameAs(expected);
+        }
+
+        [TestCase]
         public void Test_Reading_A_String()
         {
             var expected = "hello world";
