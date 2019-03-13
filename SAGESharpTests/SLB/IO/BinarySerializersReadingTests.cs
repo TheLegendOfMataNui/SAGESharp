@@ -24,13 +24,13 @@ namespace SAGESharp.SLB.IO
         public void Test_FuncBasedBinarySerializer()
         {
             var expected = "expected";
-            object func(IBinaryReader reader)
+            string func(IBinaryReader reader)
             {
                 reader.Should().BeSameAs(this.reader);
                 return expected;
             }
 
-            new FuncBasedBinarySerializer(func)
+            new FuncBasedBinarySerializer<string>(func)
                 .Read(reader)
                 .Should()
                 .BeSameAs(expected);
