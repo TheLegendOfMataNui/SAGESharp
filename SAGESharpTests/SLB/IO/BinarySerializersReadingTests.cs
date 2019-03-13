@@ -76,7 +76,7 @@ namespace SAGESharp.SLB.IO
         public void Test_Reading_A_List()
         {
             var expected = new List<char>() { 'a', 'b', 'c', 'd', 'e' };
-            var serializer = Substitute.For<IBinarySerializer>();
+            var serializer = Substitute.For<IBinarySerializer<char>>();
 
             // Returns count and offset
             reader.ReadUInt32().Returns((uint)expected.Count, (uint)70);
@@ -121,9 +121,9 @@ namespace SAGESharp.SLB.IO
                 String = "hello world"
             };
 
-            IBinarySerializer setupSerializer<T>(T expectedValue)
+            IBinarySerializer<T> setupSerializer<T>(T expectedValue)
             {
-                var serializer = Substitute.For<IBinarySerializer>();
+                var serializer = Substitute.For<IBinarySerializer<T>>();
 
                 serializer.Read(reader).Returns(expectedValue);
                 factory.GetSerializerForType<T>().Returns(serializer);
@@ -131,17 +131,14 @@ namespace SAGESharp.SLB.IO
                 return serializer;
             }
 
-            var serializers = new List<IBinarySerializer>
-            {
-                setupSerializer(expected.Identifier),
-                setupSerializer(expected.Int),
-                setupSerializer(expected.Short),
-                setupSerializer(expected.Byte),
-                setupSerializer(expected.Float),
-                setupSerializer(expected.Double),
-                setupSerializer(expected.List),
-                setupSerializer(expected.String)
-            };
+            var identifierSerializer = setupSerializer(expected.Identifier);
+            var intSerializer = setupSerializer(expected.Int);
+            var shortSerializer = setupSerializer(expected.Short);
+            var byteSerializer = setupSerializer(expected.Byte);
+            var floatSerializer = setupSerializer(expected.Float);
+            var doubleSerializer = setupSerializer(expected.Double);
+            var listSerializer = setupSerializer(expected.List);
+            var stringSerializer = setupSerializer(expected.String);
 
             new DefaultBinarySerializer<CustomClass>(factory)
                 .Read(reader)
@@ -156,10 +153,14 @@ namespace SAGESharp.SLB.IO
 
             Received.InOrder(() =>
             {
-                foreach (var serializer in serializers)
-                {
-                    serializer.Read(reader);
-                }
+                identifierSerializer.Read(reader);
+                intSerializer.Read(reader);
+                shortSerializer.Read(reader);
+                byteSerializer.Read(reader);
+                floatSerializer.Read(reader);
+                doubleSerializer.Read(reader);
+                listSerializer.Read(reader);
+                stringSerializer.Read(reader);
             });
         }
 

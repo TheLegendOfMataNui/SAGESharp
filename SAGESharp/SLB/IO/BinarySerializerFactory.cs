@@ -14,6 +14,6 @@ namespace SAGESharp.SLB.IO
         /// <typeparam name="T">The type of the object to serialize.</typeparam>
         /// 
         /// <returns>An instance of <see cref="IBinarySerializer" /> for <typeparamref name="T"/>.</returns>
-        IBinarySerializer GetSerializerForType<T>();
+        IBinarySerializer<T> GetSerializerForType<T>();
     }
 }

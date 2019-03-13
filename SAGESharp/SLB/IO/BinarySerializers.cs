@@ -8,9 +8,10 @@ using System.Text;
 namespace SAGESharp.SLB.IO
 {
     /// <summary>
-    /// Represents an object that can read other objects from a binary reader.
+    /// Represents an object that serialize objects of type <typeparamref name="T"/>.
     /// </summary>
-    public interface IBinarySerializer
+    /// <typeparam name="T">Type of the objects to serialize.</typeparam>
+    public interface IBinarySerializer<T>
     {
         /// <summary>
         /// Reads an objects from the input <paramref name="binaryReader"/>.
@@ -19,7 +20,7 @@ namespace SAGESharp.SLB.IO
         /// <param name="binaryReader">The binary reader used to read the object.</param>
         /// 
         /// <returns>The objec read from the <paramref name="binaryReader"/>.</returns>
-        object Read(IBinaryReader binaryReader);
+        T Read(IBinaryReader binaryReader);
     }
 
     /// <summary>
@@ -45,7 +46,7 @@ namespace SAGESharp.SLB.IO
         public byte Order { get; private set; }
     }
 
-    internal sealed class FuncBasedBinarySerializer<T> : IBinarySerializer
+    internal sealed class FuncBasedBinarySerializer<T> : IBinarySerializer<T>
     {
         public FuncBasedBinarySerializer(Func<IBinaryReader, T> readFunction)
         {
@@ -54,12 +55,12 @@ namespace SAGESharp.SLB.IO
 
         private Func<IBinaryReader, T> ReadFunction { get; }
 
-        public object Read(IBinaryReader binaryReader) => ReadFunction(binaryReader);
+        public T Read(IBinaryReader binaryReader) => ReadFunction(binaryReader);
     }
 
-    internal sealed class StringBinarySerializer : IBinarySerializer
+    internal sealed class StringBinarySerializer : IBinarySerializer<string>
     {
-        public object Read(IBinaryReader binaryReader)
+        public string Read(IBinaryReader binaryReader)
         {
             if (binaryReader == null)
             {
@@ -79,15 +80,15 @@ namespace SAGESharp.SLB.IO
         }
     }
 
-    internal sealed class ListBinarySerializer<T> : IBinarySerializer
+    internal sealed class ListBinarySerializer<T> : IBinarySerializer<List<T>>
     {
         private readonly ConstructorInfo constructor;
 
         private readonly MethodInfo addMethod;
 
-        private readonly IBinarySerializer serializer;
+        private readonly IBinarySerializer<T> serializer;
 
-        public ListBinarySerializer(IBinarySerializer serializer)
+        public ListBinarySerializer(IBinarySerializer<T> serializer)
         {
             var listType = typeof(List<T>);
 
@@ -96,7 +97,7 @@ namespace SAGESharp.SLB.IO
             this.serializer = serializer;
         }
 
-        public object Read(IBinaryReader binaryReader)
+        public List<T> Read(IBinaryReader binaryReader)
         {
             if (binaryReader == null)
             {
@@ -117,7 +118,7 @@ namespace SAGESharp.SLB.IO
                 }
             });
 
-            return result;
+            return (List<T>)result;
         }
     }
 
@@ -141,7 +142,7 @@ namespace SAGESharp.SLB.IO
      * in the reader and set the value in the property of the object result
      * of `Read`.
      */
-    internal sealed class DefaultBinarySerializer<T> : IBinarySerializer
+    internal sealed class DefaultBinarySerializer<T> : IBinarySerializer<T>
     {
         private readonly ConstructorInfo constructor;
 
@@ -161,7 +162,7 @@ namespace SAGESharp.SLB.IO
                 .Also(ss => AssertValidSetters(ss, type));
         }
 
-        public object Read(IBinaryReader binaryReader)
+        public T Read(IBinaryReader binaryReader)
         {
             var result = constructor.Invoke(Array.Empty<object>());
 
@@ -170,7 +171,7 @@ namespace SAGESharp.SLB.IO
                 setter.ReadAndSet(binaryReader, result);
             }
 
-            return result;
+            return (T)result;
         }
 
         private static void AssertValidSetters(PropertySetter[] setters, Type type)
@@ -191,6 +192,11 @@ namespace SAGESharp.SLB.IO
             private static readonly MethodInfo GET_SERIALIZER_FOR_TYPE_METHOD =
                 typeof(IBinarySerializerFactory)
                 .GetMethod(nameof(IBinarySerializerFactory.GetSerializerForType));
+
+            private static readonly Type[] SERIALIZER_READ_METHOD_ARGUMENT_TYPES = new Type[]
+            {
+                typeof(IBinaryReader)
+            };
 
             private PropertySetter(PropertyInfo property, int order, Func<IBinaryReader, object> readFunction)
             {
@@ -227,11 +233,15 @@ namespace SAGESharp.SLB.IO
 
             private static Func<IBinaryReader, object> GetReadFunction(Type type, IBinarySerializerFactory factory)
             {
-                var serializer = (IBinarySerializer)GET_SERIALIZER_FOR_TYPE_METHOD
+                var readMethod = typeof(IBinarySerializer<>)
+                    .MakeGenericType(type)
+                    .GetMethod(nameof(Read), SERIALIZER_READ_METHOD_ARGUMENT_TYPES);
+
+                var serializer = GET_SERIALIZER_FOR_TYPE_METHOD
                     .MakeGenericMethod(type)
                     .Invoke(factory, Array.Empty<object>());
 
-                return r => serializer.Read(r);
+                return r => readMethod.Invoke(serializer, new object[] { r });
             }
         }
     }
