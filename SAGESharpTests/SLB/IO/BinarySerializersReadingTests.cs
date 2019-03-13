@@ -126,7 +126,7 @@ namespace SAGESharp.SLB.IO
                 var serializer = Substitute.For<IBinarySerializer>();
 
                 serializer.Read(reader).Returns(expectedValue);
-                factory.GetSerializerForType(typeof(T)).Returns(serializer);
+                factory.GetSerializerForType<T>().Returns(serializer);
 
                 return serializer;
             }
@@ -151,8 +151,8 @@ namespace SAGESharp.SLB.IO
                 .Should()
                 .BeEquivalentTo(expected);
 
-            factory.Received().GetSerializerForType(typeof(IList<char>));
-            factory.Received().GetSerializerForType(typeof(string));
+            factory.Received().GetSerializerForType<IList<char>>();
+            factory.Received().GetSerializerForType<string>();
 
             Received.InOrder(() =>
             {

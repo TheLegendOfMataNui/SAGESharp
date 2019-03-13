@@ -188,6 +188,10 @@ namespace SAGESharp.SLB.IO
 
         private class PropertySetter
         {
+            private static readonly MethodInfo GET_SERIALIZER_FOR_TYPE_METHOD =
+                typeof(IBinarySerializerFactory)
+                .GetMethod(nameof(IBinarySerializerFactory.GetSerializerForType));
+
             private PropertySetter(PropertyInfo property, int order, Func<IBinaryReader, object> readFunction)
             {
                 Property = property;
@@ -223,7 +227,10 @@ namespace SAGESharp.SLB.IO
 
             private static Func<IBinaryReader, object> GetReadFunction(Type type, IBinarySerializerFactory factory)
             {
-                var serializer = factory.GetSerializerForType(type);
+                var serializer = (IBinarySerializer)GET_SERIALIZER_FOR_TYPE_METHOD
+                    .MakeGenericMethod(type)
+                    .Invoke(factory, Array.Empty<object>());
+
                 return r => serializer.Read(r);
             }
         }
