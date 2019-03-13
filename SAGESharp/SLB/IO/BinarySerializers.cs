@@ -79,7 +79,7 @@ namespace SAGESharp.SLB.IO
         }
     }
 
-    internal sealed class ListBinarySerializer : IBinarySerializer
+    internal sealed class ListBinarySerializer<T> : IBinarySerializer
     {
         private readonly ConstructorInfo constructor;
 
@@ -87,12 +87,12 @@ namespace SAGESharp.SLB.IO
 
         private readonly IBinarySerializer serializer;
 
-        public ListBinarySerializer(Type type, IBinarySerializer serializer)
+        public ListBinarySerializer(IBinarySerializer serializer)
         {
-            var listType = typeof(List<>).MakeGenericType(type);
+            var listType = typeof(List<T>);
 
             constructor = listType.GetConstructor(Array.Empty<Type>());
-            addMethod = listType.GetMethod(nameof(List<object>.Add));
+            addMethod = listType.GetMethod(nameof(List<T>.Add));
             this.serializer = serializer;
         }
 

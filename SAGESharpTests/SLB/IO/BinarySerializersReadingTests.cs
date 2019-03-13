@@ -86,7 +86,7 @@ namespace SAGESharp.SLB.IO
             // Returns the entire "expected" list from serailizer.Read(reader)
             serializer.Read(reader).Returns(expected[0], expected.Skip(1).Cast<object>().ToArray());
 
-            new ListBinarySerializer(typeof(char), serializer)
+            new ListBinarySerializer<char>(serializer)
                 .Read(reader)
                 .Should()
                 .BeOfType<List<char>>()
