@@ -141,14 +141,16 @@ namespace SAGESharp.SLB.IO
      * in the reader and set the value in the property of the object result
      * of `Read`.
      */
-    internal sealed class DefaultBinarySerializer : IBinarySerializer
+    internal sealed class DefaultBinarySerializer<T> : IBinarySerializer
     {
         private readonly ConstructorInfo constructor;
 
         private readonly PropertySetter[] setters;
 
-        public DefaultBinarySerializer(Type type, IBinarySerializerFactory factory)
+        public DefaultBinarySerializer(IBinarySerializerFactory factory)
         {
+            var type = typeof(T);
+
             constructor = type.GetConstructor(Array.Empty<Type>())
                 ?? throw new ArgumentException($"Type {type.Name} lacks a public constructor with no arguments");
             setters = type.GetProperties()

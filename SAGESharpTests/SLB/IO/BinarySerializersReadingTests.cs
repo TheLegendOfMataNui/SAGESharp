@@ -143,7 +143,7 @@ namespace SAGESharp.SLB.IO
                 setupSerializer(expected.String)
             };
 
-            new DefaultBinarySerializer(typeof(CustomClass), factory)
+            new DefaultBinarySerializer<CustomClass>(factory)
                 .Read(reader)
                 .Should()
                 .BeOfType<CustomClass>()
@@ -194,7 +194,7 @@ namespace SAGESharp.SLB.IO
 
         [TestCase]
         public void Test_Reading_A_Class_With_Private_Constructor() => this
-            .Invoking(_ => new DefaultBinarySerializer(typeof(ClassWithPrivateConstructor), factory))
+            .Invoking(_ => new DefaultBinarySerializer<ClassWithPrivateConstructor>(factory))
             .Should()
             .Throw<ArgumentException>()
             .Which
@@ -214,7 +214,7 @@ namespace SAGESharp.SLB.IO
 
         [TestCase]
         public void Test_Reading_A_Class_With_No_Annotations() => this
-            .Invoking(_ => new DefaultBinarySerializer(typeof(ClassWithNoAnnotations), factory))
+            .Invoking(_ => new DefaultBinarySerializer<ClassWithNoAnnotations>(factory))
             .Should()
             .Throw<ArgumentException>()
             .Which
@@ -229,7 +229,7 @@ namespace SAGESharp.SLB.IO
 
         [TestCase]
         public void Test_Reading_A_Class_With_An_Annotated_Property_With_No_Setter() => this
-            .Invoking(_ => new DefaultBinarySerializer(typeof(ClassWithAnnotatedPropertyWithNoSetter), factory))
+            .Invoking(_ => new DefaultBinarySerializer<ClassWithAnnotatedPropertyWithNoSetter>(factory))
             .Should()
             .Throw<ArgumentException>()
             .Which
@@ -245,7 +245,7 @@ namespace SAGESharp.SLB.IO
 
         [TestCase]
         public void Test_Reading_A_Class_With_Properties_With_Duplicated_Attribute_Order() => this
-            .Invoking(_ => new DefaultBinarySerializer(typeof(ClassWithPropertiesWithDuplicatedAttributeOrder), factory))
+            .Invoking(_ => new DefaultBinarySerializer<ClassWithPropertiesWithDuplicatedAttributeOrder>(factory))
             .Should()
             .Throw<ArgumentException>()
             .Which
