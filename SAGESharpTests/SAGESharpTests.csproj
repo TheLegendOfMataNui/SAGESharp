@@ -78,6 +78,7 @@
     <Compile Include="SLB\IdentifierEqualityTests.cs" />
     <Compile Include="SLB\IdentifierTests.cs" />
     <Compile Include="SLB\IO\BinarySerializersReadingTests.cs" />
+    <Compile Include="SLB\IO\BinarySerializersTests.cs" />
     <Compile Include="SLB\IO\StreamBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\CharacterBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\CharacterBinaryWriterTests.cs" />

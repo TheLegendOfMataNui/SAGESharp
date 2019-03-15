@@ -10,8 +10,9 @@ namespace SAGESharp.SLB.IO
     /// <summary>
     /// Represents an object that serialize objects of type <typeparamref name="T"/>.
     /// </summary>
+    /// 
     /// <typeparam name="T">Type of the objects to serialize.</typeparam>
-    public interface IBinarySerializer<T>
+    public interface IBinarySerializer<out T>
     {
         /// <summary>
         /// Reads an objects from the input <paramref name="binaryReader"/>.
