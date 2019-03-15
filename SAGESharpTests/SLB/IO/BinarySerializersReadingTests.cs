@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using NSubstitute;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -197,11 +196,12 @@ namespace SAGESharp.SLB.IO
         public void Test_Reading_A_Class_With_Private_Constructor() => this
             .Invoking(_ => new DefaultBinarySerializer<ClassWithPrivateConstructor>(factory))
             .Should()
-            .Throw<ArgumentException>()
-            .Which
-            .Message
+            .Throw<BadTypeException>()
+            .WithMessage("Type has no public constructor with no arguments")
+            .And
+            .Type
             .Should()
-            .Contain("public constructor with no arguments");
+            .Be(typeof(ClassWithPrivateConstructor));
 
         class ClassWithPrivateConstructor
         {
@@ -217,11 +217,12 @@ namespace SAGESharp.SLB.IO
         public void Test_Reading_A_Class_With_No_Annotations() => this
             .Invoking(_ => new DefaultBinarySerializer<ClassWithNoAnnotations>(factory))
             .Should()
-            .Throw<ArgumentException>()
-            .Which
-            .Message
+            .Throw<BadTypeException>()
+            .WithMessage($"Type has no property annotated with {nameof(SLBElementAttribute)}")
+            .And
+            .Type
             .Should()
-            .Contain("any attribute");
+            .Be(typeof(ClassWithNoAnnotations));
 
         class ClassWithNoAnnotations
         {
@@ -232,11 +233,12 @@ namespace SAGESharp.SLB.IO
         public void Test_Reading_A_Class_With_An_Annotated_Property_With_No_Setter() => this
             .Invoking(_ => new DefaultBinarySerializer<ClassWithAnnotatedPropertyWithNoSetter>(factory))
             .Should()
-            .Throw<ArgumentException>()
-            .Which
-            .Message
+            .Throw<BadTypeException>()
+            .WithMessage($"Property {nameof(ClassWithAnnotatedPropertyWithNoSetter.Int)} doesn't have a setter")
+            .And
+            .Type
             .Should()
-            .Contain("doesn't have a setter");
+            .Be(typeof(ClassWithAnnotatedPropertyWithNoSetter));
 
         class ClassWithAnnotatedPropertyWithNoSetter
         {
@@ -248,11 +250,12 @@ namespace SAGESharp.SLB.IO
         public void Test_Reading_A_Class_With_Properties_With_Duplicated_Attribute_Order() => this
             .Invoking(_ => new DefaultBinarySerializer<ClassWithPropertiesWithDuplicatedAttributeOrder>(factory))
             .Should()
-            .Throw<ArgumentException>()
-            .Which
-            .Message
+            .Throw<BadTypeException>()
+            .WithMessage("Type has more than one property with the same order")
+            .And
+            .Type
             .Should()
-            .Contain("more than one");
+            .Be(typeof(ClassWithPropertiesWithDuplicatedAttributeOrder));
 
         class ClassWithPropertiesWithDuplicatedAttributeOrder
         {

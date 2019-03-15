@@ -25,6 +25,49 @@ namespace SAGESharp.SLB.IO
     }
 
     /// <summary>
+    /// The exception that is thrown when a type cannot be serialized.
+    /// </summary>
+    public class BadTypeException : Exception
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BadTypeException"/>
+        /// class with the given <paramref name="type"/>.
+        /// </summary>
+        /// 
+        /// <param name="type">The type that cannot be serialized.</param>
+        public BadTypeException(Type type) : base()
+            => Type = type;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BadTypeException"/>
+        /// class with the given <paramref name="type"/> and the given
+        /// <paramref name="message"/>.
+        /// </summary>
+        /// 
+        /// <param name="type">The type that cannot be serialized.</param>
+        /// <param name="message">The message that describes the error.</param>
+        public BadTypeException(Type type, string message) : base(message)
+            => Type = type;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BadTypeException"/>
+        /// class with the given <paramref name="type"/>, the given
+        /// <paramref name="message"/> and the given <paramref name="innerException"/>.
+        /// </summary>
+        /// 
+        /// <param name="type">The type that cannot be serialized.</param>
+        /// <param name="message">The message that describes the error.</param>
+        /// <param name="innerException">he exception that is the cause of the current exception.</param>
+        public BadTypeException(Type type, string message, Exception innerException)
+            : base(message, innerException) => Type = type;
+
+        /// <summary>
+        /// The type that cannot be serialized.
+        /// </summary>
+        public Type Type { get; }
+    }
+
+    /// <summary>
     /// Specifies a property that should be serialized/deserialized for an SLB object.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
@@ -154,7 +197,7 @@ namespace SAGESharp.SLB.IO
             var type = typeof(T);
 
             constructor = type.GetConstructor(Array.Empty<Type>())
-                ?? throw new ArgumentException($"Type {type.Name} lacks a public constructor with no arguments");
+                ?? throw new BadTypeException(type, "Type has no public constructor with no arguments");
             setters = type.GetProperties()
                 .Select(p => PropertySetter.From(p, factory))
                 .Where(ss => ss != null)
@@ -179,12 +222,12 @@ namespace SAGESharp.SLB.IO
         {
             if (setters.Length == 0)
             {
-                throw new ArgumentException($"Type {type.Name} doesn't have any attribute marked with {nameof(SLBElementAttribute)}");
+                throw new BadTypeException(type, $"Type has no property annotated with {nameof(SLBElementAttribute)}");
             }
 
             if (setters.Length != setters.Select(s => s.Order).Distinct().Count())
             {
-                throw new ArgumentException($"Type {type.Name} has more than one {nameof(SLBElementAttribute)} with the same order");
+                throw new BadTypeException(type, "Type has more than one property with the same order");
             }
         }
 
@@ -227,8 +270,7 @@ namespace SAGESharp.SLB.IO
             {
                 if (property.GetSetMethod() == null)
                 {
-                    throw new ArgumentException($"Property {property.Name} in type " +
-                        property.DeclaringType.Name + " doesn't have a setter");
+                    throw new BadTypeException(property.DeclaringType, $"Property {property.Name} doesn't have a setter");
                 }
             }
 
