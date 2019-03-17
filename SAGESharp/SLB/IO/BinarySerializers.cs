@@ -90,18 +90,6 @@ namespace SAGESharp.SLB.IO
         public byte Order { get; private set; }
     }
 
-    internal sealed class FuncBasedBinarySerializer<T> : IBinarySerializer<T>
-    {
-        public FuncBasedBinarySerializer(Func<IBinaryReader, T> readFunction)
-        {
-            ReadFunction = readFunction;
-        }
-
-        private Func<IBinaryReader, T> ReadFunction { get; }
-
-        public T Read(IBinaryReader binaryReader) => ReadFunction(binaryReader);
-    }
-
     internal sealed class StringBinarySerializer : IBinarySerializer<string>
     {
         public string Read(IBinaryReader binaryReader)
