@@ -90,6 +90,49 @@ namespace SAGESharp.SLB.IO
         public byte Order { get; private set; }
     }
 
+    internal sealed class PrimitiveBinarySerializer<T> : IBinarySerializer<T>
+    {
+        public T Read(IBinaryReader binaryReader) => (T)ReadAsObject(binaryReader);
+
+        private object ReadAsObject(IBinaryReader binaryReader)
+        {
+            bool isType<U>() => typeof(T) == typeof(U);
+
+            if (isType<byte>())
+            {
+                return binaryReader.ReadByte();
+            }
+            else if (isType<short>())
+            {
+                return binaryReader.ReadInt16();
+            }
+            else if (isType<ushort>())
+            {
+                return binaryReader.ReadUInt16();
+            }
+            else if (isType<int>())
+            {
+                return binaryReader.ReadInt32();
+            }
+            else if (isType<uint>())
+            {
+                return binaryReader.ReadUInt32();
+            }
+            else if (isType<float>())
+            {
+                return binaryReader.ReadFloat();
+            }
+            else if (isType<double>())
+            {
+                return binaryReader.ReadDouble();
+            }
+            else
+            {
+                throw new BadTypeException(typeof(T), "Type is not a supported primitive");
+            }
+        }
+    }
+
     internal sealed class StringBinarySerializer : IBinarySerializer<string>
     {
         public string Read(IBinaryReader binaryReader)
