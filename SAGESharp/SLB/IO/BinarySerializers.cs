@@ -133,6 +133,22 @@ namespace SAGESharp.SLB.IO
         }
     }
 
+    internal sealed class CastSerializer<T, U> : IBinarySerializer<T>
+    {
+        private readonly IBinarySerializer<U> innerSerializer;
+
+        public CastSerializer(IBinarySerializer<U> innerSerializer)
+            => this.innerSerializer = innerSerializer;
+
+        public T Read(IBinaryReader binaryReader)
+        {
+            // I don't like to use dynamic but it seems is
+            // the only way to perform the casting here.
+            dynamic result = innerSerializer.Read(binaryReader);
+            return (T)result;
+        }
+    }
+
     internal sealed class StringBinarySerializer : IBinarySerializer<string>
     {
         public string Read(IBinaryReader binaryReader)

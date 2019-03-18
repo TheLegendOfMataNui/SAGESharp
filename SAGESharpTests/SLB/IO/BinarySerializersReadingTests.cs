@@ -117,6 +117,43 @@ namespace SAGESharp.SLB.IO
                 .Be(typeof(char));
 
         [TestCase]
+        public void Test_Reading_An_Identifier_With_CastSerializer()
+        {
+            var value = 0xFEDCBA98;
+            var innerSerializer = Substitute.For<IBinarySerializer<uint>>();
+
+            innerSerializer.Read(reader).Returns(value);
+
+            new CastSerializer<Identifier, uint>(innerSerializer)
+                .Read(reader)
+                .Should()
+                .Be((Identifier)value);
+
+            innerSerializer.Received().Read(reader);
+        }
+
+        [TestCase]
+        public void Test_Reading_An_Enum_With_CastSerializer()
+        {
+            var innerSerializer = Substitute.For<IBinarySerializer<byte>>();
+
+            innerSerializer.Read(reader).Returns((byte)TestEnum.A);
+
+            new CastSerializer<TestEnum, byte>(innerSerializer)
+                .Read(reader)
+                .Should()
+                .Be(TestEnum.A);
+
+            innerSerializer.Received().Read(reader);
+        }
+
+        enum TestEnum : byte
+        {
+            A = 0xAB,
+            B = 0xBB
+        }
+
+        [TestCase]
         public void Test_Reading_A_String()
         {
             var expected = "hello world";
