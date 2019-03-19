@@ -61,26 +61,20 @@
     <Compile Include="SLB\IO\BinaryReader.cs" />
     <Compile Include="SLB\IO\BinarySerializerFactory.cs" />
     <Compile Include="SLB\IO\BinarySerializers.cs" />
-    <Compile Include="SLB\ISLBBinaryReader.cs" />
     <Compile Include="SLB\ISLBBinaryWriter.cs" />
     <Compile Include="SLB\Level\Conversation\Character.cs" />
-    <Compile Include="SLB\Level\Conversation\CharacterBinaryReader.cs" />
     <Compile Include="SLB\Level\Conversation\CharacterBinaryWriter.cs" />
     <Compile Include="SLB\Level\Conversation\ConversationBinaryAccessor.cs" />
-    <Compile Include="SLB\Level\Conversation\ConversationBinaryReader.cs" />
     <Compile Include="SLB\Level\Conversation\ConversationBinaryWriter.cs" />
     <Compile Include="SLB\Level\Conversation\ConversationFooterGenerator.cs" />
     <Compile Include="SLB\Level\Conversation\Frame.cs" />
-    <Compile Include="SLB\Level\Conversation\FrameBinaryReader.cs" />
     <Compile Include="SLB\Level\Conversation\FrameBinaryWriter.cs" />
     <Compile Include="SLB\Level\Conversation\Info.cs" />
-    <Compile Include="SLB\Level\Conversation\InfoBinaryReader.cs" />
     <Compile Include="SLB\Level\Conversation\InfoBinaryWriter.cs" />
     <Compile Include="SLB\Level\Conversation\LineSide.cs" />
     <Compile Include="SLB\NumericExtensions.cs" />
     <Compile Include="SLB\StreamExtensions.cs" />
     <Compile Include="SLB\StringBinaryWriter.cs" />
-    <Compile Include="SLB\StringBinaryReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
