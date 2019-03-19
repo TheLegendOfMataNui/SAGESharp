@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SAGESharp.SLB.IO;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -16,12 +17,16 @@ namespace SAGESharp.SLB.Level.Conversation
         /// in that order.
         internal const int BINARY_SIZE = 20;
 
+        [SLBElement(1)]
         public Identifier ToaName { get; set; }
 
+        [SLBElement(2)]
         public Identifier CharName { get; set; }
 
+        [SLBElement(3)]
         public Identifier CharCont { get; set; }
 
+        [SLBElement(4)]
         public IList<Info> Entries { get; set; }
 
         public bool Equals(Character other)

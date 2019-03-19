@@ -95,6 +95,7 @@
     <Compile Include="SLB\Level\Conversation\InfoBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\InfoBinaryWriterTests.cs" />
     <Compile Include="SLB\Level\Conversation\InfoEqualityTests.cs" />
+    <Compile Include="SLB\Level\Conversation\SerializationTests.cs" />
     <Compile Include="SLB\Level\Conversation\TestData.cs" />
     <Compile Include="SLB\NumericExtensionsTests.cs" />
     <Compile Include="SLB\SLBFooterWriterTests.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="Testing\AbstractEqualityByRefTests.cs" />
     <Compile Include="Testing\AbstractEqualityByValTests.cs" />
     <Compile Include="SLB\StringBinaryReaderTests.cs" />
+    <Compile Include="Testing\SerializationTestCaseData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

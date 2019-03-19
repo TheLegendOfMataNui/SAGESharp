@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SAGESharp.SLB.IO;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -15,16 +16,22 @@ namespace SAGESharp.SLB.Level.Conversation
         /// actual entries are saved instead.
         internal const int BINARY_SIZE = 28;
 
+        [SLBElement(1)]
         public LineSide LineSide { get; set; }
 
+        [SLBElement(2)]
         public uint ConditionStart { get; set; }
 
+        [SLBElement(3)]
         public uint ConditionEnd { get; set; }
 
+        [SLBElement(4)]
         public Identifier StringLabel { get; set; }
 
+        [SLBElement(5)]
         public int StringIndex { get; set; }
 
+        [SLBElement(6)]
         public IList<Frame> Frames { get; set; }
 
         public bool Equals(Info other)
