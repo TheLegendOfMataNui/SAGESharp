@@ -72,6 +72,22 @@ namespace SAGESharp.SLB.IO
         double ReadDouble();
     }
 
+    /// <summary>
+    /// Static class to function as a simple factory for <see cref="IBinaryReader"/> instances.
+    /// </summary>
+    public static class Reader
+    {
+        /// <summary>
+        /// Gets a <see cref="IBinaryReader"/> for the intpu <paramref name="stream"/>.
+        /// </summary>
+        /// 
+        /// <param name="stream">The input stream to use in the reader.</param>
+        /// 
+        /// <returns>A <see cref="IBinaryReader"/> to read the input <paramref name="stream"/>.</returns>
+        public static IBinaryReader ForStream(Stream stream)
+            => new StreamBinaryReader(stream);
+    }
+
     internal sealed class StreamBinaryReader : IBinaryReader
     {
         private readonly Stream stream;

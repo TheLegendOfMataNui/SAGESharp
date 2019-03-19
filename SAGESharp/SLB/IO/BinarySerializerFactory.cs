@@ -19,6 +19,20 @@ namespace SAGESharp.SLB.IO
         IBinarySerializer<T> GetSerializerForType<T>();
     }
 
+    /// <summary>
+    /// Static class to provide a singleton of the <see cref="IBinarySerializerFactory"/>.
+    /// </summary>
+    public static class BinarySerializers
+    {
+        private static readonly Lazy<IBinarySerializerFactory> instance
+            = new Lazy<IBinarySerializerFactory>(() => new DefaultBinarySerializerFactory());
+
+        /// <summary>
+        /// The singleton instance of the <see cref="IBinarySerializerFactory"/> interface.
+        /// </summary>
+        public static IBinarySerializerFactory Factory { get => instance.Value; }
+    }
+
     class DefaultBinarySerializerFactory : IBinarySerializerFactory
     {
         public IBinarySerializer<T> GetSerializerForType<T>()
