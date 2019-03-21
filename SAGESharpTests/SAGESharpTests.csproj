@@ -77,30 +77,32 @@
     <Compile Include="SLB\FooterEntryTests.cs" />
     <Compile Include="SLB\IdentifierEqualityTests.cs" />
     <Compile Include="SLB\IdentifierTests.cs" />
-    <Compile Include="SLB\Level\Conversation\CharacterBinaryReaderTests.cs" />
+    <Compile Include="SLB\IO\BinarySerializersReadingTests.cs" />
+    <Compile Include="SLB\IO\BinarySerializersTests.cs" />
+    <Compile Include="SLB\IO\DefaultBinarySerializerFactoryTests.cs" />
+    <Compile Include="SLB\IO\BinaryReaderWrapperTests.cs" />
     <Compile Include="SLB\Level\Conversation\CharacterBinaryWriterTests.cs" />
     <Compile Include="SLB\Level\Conversation\CharacterEqualityTests.cs" />
-    <Compile Include="SLB\Level\Conversation\ConversationBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\ConversationBinaryAccessorTests.cs" />
     <Compile Include="SLB\Level\Conversation\ConversationBinaryWriterTests.cs" />
     <Compile Include="SLB\Level\Conversation\ConversationFooterGeneratorTests.cs" />
     <Compile Include="SLB\Level\Conversation\Defaults.cs" />
-    <Compile Include="SLB\Level\Conversation\FrameBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\FrameBinaryWriterTests.cs" />
     <Compile Include="SLB\Level\Conversation\FrameEqualityTests.cs" />
-    <Compile Include="SLB\Level\Conversation\InfoBinaryReaderTests.cs" />
     <Compile Include="SLB\Level\Conversation\InfoBinaryWriterTests.cs" />
     <Compile Include="SLB\Level\Conversation\InfoEqualityTests.cs" />
+    <Compile Include="SLB\Level\Conversation\SerializationTests.cs" />
     <Compile Include="SLB\Level\Conversation\TestData.cs" />
     <Compile Include="SLB\NumericExtensionsTests.cs" />
     <Compile Include="SLB\SLBFooterWriterTests.cs" />
     <Compile Include="SLB\StringBinaryWriterTests.cs" />
     <Compile Include="SLB\StreamExtensionsTests.cs" />
+    <Compile Include="Testing\AbstractTestCaseData.cs" />
     <Compile Include="Testing\Matchers.cs" />
     <Compile Include="Testing\ParameterGroup.cs" />
     <Compile Include="Testing\AbstractEqualityByRefTests.cs" />
     <Compile Include="Testing\AbstractEqualityByValTests.cs" />
-    <Compile Include="SLB\StringBinaryReaderTests.cs" />
+    <Compile Include="Testing\SerializationTestCaseData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

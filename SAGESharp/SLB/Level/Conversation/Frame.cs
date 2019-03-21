@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SAGESharp.SLB.IO;
+using System;
 using System.Text;
 
 namespace SAGESharp.SLB.Level.Conversation
@@ -14,16 +15,22 @@ namespace SAGESharp.SLB.Level.Conversation
         /// offset where the actual string is located is stored instead.
         internal const int BINARY_SIZE = 24;
 
+        [SLBElement(1)]
         public int ToaAnimation { get; set;  }
 
+        [SLBElement(2)]
         public int CharAnimation { get; set; }
 
+        [SLBElement(3)]
         public int CameraPositionTarget { get; set; }
 
+        [SLBElement(4)]
         public int CameraDistance { get; set; }
 
+        [SLBElement(5)]
         public int StringIndex { get; set; }
 
+        [SLBElement(6)]
         public string ConversationSounds { get; set; }
 
         public bool Equals(Frame other)

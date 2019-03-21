@@ -9,10 +9,6 @@ namespace SAGESharp.SLB.Level.Conversation
     class ConversationBinaryAccessorTests
     {
         [TestCaseSource(nameof(FileNamesAndConversations))]
-        public void Test_Reading_A_File_Successfully(string testFilePath, IList<Character> expected)
-            => ConversationBinaryAccessor.ReadConversation(testFilePath).Should().Equal(expected);
-
-        [TestCaseSource(nameof(FileNamesAndConversations))]
         public void Test_Writing_A_File_Successfully(string testFilePath, IList<Character> conversation)
         {
             var outputFilePath = $"{testFilePath}.tst";
