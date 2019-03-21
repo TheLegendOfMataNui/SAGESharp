@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Konvenience;
+using System;
 using System.IO;
 
 namespace SAGESharp.SLB.IO
@@ -85,59 +86,45 @@ namespace SAGESharp.SLB.IO
         /// 
         /// <returns>A <see cref="IBinaryReader"/> to read the input <paramref name="stream"/>.</returns>
         public static IBinaryReader ForStream(Stream stream)
-            => new StreamBinaryReader(stream);
+            => new BinaryReaderWrapper(stream);
     }
 
-    internal sealed class StreamBinaryReader : IBinaryReader
+    internal sealed class BinaryReaderWrapper : IBinaryReader
     {
-        private readonly Stream stream;
+        private readonly BinaryReader realReader;
 
-        public StreamBinaryReader(Stream stream)
-            => this.stream = stream ?? throw new ArgumentNullException();
+        public BinaryReaderWrapper(Stream stream)
+            => realReader = stream?.Let(s => new BinaryReader(s)) ?? throw new ArgumentNullException();
 
         public long Position
         {
-            get => stream.Position;
-            set => stream.Position = value;
+            get => realReader.BaseStream.Position;
+            set => realReader.BaseStream.Position = value;
         }
 
-        public byte ReadByte() => ReadBytes(1)[0];
+        public byte ReadByte()
+            => realReader.ReadByte();
 
         public byte[] ReadBytes(int count)
-        {
-            if (count == 0)
-            {
-                return Array.Empty<byte>();
-            }
-
-            var buffer = new byte[count];
-            if (stream.Read(buffer, 0, count) == count)
-            {
-                return buffer;
-            }
-            else
-            {
-                throw new EndOfStreamException();
-            }
-        }
+            => realReader.ReadBytes(count);
 
         public short ReadInt16()
-            => BitConverter.ToInt16(ReadBytes(2), 0);
+            => realReader.ReadInt16();
 
         public ushort ReadUInt16()
-            => BitConverter.ToUInt16(ReadBytes(2), 0);
+            => realReader.ReadUInt16();
 
         public int ReadInt32()
-            => BitConverter.ToInt32(ReadBytes(4), 0);
+            => realReader.ReadInt32();
 
         public uint ReadUInt32()
-            => BitConverter.ToUInt32(ReadBytes(4), 0);
+            => realReader.ReadUInt32();
 
         public float ReadFloat()
-            => BitConverter.ToSingle(ReadBytes(4), 0);
+            => realReader.ReadSingle();
 
         public double ReadDouble()
-            => BitConverter.ToDouble(ReadBytes(8), 0);
+            => realReader.ReadDouble();
     }
 
     internal static class IBinaryReaderExtensions

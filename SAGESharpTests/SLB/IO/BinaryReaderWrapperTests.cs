@@ -1,37 +1,38 @@
 ﻿using FluentAssertions;
-using NSubstitute;
 using NUnit.Framework;
 using SAGESharp.Testing;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace SAGESharp.SLB.IO
 {
-    class StreamBinaryReaderTests
+    class BinaryReaderWrapperTests
     {
-        private readonly Stream stream = Substitute.For<Stream>();
+        private readonly Stream stream = new MemoryStream();
 
         private readonly IBinaryReader reader;
 
-        public StreamBinaryReaderTests()
-            => reader = new StreamBinaryReader(stream);
+        public BinaryReaderWrapperTests()
+            => reader = new BinaryReaderWrapper(stream);
 
         [SetUp]
         public void Setup()
         {
-            stream.ClearReceivedCalls();
+            stream.SetLength(0);
+            stream.Position = 0;
         }
 
         [TestCase]
         public void Test_Create_A_Reader_With_A_Null_Stream() => this
-            .Invoking(_ => new StreamBinaryReader(null))
+            .Invoking(_ => new BinaryReaderWrapper(null))
             .Should()
             .Throw<ArgumentNullException>();
 
         [TestCase]
         public void Test_Getting_The_Position()
         {
-            stream.Position.Returns(50);
+            stream.Position = 50;
 
             reader.Position.Should().Be(50);
         }
@@ -41,22 +42,20 @@ namespace SAGESharp.SLB.IO
         {
             reader.Position = 30;
 
-            stream.Received().Position = 30;
+            stream.Position.Should().Be(30);
         }
 
         [TestCaseSource(nameof(TEST_CASES_DATA))]
         public void Test_Reading_Successfully<T>(TestCaseData<T> testData)
         {
-            stream
-                .Read(Arg.Do<byte[]>(testData.SetBytes), 0, testData.BytesToRead)
-                .Returns(testData.BytesToRead);
+            SetupStreamWithArray(testData.Bytes);
 
             testData
                 .Function(reader)
                 .Should()
                 .Be(testData.ExpectedResult);
 
-            stream.Received().Read(Arg.Any<byte[]>(), 0, testData.BytesToRead);
+            stream.Position.Should().Be(testData.Bytes.Length);
         }
 
         [TestCase]
@@ -64,18 +63,14 @@ namespace SAGESharp.SLB.IO
         {
             var expected = new byte[] { 0x01, 0x02, 0x03 };
 
-            stream
-                .Read(Arg.Do<byte[]>(bs => expected.CopyTo(bs, 0)), 0, expected.Length)
-                .Returns(expected.Length);
+            SetupStreamWithArray(expected);
 
             reader
                 .ReadBytes(expected.Length)
                 .Should()
                 .Equal(expected);
 
-            stream
-                .Received()
-                .Read(Arg.Any<byte[]>(), 0, expected.Length);
+            stream.Position.Should().Be(expected.Length);
         }
 
         [TestCase]
@@ -86,54 +81,72 @@ namespace SAGESharp.SLB.IO
                 .Should()
                 .BeEmpty();
 
-            stream.DidNotReceiveWithAnyArgs().Read(null, 0, 0);
+            stream.Position.Should().Be(0);
         }
 
         [TestCaseSource(nameof(TEST_CASES_DATA))]
         public void Test_Reading_After_EOF<T>(TestCaseData<T> testData)
         {
-            stream.Read(Arg.Any<byte[]>(), 0, 0).Returns(0);
+            var subArray = testData.Bytes.Skip(1).ToArray();
+            SetupStreamWithArray(subArray);
 
             testData
                 .Invoking(td => td.Function(reader))
                 .Should()
                 .Throw<EndOfStreamException>();
 
-            stream.Received().Read(Arg.Any<byte[]>(), 0, testData.BytesToRead);
+            stream.Position.Should().Be(subArray.Length);
         }
 
         [TestCase]
         public void Test_OnPositionDo_With_Result()
         {
-            stream.Position.Returns(20);
-            stream.ReadByte().Returns(100);
+            SetupStreamWithArray(array: new byte[] { 100 }, position: 40);
+            stream.Position = 20;
+            long? positionInLambda = null;
 
             reader
-                .DoAtPosition(40, () => stream.ReadByte())
+                .DoAtPosition(40, () =>
+                {
+                    positionInLambda = stream.Position;
+                    return stream.ReadByte();
+                })
                 .Should()
                 .Be(100);
 
-            Received.InOrder(() =>
-            {
-                stream.Position = 40;
-                stream.ReadByte();
-                stream.Position = 20;
-            });
+            positionInLambda
+                .Should()
+                .HaveValue()
+                .And
+                .Be(40);
+            stream
+                .Position
+                .Should()
+                .Be(20);
         }
 
         [TestCase]
         public void Test_OnPositionDo_Without_Result()
         {
-            stream.Position.Returns(20);
+            SetupStreamWithArray(array: new byte[] { 100 }, position: 40);
+            stream.Position = 20;
+            long? positionInLambda = null;
 
-            reader.DoAtPosition(40, () => stream.WriteByte(0));
+            reader
+                .DoAtPosition(40, () => {
+                    positionInLambda = stream.Position;
+                    stream.ReadByte().Should().Be(100);
+                });
 
-            Received.InOrder(() =>
-            {
-                stream.Position = 40;
-                stream.WriteByte(0);
-                stream.Position = 20;
-            });
+            positionInLambda
+                .Should()
+                .HaveValue()
+                .And
+                .Be(40);
+            stream
+                .Position
+                .Should()
+                .Be(20);
         }
 
         static object[] TEST_CASES_DATA() => new object[]
@@ -184,35 +197,26 @@ namespace SAGESharp.SLB.IO
 
         public class TestCaseData<T> : AbstractTestCaseData
         {
-            private readonly byte[] bytes;
-
             public TestCaseData(string description, byte[] input, Func<IBinaryReader, T> function, T expectedResult) : base(description)
             {
-                bytes = input;
+                Bytes = input;
                 Function = function;
                 ExpectedResult = expectedResult;
             }
 
-            public int BytesToRead
-            {
-                get
-                {
-                    return bytes.Length;
-                }
-            }
+            public byte[] Bytes { get; }
 
             public Func<IBinaryReader, T> Function { get; private set; }
 
             public T ExpectedResult { get; private set; }
+        }
 
-            public void SetBytes(byte[] inputBytes)
-            {
-                inputBytes.Should().HaveCount(bytes.Length,
-                    $"input bytes should be of size {bytes.Length} " +
-                    $"but they are of size {inputBytes.Length} instead");
-
-                bytes.CopyTo(inputBytes, 0);
-            }
+        private void SetupStreamWithArray(byte[] array, int position = 0)
+        {
+            stream.SetLength(position + array.Length);
+            stream.Position = position;
+            stream.Write(array, 0, array.Length);
+            stream.Position = 0;
         }
     }
 }

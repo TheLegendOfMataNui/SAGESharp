@@ -80,7 +80,7 @@
     <Compile Include="SLB\IO\BinarySerializersReadingTests.cs" />
     <Compile Include="SLB\IO\BinarySerializersTests.cs" />
     <Compile Include="SLB\IO\DefaultBinarySerializerFactoryTests.cs" />
-    <Compile Include="SLB\IO\StreamBinaryReaderTests.cs" />
+    <Compile Include="SLB\IO\BinaryReaderWrapperTests.cs" />
     <Compile Include="SLB\Level\Conversation\CharacterBinaryWriterTests.cs" />
     <Compile Include="SLB\Level\Conversation\CharacterEqualityTests.cs" />
     <Compile Include="SLB\Level\Conversation\ConversationBinaryAccessorTests.cs" />
