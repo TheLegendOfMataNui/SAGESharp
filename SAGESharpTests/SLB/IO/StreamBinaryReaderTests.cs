@@ -109,7 +109,7 @@ namespace SAGESharp.SLB.IO
             stream.ReadByte().Returns(100);
 
             reader
-                .OnPositionDo(40, () => stream.ReadByte())
+                .DoAtPosition(40, () => stream.ReadByte())
                 .Should()
                 .Be(100);
 
@@ -126,7 +126,7 @@ namespace SAGESharp.SLB.IO
         {
             stream.Position.Returns(20);
 
-            reader.OnPositionDo(40, () => stream.WriteByte(0));
+            reader.DoAtPosition(40, () => stream.WriteByte(0));
 
             Received.InOrder(() =>
             {

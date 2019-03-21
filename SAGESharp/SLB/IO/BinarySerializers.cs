@@ -160,7 +160,7 @@ namespace SAGESharp.SLB.IO
 
             var offset = binaryReader.ReadUInt32();
 
-            return binaryReader.OnPositionDo(offset, () =>
+            return binaryReader.DoAtPosition(offset, () =>
             {
                 var count = binaryReader.ReadByte();
                 return binaryReader
@@ -200,7 +200,7 @@ namespace SAGESharp.SLB.IO
 
             var result = constructor.Invoke(Array.Empty<object>());
             var args = new object[1];
-            binaryReader.OnPositionDo(offset, () =>
+            binaryReader.DoAtPosition(offset, () =>
             {
                 for (int n = 0; n < count; ++n)
                 {
