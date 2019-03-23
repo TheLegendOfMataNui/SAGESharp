@@ -2,13 +2,12 @@ using SAGESharp.SLB.IO;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Konvenience;
 
 namespace SAGESharp.SLB.Cinematic.Camera
 {
     public sealed class Frame : IEquatable<Frame>
     {
-
-        internal const int BINARY_SIZE = 28;
 
         [SLBElement(1)]
         public float Time { get; set; }
@@ -33,13 +32,7 @@ namespace SAGESharp.SLB.Cinematic.Camera
 
         public override string ToString()
         {
-            StringBuilder result = new StringBuilder();
-
-            result.AppendFormat("Time={0}", Time).Append(", ");
-            result.AppendFormat("Position={0}", Position).Append(", ");
-            result.AppendFormat("Target={0}", Target).Append(", ");
-
-            return result.ToString();
+            return $"Time={Time}, Position={Position}, Target={Target}"
         }
 
         public override bool Equals(object other)

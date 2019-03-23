@@ -2,15 +2,12 @@ using SAGESharp.SLB.IO;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Konvenience;
 
 namespace SAGESharp.SLB.Cinematic.Camera
 {
     public sealed class Camera : IEquatable<Camera>
     {
-
-
-
-        internal const int BINARY_SIZE = 20; //TODO: I don't know what I should count
 
         [SLBElement(1)]
         public float ViewAngle { get; set; }
@@ -43,25 +40,11 @@ namespace SAGESharp.SLB.Cinematic.Camera
 
         public override string ToString()
         {
-            StringBuilder result = new StringBuilder();
-
-            result.AppendFormat("ViewAngle={0}", ViewAngle).Append(", ");
-            result.AppendFormat("SpinMaskTimes1={0}", SpinMaskTimes1).Append(", ");
-            result.AppendFormat("SpinMaskTimes2={0}", SpinMaskTimes2).Append(", ");
-            result.AppendFormat("SpinMaskTimes3={0}", SpinMaskTimes3).Append(", ");
-            if (Frames == null)
-            {
-              result.Append("Frames=null");
-            }
-            else if (Frames.Count != 0) {
-              result.AppendFormat("Frames=[({0})]", string.Join("), (", Frames));
-            }
-            else
-            {
-              result.Append("Frames=[]")
-            }
-
-            return result.ToString();
+          return $"ViewAngle={ViewAngle}," +
+  $"SpinMaskTimes1={SpinMasktimes1}," +
+  $"SpinMaskTimes2={SpinMasktimes2}," +
+  $"SpinMaskTimes3={SpinMasktimes3}," +
+  $"Frames={Frames?.Let(frames => "[(" + string.Join("), (") + ")]") ?? "null"}";
         }
 
         public override bool Equals(object other)

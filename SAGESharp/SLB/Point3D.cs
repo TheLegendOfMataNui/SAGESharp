@@ -2,6 +2,7 @@ using SAGESharp.SLB.IO;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Konvenience;
 
 namespace SAGESharp.SLB
 {
@@ -35,13 +36,7 @@ namespace SAGESharp.SLB
         }
         public override string ToString()
         {
-            StringBuilder result = new StringBuilder();
-
-            result.AppendFormat("X={0}", X).Append(", ");
-            result.AppendFormat("Y={0}", Y).Append(", ");
-            result.AppendFormat("Z={0}", Z).Append(", ");
-
-            return result.ToString();
+            return $"X={X}, Y={Y}, Z={Z}";
         }
 
         public override bool Equals(object other)
