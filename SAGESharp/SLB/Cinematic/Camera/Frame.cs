@@ -32,7 +32,7 @@ namespace SAGESharp.SLB.Cinematic.Camera
 
         public override string ToString()
         {
-            return $"Time={Time}, Position={Position}, Target={Target}"
+            return $"Time={Time}, Position={Position}, Target={Target}";
         }
 
         public override bool Equals(object other)

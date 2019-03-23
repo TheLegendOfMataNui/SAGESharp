@@ -44,7 +44,7 @@ namespace SAGESharp.SLB.Cinematic.Camera
   $"SpinMaskTimes1={SpinMasktimes1}," +
   $"SpinMaskTimes2={SpinMasktimes2}," +
   $"SpinMaskTimes3={SpinMasktimes3}," +
-  $"Frames={Frames?.Let(frames => "[(" + string.Join("), (") + ")]") ?? "null"}";
+  $"Frames={Frames?.Let(frames => "[(" + string.Join("), (", frames) + ")]") ?? "null"}";
         }
 
         public override bool Equals(object other)
