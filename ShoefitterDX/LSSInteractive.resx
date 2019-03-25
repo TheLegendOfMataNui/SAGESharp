@@ -117,4 +117,159 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="SourceTextBox.ServiceColors" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAFdGYXN0Q29sb3JlZFRleHRCb3gsIFZlcnNpb249Mi4xNi4yNC4w
+        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWZiOGFhMTJiOTk0ZWY2MWIMAwAAAFFTeXN0
+        ZW0uRHJhd2luZywgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2Vu
+        PWIwM2Y1ZjdmMTFkNTBhM2EFAQAAACJGYXN0Q29sb3JlZFRleHRCb3hOUy5TZXJ2aWNlQ29sb3JzBgAA
+        ACg8Q29sbGFwc2VNYXJrZXJGb3JlQ29sb3I+a19fQmFja2luZ0ZpZWxkKDxDb2xsYXBzZU1hcmtlckJh
+        Y2tDb2xvcj5rX19CYWNraW5nRmllbGQqPENvbGxhcHNlTWFya2VyQm9yZGVyQ29sb3I+a19fQmFja2lu
+        Z0ZpZWxkJjxFeHBhbmRNYXJrZXJGb3JlQ29sb3I+a19fQmFja2luZ0ZpZWxkJjxFeHBhbmRNYXJrZXJC
+        YWNrQ29sb3I+a19fQmFja2luZ0ZpZWxkKDxFeHBhbmRNYXJrZXJCb3JkZXJDb2xvcj5rX19CYWNraW5n
+        RmllbGQEBAQEBAQUU3lzdGVtLkRyYXdpbmcuQ29sb3IDAAAAFFN5c3RlbS5EcmF3aW5nLkNvbG9yAwAA
+        ABRTeXN0ZW0uRHJhd2luZy5Db2xvcgMAAAAUU3lzdGVtLkRyYXdpbmcuQ29sb3IDAAAAFFN5c3RlbS5E
+        cmF3aW5nLkNvbG9yAwAAABRTeXN0ZW0uRHJhd2luZy5Db2xvcgMAAAACAAAABfz///8UU3lzdGVtLkRy
+        YXdpbmcuQ29sb3IEAAAABG5hbWUFdmFsdWUKa25vd25Db2xvcgVzdGF0ZQEAAAAJBwcDAAAACgAAAAAA
+        AAAAlgABAAH7/////P///woAAAAAAAAAAKQAAQAB+v////z///8KAAAAAAAAAACWAAEAAfn////8////
+        CgAAAAAAAAAAjQABAAH4/////P///woAAAAAAAAAAKQAAQAB9/////z///8KAAAAAAAAAACWAAEACw==
+</value>
+  </data>
+  <data name="SourceTextBox.Text" xml:space="preserve">
+    <value>global foo;
+
+class TestClass : TestParentClass {
+    property IsCool;
+    property Thing;
+    property Name;
+    property Color;
+    
+    method TestClass() {
+        TestParentClass();
+    }
+    
+    method DoThing(color) {
+        
+    }
+    
+    /**
+     * This should run through all the syntax capabilities LSS needs.
+     * 
+     */
+    method Test(param1, param2, param3) {
+        // Get &amp; set member value
+        // Call member function
+        // Create instance
+        param1.thing(new TestClass(), param2.member1);
+        // Get &amp; set this member value
+        // Call this member function
+        this.Name = DoThing(this.Color);
+        // Get &amp; set member value by string
+        // Call member function by string
+        param1.$(this.Name) = param1.$"sup"(param2.$"hello");
+        // Get &amp; set global &amp; stack variable values
+        foo = param3;
+        // Increment &amp; decrement global &amp; stack variables
+        foo++;
+        param3--;
+        // Literals
+        param3 = 0; // zero
+        param3 = 10; // byte
+        param3 = 500; // short
+        param3 = 10000000; // int
+        param3 = 2.5; // float
+        param3 = "Hello there"; // string
+        param3 = null; // null
+        param3 = rgb(128, 128, 0, 255); // color8888
+        param3 = true; // int 1
+        param3 = false; // int 0
+        // We won't use color5551
+        // Returning
+        return;
+        return param3;
+        // Branching
+        if (true) {
+            
+        }
+        else if (true) {
+            
+        }
+        else if ("banana") {
+            
+        }
+        else  {
+            
+        }
+        while (true) {
+            //debug::print(sup);
+        }
+        // Operators
+        param3 = 5 == 5 || true &amp;&amp; !false;
+        param3 = param1 &lt; ((param2 - param3) % 10) ^ 3; // ^ is power
+        param3 = param2 &lt;= param3 &amp; ~param1; // ~ is bitwise not
+        param3 = param1 &gt; param3 &lt;&lt; 3 + param2 &gt;&gt; param1;
+        param3 = param2 &gt;= param1 | param3 # param2; // # is bitwise xor
+        // Get &amp; set game variables
+        // Call game function
+        gcsaver::thing = gcsaver::thing + 10;
+        gcsaver::resetdata();
+        gcsaver::$("loadgame")();
+        // Array initializers
+        param3 = { };
+        param3 = { 1, 2, 3, "ben", param2 };
+        // Get array length
+        param3.__length
+        // Set &amp; get array elements
+        param3[2] = param3[1];
+        // Append element
+        param3.__append("benji"); // mutates array
+        // Remove element at index
+        param3.__removeat(5 + param2); // mutates array
+        // Insert element at index
+        param3.__insertat(10 + param2, param1); // mutates array
+        // Primitive color functions
+        param3.__red = param3.__alpha;
+        param3.__green = param3.__red;
+        param3.__alpha = param3.__green;
+        param3.__blue = param3.__blue;
+        // Conversions to string, float, and int
+        param3 = __tostring(param2);
+        param3 = __tofloat(param2):
+        param3 = __toint(param2);
+        // Type checks
+        param3 = __isint(param2);
+        param3 = __isfloat(param2);
+        param3 = __isstring(param2);
+        param3 = __isobject(param2);
+        param3 = __isinstance(param2);
+        param3 = __isarray(param2);
+        // Class id
+        param3 = __classid(param2);
+    }
+}
+
+
+function StaticThing(param1, param2) {
+    
+    
+}</value>
+  </data>
+  <data name="ResultTextBox.ServiceColors" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAFdGYXN0Q29sb3JlZFRleHRCb3gsIFZlcnNpb249Mi4xNi4yNC4w
+        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWZiOGFhMTJiOTk0ZWY2MWIMAwAAAFFTeXN0
+        ZW0uRHJhd2luZywgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2Vu
+        PWIwM2Y1ZjdmMTFkNTBhM2EFAQAAACJGYXN0Q29sb3JlZFRleHRCb3hOUy5TZXJ2aWNlQ29sb3JzBgAA
+        ACg8Q29sbGFwc2VNYXJrZXJGb3JlQ29sb3I+a19fQmFja2luZ0ZpZWxkKDxDb2xsYXBzZU1hcmtlckJh
+        Y2tDb2xvcj5rX19CYWNraW5nRmllbGQqPENvbGxhcHNlTWFya2VyQm9yZGVyQ29sb3I+a19fQmFja2lu
+        Z0ZpZWxkJjxFeHBhbmRNYXJrZXJGb3JlQ29sb3I+a19fQmFja2luZ0ZpZWxkJjxFeHBhbmRNYXJrZXJC
+        YWNrQ29sb3I+a19fQmFja2luZ0ZpZWxkKDxFeHBhbmRNYXJrZXJCb3JkZXJDb2xvcj5rX19CYWNraW5n
+        RmllbGQEBAQEBAQUU3lzdGVtLkRyYXdpbmcuQ29sb3IDAAAAFFN5c3RlbS5EcmF3aW5nLkNvbG9yAwAA
+        ABRTeXN0ZW0uRHJhd2luZy5Db2xvcgMAAAAUU3lzdGVtLkRyYXdpbmcuQ29sb3IDAAAAFFN5c3RlbS5E
+        cmF3aW5nLkNvbG9yAwAAABRTeXN0ZW0uRHJhd2luZy5Db2xvcgMAAAACAAAABfz///8UU3lzdGVtLkRy
+        YXdpbmcuQ29sb3IEAAAABG5hbWUFdmFsdWUKa25vd25Db2xvcgVzdGF0ZQEAAAAJBwcDAAAACgAAAAAA
+        AAAAlgABAAH7/////P///woAAAAAAAAAAKQAAQAB+v////z///8KAAAAAAAAAACWAAEAAfn////8////
+        CgAAAAAAAAAAjQABAAH4/////P///woAAAAAAAAAAKQAAQAB9/////z///8KAAAAAAAAAACWAAEACw==
+</value>
+  </data>
 </root>

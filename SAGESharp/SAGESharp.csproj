@@ -54,7 +54,15 @@
     <Compile Include="BHDFile.cs" />
     <Compile Include="INIConfig.cs" />
     <Compile Include="LSS\Compiler.cs" />
+    <Compile Include="LSS\Parser.cs" />
     <Compile Include="LSS\Scanner.cs" />
+    <Compile Include="LSS\Statements\BlockStatement.cs" />
+    <Compile Include="LSS\Statements\ClassStatement.cs" />
+    <Compile Include="LSS\Statements\GlobalStatement.cs" />
+    <Compile Include="LSS\Statements\InstructionStatement.cs" />
+    <Compile Include="LSS\Statements\PropertyStatement.cs" />
+    <Compile Include="LSS\Statements\Statement.cs" />
+    <Compile Include="LSS\Statements\SubroutineStatement.cs" />
     <Compile Include="LSS\SyntaxError.cs" />
     <Compile Include="LSS\Token.cs" />
     <Compile Include="OSI\BCLInstruction.cs" />
@@ -92,6 +100,7 @@
     <Compile Include="SLB\StringBinaryWriter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="LSS\readme.md" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

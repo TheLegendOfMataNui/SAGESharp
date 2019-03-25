@@ -75,12 +75,19 @@ namespace ShoefitterDX
             {
                 if (CurrentInspector != null)
                 {
-                    this.splitContainer2.Panel1.Controls.Remove(CurrentInspector);
+                    InspectorPanel.Controls.Remove(CurrentInspector);
+                }
+                if (GeneratePseudocodeCheckBox.Checked)
+                {
+                    g = Analyzer.ReconstructControlFlow(g);
                 }
                 CurrentInspector = new OSISubroutineInspector(g);
-                g = Analyzer.ReconstructControlFlow(g);
+                if (!GeneratePseudocodeCheckBox.Checked)
+                {
+                    g = Analyzer.ReconstructControlFlow(g);
+                }
 
-                this.splitContainer2.Panel1.Controls.Add(CurrentInspector);
+                InspectorPanel.Controls.Add(CurrentInspector);
                 CurrentInspector.Dock = DockStyle.Fill;
                 if (g.Nodes.Count == 3)
                 {

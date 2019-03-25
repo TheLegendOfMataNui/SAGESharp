@@ -40,14 +40,12 @@ namespace ShoefitterDX
             }
         }
 
-           
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
-        {
-            Config = new SAGESharp.INIConfig(INIFilename);
+            //OSIBrowser browser = new OSIBrowser();
+            //browser.LoadOSI(osi);
+            //Application.Run(browser);
+
+            LSSInteractive IDE = new LSSInteractive();
+            Application.Run(IDE);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

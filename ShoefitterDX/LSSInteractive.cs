@@ -22,13 +22,47 @@ namespace ShoefitterDX
         private void Compile_Click(object sender, EventArgs e)
         {
             List<SyntaxError> errors = new List<SyntaxError>();
-            List<Token> tokens = Scanner.Scan(SourceTextBox.Text, errors, true, true);
-
-            ResultTextBox.Text = "";
-            foreach (Token t in tokens)
+            List<Token> tokens = Scanner.Scan(SourceTextBox.Text, errors, false, true);
+            if (errors.Count == 0)
             {
-                ResultTextBox.Text += t.ToString() + "\r\n";
+                if (true)
+                {
+                    Parser p = new Parser();
+                    Parser.Result parseResult = p.Parse(tokens);
+
+                    if (parseResult.Errors.Count > 0)
+                    {
+                        ResultTextBox.Text = parseResult.Errors.Count + " Errors: \n";
+                        foreach (SyntaxError error in parseResult.Errors)
+                        {
+                            ResultTextBox.Text += "    " + error.ToString() + "\n";
+                        }
+                    }
+                    else
+                    {
+                        ResultTextBox.Text = "Parsed with 0 errors.";
+                    }
+
+                }
+                else
+                {
+                    ResultTextBox.Text = "Scan Success! Tokens: \r\n";
+                    foreach (Token t in tokens)
+                    {
+                        ResultTextBox.Text += t.ToString().Replace("\r\n", "\\n").Replace("\n", "\\n").Replace("\t", "\\t") + "\r\n";
+                    }
+                }
             }
+            else
+            {
+                ResultTextBox.Text = "Scan Error! Tokens: \r\n";
+                foreach (Token t in tokens)
+                {
+                    ResultTextBox.Text += t.ToString().Replace("\r\n", "\\n").Replace("\n", "\\n").Replace("\t", "\\t") + "\r\n";
+                }
+
+            }
+
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)

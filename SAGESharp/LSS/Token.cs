@@ -14,6 +14,7 @@ namespace SAGESharp.LSS
         KeywordFunction,
         KeywordProperty,
         KeywordMethod,
+        KeywordGlobal,
         KeywordVar,
         KeywordWhile,
         KeywordIf,
@@ -25,6 +26,25 @@ namespace SAGESharp.LSS
         KeywordNull,
         KeywordAnd,
         KeywordOr,
+        KeywordRGB,
+        KeywordLength,
+        KeywordAppend,
+        KeywordRemoveAt,
+        KeywordInsertAt,
+        KeywordRed,
+        KeywordGreen,
+        KeywordBlue,
+        KeywordAlpha,
+        KeywordToString,
+        KeywordToFloat,
+        KeywordToInt,
+        KeywordIsInt,
+        KeywordIsFloat,
+        KeywordIsString,
+        KeywordIsObject,
+        KeywordIsInstance,
+        KeywordIsArray,
+        KeywordClassID,
         Comment,
         MultilineComment,
         OpenBrace, // {
@@ -43,6 +63,18 @@ namespace SAGESharp.LSS
         Slash, // /
         Asterisk, // *
         Percent, // %
+        Ampersand, // &
+        Pipe, // |
+        Octothorpe, // #
+        Caret, // ^
+        Tilde, // ~
+        PlusPlus, // ++
+        DashDash, // --
+        ColonColon, // ::
+        PipePipe, // ||
+        AmpersandAmpersand, // &&
+        LessLess, // <<
+        GreaterGreater, // >>
 
         Symbol,
         StringLiteral,

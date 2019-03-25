@@ -27,6 +27,7 @@ namespace SAGESharp.LSS
                 _keywords.Add("function", TokenType.KeywordFunction);
                 _keywords.Add("property", TokenType.KeywordProperty);
                 _keywords.Add("method", TokenType.KeywordMethod);
+                _keywords.Add("global", TokenType.KeywordGlobal);
                 _keywords.Add("var", TokenType.KeywordVar);
                 _keywords.Add("while", TokenType.KeywordWhile);
                 _keywords.Add("if", TokenType.KeywordIf);
@@ -38,6 +39,25 @@ namespace SAGESharp.LSS
                 _keywords.Add("null", TokenType.KeywordNull);
                 _keywords.Add("and", TokenType.KeywordAnd);
                 _keywords.Add("or", TokenType.KeywordOr);
+                _keywords.Add("rgb", TokenType.KeywordRGB);
+                _keywords.Add("__length", TokenType.KeywordLength);
+                _keywords.Add("__append", TokenType.KeywordAppend);
+                _keywords.Add("__removeat", TokenType.KeywordRemoveAt);
+                _keywords.Add("__insertat", TokenType.KeywordInsertAt);
+                _keywords.Add("__red", TokenType.KeywordRed);
+                _keywords.Add("__green", TokenType.KeywordGreen);
+                _keywords.Add("__blue", TokenType.KeywordBlue);
+                _keywords.Add("__alpha", TokenType.KeywordAlpha);
+                _keywords.Add("__tostring", TokenType.KeywordToString);
+                _keywords.Add("__tofloat", TokenType.KeywordToFloat);
+                _keywords.Add("__toint", TokenType.KeywordToInt);
+                _keywords.Add("__isint", TokenType.KeywordIsInt);
+                _keywords.Add("__isfloat", TokenType.KeywordIsFloat);
+                _keywords.Add("__isstring", TokenType.KeywordIsString);
+                _keywords.Add("__isobject", TokenType.KeywordIsObject);
+                _keywords.Add("__isinstance", TokenType.KeywordIsInstance);
+                _keywords.Add("__isarray", TokenType.KeywordIsArray);
+                _keywords.Add("__classid", TokenType.KeywordClassID);
             }
             if (_keywords.ContainsKey(contents))
                 return _keywords[contents];
@@ -85,7 +105,11 @@ namespace SAGESharp.LSS
             else if (start == ';')
                 return FinishToken(TokenType.Semicolon);
             else if (start == ':')
+            {
+                if (AdvanceIfMatches(':'))
+                    return FinishToken(TokenType.ColonColon);
                 return FinishToken(TokenType.Colon);
+            }
             else if (start == '.')
                 return FinishToken(TokenType.Period);
             else if (start == '$')
@@ -93,27 +117,66 @@ namespace SAGESharp.LSS
             else if (start == ',')
                 return FinishToken(TokenType.Comma);
             else if (start == '-')
+            {
+                if (AdvanceIfMatches('-'))
+                    return FinishToken(TokenType.DashDash);
                 return FinishToken(TokenType.Dash);
+            }
             else if (start == '+')
+            {
+                if (AdvanceIfMatches('+'))
+                    return FinishToken(TokenType.PlusPlus);
                 return FinishToken(TokenType.Plus);
+            }
             else if (start == '*')
                 return FinishToken(TokenType.Asterisk);
             else if (start == '%')
                 return FinishToken(TokenType.Percent);
+            else if (start == '&')
+            {
+                if (AdvanceIfMatches('&'))
+                    return FinishToken(TokenType.AmpersandAmpersand);
+                return FinishToken(TokenType.Ampersand); // TODO: AmpAmp
+            }
+            else if (start == '|')
+            {
+                if (AdvanceIfMatches('|'))
+                    return FinishToken(TokenType.PipePipe);
+                return FinishToken(TokenType.Pipe); // TODO: PipePipe
+            }
+            else if (start == '#')
+                return FinishToken(TokenType.Octothorpe);
+            else if (start == '^')
+                return FinishToken(TokenType.Caret);
+            else if (start == '~')
+                return FinishToken(TokenType.Tilde);
             else if (start == '!')
                 return FinishToken(AdvanceIfMatches('=') ? TokenType.ExclamationEquals : TokenType.Exclamation);
             else if (start == '=')
                 return FinishToken(AdvanceIfMatches('=') ? TokenType.EqualsEquals : TokenType.Equals);
             else if (start == '>')
-                return FinishToken(AdvanceIfMatches('=') ? TokenType.GreaterEquals : TokenType.Greater);
+            {
+                if (AdvanceIfMatches('>'))
+                    return FinishToken(TokenType.GreaterGreater);
+                if (AdvanceIfMatches('='))
+                    return FinishToken(TokenType.GreaterEquals);
+                return FinishToken(TokenType.Greater);
+            }
             else if (start == '<')
-                return FinishToken(AdvanceIfMatches('=') ? TokenType.LessEquals : TokenType.Less);
+            {
+                if (AdvanceIfMatches('<'))
+                    return FinishToken(TokenType.LessLess);
+                if (AdvanceIfMatches('='))
+                    return FinishToken(TokenType.LessEquals);
+                return FinishToken(TokenType.Less);
+            }
             else if (start == '/')
             {
                 if (Peek() == '/')
                 {
                     while (Peek() != '\n' && !IsAtEnd())
                         Advance();
+                    CurrentIndex--; // Newline is not part of a comment.
                     return FinishToken(TokenType.Comment);
                 }
                 else if (Peek() == '*')
@@ -121,7 +184,7 @@ namespace SAGESharp.LSS
                     while ((Peek() != '*' || PeekNext() != '/') && !IsAtEnd())
                         Advance();
                     if (IsAtEnd())
-                        return FinishError();
+                        return FinishError("Unterminated multiline comment by the end of the source.");
                     else
                     {
                         CurrentIndex += 2; // Include the closing '*/' we peeked above
@@ -142,11 +205,11 @@ namespace SAGESharp.LSS
 
                 if (IsAtEnd())
                 {
-                    return FinishError(); // Unterminated string at end of file
+                    return FinishError("Unterminated string literal by the end of the source.");
                 }
                 else if (Peek() == '\n')
                 {
-                    return FinishError(); // Unterminated string at end of line
+                    return FinishError("Unterminated string literal by the end of the line.");
                 }
                 else
                 {
@@ -191,7 +254,7 @@ namespace SAGESharp.LSS
                 return FinishToken(GetKeywordType(Source.Substring(StartIndex, CurrentIndex - StartIndex)));
             }
             else
-                return FinishError();
+                return FinishError("Unknown token.");
         }
 
         private static Token FinishToken(TokenType type)
@@ -199,9 +262,9 @@ namespace SAGESharp.LSS
             return new Token(type, Source.Substring(StartIndex, CurrentIndex - StartIndex), StartIndex, CurrentIndex - StartIndex);
         }
 
-        private static Token FinishError()
+        private static Token FinishError(string message)
         {
-            Errors.Add(new SyntaxError(StartIndex, CurrentIndex - StartIndex, Line));
+            Errors.Add(new SyntaxError(message, StartIndex, CurrentIndex - StartIndex, Line));
             return FinishToken(TokenType.Invalid);
         }
 

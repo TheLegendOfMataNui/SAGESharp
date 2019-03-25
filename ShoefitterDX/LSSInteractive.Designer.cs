@@ -28,14 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LSSInteractive));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.SourceTextBox = new System.Windows.Forms.TextBox();
-            this.ResultTextBox = new System.Windows.Forms.TextBox();
+            this.SourceTextBox = new FastColoredTextBoxNS.FastColoredTextBox();
+            this.ResultTextBox = new FastColoredTextBoxNS.FastColoredTextBox();
             this.Compile = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SourceTextBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ResultTextBox)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -59,29 +63,65 @@
             // 
             // SourceTextBox
             // 
+            this.SourceTextBox.AutoCompleteBracketsList = new char[] {
+        '(',
+        ')',
+        '{',
+        '}',
+        '[',
+        ']',
+        '\"',
+        '\"',
+        '\'',
+        '\''};
+            this.SourceTextBox.AutoScrollMinSize = new System.Drawing.Size(619, 1638);
+            this.SourceTextBox.BackBrush = null;
+            this.SourceTextBox.CharHeight = 14;
+            this.SourceTextBox.CharWidth = 8;
+            this.SourceTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.SourceTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.SourceTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SourceTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SourceTextBox.IsReplaceMode = false;
             this.SourceTextBox.Location = new System.Drawing.Point(0, 0);
-            this.SourceTextBox.Multiline = true;
             this.SourceTextBox.Name = "SourceTextBox";
-            this.SourceTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.SourceTextBox.Paddings = new System.Windows.Forms.Padding(0);
+            this.SourceTextBox.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.SourceTextBox.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("SourceTextBox.ServiceColors")));
             this.SourceTextBox.Size = new System.Drawing.Size(396, 407);
             this.SourceTextBox.TabIndex = 0;
-            this.SourceTextBox.WordWrap = false;
+            this.SourceTextBox.Text = resources.GetString("SourceTextBox.Text");
+            this.SourceTextBox.Zoom = 100;
             // 
             // ResultTextBox
             // 
-            this.ResultTextBox.BackColor = System.Drawing.Color.White;
+            this.ResultTextBox.AutoCompleteBracketsList = new char[] {
+        '(',
+        ')',
+        '{',
+        '}',
+        '[',
+        ']',
+        '\"',
+        '\"',
+        '\'',
+        '\''};
+            this.ResultTextBox.AutoScrollMinSize = new System.Drawing.Size(27, 14);
+            this.ResultTextBox.BackBrush = null;
+            this.ResultTextBox.CharHeight = 14;
+            this.ResultTextBox.CharWidth = 8;
+            this.ResultTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.ResultTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.ResultTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ResultTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ResultTextBox.IsReplaceMode = false;
             this.ResultTextBox.Location = new System.Drawing.Point(0, 0);
-            this.ResultTextBox.Multiline = true;
             this.ResultTextBox.Name = "ResultTextBox";
+            this.ResultTextBox.Paddings = new System.Windows.Forms.Padding(0);
             this.ResultTextBox.ReadOnly = true;
-            this.ResultTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.ResultTextBox.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.ResultTextBox.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("ResultTextBox.ServiceColors")));
             this.ResultTextBox.Size = new System.Drawing.Size(396, 407);
-            this.ResultTextBox.TabIndex = 1;
-            this.ResultTextBox.WordWrap = false;
+            this.ResultTextBox.TabIndex = 0;
+            this.ResultTextBox.Zoom = 100;
             // 
             // Compile
             // 
@@ -104,11 +144,11 @@
             this.Name = "LSSInteractive";
             this.Text = "LSSInteractive";
             this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.SourceTextBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ResultTextBox)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -116,8 +156,8 @@
         #endregion
 
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.TextBox SourceTextBox;
-        private System.Windows.Forms.TextBox ResultTextBox;
         private System.Windows.Forms.Button Compile;
+        private FastColoredTextBoxNS.FastColoredTextBox SourceTextBox;
+        private FastColoredTextBoxNS.FastColoredTextBox ResultTextBox;
     }
 }

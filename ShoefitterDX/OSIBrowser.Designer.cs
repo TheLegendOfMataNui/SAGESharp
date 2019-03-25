@@ -31,12 +31,15 @@
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.InspectorPanel = new System.Windows.Forms.Panel();
+            this.GeneratePseudocodeCheckBox = new System.Windows.Forms.CheckBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             this.SuspendLayout();
@@ -75,12 +78,36 @@
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
             this.splitContainer2.Name = "splitContainer2";
             // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.InspectorPanel);
+            this.splitContainer2.Panel1.Controls.Add(this.GeneratePseudocodeCheckBox);
+            // 
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.textBox1);
             this.splitContainer2.Size = new System.Drawing.Size(680, 467);
             this.splitContainer2.SplitterDistance = 333;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // InspectorPanel
+            // 
+            this.InspectorPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.InspectorPanel.Location = new System.Drawing.Point(0, 17);
+            this.InspectorPanel.Name = "InspectorPanel";
+            this.InspectorPanel.Size = new System.Drawing.Size(333, 450);
+            this.InspectorPanel.TabIndex = 1;
+            // 
+            // GeneratePseudocodeCheckBox
+            // 
+            this.GeneratePseudocodeCheckBox.AutoSize = true;
+            this.GeneratePseudocodeCheckBox.Dock = System.Windows.Forms.DockStyle.Top;
+            this.GeneratePseudocodeCheckBox.Location = new System.Drawing.Point(0, 0);
+            this.GeneratePseudocodeCheckBox.Name = "GeneratePseudocodeCheckBox";
+            this.GeneratePseudocodeCheckBox.Size = new System.Drawing.Size(333, 17);
+            this.GeneratePseudocodeCheckBox.TabIndex = 0;
+            this.GeneratePseudocodeCheckBox.Text = "Generate control flow pseudocode";
+            this.GeneratePseudocodeCheckBox.UseVisualStyleBackColor = true;
             // 
             // textBox1
             // 
@@ -108,6 +135,8 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
@@ -122,5 +151,7 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.CheckBox GeneratePseudocodeCheckBox;
+        private System.Windows.Forms.Panel InspectorPanel;
     }
 }
