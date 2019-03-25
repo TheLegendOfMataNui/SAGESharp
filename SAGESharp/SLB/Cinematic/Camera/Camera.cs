@@ -1,14 +1,12 @@
+using Konvenience;
 using SAGESharp.SLB.IO;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Konvenience;
 
 namespace SAGESharp.SLB.Cinematic.Camera
 {
     public sealed class Camera : IEquatable<Camera>
     {
-
         [SLBElement(1)]
         public float ViewAngle { get; set; }
 
@@ -38,19 +36,14 @@ namespace SAGESharp.SLB.Cinematic.Camera
                 Frames.SafeSequenceEquals(other.Frames);
         }
 
-        public override string ToString()
-        {
-          return $"ViewAngle={ViewAngle}," +
-  $"SpinMaskTimes1={SpinMasktimes1}," +
-  $"SpinMaskTimes2={SpinMasktimes2}," +
-  $"SpinMaskTimes3={SpinMasktimes3}," +
-  $"Frames={Frames?.Let(frames => "[(" + string.Join("), (", frames) + ")]") ?? "null"}";
-        }
+        public override string ToString() => $"ViewAngle={ViewAngle}," +
+            $"SpinMaskTimes1={SpinMaskTimes1}," +
+            $"SpinMaskTimes2={SpinMaskTimes2}," +
+            $"SpinMaskTimes3={SpinMaskTimes3}," +
+            $"Frames={Frames?.Let(frames => "[(" + string.Join("), (", frames) + ")]") ?? "null"}";
 
         public override bool Equals(object other)
-        {
-            return Equals(other as Camera);
-        }
+            => Equals(other as Camera);
 
         public override int GetHashCode()
         {
@@ -81,8 +74,6 @@ namespace SAGESharp.SLB.Cinematic.Camera
         }
 
         public static bool operator !=(Camera left, Camera right)
-        {
-            return !(left == right);
-        }
+            => !(left == right);
     }
 }

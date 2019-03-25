@@ -1,14 +1,10 @@
 using SAGESharp.SLB.IO;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Konvenience;
 
 namespace SAGESharp.SLB.Cinematic.Camera
 {
     public sealed class Frame : IEquatable<Frame>
     {
-
         [SLBElement(1)]
         public float Time { get; set; }
 
@@ -31,21 +27,17 @@ namespace SAGESharp.SLB.Cinematic.Camera
         }
 
         public override string ToString()
-        {
-            return $"Time={Time}, Position={Position}, Target={Target}";
-        }
+            => $"Time={Time}, Position={Position}, Target={Target}";
 
         public override bool Equals(object other)
-        {
-            return Equals(other as Frame);
-        }
+            => Equals(other as Frame);
 
         public override int GetHashCode()
         {
             int hash = 7507;
             Time.AddHashCodeByVal(ref hash, 907);
-            Position.AddHashCodeByVal(ref hash, 907);
-            Target.AddHashCodeByVal(ref hash, 907);
+            Position.AddHashCodeByRef(ref hash, 907);
+            Target.AddHashCodeByRef(ref hash, 907);
 
             return hash;
         }
@@ -67,8 +59,6 @@ namespace SAGESharp.SLB.Cinematic.Camera
         }
 
         public static bool operator !=(Frame left, Frame right)
-        {
-            return !(left == right);
-        }
+            => !(left == right);
     }
 }
