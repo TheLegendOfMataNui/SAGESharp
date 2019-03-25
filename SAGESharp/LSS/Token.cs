@@ -24,6 +24,7 @@ namespace SAGESharp.LSS
         KeywordTrue,
         KeywordFalse,
         KeywordNull,
+        KeywordNew,
         KeywordAnd,
         KeywordOr,
         KeywordRGB,
@@ -76,6 +77,7 @@ namespace SAGESharp.LSS
         AmpersandAmpersand, // &&
         LessLess, // <<
         GreaterGreater, // >>
+        ColonColonDollarSign, // ::$
 
         Symbol,
         StringLiteral,

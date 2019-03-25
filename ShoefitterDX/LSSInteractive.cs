@@ -40,7 +40,19 @@ namespace ShoefitterDX
                     }
                     else
                     {
-                        ResultTextBox.Text = "Parsed with 0 errors.";
+                        ResultTextBox.Text = "Parsed with 0 errors.\n\n";
+                        foreach (var g in parseResult.Globals)
+                        {
+                            ResultTextBox.AppendText(g.ToString() + "\n\n");
+                        }
+                        foreach (SAGESharp.LSS.Statements.ClassStatement cls in parseResult.Classes)
+                        {
+                            ResultTextBox.AppendText(cls.ToString() + "\n\n");
+                        }
+                        foreach (var f in parseResult.Functions)
+                        {
+                            ResultTextBox.AppendText("function " + f.ToString() + "\n\n");
+                        }
                     }
 
                 }

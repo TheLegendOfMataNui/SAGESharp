@@ -37,6 +37,7 @@ namespace SAGESharp.LSS
                 _keywords.Add("true", TokenType.KeywordTrue);
                 _keywords.Add("false", TokenType.KeywordFalse);
                 _keywords.Add("null", TokenType.KeywordNull);
+                _keywords.Add("new", TokenType.KeywordNew);
                 _keywords.Add("and", TokenType.KeywordAnd);
                 _keywords.Add("or", TokenType.KeywordOr);
                 _keywords.Add("rgb", TokenType.KeywordRGB);
@@ -107,7 +108,11 @@ namespace SAGESharp.LSS
             else if (start == ':')
             {
                 if (AdvanceIfMatches(':'))
+                {
+                    if (AdvanceIfMatches('$'))
+                        return FinishToken(TokenType.ColonColonDollarSign);
                     return FinishToken(TokenType.ColonColon);
+                }
                 return FinishToken(TokenType.Colon);
             }
             else if (start == '.')

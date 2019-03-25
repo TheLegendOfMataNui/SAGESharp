@@ -14,6 +14,9 @@ namespace SAGESharp.LSS.Expressions
         T VisitGroupingExpression(GroupingExpression expr);
         T VisitUnaryExpression(UnaryExpression expr);
         T VisitArrayAccessExpression(ArrayAccessExpression expr);
+        T VisitCallExpression(CallExpression expr);
+        T VisitConstructorExpression(ConstructorExpression expr);
+        T VisitArrayExpression(ArrayExpression expr);
     }
 
     public abstract class Expression

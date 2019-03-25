@@ -81,6 +81,7 @@
             this.SourceTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.SourceTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.SourceTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SourceTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.SourceTextBox.IsReplaceMode = false;
             this.SourceTextBox.Location = new System.Drawing.Point(0, 0);
             this.SourceTextBox.Name = "SourceTextBox";
@@ -112,6 +113,7 @@
             this.ResultTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.ResultTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.ResultTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ResultTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.ResultTextBox.IsReplaceMode = false;
             this.ResultTextBox.Location = new System.Drawing.Point(0, 0);
             this.ResultTextBox.Name = "ResultTextBox";

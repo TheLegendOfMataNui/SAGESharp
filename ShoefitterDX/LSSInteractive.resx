@@ -180,7 +180,7 @@ class TestClass : TestParentClass {
         param3 = 2.5; // float
         param3 = "Hello there"; // string
         param3 = null; // null
-        param3 = rgb(128, 128, 0, 255); // color8888
+        param3 = rgba(128, 128, 0, param3 + 10); // color8888
         param3 = true; // int 1
         param3 = false; // int 0
         // We won't use color5551
@@ -197,7 +197,7 @@ class TestClass : TestParentClass {
         else if ("banana") {
             
         }
-        else  {
+        else {
             
         }
         while (true) {
@@ -218,7 +218,7 @@ class TestClass : TestParentClass {
         param3 = { };
         param3 = { 1, 2, 3, "ben", param2 };
         // Get array length
-        param3.__length
+        param3 = param3.__length;
         // Set &amp; get array elements
         param3[2] = param3[1];
         // Append element
@@ -234,7 +234,7 @@ class TestClass : TestParentClass {
         param3.__blue = param3.__blue;
         // Conversions to string, float, and int
         param3 = __tostring(param2);
-        param3 = __tofloat(param2):
+        param3 = __tofloat(param2);
         param3 = __toint(param2);
         // Type checks
         param3 = __isint(param2);

@@ -23,5 +23,20 @@ namespace SAGESharp.LSS.Expressions
         {
             return visitor.VisitBinaryExpression(this);
         }
+
+        public override string ToString()
+        {
+            if (Operation.Type == TokenType.Period
+                || Operation.Type == TokenType.PeriodDollarSign
+                || Operation.Type == TokenType.ColonColon
+                || Operation.Type == TokenType.ColonColonDollarSign)
+            {
+                return Left.ToString() + Operation.Content + Right.ToString();
+            }
+            else
+            {
+                return Left.ToString() + " " + Operation.Content + " " + Right.ToString();
+            }
+        }
     }
 }

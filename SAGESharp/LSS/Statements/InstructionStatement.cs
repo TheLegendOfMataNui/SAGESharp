@@ -8,6 +8,6 @@ namespace SAGESharp.LSS.Statements
 {
     public abstract class InstructionStatement : Statement
     {
-        // TODO: Accept compilation visitors
+
     }
 }

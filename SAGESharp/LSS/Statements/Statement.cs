@@ -13,6 +13,11 @@ namespace SAGESharp.LSS.Statements
         T VisitPropertyStatement(PropertyStatement s);
         T VisitSubroutineStatement(SubroutineStatement s);
         T VisitGlobalStatement(GlobalStatement s);
+        T VisitExpressionStatement(ExpressionStatement s);
+        T VisitReturnStatement(ReturnStatement s);
+        T VisitIfStatement(IfStatement s);
+        T VisitWhileStatement(WhileStatement s);
+        T VisitAssignmentStatement(AssignmentStatement s);
     }
 
     public abstract class Statement

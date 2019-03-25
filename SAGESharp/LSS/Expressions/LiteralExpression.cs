@@ -19,5 +19,10 @@ namespace SAGESharp.LSS.Expressions
         {
             return visitor.VisitLiteralExpression(this);
         }
+
+        public override string ToString()
+        {
+            return Value.Content;
+        }
     }
 }

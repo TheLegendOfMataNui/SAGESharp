@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace SAGESharp.LSS.Statements
 {
-    public class BlockStatement : Statement
+    public class BlockStatement : InstructionStatement
     {
-        public List<InstructionStatement> Instructions;
+        public List<InstructionStatement> Instructions { get; }
 
         public BlockStatement(IEnumerable<InstructionStatement> instructions)
         {
@@ -18,6 +18,18 @@ namespace SAGESharp.LSS.Statements
         public override T AcceptVisitor<T>(StatementVisitor<T> visitor)
         {
             return visitor.VisitBlockStatement(this);
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("{");
+            foreach (InstructionStatement s in Instructions)
+            {
+                sb.AppendLine(s.ToString());
+            }
+            sb.Append("}");
+            return sb.ToString();
         }
     }
 }

@@ -19,5 +19,10 @@ namespace SAGESharp.LSS.Statements
         {
             return visitor.VisitGlobalStatement(this);
         }
+
+        public override string ToString()
+        {
+            return "global " + Name.Content + ";";
+        }
     }
 }

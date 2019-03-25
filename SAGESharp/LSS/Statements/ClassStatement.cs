@@ -17,5 +17,34 @@ namespace SAGESharp.LSS.Statements
         {
             return visitor.VisitClassStatement(this);
         }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder("class ");
+            sb.Append(Name.Content);
+            if (SuperclassName != null)
+            {
+                sb.Append(" : ");
+                sb.Append(SuperclassName.Content);
+            }
+            sb.AppendLine(" {");
+
+            foreach (PropertyStatement p in Properties)
+            {
+                sb.Append("property ");
+                sb.Append(p.Name.Content);
+                sb.AppendLine(";");
+            }
+
+            foreach (SubroutineStatement s in Methods)
+            {
+                sb.Append("method ");
+                sb.AppendLine(s.ToString());
+            }
+
+            sb.Append("}");
+
+            return sb.ToString();
+        }
     }
 }

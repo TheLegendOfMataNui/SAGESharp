@@ -6,23 +6,23 @@ using System.Threading.Tasks;
 
 namespace SAGESharp.LSS.Statements
 {
-    public class PropertyStatement : Statement
+    public class ExpressionStatement : InstructionStatement
     {
-        public Token Name;
+        public Expressions.Expression Expression { get; }
 
-        public PropertyStatement(Token name)
+        public ExpressionStatement(Expressions.Expression expression)
         {
-            this.Name = name;
+            this.Expression = expression;
         }
 
         public override T AcceptVisitor<T>(StatementVisitor<T> visitor)
         {
-            return visitor.VisitPropertyStatement(this);
+            return visitor.VisitExpressionStatement(this);
         }
 
         public override string ToString()
         {
-            return "property " + Name.Content + ";";
+            return Expression.ToString() + ";";
         }
     }
 }

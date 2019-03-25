@@ -23,5 +23,23 @@ namespace SAGESharp.LSS.Statements
         {
             return visitor.VisitSubroutineStatement(this);
         }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(Name.Content);
+            sb.Append("(");
+            for (int i = 0; i < Parameters.Count; i++)
+            {
+                if (i > 0)
+                    sb.Append(", ");
+                sb.Append(Parameters[i].Content);
+            }
+            sb.AppendLine(")");
+            sb.Append(Body.ToString());
+
+            return sb.ToString();
+        }
     }
 }

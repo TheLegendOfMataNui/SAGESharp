@@ -66,7 +66,7 @@ namespace SAGESharp.LSS
                         }
                         else if (t.Type == TokenType.KeywordMethod)
                         {
-                            cls.Methods.Add(ParseSubroutine());
+                            cls.Methods.Add(ParseSubroutineStatement());
                         }
                         else
                         {
@@ -81,7 +81,7 @@ namespace SAGESharp.LSS
                 else if (ConsumeIfType(out _, TokenType.KeywordFunction))
                 {
                     SkipWhitespace();
-                    result.Functions.Add(ParseSubroutine());
+                    result.Functions.Add(ParseSubroutineStatement());
                 }
                 else if (ConsumeIfType(out _, TokenType.KeywordGlobal))
                 {
@@ -102,7 +102,7 @@ namespace SAGESharp.LSS
             return result;
         }
 
-        private SubroutineStatement ParseSubroutine()
+        private SubroutineStatement ParseSubroutineStatement()
         {
             Token name = ConsumeType(TokenType.Symbol, "Expected a name.");
             ConsumeType(TokenType.OpenParenthesis, "Expected an open parenthesis after subroutine name.");
@@ -130,11 +130,11 @@ namespace SAGESharp.LSS
             SkipWhitespace();
 
             // Body
-            BlockStatement body = ParseBlock();
+            BlockStatement body = ParseBlockStatement();
             return new SubroutineStatement(name, parameters, body);
         }
 
-        private BlockStatement ParseBlock()
+        private BlockStatement ParseBlockStatement()
         {
             List<InstructionStatement> instructions = new List<InstructionStatement>();
             ConsumeType(TokenType.OpenBrace, "Expected an open brace for subroutine body.");
@@ -142,9 +142,7 @@ namespace SAGESharp.LSS
 
             while (!IsAtEnd() && Peek().Type != TokenType.CloseBrace)
             {
-                // TODO: Read ExecutableStatement
-                Consume(); // Hack to not get stuck
-
+                instructions.Add(ParseInstructionStatement());
                 SkipWhitespace();
             }
             ConsumeType(TokenType.CloseBrace, "Unterminated subroutine body by the end of the source.");
@@ -153,11 +151,100 @@ namespace SAGESharp.LSS
             return result;
         }
 
-        private InstructionStatement ParseInstructionStatement()
+        public IfStatement ParseIfStatement()
         {
-            throw new NotImplementedException();
+            ConsumeType(TokenType.KeywordIf, "Expected if keyword.");
+            SkipWhitespace();
+            ConsumeType(TokenType.OpenParenthesis, "Expected an open parenthesis after if keyword.");
+            Expression condition = ParseExpression();
+            SkipWhitespace();
+            ConsumeType(TokenType.CloseParenthesis, "Expected a close parenthesis after if condition.");
+            InstructionStatement body = ParseInstructionStatement();
+            SkipWhitespace();
+            IfStatement elseStatement = null;
+            if (ConsumeIfType(out Token elseKeyword, TokenType.KeywordElse))
+            {
+                SkipWhitespace();
+                /*if (ConsumeIfType(out Token elseIfKeyword, TokenType.KeywordIf))
+                {
+                    SkipWhitespace();
+                    ConsumeType(TokenType.OpenParenthesis, "Expected an open parenthesis after else if keywords.");
+                    Expression elseIfCondition = ParseExpression();
+                    SkipWhitespace();
+                    ConsumeType(TokenType.CloseParenthesis, "Expected a close parenthesis after else if condition.");
+                    InstructionStatement elseIfBody = ParseInstructionStatement();
+
+                }*/
+                if (Peek().Type == TokenType.KeywordIf)
+                {
+                    elseStatement = ParseIfStatement();
+                }
+                else
+                {
+                    InstructionStatement elseBody = ParseInstructionStatement();
+                    elseStatement = new IfStatement(null, elseBody, null);
+                }
+                SkipWhitespace();
+            }
+            return new IfStatement(condition, body, elseStatement);
         }
 
+        private InstructionStatement ParseInstructionStatement()
+        {
+            // { means block
+            SkipWhitespace();
+            if (Peek().Type == TokenType.OpenBrace)
+            {
+                return ParseBlockStatement();
+            }
+            else if (Peek().Type == TokenType.KeywordIf)
+            {
+                return ParseIfStatement();
+            }
+            else if (ConsumeIfType(out Token whileKeyword, TokenType.KeywordWhile))
+            {
+                SkipWhitespace();
+                ConsumeType(TokenType.OpenParenthesis, "Expected an open parenthesis after while keyword.");
+                Expression condition = ParseExpression();
+                SkipWhitespace();
+                ConsumeType(TokenType.CloseParenthesis, "Expected a close parenthesis after while condition.");
+                InstructionStatement body = ParseInstructionStatement();
+                return new WhileStatement(condition, body);
+            }
+            else if (ConsumeIfType(out Token returnKeyword, TokenType.KeywordReturn))
+            {
+                if (ConsumeIfType(out _, TokenType.Semicolon))
+                {
+                    return new ReturnStatement(returnKeyword, null);
+                }
+                else
+                {
+                    Expression value = ParseExpression();
+                    SkipWhitespace();
+                    ConsumeType(TokenType.Semicolon, "Expected semicolon after expression to return.");
+                    return new ReturnStatement(returnKeyword, value);
+                }
+            }
+            else
+            {
+                Expression value = ParseExpression();
+                SkipWhitespace();
+                if (ConsumeIfType(out Token equalsOperator, TokenType.Equals))
+                {
+                    Expression rhs = ParseExpression();
+                    SkipWhitespace();
+                    ConsumeType(TokenType.Semicolon, "Expected semicolon after assignment statement.");
+                    return new AssignmentStatement(value, rhs);
+                }
+                else
+                {
+                    ConsumeType(TokenType.Semicolon, "Expected semicolon after expression statement.");
+                    return new ExpressionStatement(value);
+                }
+            }
+        }
+
+        // Hack for testing expression parsing by itself
         public Expression ParseExpression(List<Token> tokens)
         {
             this.Tokens = tokens;
@@ -169,7 +256,6 @@ namespace SAGESharp.LSS
             return ParseExpression();
         }
 
-        // TODO: Revert to private after testing
         private Expression ParseExpression()
         {
             return ParseLogicalOrExpression();
@@ -182,9 +268,10 @@ namespace SAGESharp.LSS
             Token t = Consume();
             if (t.Type == TokenType.KeywordTrue || t.Type == TokenType.KeywordFalse
                 || t.Type == TokenType.KeywordNull || t.Type == TokenType.IntegerLiteral
-                || t.Type == TokenType.FloatLiteral || t.Type == TokenType.StringLiteral)
+                || t.Type == TokenType.FloatLiteral || t.Type == TokenType.StringLiteral
+                || (t.Type >= TokenType.KeywordLength && t.Type <= TokenType.KeywordClassID))
                 return new LiteralExpression(t);
-            else if (t.Type == TokenType.Symbol)
+            else if (t.Type == TokenType.Symbol || t.Type == TokenType.KeywordThis)
                 return new VariableExpression(t);
             else if (t.Type == TokenType.OpenParenthesis)
             {
@@ -202,13 +289,105 @@ namespace SAGESharp.LSS
             }
         }
 
-        // [ ] ( ) . .$ :: ++ (postfix) -- (postfix) // Note: Right now parentheses are handled by ParseTerminalExpression()
-        private Expression ParseScopeExpression()
+        private Expression ParseConstructorExpression()
         {
-            Expression result = ParseTerminalExpression();
+            if (ConsumeIfType(out Token newKeyword, TokenType.KeywordNew))
+            {
+                SkipWhitespace();
+                Token typeName = ConsumeType(TokenType.Symbol, "Expected a type for constructor expression.");
+                SkipWhitespace();
+                ConsumeType(TokenType.OpenParenthesis, "Expected an open parenthesis after constructor type.");
+                // We don't call ParseCallExpression here because that would make the call expression optional. We want to demand the call.
+                bool isFirst = true;
+                List<Expression> arguments = new List<Expression>();
+                while (Peek().Type != TokenType.CloseParenthesis)
+                {
+                    SkipWhitespace();
+                    if (!isFirst)
+                        ConsumeType(TokenType.Comma, "Expected a comma between constructor arguments.");
+
+                    Expression argument = ParseExpression();
+                    arguments.Add(argument);
+
+                    isFirst = false;
+                    SkipWhitespace();
+                }
+
+                ConsumeType(TokenType.CloseParenthesis, "Expected a close parenthesis after constructor call.");
+                return new ConstructorExpression(typeName, arguments);
+            }
+            else
+            {
+                return ParseTerminalExpression();
+            }
+        }
+
+        // Function calls
+        private Expression ParseCallExpression()
+        {
+            Expression subroutine = ParseConstructorExpression();
 
             SkipWhitespace();
-            while (ConsumeIfType(out Token token, TokenType.OpenSquareBracket, /*TokenType.OpenParenthesis, */TokenType.Period, TokenType.PeriodDollarSign, TokenType.ColonColon, TokenType.PlusPlus, TokenType.DashDash))
+            while (ConsumeIfType(out Token openParenthesis, TokenType.OpenParenthesis))
+            {
+                SkipWhitespace();
+                List<Expression> arguments = new List<Expression>();
+
+                bool isFirst = true;
+                while (Peek().Type != TokenType.CloseParenthesis)
+                {
+                    SkipWhitespace();
+                    if (!isFirst)
+                        ConsumeType(TokenType.Comma, "Expected a comma between call arguments.");
+
+                    Expression argument = ParseExpression();
+                    arguments.Add(argument);
+
+                    isFirst = false;
+                    SkipWhitespace();
+                }
+
+                ConsumeType(TokenType.CloseParenthesis, "Expected a close parenthesis after function call.");
+                subroutine = new CallExpression(subroutine, arguments);
+            }
+            return subroutine;
+        }
+
+        private Expression ParseArrayExpression()
+        {
+            if (ConsumeIfType(out _, TokenType.OpenBrace))
+            {
+                SkipWhitespace();
+                List<Expression> elements = new List<Expression>();
+                bool firstElement = true;
+                while (Peek().Type != TokenType.CloseBrace)
+                {
+                    SkipWhitespace();
+                    if (!firstElement)
+                        ConsumeType(TokenType.Comma, "Expected a comma between elements of array expression.");
+                    Expression element = ParseExpression();
+                    elements.Add(element);
+                    firstElement = false;
+                    SkipWhitespace();
+                }
+
+                SkipWhitespace();
+                ConsumeType(TokenType.CloseBrace, "Expected a close brace after array expression.");
+                return new ArrayExpression(elements);
+            }
+            else
+            {
+                return ParseCallExpression();
+            }
+        }
+
+        // [ ] ( ) . .$ :: ::$ ++ (postfix) -- (postfix) // Note: Right now parentheses are handled by ParseTerminalExpression()
+        private Expression ParseScopeExpression()
+        {
+            Expression result = ParseArrayExpression();
+
+            SkipWhitespace();
+            while (ConsumeIfType(out Token token, TokenType.OpenSquareBracket, /*TokenType.OpenParenthesis, */TokenType.Period, TokenType.PeriodDollarSign, TokenType.ColonColon, TokenType.ColonColonDollarSign, TokenType.PlusPlus, TokenType.DashDash))
             {
                 if (token.Type == TokenType.OpenSquareBracket)
                 {
@@ -223,15 +402,15 @@ namespace SAGESharp.LSS
                 {
                     Expression content = 
                 }*/
-                else if (token.Type == TokenType.Period || token.Type == TokenType.PeriodDollarSign || token.Type == TokenType.ColonColon)
+                else if (token.Type == TokenType.Period || token.Type == TokenType.PeriodDollarSign || token.Type == TokenType.ColonColon || token.Type == TokenType.ColonColonDollarSign)
                 {
-                    Expression rhs = ParseTerminalExpression();
+                    Expression rhs = ParseArrayExpression();
                     result = new BinaryExpression(result, token, rhs);
                     SkipWhitespace();
                 }
                 else if (token.Type == TokenType.PlusPlus || token.Type == TokenType.DashDash)
                 {
-                    result = new UnaryExpression(result, token);
+                    result = new UnaryExpression(result, token, false);
                     SkipWhitespace();
                 }
             }
@@ -245,7 +424,7 @@ namespace SAGESharp.LSS
             if (ConsumeIfType(out Token token, TokenType.Dash, TokenType.Exclamation, TokenType.Tilde, TokenType.PlusPlus, TokenType.DashDash))
             {
                 Expression inner = ParseUnaryExpression();
-                return new UnaryExpression(inner, token);
+                return new UnaryExpression(inner, token, true);
             }
             return ParseScopeExpression();
         }

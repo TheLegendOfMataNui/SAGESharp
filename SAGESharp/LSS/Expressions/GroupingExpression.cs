@@ -19,5 +19,10 @@ namespace SAGESharp.LSS.Expressions
         {
             return visitor.VisitGroupingExpression(this);
         }
+
+        public override string ToString()
+        {
+            return "(" + Contents.ToString() + ")";
+        }
     }
 }
