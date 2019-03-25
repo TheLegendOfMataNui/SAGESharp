@@ -68,6 +68,7 @@ namespace SAGESharp.LSS
         Octothorpe, // #
         Caret, // ^
         Tilde, // ~
+        PeriodDollarSign, // .$
         PlusPlus, // ++
         DashDash, // --
         ColonColon, // ::

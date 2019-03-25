@@ -111,7 +111,11 @@ namespace SAGESharp.LSS
                 return FinishToken(TokenType.Colon);
             }
             else if (start == '.')
+            {
+                if (AdvanceIfMatches('$'))
+                    return FinishToken(TokenType.PeriodDollarSign);
                 return FinishToken(TokenType.Period);
+            }
             else if (start == '$')
                 return FinishToken(TokenType.DollarSign);
             else if (start == ',')
@@ -136,13 +140,13 @@ namespace SAGESharp.LSS
             {
                 if (AdvanceIfMatches('&'))
                     return FinishToken(TokenType.AmpersandAmpersand);
-                return FinishToken(TokenType.Ampersand); // TODO: AmpAmp
+                return FinishToken(TokenType.Ampersand);
             }
             else if (start == '|')
             {
                 if (AdvanceIfMatches('|'))
                     return FinishToken(TokenType.PipePipe);
-                return FinishToken(TokenType.Pipe); // TODO: PipePipe
+                return FinishToken(TokenType.Pipe);
             }
             else if (start == '#')
                 return FinishToken(TokenType.Octothorpe);
