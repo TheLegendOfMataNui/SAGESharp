@@ -404,7 +404,16 @@ namespace SAGESharp.LSS
                 }*/
                 else if (token.Type == TokenType.Period || token.Type == TokenType.PeriodDollarSign || token.Type == TokenType.ColonColon || token.Type == TokenType.ColonColonDollarSign)
                 {
-                    Expression rhs = ParseArrayExpression();
+                    Expression rhs = null;
+                    if (token.Type == TokenType.PeriodDollarSign || token.Type == TokenType.ColonColonDollarSign)
+                    {
+                        // Don't allow function calls as part of the lookup expression - this would be ambiguous, consider thing.$foo(bar), is '(bar)' part of the lookup expression, or calling the looked-up function?
+                        rhs = ParseTerminalExpression();
+                    }
+                    else
+                    {
+                        rhs = ParseArrayExpression();
+                    }
                     result = new BinaryExpression(result, token, rhs);
                     SkipWhitespace();
                 }
