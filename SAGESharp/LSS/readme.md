@@ -117,11 +117,13 @@ Expressions are bits of code that evaluate to a value, which can be of many diff
 Here are the various types of expressions:  
 
 **Literals**  
-LSS supports string, integer, and floating-point literals, which look like:
+LSS supports string, integer, and floating-point literals.  
+Colors are an interesting case - they are primitives, but the literal looks like a function call and can contain arbitrary expressions for the red, green, blue, and alpha arguments.  
 ```
 "this is a string"
 10000
 -4193.9591
+rgba(255, 0, 255 / 2, myVariable3)
 ```
 
 **Variables**  
@@ -163,3 +165,90 @@ The expression after the dollar sign must be a literal, a variable name, or a pa
 myRectangle.$("wid" + "th")
 someNamespace::$variableContainingFunctionName(arg1, 1052, "hey there")
 ```
+
+**Instantiation**  
+To create a new instance of an LSS class or native structure, the `new` keyword is used to invoke the constructor.
+```
+new lego_pickup("mskv", 3, 1, "item", 1, 1)
+```
+
+**Logical Operators**  
+LSS contains the standard operators you are probably used to for making comparisons.  
+One difference is that the `&&` and `||` operators do not short-circuit.
+```
+expression1 == expression2 // Checks equality
+expression1 != expression2 // Checks inequality
+expression1 < expression2 // Checks less than
+expression1 <= expression2 // Checks less than or equal to
+expression1 > expression2 // Checks greater than
+expression1 >= expression2 // Checks greater than or equal to
+!expression1 // The logical opposite
+expression1 && expression2 // Checks whether both are true.
+expression1 || expression2 // Checks whether at least one of the expressions are true.
+```
+
+**Mathematic Operators**  
+LSS also contains operators for math operations, with a few deviations from the standard C operators, notably:  
+ - Caret (`^`) is the power operator
+```
+++thing // Increment before use
+thing++ // Increment after use
+--thing // Decrement before use
+thing-- // Decrement after use
+-thing // Negate
+thing ^ thing // Exponent
+thing * thing // Product
+thing / thing // Quocient
+thing % thing // Modulo
+thing + thing // Sum
+thing - thing // Difference
+```
+
+**Bitwise Operators**  
+LSS also contains operators for bitwise integer operations, with a few deviations as well from standard C operators:  
+ - Octothorpe (`#`) is the bitwise XOR operator
+ ```
+ ~thing // Bitwise NOT
+ thing << thing // Bitwise left shift
+ thing >> thing // Bitwise right shift
+ thing & thing // Bitwise AND
+ thing # thing // Bitwise XOR
+ thing | thing // Bitwise OR
+ ```
+
+ **Arrays**    
+ LSS provides the standard array access syntax with square brackets, and a succinct syntax for creating array expressions using braces.
+ ```
+ { }
+ { thing1, thing2, 1003919, "Sup guys", true }
+ arrayThing[0] = 10
+ arrayThing[12 + 3] = arrayThing[0]
+ ```
+
+ **Builtin Members**  
+ Some names, which start with two underscores, are reserved for special use.
+ ```
+ thing.__length // Gets array length
+ thing.__append(anotherThing) // Appends to array
+ thing.__removeat(someVariable * 3) // Removes the array element at the given index
+ thing.__insertat(10 % otherVariable, thingToInsert) // Inserts the given element at the given index
+ thing.__red // Get or set Red component of color primitive
+ thing.__green // Get or set Green component of color primitive
+ thing.__blue // Get or set Blue component of color primitive
+ thing.__alpha // Get or set Alpha component of color primitive
+ ```
+
+ **Builtin Functions**  
+ LSS reserves some keywords for builtin functions, which start with two underscores, for type manipulation.
+ ```
+ __tostring(expression)
+ __tofloat(expression)
+ __toint(expression)
+ __isint(expression)
+ __isfloat(expression)
+ __isstring(expression)
+ __isobject(expression)
+ __isinstance(expression)
+ __isarray(expression)
+ __classid(expression)
+ ```
