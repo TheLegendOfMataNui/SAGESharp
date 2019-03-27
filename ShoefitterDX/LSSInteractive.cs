@@ -14,56 +14,21 @@ namespace ShoefitterDX
 {
     public partial class LSSInteractive : Form
     {
+        private Button LastClicked; // Store the last-clicked button for the Ctrl+Enter command.
+
         public LSSInteractive()
         {
             InitializeComponent();
+            LastClicked = CompileButton;
         }
 
-        private void Compile_Click(object sender, EventArgs e)
+        private bool TryScan(out List<Token> tokens)
         {
             List<SyntaxError> errors = new List<SyntaxError>();
-            List<Token> tokens = Scanner.Scan(SourceTextBox.Text, errors, false, true);
+            tokens = Scanner.Scan(SourceTextBox.Text, errors, false, true);
             if (errors.Count == 0)
             {
-                if (true)
-                {
-                    Parser p = new Parser();
-                    Parser.Result parseResult = p.Parse(tokens);
-
-                    if (parseResult.Errors.Count > 0)
-                    {
-                        ResultTextBox.Text = parseResult.Errors.Count + " Errors: \n";
-                        foreach (SyntaxError error in parseResult.Errors)
-                        {
-                            ResultTextBox.Text += "    " + error.ToString() + "\n";
-                        }
-                    }
-                    else
-                    {
-                        ResultTextBox.Text = "Parsed with 0 errors.\n\n";
-                        foreach (var g in parseResult.Globals)
-                        {
-                            ResultTextBox.AppendText(g.ToString() + "\n\n");
-                        }
-                        foreach (SAGESharp.LSS.Statements.ClassStatement cls in parseResult.Classes)
-                        {
-                            ResultTextBox.AppendText(cls.ToString() + "\n\n");
-                        }
-                        foreach (var f in parseResult.Functions)
-                        {
-                            ResultTextBox.AppendText("function " + f.ToString() + "\n\n");
-                        }
-                    }
-
-                }
-                else
-                {
-                    ResultTextBox.Text = "Scan Success! Tokens: \r\n";
-                    foreach (Token t in tokens)
-                    {
-                        ResultTextBox.Text += t.ToString().Replace("\r\n", "\\n").Replace("\n", "\\n").Replace("\t", "\\t") + "\r\n";
-                    }
-                }
+                return true;
             }
             else
             {
@@ -72,16 +37,126 @@ namespace ShoefitterDX
                 {
                     ResultTextBox.Text += t.ToString().Replace("\r\n", "\\n").Replace("\n", "\\n").Replace("\t", "\\t") + "\r\n";
                 }
-
+                tokens = null;
+                return false;
             }
+        }
 
+        private bool TryParse(out Parser.Result result)
+        {
+            if (TryScan(out List<Token> tokens))
+            {
+                Parser p = new Parser();
+                result = p.Parse(tokens);
+                if (result.Errors.Count == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    ResultTextBox.Text = result.Errors.Count + " Errors: \n";
+                    foreach (SyntaxError error in result.Errors)
+                    {
+                        ResultTextBox.Text += "    " + error.ToString() + "\n";
+                    }
+                    result = null;
+                    return false;
+                }
+            }
+            else
+            {
+                result = null;
+                return false;
+            }
+        }
+
+        private bool TryCompile(out Compiler.Result result)
+        {
+            if (TryParse(out Parser.Result parsed))
+            {
+                Compiler c = new Compiler();
+                result = c.CompileParsed(parsed);
+                if (result.Errors.Count == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    ResultTextBox.Text = result.Errors.Count + " Compile Errors: \n";
+                    foreach (SyntaxError error in result.Errors)
+                    {
+                        ResultTextBox.AppendText("    " + error.ToString() + "\n");
+                    }
+                    result = null;
+                    return false;
+                }
+            }
+            else
+            {
+                result = null;
+                return false;
+            }
+        }
+
+        private void ScanButton_Click(object sender, EventArgs e)
+        {
+            LastClicked = ScanButton;
+
+            ResultTextBox.BeginUpdate(); // Don't re-render on text change
+            if (TryScan(out List<Token> tokens))
+            {
+                ResultTextBox.Text = "";
+                foreach (Token t in tokens)
+                {
+                    ResultTextBox.Text += t.ToString().Replace("\r\n", "\\n").Replace("\n", "\\n").Replace("\t", "\\t") + "\r\n";
+                }
+            }
+            ResultTextBox.EndUpdate(); // Ok we're done changing the text rapidly
+        }
+
+        private void ParseButton_Click(object sender, EventArgs e)
+        {
+            LastClicked = ParseButton;
+
+            ResultTextBox.BeginUpdate();
+            if (TryParse(out Parser.Result result))
+            {
+                ResultTextBox.Text = "";
+                foreach (var g in result.Globals)
+                {
+                    ResultTextBox.AppendText(g.ToString() + "\n\n");
+                }
+                foreach (SAGESharp.LSS.Statements.ClassStatement cls in result.Classes)
+                {
+                    ResultTextBox.AppendText(cls.ToString() + "\n\n");
+                }
+                foreach (var f in result.Functions)
+                {
+                    ResultTextBox.AppendText("function " + f.ToString() + "\n\n");
+                }
+            }
+            ResultTextBox.EndUpdate();
+        }
+
+        private void CompileButton_Click(object sender, EventArgs e)
+        {
+            LastClicked = CompileButton;
+
+            ResultTextBox.BeginUpdate();
+            if (TryCompile(out Compiler.Result result))
+            {
+                ResultTextBox.Text = "";
+                // TODO: Debug print the compiled OSI
+                ResultTextBox.AppendText("Compiled successfully!");
+            }
+            ResultTextBox.EndUpdate();
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == (Keys.Control | Keys.Enter))
             {
-                Compile.PerformClick();
+                LastClicked.PerformClick();
                 return true;
             }
             return base.ProcessCmdKey(ref msg, keyData);

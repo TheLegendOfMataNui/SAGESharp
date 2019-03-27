@@ -94,7 +94,7 @@ namespace SAGESharp.LSS
                     Token extra = Consume();
                     if (extra.Type != TokenType.Whitespace && extra.Type != TokenType.Comment && extra.Type != TokenType.MultilineComment)
                     {
-                        result.Errors.Add(new SyntaxError("Expected class or function", extra.SourceLocation.Offset, extra.SourceLength, CurrentLine));
+                        result.Errors.Add(new SyntaxError("Expected global, class, or function", extra.SourceLocation.Offset, extra.SourceLength, CurrentLine));
                     }
                 }
             }

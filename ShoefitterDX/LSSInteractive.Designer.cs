@@ -33,7 +33,9 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.SourceTextBox = new FastColoredTextBoxNS.FastColoredTextBox();
             this.ResultTextBox = new FastColoredTextBoxNS.FastColoredTextBox();
-            this.Compile = new System.Windows.Forms.Button();
+            this.CompileButton = new System.Windows.Forms.Button();
+            this.ScanButton = new System.Windows.Forms.Button();
+            this.ParseButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -81,6 +83,7 @@
             this.SourceTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.SourceTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.SourceTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SourceTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.SourceTextBox.IsReplaceMode = false;
             this.SourceTextBox.Location = new System.Drawing.Point(0, 0);
             this.SourceTextBox.Name = "SourceTextBox";
@@ -112,6 +115,7 @@
             this.ResultTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.ResultTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.ResultTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ResultTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.ResultTextBox.IsReplaceMode = false;
             this.ResultTextBox.Location = new System.Drawing.Point(0, 0);
             this.ResultTextBox.Name = "ResultTextBox";
@@ -123,23 +127,47 @@
             this.ResultTextBox.TabIndex = 0;
             this.ResultTextBox.Zoom = 100;
             // 
-            // Compile
+            // CompileButton
             // 
-            this.Compile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.Compile.Location = new System.Drawing.Point(12, 415);
-            this.Compile.Name = "Compile";
-            this.Compile.Size = new System.Drawing.Size(75, 23);
-            this.Compile.TabIndex = 1;
-            this.Compile.Text = "Compile";
-            this.Compile.UseVisualStyleBackColor = true;
-            this.Compile.Click += new System.EventHandler(this.Compile_Click);
+            this.CompileButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.CompileButton.Location = new System.Drawing.Point(174, 415);
+            this.CompileButton.Name = "CompileButton";
+            this.CompileButton.Size = new System.Drawing.Size(75, 23);
+            this.CompileButton.TabIndex = 1;
+            this.CompileButton.Text = "Compile";
+            this.CompileButton.UseVisualStyleBackColor = true;
+            this.CompileButton.Click += new System.EventHandler(this.CompileButton_Click);
+            // 
+            // ScanButton
+            // 
+            this.ScanButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ScanButton.Location = new System.Drawing.Point(12, 415);
+            this.ScanButton.Name = "ScanButton";
+            this.ScanButton.Size = new System.Drawing.Size(75, 23);
+            this.ScanButton.TabIndex = 2;
+            this.ScanButton.Text = "Scan";
+            this.ScanButton.UseVisualStyleBackColor = true;
+            this.ScanButton.Click += new System.EventHandler(this.ScanButton_Click);
+            // 
+            // ParseButton
+            // 
+            this.ParseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ParseButton.Location = new System.Drawing.Point(93, 415);
+            this.ParseButton.Name = "ParseButton";
+            this.ParseButton.Size = new System.Drawing.Size(75, 23);
+            this.ParseButton.TabIndex = 3;
+            this.ParseButton.Text = "Parse";
+            this.ParseButton.UseVisualStyleBackColor = true;
+            this.ParseButton.Click += new System.EventHandler(this.ParseButton_Click);
             // 
             // LSSInteractive
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.Compile);
+            this.Controls.Add(this.ParseButton);
+            this.Controls.Add(this.ScanButton);
+            this.Controls.Add(this.CompileButton);
             this.Controls.Add(this.splitContainer1);
             this.Name = "LSSInteractive";
             this.Text = "LSSInteractive";
@@ -156,8 +184,10 @@
         #endregion
 
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.Button Compile;
+        private System.Windows.Forms.Button CompileButton;
         private FastColoredTextBoxNS.FastColoredTextBox SourceTextBox;
         private FastColoredTextBoxNS.FastColoredTextBox ResultTextBox;
+        private System.Windows.Forms.Button ScanButton;
+        private System.Windows.Forms.Button ParseButton;
     }
 }
