@@ -161,6 +161,8 @@ class TestClass : TestParentClass {
         // Call member function
         // Create instance
         param1.thing(new TestClass(), param2.member1);
+        // Declare variables
+        var myLocal = 10 + "ten";
         // Get &amp; set this member value
         // Call this member function
         this.Name = DoThing(this.Color);

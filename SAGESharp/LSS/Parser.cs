@@ -221,9 +221,23 @@ namespace SAGESharp.LSS
                 {
                     Expression value = ParseExpression();
                     SkipWhitespace();
-                    ConsumeType(TokenType.Semicolon, "Expected semicolon after expression to return.");
+                    ConsumeType(TokenType.Semicolon, "Expected a semicolon after expression to return.");
                     return new ReturnStatement(returnKeyword, value);
                 }
+            }
+            else if (ConsumeIfType(out Token varKeyword, TokenType.KeywordVar))
+            {
+                SkipWhitespace();
+                Token name = ConsumeType(TokenType.Symbol, "Expected a name for variable declaration.");
+                Expression initializer = null;
+                SkipWhitespace();
+                if (ConsumeIfType(out _, TokenType.Equals))
+                {
+                    initializer = ParseExpression();
+                }
+                SkipWhitespace();
+                ConsumeType(TokenType.Semicolon, "Expected a semicolon after variable initializer.");
+                return new VariableDeclarationStatement(name, initializer);
             }
             else
             {
@@ -322,10 +336,34 @@ namespace SAGESharp.LSS
             }
         }
 
+        // . .$ :: ::$
+        private Expression ParseScopeExpression()
+        {
+            Expression result = ParseConstructorExpression();
+
+            SkipWhitespace();
+            while (ConsumeIfType(out Token token, TokenType.Period, TokenType.PeriodDollarSign, TokenType.ColonColon, TokenType.ColonColonDollarSign))
+            {
+                Expression rhs = null;
+                if (token.Type == TokenType.PeriodDollarSign || token.Type == TokenType.ColonColonDollarSign)
+                {
+                    // Don't allow function calls as part of the lookup expression - this would be ambiguous, consider thing.$foo(bar), is '(bar)' part of the lookup expression, or calling the looked-up function?
+                    rhs = ParseTerminalExpression();
+                }
+                else
+                {
+                    rhs = ParseArrayExpression();
+                }
+                result = new BinaryExpression(result, token, rhs);
+                SkipWhitespace();
+            }
+            return result;
+        }
+
         // Function calls
         private Expression ParseCallExpression()
         {
-            Expression subroutine = ParseConstructorExpression();
+            Expression subroutine = ParseScopeExpression();
 
             SkipWhitespace();
             while (ConsumeIfType(out Token openParenthesis, TokenType.OpenParenthesis))
@@ -381,13 +419,13 @@ namespace SAGESharp.LSS
             }
         }
 
-        // [ ] ( ) . .$ :: ::$ ++ (postfix) -- (postfix) // Note: Right now parentheses are handled by ParseTerminalExpression()
-        private Expression ParseScopeExpression()
+        // [ ] ++ (postfix) -- (postfix) // Note: Right now parentheses are handled by ParseTerminalExpression()
+        private Expression ParsePostfixExpression()
         {
             Expression result = ParseArrayExpression();
 
             SkipWhitespace();
-            while (ConsumeIfType(out Token token, TokenType.OpenSquareBracket, /*TokenType.OpenParenthesis, */TokenType.Period, TokenType.PeriodDollarSign, TokenType.ColonColon, TokenType.ColonColonDollarSign, TokenType.PlusPlus, TokenType.DashDash))
+            while (ConsumeIfType(out Token token, TokenType.OpenSquareBracket, TokenType.PlusPlus, TokenType.DashDash))
             {
                 if (token.Type == TokenType.OpenSquareBracket)
                 {
@@ -397,25 +435,6 @@ namespace SAGESharp.LSS
                     // TODO: Assert that that was actually a close square bracket
                     // once we have a proper panic & sync system
                     result = new ArrayAccessExpression(result, index);
-                }
-                /*else if (token.Type == TokenType.OpenParenthesis)
-                {
-                    Expression content = 
-                }*/
-                else if (token.Type == TokenType.Period || token.Type == TokenType.PeriodDollarSign || token.Type == TokenType.ColonColon || token.Type == TokenType.ColonColonDollarSign)
-                {
-                    Expression rhs = null;
-                    if (token.Type == TokenType.PeriodDollarSign || token.Type == TokenType.ColonColonDollarSign)
-                    {
-                        // Don't allow function calls as part of the lookup expression - this would be ambiguous, consider thing.$foo(bar), is '(bar)' part of the lookup expression, or calling the looked-up function?
-                        rhs = ParseTerminalExpression();
-                    }
-                    else
-                    {
-                        rhs = ParseArrayExpression();
-                    }
-                    result = new BinaryExpression(result, token, rhs);
-                    SkipWhitespace();
                 }
                 else if (token.Type == TokenType.PlusPlus || token.Type == TokenType.DashDash)
                 {
@@ -435,7 +454,7 @@ namespace SAGESharp.LSS
                 Expression inner = ParseUnaryExpression();
                 return new UnaryExpression(inner, token, true);
             }
-            return ParseScopeExpression();
+            return ParsePostfixExpression();
         }
 
         // ^
