@@ -17,9 +17,9 @@ namespace SAGESharp.LSS.Expressions
             this.Arguments = new List<Expression>(arguments); // copies the elements of 'arguments'
         }
 
-        public override T AcceptVisitor<T>(ExpressionVisitor<T> visitor)
+        public override T AcceptVisitor<T, C>(ExpressionVisitor<T, C> visitor, C context)
         {
-            return visitor.VisitCallExpression(this);
+            return visitor.VisitCallExpression(this, context);
         }
 
         public override string ToString()

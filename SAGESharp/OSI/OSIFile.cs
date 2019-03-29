@@ -20,6 +20,8 @@ namespace SAGESharp.OSI
             {
                 this.Name = name;
                 this.ParameterCount = parameterCount;
+                this.BytecodeOffset = 0;
+                this.Instructions = new List<Instruction>();
             }
 
             public FunctionInfo(BinaryReader reader)
@@ -41,6 +43,8 @@ namespace SAGESharp.OSI
             public MethodInfo(ushort nameSymbol)
             {
                 this.NameSymbol = nameSymbol;
+                this.BytecodeOffset = 0;
+                this.Instructions = new List<Instruction>();
             }
 
             public MethodInfo(BinaryReader reader)
@@ -264,9 +268,10 @@ namespace SAGESharp.OSI
                 {
                     sb.AppendLine("      [" + j.ToString().PadLeft(4, ' ') + "]: " + this.Symbols[this.Classes[i].PropertySymbols[j]]);
                 }
+                sb.AppendLine("    Methods [" + this.Classes[i].Methods.Count + "]:");
                 for (int j = 0; j < this.Classes[i].Methods.Count; j++)
                 {
-                    sb.AppendLine("      [" + j.ToString().PadLeft(4, ' ') + "]: " + this.Symbols[this.Classes[i].Methods[j].NameSymbol]);
+                    sb.AppendLine("      [" + j.ToString().PadLeft(4, ' ') + "]: " + this.Symbols[this.Classes[i].Methods[j].NameSymbol] + " -> 0x" + this.Classes[i].Methods[j].BytecodeOffset.ToString("X8"));
                     uint offset = 0;
                     for (int k = 0; k < this.Classes[i].Methods[j].Instructions.Count; k++)
                     {

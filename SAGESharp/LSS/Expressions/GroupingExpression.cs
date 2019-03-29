@@ -15,9 +15,9 @@ namespace SAGESharp.LSS.Expressions
             this.Contents = contents;
         }
 
-        public override T AcceptVisitor<T>(ExpressionVisitor<T> visitor)
+        public override T AcceptVisitor<T, C>(ExpressionVisitor<T, C> visitor, C context)
         {
-            return visitor.VisitGroupingExpression(this);
+            return visitor.VisitGroupingExpression(this, context);
         }
 
         public override string ToString()

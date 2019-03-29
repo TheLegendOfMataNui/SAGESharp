@@ -15,9 +15,9 @@ namespace SAGESharp.LSS.Expressions
             this.Symbol = symbol;
         }
 
-        public override T AcceptVisitor<T>(ExpressionVisitor<T> visitor)
+        public override T AcceptVisitor<T, C>(ExpressionVisitor<T, C> visitor, C context)
         {
-            return visitor.VisitVariableExpression(this);
+            return visitor.VisitVariableExpression(this, context);
         }
 
         public override string ToString()

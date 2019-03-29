@@ -17,9 +17,9 @@ namespace SAGESharp.LSS.Expressions
             this.Index = index;
         }
 
-        public override T AcceptVisitor<T>(ExpressionVisitor<T> visitor)
+        public override T AcceptVisitor<T, C>(ExpressionVisitor<T, C> visitor, C context)
         {
-            return visitor.VisitArrayAccessExpression(this);
+            return visitor.VisitArrayAccessExpression(this, context);
         }
 
         public override string ToString()

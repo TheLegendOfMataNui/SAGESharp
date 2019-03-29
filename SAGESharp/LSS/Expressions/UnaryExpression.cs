@@ -19,9 +19,9 @@ namespace SAGESharp.LSS.Expressions
             this.IsPrefix = isPrefix;
         }
 
-        public override T AcceptVisitor<T>(ExpressionVisitor<T> visitor)
+        public override T AcceptVisitor<T, C>(ExpressionVisitor<T, C> visitor, C context)
         {
-            return visitor.VisitUnaryExpression(this);
+            return visitor.VisitUnaryExpression(this, context);
         }
 
         public override string ToString()

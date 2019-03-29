@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SAGESharp.LSS.Expressions;
 using SAGESharp.OSI;
 
 namespace SAGESharp.LSS
@@ -18,6 +19,57 @@ namespace SAGESharp.LSS
             {
                 this.OSI = osi;
                 this.Errors = new List<SyntaxError>();
+            }
+        }
+
+        public class SubroutineContext : Expressions.ExpressionVisitor<object, SubroutineContext>
+        {
+            private List<Instruction> Instructions = new List<Instruction>();
+            private Dictionary<string, int> LocalLocations = new Dictionary<string, int>();
+
+            public object VisitArrayAccessExpression(ArrayAccessExpression expr, SubroutineContext context)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object VisitArrayExpression(ArrayExpression expr, SubroutineContext context)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object VisitBinaryExpression(BinaryExpression expr, SubroutineContext context)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object VisitCallExpression(CallExpression expr, SubroutineContext context)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object VisitConstructorExpression(ConstructorExpression expr, SubroutineContext context)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object VisitGroupingExpression(GroupingExpression expr, SubroutineContext context)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object VisitLiteralExpression(LiteralExpression expr, SubroutineContext context)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object VisitUnaryExpression(UnaryExpression expr, SubroutineContext context)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object VisitVariableExpression(VariableExpression expr, SubroutineContext context)
+            {
+                throw new NotImplementedException();
             }
         }
 
@@ -101,64 +153,79 @@ namespace SAGESharp.LSS
 
         private void CompileInto(Result result, params Parser.Result[] parseResults)
         {
-            Dictionary<string, int> strings = new Dictionary<string, int>();
-            Dictionary<string, int> symbols = new Dictionary<string, int>();
-            Dictionary<string, int> globals = new Dictionary<string, int>();
+            Dictionary<string, ushort> strings = new Dictionary<string, ushort>();
+            Dictionary<string, ushort> symbols = new Dictionary<string, ushort>();
+            Dictionary<string, ushort> globals = new Dictionary<string, ushort>();
+
+            List<string> functions = new List<string>();
+            List<string> classes = new List<string>();
 
             // Collect existing names
             for (int i = 0; i < result.OSI.Strings.Count; i++)
-                strings.Add(result.OSI.Strings[i], i);
+                strings.Add(result.OSI.Strings[i], (ushort)i);
             for (int i = 0; i < result.OSI.Symbols.Count; i++)
-                symbols.Add(result.OSI.Symbols[i], i);
+                symbols.Add(result.OSI.Symbols[i], (ushort)i);
             for (int i = 0; i < result.OSI.Globals.Count; i++)
-                globals.Add(result.OSI.Globals[i], i);
+                globals.Add(result.OSI.Globals[i], (ushort)i);
+            for (int i = 0; i < result.OSI.Functions.Count; i++)
+                functions.Add(result.OSI.Functions[i].Name);
+            for (int i = 0; i < result.OSI.Classes.Count; i++)
+                classes.Add(result.OSI.Classes[i].Name);
 
-            // Collect new names
+            // Add new symbols, globals, class info, and method info
             foreach (Parser.Result parseResult in parseResults)
             {
                 foreach (Statements.ClassStatement cls in parseResult.Classes)
                 {
-                    if (symbols.ContainsKey(cls.Name.Content))
+                    List<ushort> propertySymbols = new List<ushort>();
+                    List<OSIFile.MethodInfo> methods = new List<OSIFile.MethodInfo>();
+                    if (classes.Contains(cls.Name.Content))
                     {
                         result.Errors.Add(new SyntaxError("Class already exists with same name.", cls.Name.SourceLocation.Offset, cls.Name.SourceLength, 0));
                     }
                     else
                     {
-                        /*int clsIndex = result.OSI.Symbols.Count;
-                        result.OSI.Symbols.Add(cls.Name.Content);
-                        symbols.Add(cls.Name.Content, clsIndex);*/
                         foreach (var prop in cls.Properties)
                         {
                             if (!symbols.ContainsKey(prop.Name.Content))
                             {
-                                int propIndex = result.OSI.Symbols.Count;
+                                ushort propIndex = (ushort)result.OSI.Symbols.Count;
                                 result.OSI.Symbols.Add(prop.Name.Content);
                                 symbols.Add(prop.Name.Content, propIndex);
+                                propertySymbols.Add(propIndex);
+                            }
+                            else
+                            {
+                                propertySymbols.Add(symbols[prop.Name.Content]);
                             }
                         }
                         foreach (var method in cls.Methods)
                         {
                             if (!symbols.ContainsKey(method.Name.Content))
                             {
-                                int methodIndex = result.OSI.Symbols.Count;
+                                ushort methodIndex = (ushort)result.OSI.Symbols.Count;
                                 result.OSI.Symbols.Add(method.Name.Content);
                                 symbols.Add(method.Name.Content, methodIndex);
+                                methods.Add(new OSIFile.MethodInfo(methodIndex));
+                            }
+                            else
+                            {
+                                methods.Add(new OSIFile.MethodInfo(symbols[method.Name.Content]));
                             }
                         }
                     }
+                    result.OSI.Classes.Add(new OSIFile.ClassInfo(cls.Name.Content, propertySymbols, methods));
                 }
 
                 foreach (Statements.SubroutineStatement func in parseResult.Functions)
                 {
-                    if (symbols.ContainsKey(func.Name.Content))
+                    if (functions.Contains(func.Name.Content))
                     {
                         result.Errors.Add(new SyntaxError("Function already exists with same name.", func.Name.SourceLocation.Offset, func.Name.SourceLength, 0));
                     }
                     else
                     {
-                        int funcIndex = result.OSI.Symbols.Count;
-                        result.OSI.Symbols.Add(func.Name.Content);
-                        symbols.Add(func.Name.Content, funcIndex);
+                        result.OSI.Functions.Add(new OSIFile.FunctionInfo(func.Name.Content, (ushort)func.Parameters.Count));
                     }
                 }
 
@@ -166,15 +233,19 @@ namespace SAGESharp.LSS
                 {
                     if (globals.ContainsKey(global.Name.Content))
                     {
-                        result.Errors.Add(new SyntaxError("Global already exists with same name.", global.Name.SourceLocation.Offset, global.Name.SourceLength, 0));
+                        // Duplicate globals are technically allowed
+                        // TODO: Warn about duplicate globals
+                        //result.Errors.Add(new SyntaxError("Global already exists with same name.", global.Name.SourceLocation.Offset, global.Name.SourceLength, 0));
                     }
                     else
                     {
-                        int globalIndex = result.OSI.Globals.Count;
+                        ushort globalIndex = (ushort)result.OSI.Globals.Count;
                         result.OSI.Globals.Add(global.Name.Content);
                         globals.Add(global.Name.Content, globalIndex);
                     }
                 }
+
+                // TODO: Compile the subroutines
             }
         }
 

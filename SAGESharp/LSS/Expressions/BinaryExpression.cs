@@ -19,9 +19,9 @@ namespace SAGESharp.LSS.Expressions
             this.Right = right;
         }
 
-        public override T AcceptVisitor<T>(ExpressionVisitor<T> visitor)
+        public override T AcceptVisitor<T, C>(ExpressionVisitor<T, C> visitor, C context)
         {
-            return visitor.VisitBinaryExpression(this);
+            return visitor.VisitBinaryExpression(this, context);
         }
 
         public override string ToString()
