@@ -452,7 +452,23 @@ namespace SAGESharp.LSS
             if (ConsumeIfType(out Token token, TokenType.Dash, TokenType.Exclamation, TokenType.Tilde, TokenType.PlusPlus, TokenType.DashDash))
             {
                 Expression inner = ParseUnaryExpression();
-                return new UnaryExpression(inner, token, true);
+                if (token.Type == TokenType.Dash && inner is LiteralExpression literal && (literal.Value.Type == TokenType.IntegerLiteral || literal.Value.Type == TokenType.FloatLiteral))
+                {
+                    if (literal.Value.Type == TokenType.IntegerLiteral)
+                    {
+                        string newContent = (-1 * Int32.Parse(literal.Value.Content)).ToString();
+                        return new LiteralExpression(new Token(TokenType.IntegerLiteral, newContent, token.SourceLocation.Offset, literal.Value.SourceLocation + literal.Value.SourceLength - token.SourceLocation.Offset));
+                    }
+                    else //if (literal.Value.Type == TokenType.FloatLiteral)
+                    {
+                        string newContent = (-1.0f * Single.Parse(literal.Value.Content)).ToString();
+                        return new LiteralExpression(new Token(TokenType.FloatLiteral, newContent, token.SourceLocation.Offset, literal.Value.SourceLocation + literal.Value.SourceLength - token.SourceLocation.Offset));
+                    }
+                }
+                else
+                {
+                    return new UnaryExpression(inner, token, true);
+                }
             }
             return ParsePostfixExpression();
         }

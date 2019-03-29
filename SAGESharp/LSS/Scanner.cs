@@ -38,8 +38,8 @@ namespace SAGESharp.LSS
                 _keywords.Add("false", TokenType.KeywordFalse);
                 _keywords.Add("null", TokenType.KeywordNull);
                 _keywords.Add("new", TokenType.KeywordNew);
-                _keywords.Add("and", TokenType.KeywordAnd);
-                _keywords.Add("or", TokenType.KeywordOr);
+                //_keywords.Add("and", TokenType.KeywordAnd);
+                //_keywords.Add("or", TokenType.KeywordOr);
                 _keywords.Add("rgb", TokenType.KeywordRGB);
                 _keywords.Add("__length", TokenType.KeywordLength);
                 _keywords.Add("__append", TokenType.KeywordAppend);
