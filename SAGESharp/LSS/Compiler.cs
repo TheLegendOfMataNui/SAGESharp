@@ -23,34 +23,58 @@ namespace SAGESharp.LSS
             }
         }
 
+        private class SubroutineScope
+        {
+            public Dictionary<string, int> Locals = new Dictionary<string, int>();
+            public SubroutineScope ParentScope { get; }
+
+            public SubroutineScope(SubroutineScope parentScope)
+            {
+                this.ParentScope = parentScope;
+            }
+        }
+
         private class SubroutineContext : ExpressionVisitor<uint, object>, Statements.StatementVisitor<uint>
         {
             public List<Instruction> Instructions { get; } = new List<Instruction>();
-            private Dictionary<string, int> LocalLocations = new Dictionary<string, int>();
             private OSIFile OSI { get; }
             public bool IsFinalized { get; private set; }
+            private ushort ParameterCount { get; } // Including 'this'
+            private ushort LocalCount = 0;
+            private SubroutineScope BaseScope { get; }
+            private SubroutineScope CurrentScope { get; set; }
 
             public SubroutineContext(OSIFile osi, IEnumerable<string> parameterNames)
             {
                 this.OSI = osi;
+                BaseScope = new SubroutineScope(null);
+                CurrentScope = BaseScope;
                 foreach (string param in parameterNames) {
                     AddLocal(param);
                 }
+                ParameterCount = LocalCount;
             }
 
             public void FinalizeInstructions()
             {
                 if (IsFinalized)
                     throw new InvalidOperationException("Cannot modify a SubroutineContext after it has been finalized.");
+                if (LocalCount > ParameterCount)
+                {
+                    Instructions.Insert(0, new BCLInstruction(BCLOpcode.CreateStackVariables, (sbyte)(LocalCount - ParameterCount)));
+                }
+                if (ParameterCount > 0)
+                {
+                    Instructions.Insert(0, new BCLInstruction(BCLOpcode.MemberFunctionArgumentCheck, (sbyte)ParameterCount));
+                }
             }
 
             private int AddLocal(string localName)
             {
                 if (IsFinalized)
                     throw new InvalidOperationException("Cannot modify a SubroutineContext after it has been finalized.");
-                int localIndex = LocalLocations.Count;
-                LocalLocations.Add(localName, localIndex);
-                return localIndex;
+                CurrentScope.Locals.Add(localName, LocalCount);
+                return LocalCount++;
             }
 
             private ushort AddOrGetString(string value)
@@ -64,6 +88,24 @@ namespace SAGESharp.LSS
                     OSI.Strings.Add(value);
                 }
                 return (ushort)index;
+            }
+
+            private void EnterScope()
+            {
+                SubroutineScope scope = new SubroutineScope(CurrentScope);
+                CurrentScope = scope;
+            }
+
+            private void LeaveScope()
+            {
+                if (CurrentScope.ParentScope != null)
+                {
+                    CurrentScope = CurrentScope.ParentScope;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Cannot leave the base subroutine scope.");
+                }
             }
 
             private string UnescapeString(string value)
@@ -307,27 +349,34 @@ namespace SAGESharp.LSS
             #region Statements
             public uint VisitBlockStatement(BlockStatement s)
             {
-                throw new NotImplementedException();
+                uint size = 0;
+                EnterScope();
+                foreach (InstructionStatement childStatement in s.Instructions)
+                {
+                    size += childStatement.AcceptVisitor(this);
+                }
+                LeaveScope();
+                return size;
             }
 
             public uint VisitClassStatement(ClassStatement s)
             {
-                throw new NotImplementedException();
+                throw new InvalidOperationException("Class statements are not allowed in a subroutine body.");
             }
 
             public uint VisitPropertyStatement(PropertyStatement s)
             {
-                throw new NotImplementedException();
+                throw new InvalidOperationException("Property statements are not allowed in a subroutine body.");
             }
 
             public uint VisitSubroutineStatement(SubroutineStatement s)
             {
-                throw new NotImplementedException();
+                throw new InvalidOperationException("Subroutine statements are not allowed inside the body of another subroutine.");
             }
 
             public uint VisitGlobalStatement(GlobalStatement s)
             {
-                throw new NotImplementedException();
+                throw new InvalidOperationException("Global statements are not allowed inside a subroutine body.");
             }
 
             public uint VisitExpressionStatement(ExpressionStatement s)
@@ -369,7 +418,16 @@ namespace SAGESharp.LSS
 
             public uint VisitVariableDeclarationStatement(VariableDeclarationStatement s)
             {
-                throw new NotImplementedException();
+                uint size = 0;
+                ushort localIndex = (ushort)AddLocal(s.Name.Content);
+                List<Instruction> ops = new List<Instruction>();
+                if (s.Initializer != null)
+                {
+                    size += s.Initializer.AcceptVisitor(this, null);
+                    ops.Add(new BCLInstruction(BCLOpcode.SetVariableValue, (ushort)localIndex));
+                }
+                Instructions.AddRange(ops);
+                return size + (uint)ops.Sum(instruction => instruction.Size);
             }
             #endregion
         }
