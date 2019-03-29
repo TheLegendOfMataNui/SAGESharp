@@ -23,7 +23,7 @@ namespace SAGESharp.LSS
             }
         }
 
-        private class SubroutineContext : ExpressionVisitor<object, object>, Statements.StatementVisitor<object>
+        private class SubroutineContext : ExpressionVisitor<uint, object>, Statements.StatementVisitor<uint>
         {
             public List<Instruction> Instructions { get; } = new List<Instruction>();
             private Dictionary<string, int> LocalLocations = new Dictionary<string, int>();
@@ -74,20 +74,21 @@ namespace SAGESharp.LSS
             // TODO: Make a corresponding EscapeString and use it in OSIFile.ToString()
 
             #region Expressions
-            public object VisitArrayAccessExpression(ArrayAccessExpression expr, object context)
+            public uint VisitArrayAccessExpression(ArrayAccessExpression expr, object context)
             {
                 throw new NotImplementedException();
             }
 
-            public object VisitArrayExpression(ArrayExpression expr, object context)
+            public uint VisitArrayExpression(ArrayExpression expr, object context)
             {
                 throw new NotImplementedException();
             }
 
-            public object VisitBinaryExpression(BinaryExpression expr, object context)
+            public uint VisitBinaryExpression(BinaryExpression expr, object context)
             {
-                expr.Left.AcceptVisitor(this, context);
-                expr.Right.AcceptVisitor(this, context);
+                uint size = 0;
+                size += expr.Left.AcceptVisitor(this, context);
+                size += expr.Right.AcceptVisitor(this, context);
                 List<Instruction> ops = new List<Instruction>();
                 if (expr.Operation.Type == TokenType.Ampersand)
                 {
@@ -187,26 +188,27 @@ namespace SAGESharp.LSS
                     throw new InvalidOperationException("Invalid binary operator: " + expr.Operation.Type);
                 }
                 Instructions.AddRange(ops);
-                return null;
+                return size + (uint)ops.Sum(instruction => instruction.Size);
             }
 
-            public object VisitCallExpression(CallExpression expr, object context)
+            public uint VisitCallExpression(CallExpression expr, object context)
             {
                 throw new NotImplementedException();
             }
 
-            public object VisitConstructorExpression(ConstructorExpression expr, object context)
+            public uint VisitConstructorExpression(ConstructorExpression expr, object context)
             {
                 throw new NotImplementedException();
             }
 
-            public object VisitGroupingExpression(GroupingExpression expr, object context)
+            public uint VisitGroupingExpression(GroupingExpression expr, object context)
             {
                 return expr.Contents.AcceptVisitor(this, context);
             }
 
-            public object VisitLiteralExpression(LiteralExpression expr, object context)
+            public uint VisitLiteralExpression(LiteralExpression expr, object context)
             {
+                List<Instruction> ops = new List<Instruction>();
                 if (expr.Value.Type == TokenType.StringLiteral)
                 {
                     ushort index = AddOrGetString(expr.Value.Content.Substring(1, expr.Value.Content.Length - 2));
@@ -217,34 +219,44 @@ namespace SAGESharp.LSS
                     int value = Int32.Parse(expr.Value.Content);
                     if (value == 0)
                     {
-                        Instructions.Add(new BCLInstruction(BCLOpcode.PushConstant0));
+                        ops.Add(new BCLInstruction(BCLOpcode.PushConstant0));
                     }
                     else if (value <= SByte.MaxValue && value >= SByte.MinValue)
                     {
-                        Instructions.Add(new BCLInstruction(BCLOpcode.PushConstanti8, (sbyte)value));
+                        ops.Add(new BCLInstruction(BCLOpcode.PushConstanti8, (sbyte)value));
                     }
                     else if (value <= Int16.MaxValue && value >= Int16.MinValue)
                     {
-                        Instructions.Add(new BCLInstruction(BCLOpcode.PushConstanti16, (short)value));
+                        ops.Add(new BCLInstruction(BCLOpcode.PushConstanti16, (short)value));
                     }
                     else
                     {
-                        Instructions.Add(new BCLInstruction(BCLOpcode.PushConstanti32, value));
+                        ops.Add(new BCLInstruction(BCLOpcode.PushConstanti32, value));
                     }
                 }
                 else if (expr.Value.Type == TokenType.FloatLiteral)
                 {
-                    Instructions.Add(new BCLInstruction(BCLOpcode.PushConstantf32, Single.Parse(expr.Value.Content)));
+                    ops.Add(new BCLInstruction(BCLOpcode.PushConstantf32, Single.Parse(expr.Value.Content)));
+                }
+                else if (expr.Value.Type == TokenType.KeywordTrue)
+                {
+                    ops.Add(new BCLInstruction(BCLOpcode.PushConstanti8, (sbyte)1));
+                }
+                else if (expr.Value.Type == TokenType.KeywordFalse)
+                {
+                    ops.Add(new BCLInstruction(BCLOpcode.PushConstant0));
                 }
                 else
                 {
                     throw new InvalidOperationException("Invalid literal type: " + expr.Value.Type);
                 }
-                return null;
+                Instructions.AddRange(ops);
+                return (uint)ops.Sum(instruction => instruction.Size);
             }
 
-            public object VisitUnaryExpression(UnaryExpression expr, object context)
+            public uint VisitUnaryExpression(UnaryExpression expr, object context)
             {
+                uint size = 0;
                 if (expr.IsPrefix && (expr.Operation.Type == TokenType.PlusPlus || expr.Operation.Type == TokenType.DashDash))
                 {
                     // TODO: Increment or decrement the assignable before compiling the operand
@@ -252,7 +264,7 @@ namespace SAGESharp.LSS
                 }
                 else
                 {
-                    expr.Contents.AcceptVisitor(this, context);
+                    size += expr.Contents.AcceptVisitor(this, context);
                     List<Instruction> ops = new List<Instruction>();
                     if (expr.Operation.Type == TokenType.Exclamation)
                     {
@@ -282,68 +294,80 @@ namespace SAGESharp.LSS
                         throw new InvalidOperationException("Invalid unary operator " + expr.Operation.Type);
                     }
                     Instructions.AddRange(ops);
-                    return null;
+                    return size + (uint)ops.Sum(instruction => instruction.Size);
                 }
             }
 
-            public object VisitVariableExpression(VariableExpression expr, object context)
+            public uint VisitVariableExpression(VariableExpression expr, object context)
             {
                 throw new NotImplementedException();
             }
             #endregion
 
             #region Statements
-            public object VisitBlockStatement(BlockStatement s)
+            public uint VisitBlockStatement(BlockStatement s)
             {
                 throw new NotImplementedException();
             }
 
-            public object VisitClassStatement(ClassStatement s)
+            public uint VisitClassStatement(ClassStatement s)
             {
                 throw new NotImplementedException();
             }
 
-            public object VisitPropertyStatement(PropertyStatement s)
+            public uint VisitPropertyStatement(PropertyStatement s)
             {
                 throw new NotImplementedException();
             }
 
-            public object VisitSubroutineStatement(SubroutineStatement s)
+            public uint VisitSubroutineStatement(SubroutineStatement s)
             {
                 throw new NotImplementedException();
             }
 
-            public object VisitGlobalStatement(GlobalStatement s)
+            public uint VisitGlobalStatement(GlobalStatement s)
             {
                 throw new NotImplementedException();
             }
 
-            public object VisitExpressionStatement(ExpressionStatement s)
+            public uint VisitExpressionStatement(ExpressionStatement s)
             {
                 return s.Expression.AcceptVisitor(this, null);
             }
 
-            public object VisitReturnStatement(ReturnStatement s)
+            public uint VisitReturnStatement(ReturnStatement s)
+            {
+                List<Instruction> ops = new List<Instruction>();
+                uint size = 0;
+                if (s.Value != null)
+                {
+                    size += s.Value.AcceptVisitor(this, null);
+                }
+                else
+                {
+                    ops.Add(new BCLInstruction(BCLOpcode.PushNothing));
+                }
+                ops.Add(new BCLInstruction(BCLOpcode.Return));
+                Instructions.AddRange(ops);
+                return size + (uint)ops.Sum(instruction => instruction.Size);
+            }
+
+            public uint VisitIfStatement(IfStatement s)
             {
                 throw new NotImplementedException();
             }
 
-            public object VisitIfStatement(IfStatement s)
+            public uint VisitWhileStatement(WhileStatement s)
             {
                 throw new NotImplementedException();
             }
 
-            public object VisitWhileStatement(WhileStatement s)
+            public uint VisitAssignmentStatement(AssignmentStatement s)
             {
                 throw new NotImplementedException();
             }
 
-            public object VisitAssignmentStatement(AssignmentStatement s)
-            {
-                throw new NotImplementedException();
-            }
-
-            public object VisitVariableDeclarationStatement(VariableDeclarationStatement s)
+            public uint VisitVariableDeclarationStatement(VariableDeclarationStatement s)
             {
                 throw new NotImplementedException();
             }
