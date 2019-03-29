@@ -1,7 +1,7 @@
 using SAGESharp.SLB.IO;
 using System;
 
-namespace SAGESharp.SLB.Cinematic.Character
+namespace SAGESharp.SLB
 {
     public sealed class Location : IEquatable<Location>
     {
