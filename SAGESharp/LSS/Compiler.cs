@@ -124,9 +124,9 @@ namespace SAGESharp.LSS
                     }
                     else
                     {
-                        int clsIndex = result.OSI.Symbols.Count;
+                        /*int clsIndex = result.OSI.Symbols.Count;
                         result.OSI.Symbols.Add(cls.Name.Content);
-                        symbols.Add(cls.Name.Content, clsIndex);
+                        symbols.Add(cls.Name.Content, clsIndex);*/
                         foreach (var prop in cls.Properties)
                         {
                             if (!symbols.ContainsKey(prop.Name.Content))

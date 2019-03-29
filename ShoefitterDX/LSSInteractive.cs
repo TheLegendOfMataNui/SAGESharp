@@ -146,8 +146,7 @@ namespace ShoefitterDX
             if (TryCompile(out Compiler.Result result))
             {
                 ResultTextBox.Text = "";
-                // TODO: Debug print the compiled OSI
-                ResultTextBox.AppendText("Compiled successfully!");
+                ResultTextBox.AppendText(result.OSI.ToString());
             }
             ResultTextBox.EndUpdate();
         }

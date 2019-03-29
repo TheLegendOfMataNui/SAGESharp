@@ -220,5 +220,62 @@ namespace SAGESharp.OSI
             reader.BaseStream.Position = offset;
             return result;
         }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Globals [" + this.Globals.Count + "]:");
+            for (int i = 0; i < this.Globals.Count; i++)
+            {
+                sb.AppendLine("  [" + i.ToString().PadLeft(4, ' ') + "]: " + this.Globals[i]);
+            }
+            sb.AppendLine("Symbols [" + this.Symbols.Count + "]:");
+            for (int i = 0; i < this.Symbols.Count; i++)
+            {
+                sb.AppendLine("  [" + i.ToString().PadLeft(4, ' ') + "]: " + this.Symbols[i]);
+            }
+            sb.AppendLine("Strings [" + this.Strings.Count + "]:");
+            for (int i = 0; i < this.Strings.Count; i++)
+            {
+                sb.AppendLine("  [" + i.ToString().PadLeft(4, ' ') + "]: \"" + this.Strings[i] + "\"");
+            }
+            sb.AppendLine("Sources [" + this.SourceFilenames.Count + "]: ");
+            for (int i = 0; i < this.SourceFilenames.Count; i++)
+            {
+                sb.AppendLine("  [" + i.ToString().PadLeft(4, ' ') + "]: \"" + this.SourceFilenames[i] + "\"");
+            }
+            sb.AppendLine("Functions [" + this.Functions.Count + "]: ");
+            for (int i = 0; i < this.Functions.Count; i++)
+            {
+                sb.AppendLine("  [" + i.ToString().PadLeft(4, ' ') + "]: " + this.Functions[i].Name + "(" + this.Functions[i].ParameterCount + ") -> 0x" + this.Functions[i].BytecodeOffset.ToString("X8"));
+                uint offset = 0;
+                for (int j = 0; j < this.Functions[i].Instructions.Count; j++)
+                {
+                    sb.AppendLine("    [" + offset.ToString().PadLeft(8, '0') + "]: " + this.Functions[i].Instructions[j].ToString());
+                    offset += this.Functions[i].Instructions[j].Size;
+                }
+            }
+            sb.AppendLine("Classes [" + this.Classes.Count + "]: ");
+            for (int i = 0; i < this.Classes.Count; i++)
+            {
+                sb.AppendLine("  [" + i.ToString().PadLeft(4, ' ') + "]: " + this.Classes[i].Name);
+                sb.AppendLine("    Properties [" + this.Classes[i].PropertySymbols.Count + "]:");
+                for (int j = 0; j < this.Classes[i].PropertySymbols.Count; j++)
+                {
+                    sb.AppendLine("      [" + j.ToString().PadLeft(4, ' ') + "]: " + this.Symbols[this.Classes[i].PropertySymbols[j]]);
+                }
+                for (int j = 0; j < this.Classes[i].Methods.Count; j++)
+                {
+                    sb.AppendLine("      [" + j.ToString().PadLeft(4, ' ') + "]: " + this.Symbols[this.Classes[i].Methods[j].NameSymbol]);
+                    uint offset = 0;
+                    for (int k = 0; k < this.Classes[i].Methods[j].Instructions.Count; k++)
+                    {
+                        sb.AppendLine("        [" + offset.ToString().PadLeft(8, '0') + "]: " + this.Classes[i].Methods[j].Instructions[k].ToString());
+                        offset += this.Classes[i].Methods[j].Instructions[k].Size;
+                    }
+                }
+            }
+            return sb.ToString();
+        }
     }
 }
