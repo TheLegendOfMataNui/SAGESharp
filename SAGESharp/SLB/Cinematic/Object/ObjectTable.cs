@@ -22,7 +22,7 @@ namespace SAGESharp.SLB.Cinematic.Object
         }
 
         public override string ToString() =>
-            $"Characters={Objects?.Let(Objects => "[(" + string.Join("), (", Objects) + ")]") ?? "null"}";
+            $"Objects={Objects?.Let(Objects => "[(" + string.Join("), (", Objects) + ")]") ?? "null"}";
 
         public override bool Equals(object other)
             => Equals(other as ObjectTable);
@@ -30,7 +30,7 @@ namespace SAGESharp.SLB.Cinematic.Object
         public override int GetHashCode()
         {
             int hash = 2179;
-            Characters.AddHashCodesByRef(ref hash, 2161, 2791);
+            Objects.AddHashCodesByRef(ref hash, 2161, 2791);
 
             return hash;
         }
