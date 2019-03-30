@@ -254,7 +254,7 @@ namespace SAGESharp.LSS
                 if (expr.Value.Type == TokenType.StringLiteral)
                 {
                     ushort index = AddOrGetString(expr.Value.Content.Substring(1, expr.Value.Content.Length - 2));
-                    Instructions.Add(new BCLInstruction(BCLOpcode.PushConstantString, index));
+                    ops.Add(new BCLInstruction(BCLOpcode.PushConstantString, index));
                 }
                 else if (expr.Value.Type == TokenType.IntegerLiteral)
                 {
@@ -381,7 +381,11 @@ namespace SAGESharp.LSS
 
             public uint VisitExpressionStatement(ExpressionStatement s)
             {
-                return s.Expression.AcceptVisitor(this, null);
+                uint size = s.Expression.AcceptVisitor(this, null);
+                BCLInstruction popInstruction = new BCLInstruction(BCLOpcode.Pop);
+                Instructions.Add(popInstruction);
+                size += popInstruction.Size;
+                return size;
             }
 
             public uint VisitReturnStatement(ReturnStatement s)
@@ -403,12 +407,62 @@ namespace SAGESharp.LSS
 
             public uint VisitIfStatement(IfStatement s)
             {
-                throw new NotImplementedException();
+                uint size = 0;
+
+                BCLInstruction mainBranchInstruction = null;
+
+                // 'else' statements have no condition
+                if (s.Condition != null)
+                {
+                    size += s.Condition.AcceptVisitor(this, null);
+                    mainBranchInstruction = new BCLInstruction(BCLOpcode.CompareAndBranchIfFalse);
+                    size += mainBranchInstruction.Size;
+                    Instructions.Add(mainBranchInstruction);
+                }
+
+                uint bodySize = s.Body.AcceptVisitor(this);
+                size += bodySize;
+
+                if (s.ElseStatement != null)
+                {
+                    BCLInstruction branchToEndInstruction = new BCLInstruction(BCLOpcode.BranchAlways);
+                    size += branchToEndInstruction.Size;
+                    bodySize += branchToEndInstruction.Size;
+                    Instructions.Add(branchToEndInstruction);
+
+                    uint elseSize = s.ElseStatement.AcceptVisitor(this);
+                    size += elseSize;
+                    branchToEndInstruction.Arguments[0].Value = (short)elseSize;
+                }
+
+                if (s.Condition != null)
+                {
+                    mainBranchInstruction.Arguments[0].Value = (short)bodySize;
+                }
+
+                return size;
             }
 
             public uint VisitWhileStatement(WhileStatement s)
             {
-                throw new NotImplementedException();
+                uint size = 0;
+
+                size += s.Condition.AcceptVisitor(this, null);
+                BCLInstruction exitBranch = new BCLInstruction(BCLOpcode.CompareAndBranchIfFalse);
+                Instructions.Add(exitBranch);
+                size += exitBranch.Size;
+
+                uint bodySize = 0;
+                bodySize += s.Body.AcceptVisitor(this);
+                BCLInstruction loopBranch = new BCLInstruction(BCLOpcode.BranchAlways);
+                Instructions.Add(loopBranch);
+                bodySize += loopBranch.Size;
+
+                size += bodySize;
+                loopBranch.Arguments[0].Value = (short)(-1 * (short)size);
+                exitBranch.Arguments[0].Value = (short)bodySize;
+
+                return size;
             }
 
             public uint VisitAssignmentStatement(AssignmentStatement s)
