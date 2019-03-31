@@ -73,8 +73,45 @@ namespace SAGESharp.LSS
             {
                 if (IsFinalized)
                     throw new InvalidOperationException("Cannot modify a SubroutineContext after it has been finalized.");
+                SubroutineScope scope = CurrentScope;
+                while (scope != null)
+                {
+                    if (scope.Locals.ContainsKey(localName))
+                        throw new ArgumentException("Variable is already declared, and would conflict.");
+                    scope = scope.ParentScope;
+                }
                 CurrentScope.Locals.Add(localName, LocalCount);
                 return LocalCount++;
+            }
+
+            // Could be a local in one of the current scopes or a global.
+            private ushort? FindVariable(string name)
+            {
+                ushort? variableID = null;
+
+                // Local?
+                SubroutineScope scope = CurrentScope;
+                while (scope != null)
+                {
+                    if (scope.Locals.ContainsKey(name))
+                    {
+                        variableID = (ushort)scope.Locals[name];
+                        break;
+                    }
+                    scope = scope.ParentScope;
+                }
+
+                // Global?
+                if (!variableID.HasValue)
+                {
+                    if (OSI.Globals.Contains(name))
+                    {
+                        // Highest bit (0x8000) means global
+                        variableID = (ushort)(OSI.Globals.IndexOf(name) | (1 << 15));
+                    }
+                }
+
+                return variableID;
             }
 
             private ushort AddOrGetString(string value)
@@ -342,7 +379,21 @@ namespace SAGESharp.LSS
 
             public uint VisitVariableExpression(VariableExpression expr, object context)
             {
-                throw new NotImplementedException();
+                uint size = 0;
+                ushort? variableID = FindVariable(expr.Symbol.Content);
+
+                if (variableID.HasValue)
+                {
+                    BCLInstruction getVariable = new BCLInstruction(BCLOpcode.GetVariableValue, variableID.Value);
+                    Instructions.Add(getVariable);
+                    size += getVariable.Size;
+                }
+                else
+                {
+                    throw new ArgumentException("Variable '" + expr.Symbol.Content + "' is not a valid local or global.");
+                }
+
+                return size;
             }
             #endregion
 
@@ -467,7 +518,28 @@ namespace SAGESharp.LSS
 
             public uint VisitAssignmentStatement(AssignmentStatement s)
             {
-                throw new NotImplementedException();
+                if (s.Target is VariableExpression varExpr)
+                {
+                    ushort? variableID = FindVariable(varExpr.Symbol.Content);
+
+                    if (variableID.HasValue)
+                    {
+                        uint size = 0;
+                        size += s.Value.AcceptVisitor(this, null);
+                        BCLInstruction setVariable = new BCLInstruction(BCLOpcode.SetVariableValue, variableID.Value);
+                        Instructions.Add(setVariable);
+                        size += setVariable.Size;
+                        return size;
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Variable '" + varExpr.Symbol.Content + "' is not a valid local or global.");
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException("Cannot assign into ");
+                }
             }
 
             public uint VisitVariableDeclarationStatement(VariableDeclarationStatement s)
