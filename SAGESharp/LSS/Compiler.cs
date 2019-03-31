@@ -39,12 +39,13 @@ namespace SAGESharp.LSS
             public List<Instruction> Instructions { get; } = new List<Instruction>();
             private OSIFile OSI { get; }
             public bool IsFinalized { get; private set; }
+            public bool IsInstanceMethod { get; }
             private ushort ParameterCount { get; } // Including 'this'
             private ushort LocalCount = 0;
             private SubroutineScope BaseScope { get; }
             private SubroutineScope CurrentScope { get; set; }
 
-            public SubroutineContext(OSIFile osi, IEnumerable<string> parameterNames)
+            public SubroutineContext(OSIFile osi, bool isInstanceMethod, IEnumerable<string> parameterNames)
             {
                 this.OSI = osi;
                 BaseScope = new SubroutineScope(null);
@@ -53,6 +54,7 @@ namespace SAGESharp.LSS
                     AddLocal(param);
                 }
                 ParameterCount = LocalCount;
+                this.IsInstanceMethod = isInstanceMethod;
             }
 
             public void FinalizeInstructions()
@@ -63,9 +65,14 @@ namespace SAGESharp.LSS
                 {
                     Instructions.Insert(0, new BCLInstruction(BCLOpcode.CreateStackVariables, (sbyte)(LocalCount - ParameterCount)));
                 }
-                if (ParameterCount > 0)
+                if (this.IsInstanceMethod && ParameterCount > 0)
                 {
                     Instructions.Insert(0, new BCLInstruction(BCLOpcode.MemberFunctionArgumentCheck, (sbyte)ParameterCount));
+                }
+                if ((Instructions[Instructions.Count - 1] as BCLInstruction)?.Opcode != BCLOpcode.Return)
+                {
+                    Instructions.Add(new BCLInstruction(BCLOpcode.PushNothing));
+                    Instructions.Add(new BCLInstruction(BCLOpcode.Return));
                 }
             }
 
@@ -325,6 +332,10 @@ namespace SAGESharp.LSS
                 {
                     ops.Add(new BCLInstruction(BCLOpcode.PushConstant0));
                 }
+                else if (expr.Value.Type == TokenType.KeywordNull)
+                {
+                    ops.Add(new BCLInstruction(BCLOpcode.PushNothing));
+                }
                 else
                 {
                     throw new InvalidOperationException("Invalid literal type: " + expr.Value.Type);
@@ -520,6 +531,11 @@ namespace SAGESharp.LSS
             {
                 if (s.Target is VariableExpression varExpr)
                 {
+                    if (varExpr.Symbol.Type == TokenType.KeywordThis)
+                    {
+                        throw new ArgumentException("'this' is not allowed to be modified.");
+                    }
+
                     ushort? variableID = FindVariable(varExpr.Symbol.Content);
 
                     if (variableID.HasValue)
@@ -544,6 +560,11 @@ namespace SAGESharp.LSS
 
             public uint VisitVariableDeclarationStatement(VariableDeclarationStatement s)
             {
+                if (s.Name.Type == TokenType.KeywordThis)
+                {
+                    throw new ArgumentException("Cannot create local variables with reserved name 'this'.");
+                }
+
                 uint size = 0;
                 ushort localIndex = (ushort)AddLocal(s.Name.Content);
                 List<Instruction> ops = new List<Instruction>();
@@ -701,7 +722,9 @@ namespace SAGESharp.LSS
                             }
                         }
                     }
-                    result.OSI.Classes.Add(new OSIFile.ClassInfo(cls.Name.Content, propertySymbols, methods));
+                    OSIFile.ClassInfo clsInfo = new OSIFile.ClassInfo(cls.Name.Content, propertySymbols, methods);
+                    classes.Add(cls.Name.Content, clsInfo);
+                    result.OSI.Classes.Add(clsInfo);
                 }
 
                 foreach (Statements.SubroutineStatement func in parseResult.Functions)
@@ -737,7 +760,7 @@ namespace SAGESharp.LSS
                 // Compile the functions
                 foreach (SubroutineStatement function in parseResult.Functions)
                 {
-                    SubroutineContext context = new SubroutineContext(result.OSI, function.Parameters.Select(token => token.Content));
+                    SubroutineContext context = new SubroutineContext(result.OSI, false, function.Parameters.Select(token => token.Content));
                     foreach (InstructionStatement stmt in function.Body.Instructions)
                     {
                         stmt.AcceptVisitor(context);
@@ -749,6 +772,24 @@ namespace SAGESharp.LSS
                 }
 
                 // Compile the methods
+                foreach (ClassStatement cls in parseResult.Classes)
+                {
+                    foreach (SubroutineStatement method in cls.Methods)
+                    {
+                        List<string> parameters = new List<string>();
+                        parameters.Add("this");
+                        parameters.AddRange(method.Parameters.Select(token => token.Content));
+                        SubroutineContext context = new SubroutineContext(result.OSI, true, parameters);
+                        foreach (InstructionStatement stmt in method.Body.Instructions)
+                        {
+                            stmt.AcceptVisitor(context);
+                        }
+                        context.FinalizeInstructions();
+                        OSIFile.MethodInfo destination = classes[cls.Name.Content].Methods.Find(m => m.NameSymbol == symbols[method.Name.Content]);
+                        destination.Instructions.Clear();
+                        destination.Instructions.AddRange(context.Instructions);
+                    }
+                }
             }
         }
 
