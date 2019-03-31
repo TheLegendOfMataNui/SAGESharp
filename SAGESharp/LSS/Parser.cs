@@ -352,7 +352,7 @@ namespace SAGESharp.LSS
                 }
                 else
                 {
-                    rhs = ParseArrayExpression();
+                    rhs = ParseTerminalExpression();
                 }
                 result = new BinaryExpression(result, token, rhs);
                 SkipWhitespace();

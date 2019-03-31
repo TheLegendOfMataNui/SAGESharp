@@ -186,108 +186,150 @@ namespace SAGESharp.LSS
             public uint VisitBinaryExpression(BinaryExpression expr, object context)
             {
                 uint size = 0;
-                size += expr.Left.AcceptVisitor(this, context);
-                size += expr.Right.AcceptVisitor(this, context);
-                List<Instruction> ops = new List<Instruction>();
-                if (expr.Operation.Type == TokenType.Ampersand)
+                if (expr.Operation.Type == TokenType.Period)
                 {
-                    ops.Add(new BCLInstruction(BCLOpcode.BitwiseAnd));
+                    if (expr.Right is VariableExpression symbol)
+                    {
+                        ushort memberSymbol = AddOrGetSymbol(symbol.Symbol.Content);
+
+                        BCLInstruction get = null;
+                        if (expr.Left is VariableExpression thisExpr)
+                        {
+                            get = new BCLInstruction(BCLOpcode.GetThisMemberValue, memberSymbol);
+                        }
+                        else
+                        {
+                            size += expr.Left.AcceptVisitor(this, null);
+                            get = new BCLInstruction(BCLOpcode.GetMemberValue, memberSymbol);
+                        }
+                        Instructions.Add(get);
+                        size += get.Size;
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Member access must use a member name.");
+                    }
                 }
-                else if (expr.Operation.Type == TokenType.AmpersandAmpersand)
+                else if (expr.Operation.Type == TokenType.PeriodDollarSign)
                 {
-                    ops.Add(new BCLInstruction(BCLOpcode.And));
-                }
-                else if (expr.Operation.Type == TokenType.Asterisk)
-                {
-                    ops.Add(new BCLInstruction(BCLOpcode.Multiply));
-                }
-                else if (expr.Operation.Type == TokenType.Caret)
-                {
-                    ops.Add(new BCLInstruction(BCLOpcode.Power));
+                    size += expr.Left.AcceptVisitor(this, null);
+                    size += expr.Right.AcceptVisitor(this, null);
+
+                    BCLInstruction getValue = new BCLInstruction(BCLOpcode.GetMemberValueFromString);
+                    Instructions.Add(getValue);
+                    size += getValue.Size;
                 }
                 else if (expr.Operation.Type == TokenType.ColonColon)
                 {
-                    throw new NotImplementedException();
+                    if (expr.Left is VariableExpression ns && ns.Symbol.Type == TokenType.Symbol
+                        && expr.Right is VariableExpression name && name.Symbol.Type == TokenType.Symbol)
+                    {
+                        ushort nsIndex = AddOrGetString(ns.Symbol.Content);
+                        ushort nameIndex = AddOrGetString(name.Symbol.Content);
+
+                        BCLInstruction getValue = new BCLInstruction(BCLOpcode.GetGameVariable, nsIndex, nameIndex);
+                        Instructions.Add(getValue);
+                        size += getValue.Size;
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Game variable access must use a namespace and name symbol.");
+                    }
                 }
                 else if (expr.Operation.Type == TokenType.ColonColonDollarSign)
                 {
                     throw new NotImplementedException();
                 }
-                else if (expr.Operation.Type == TokenType.Dash)
-                {
-                    ops.Add(new BCLInstruction(BCLOpcode.Subtract));
-                }
-                else if (expr.Operation.Type == TokenType.EqualsEquals)
-                {
-                    ops.Add(new BCLInstruction(BCLOpcode.EqualTo));
-                }
-                else if (expr.Operation.Type == TokenType.ExclamationEquals)
-                {
-                    ops.Add(new BCLInstruction(BCLOpcode.EqualTo));
-                    ops.Add(new BCLInstruction(BCLOpcode.Not));
-                }
-                else if (expr.Operation.Type == TokenType.Greater)
-                {
-                    ops.Add(new BCLInstruction(BCLOpcode.GreaterThan));
-                }
-                else if (expr.Operation.Type == TokenType.GreaterEquals)
-                {
-                    ops.Add(new BCLInstruction(BCLOpcode.GreaterOrEqual));
-                }
-                else if (expr.Operation.Type == TokenType.GreaterGreater)
-                {
-                    ops.Add(new BCLInstruction(BCLOpcode.ShiftRight));
-                }
-                else if (expr.Operation.Type == TokenType.Less)
-                {
-                    ops.Add(new BCLInstruction(BCLOpcode.LessThan));
-                }
-                else if (expr.Operation.Type == TokenType.LessEquals)
-                {
-                    ops.Add(new BCLInstruction(BCLOpcode.LessOrEqual));
-                }
-                else if (expr.Operation.Type == TokenType.LessLess)
-                {
-                    ops.Add(new BCLInstruction(BCLOpcode.ShiftLeft));
-                }
-                else if (expr.Operation.Type == TokenType.Octothorpe)
-                {
-                    ops.Add(new BCLInstruction(BCLOpcode.BitwiseXor));
-                }
-                else if (expr.Operation.Type == TokenType.Percent)
-                {
-                    ops.Add(new BCLInstruction(BCLOpcode.Modulus));
-                }
-                else if (expr.Operation.Type == TokenType.Period)
-                {
-                    throw new NotImplementedException();
-                }
-                else if (expr.Operation.Type == TokenType.PeriodDollarSign)
-                {
-                    throw new NotImplementedException();
-                }
-                else if (expr.Operation.Type == TokenType.Pipe)
-                {
-                    ops.Add(new BCLInstruction(BCLOpcode.BitwiseOr));
-                }
-                else if (expr.Operation.Type == TokenType.PipePipe)
-                {
-                    ops.Add(new BCLInstruction(BCLOpcode.Or));
-                }
-                else if (expr.Operation.Type == TokenType.Plus)
-                {
-                    ops.Add(new BCLInstruction(BCLOpcode.Add));
-                }
-                else if (expr.Operation.Type == TokenType.Slash)
-                {
-                    ops.Add(new BCLInstruction(BCLOpcode.Divide));
-                }
                 else
                 {
-                    throw new InvalidOperationException("Invalid binary operator: " + expr.Operation.Type);
+                    size += expr.Left.AcceptVisitor(this, context);
+                    size += expr.Right.AcceptVisitor(this, context);
+                    List<Instruction> ops = new List<Instruction>();
+                    if (expr.Operation.Type == TokenType.Ampersand)
+                    {
+                        ops.Add(new BCLInstruction(BCLOpcode.BitwiseAnd));
+                    }
+                    else if (expr.Operation.Type == TokenType.AmpersandAmpersand)
+                    {
+                        ops.Add(new BCLInstruction(BCLOpcode.And));
+                    }
+                    else if (expr.Operation.Type == TokenType.Asterisk)
+                    {
+                        ops.Add(new BCLInstruction(BCLOpcode.Multiply));
+                    }
+                    else if (expr.Operation.Type == TokenType.Caret)
+                    {
+                        ops.Add(new BCLInstruction(BCLOpcode.Power));
+                    }
+                    else if (expr.Operation.Type == TokenType.Dash)
+                    {
+                        ops.Add(new BCLInstruction(BCLOpcode.Subtract));
+                    }
+                    else if (expr.Operation.Type == TokenType.EqualsEquals)
+                    {
+                        ops.Add(new BCLInstruction(BCLOpcode.EqualTo));
+                    }
+                    else if (expr.Operation.Type == TokenType.ExclamationEquals)
+                    {
+                        ops.Add(new BCLInstruction(BCLOpcode.EqualTo));
+                        ops.Add(new BCLInstruction(BCLOpcode.Not));
+                    }
+                    else if (expr.Operation.Type == TokenType.Greater)
+                    {
+                        ops.Add(new BCLInstruction(BCLOpcode.GreaterThan));
+                    }
+                    else if (expr.Operation.Type == TokenType.GreaterEquals)
+                    {
+                        ops.Add(new BCLInstruction(BCLOpcode.GreaterOrEqual));
+                    }
+                    else if (expr.Operation.Type == TokenType.GreaterGreater)
+                    {
+                        ops.Add(new BCLInstruction(BCLOpcode.ShiftRight));
+                    }
+                    else if (expr.Operation.Type == TokenType.Less)
+                    {
+                        ops.Add(new BCLInstruction(BCLOpcode.LessThan));
+                    }
+                    else if (expr.Operation.Type == TokenType.LessEquals)
+                    {
+                        ops.Add(new BCLInstruction(BCLOpcode.LessOrEqual));
+                    }
+                    else if (expr.Operation.Type == TokenType.LessLess)
+                    {
+                        ops.Add(new BCLInstruction(BCLOpcode.ShiftLeft));
+                    }
+                    else if (expr.Operation.Type == TokenType.Octothorpe)
+                    {
+                        ops.Add(new BCLInstruction(BCLOpcode.BitwiseXor));
+                    }
+                    else if (expr.Operation.Type == TokenType.Percent)
+                    {
+                        ops.Add(new BCLInstruction(BCLOpcode.Modulus));
+                    }
+                    else if (expr.Operation.Type == TokenType.Pipe)
+                    {
+                        ops.Add(new BCLInstruction(BCLOpcode.BitwiseOr));
+                    }
+                    else if (expr.Operation.Type == TokenType.PipePipe)
+                    {
+                        ops.Add(new BCLInstruction(BCLOpcode.Or));
+                    }
+                    else if (expr.Operation.Type == TokenType.Plus)
+                    {
+                        ops.Add(new BCLInstruction(BCLOpcode.Add));
+                    }
+                    else if (expr.Operation.Type == TokenType.Slash)
+                    {
+                        ops.Add(new BCLInstruction(BCLOpcode.Divide));
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Invalid binary operator: " + expr.Operation.Type);
+                    }
+                    Instructions.AddRange(ops);
+                    size += (uint)ops.Sum(instruction => instruction.Size);
                 }
-                Instructions.AddRange(ops);
-                return size + (uint)ops.Sum(instruction => instruction.Size);
+                return size;
             }
 
             public uint VisitCallExpression(CallExpression expr, object context)
