@@ -69,7 +69,7 @@ namespace SAGESharp.LSS
                 {
                     Instructions.Insert(0, new BCLInstruction(BCLOpcode.MemberFunctionArgumentCheck, (sbyte)ParameterCount));
                 }
-                if ((Instructions[Instructions.Count - 1] as BCLInstruction)?.Opcode != BCLOpcode.Return)
+                if (Instructions.Count == 0 || ((Instructions[Instructions.Count - 1] as BCLInstruction)?.Opcode != BCLOpcode.Return))
                 {
                     Instructions.Add(new BCLInstruction(BCLOpcode.PushNothing));
                     Instructions.Add(new BCLInstruction(BCLOpcode.Return));
@@ -130,6 +130,19 @@ namespace SAGESharp.LSS
                 {
                     index = OSI.Strings.Count;
                     OSI.Strings.Add(value);
+                }
+                return (ushort)index;
+            }
+
+            private ushort AddOrGetSymbol(string value)
+            {
+                if (IsFinalized)
+                    throw new InvalidOperationException("Cannot modify a SubroutineContext after it has been finalized.");
+                int index = OSI.Symbols.IndexOf(value);
+                if (index == -1)
+                {
+                    index = OSI.Symbols.Count;
+                    OSI.Symbols.Add(value);
                 }
                 return (ushort)index;
             }
@@ -531,6 +544,7 @@ namespace SAGESharp.LSS
             {
                 if (s.Target is VariableExpression varExpr)
                 {
+                    // Local variable or global variable assignment
                     if (varExpr.Symbol.Type == TokenType.KeywordThis)
                     {
                         throw new ArgumentException("'this' is not allowed to be modified.");
@@ -551,6 +565,58 @@ namespace SAGESharp.LSS
                     {
                         throw new ArgumentException("Variable '" + varExpr.Symbol.Content + "' is not a valid local or global.");
                     }
+                }
+                else if (s.Target is BinaryExpression memberExpr && memberExpr.Operation.Type == TokenType.Period && memberExpr.Right is VariableExpression member)
+                {
+                    // Member assignment (.)
+                    ushort memberSymbol = AddOrGetSymbol(member.Symbol.Content);
+                    uint size = 0;
+                    size += s.Value.AcceptVisitor(this, null);
+                    BCLInstruction setVariable = null; //= new BCLInstruction(BCLOpcode.SetMem)
+                    if (memberExpr.Left is VariableExpression instance && instance.Symbol.Type == TokenType.KeywordThis)
+                    {
+                        setVariable = new BCLInstruction(BCLOpcode.SetThisMemberValue, (ushort)memberSymbol);
+                    }
+                    else
+                    {
+                        size += memberExpr.Left.AcceptVisitor(this, null);
+
+                        setVariable = new BCLInstruction(BCLOpcode.SetMemberValue, (ushort)memberSymbol);
+                    }
+                    Instructions.Add(setVariable);
+                    size += setVariable.Size;
+                    return size;
+                }
+                else if (s.Target is BinaryExpression lookupExpr && lookupExpr.Operation.Type == TokenType.PeriodDollarSign)
+                {
+                    // Dynamic member assignment (.$)
+                    uint size = 0;
+                    // Push value
+                    size += s.Value.AcceptVisitor(this, null);
+
+                    // Push target
+                    size += lookupExpr.Left.AcceptVisitor(this, null);
+
+                    // Push member name
+                    size += lookupExpr.Right.AcceptVisitor(this, null);
+
+                    BCLInstruction setVariable = new BCLInstruction(BCLOpcode.SetMemberValueFromString);
+                    Instructions.Add(setVariable);
+                    size += setVariable.Size;
+
+                    return size;
+                }
+                else if (s.Target is BinaryExpression gameExpr && gameExpr.Operation.Type == TokenType.ColonColon && gameExpr.Left is VariableExpression ns && gameExpr.Right is VariableExpression name)
+                {
+                    // Game variable assignment (::)
+                    uint size = 0;
+                    size += s.Value.AcceptVisitor(this, null);
+
+                    BCLInstruction setValue = new BCLInstruction(BCLOpcode.SetGameVariable, AddOrGetString(ns.Symbol.Content), AddOrGetString(name.Symbol.Content));
+                    Instructions.Add(setValue);
+                    size += setValue.Size;
+
+                    return size;
                 }
                 else
                 {
