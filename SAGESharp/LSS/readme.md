@@ -217,10 +217,10 @@ LSS also contains operators for bitwise integer operations, with a few deviation
  ```
 
  **Arrays**    
- LSS provides the standard array access syntax with square brackets, and a succinct syntax for creating array expressions using braces.
+ LSS provides the standard array access syntax and a succinct syntax for creating array expressions, both using square brackets.
  ```
- { }
- { thing1, thing2, 1003919, "Sup guys", true }
+ [ ]
+ [ thing1, thing2, 1003919, "Sup guys", true ]
  arrayThing[0] = 10
  arrayThing[12 + 3] = arrayThing[0]
  ```

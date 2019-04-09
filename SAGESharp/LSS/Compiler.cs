@@ -175,12 +175,41 @@ namespace SAGESharp.LSS
             #region Expressions
             public uint VisitArrayAccessExpression(ArrayAccessExpression expr, object context)
             {
-                throw new NotImplementedException();
+                uint size = 0;
+
+                size += expr.Array.AcceptVisitor(this, context);
+
+                size += expr.Index.AcceptVisitor(this, context);
+
+                BCLInstruction getElement = new BCLInstruction(BCLOpcode.GetArrayValue);
+                size += getElement.Size;
+                Instructions.Add(getElement);
+
+                return size;
             }
 
             public uint VisitArrayExpression(ArrayExpression expr, object context)
             {
-                throw new NotImplementedException();
+                uint size = 0;
+
+                BCLInstruction create = new BCLInstruction(BCLOpcode.CreateArray);
+                size += create.Size;
+                Instructions.Add(create);
+
+                foreach (Expression value in expr.Elements)
+                {
+                    BCLInstruction dupArray = new BCLInstruction(BCLOpcode.Dup);
+                    size += dupArray.Size;
+                    Instructions.Add(dupArray);
+
+                    size += value.AcceptVisitor(this, context);
+
+                    BCLInstruction append = new BCLInstruction(BCLOpcode.AppendToArray);
+                    size += append.Size;
+                    Instructions.Add(append);
+                }
+
+                return size;
             }
 
             public uint VisitBinaryExpression(BinaryExpression expr, object context)
@@ -817,6 +846,23 @@ namespace SAGESharp.LSS
                     BCLInstruction setValue = new BCLInstruction(BCLOpcode.SetGameVariable, AddOrGetString(ns.Symbol.Content), AddOrGetString(name.Symbol.Content));
                     Instructions.Add(setValue);
                     size += setValue.Size;
+
+                    return size;
+                }
+                else if (s.Target is ArrayAccessExpression arrayExpr)
+                {
+                    // Array assignment ([ ])
+                    uint size = 0;
+
+                    size += arrayExpr.Array.AcceptVisitor(this, null);
+
+                    size += arrayExpr.Index.AcceptVisitor(this, null);
+
+                    size += s.Value.AcceptVisitor(this, null);
+
+                    BCLInstruction setValue = new BCLInstruction(BCLOpcode.SetArrayValue);
+                    size += setValue.Size;
+                    Instructions.Add(setValue);
 
                     return size;
                 }

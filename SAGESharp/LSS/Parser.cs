@@ -393,12 +393,12 @@ namespace SAGESharp.LSS
 
         private Expression ParseArrayExpression()
         {
-            if (ConsumeIfType(out _, TokenType.OpenBrace))
+            if (ConsumeIfType(out _, TokenType.OpenSquareBracket))
             {
                 SkipWhitespace();
                 List<Expression> elements = new List<Expression>();
                 bool firstElement = true;
-                while (Peek().Type != TokenType.CloseBrace)
+                while (Peek().Type != TokenType.CloseSquareBracket)
                 {
                     SkipWhitespace();
                     if (!firstElement)
@@ -410,7 +410,7 @@ namespace SAGESharp.LSS
                 }
 
                 SkipWhitespace();
-                ConsumeType(TokenType.CloseBrace, "Expected a close brace after array expression.");
+                ConsumeType(TokenType.CloseSquareBracket, "Expected a close brace after array expression.");
                 return new ArrayExpression(elements);
             }
             else
