@@ -47,7 +47,15 @@ namespace ShoefitterDX
             if (TryScan(out List<Token> tokens))
             {
                 Parser p = new Parser();
-                result = p.Parse(tokens);
+                try
+                {
+                    result = p.Parse(tokens);
+                }
+                catch (Exception ex)
+                {
+                    result = new Parser.Result();
+                    result.Errors.Add(new SyntaxError("Parser exception: \n\n" + ex.ToString(), 0, 0, 0));
+                }
                 if (result.Errors.Count == 0)
                 {
                     return true;
@@ -75,7 +83,15 @@ namespace ShoefitterDX
             if (TryParse(out Parser.Result parsed))
             {
                 Compiler c = new Compiler();
-                result = c.CompileParsed(parsed);
+                try
+                {
+                    result = c.CompileParsed(parsed);
+                }
+                catch (Exception ex)
+                {
+                    result = new Compiler.Result(new SAGESharp.OSI.OSIFile());
+                    result.Errors.Add(new SyntaxError("Compiler exception: \n\n" + ex.ToString(), 0, 0, 0));
+                }
                 if (result.Errors.Count == 0)
                 {
                     return true;

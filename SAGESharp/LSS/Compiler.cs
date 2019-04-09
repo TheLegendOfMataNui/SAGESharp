@@ -332,9 +332,169 @@ namespace SAGESharp.LSS
                 return size;
             }
 
+            private uint PushCallArguments(CallExpression expr)
+            {
+                uint size = 0;
+                
+                // Push call arguments left to right
+                for (int i = 0; i < expr.Arguments.Count; i++)
+                {
+                    size += expr.Arguments[i].AcceptVisitor(this, null);
+                }
+
+                return size;
+            }
+
             public uint VisitCallExpression(CallExpression expr, object context)
             {
-                throw new NotImplementedException();
+                uint size = 0;
+                if (expr.Target is VariableExpression varExp)
+                {
+                    // Static function
+                    // TODO: Use a JumpRelative after pushing a const int that is determined when the subroutines are written to file
+                    throw new NotImplementedException();
+                }
+                else if (expr.Target is BinaryExpression binExp)
+                {
+                    if (binExp.Right is VariableExpression nameExp)
+                    {
+                        // Standard symbol
+                        if (binExp.Operation.Type == TokenType.Period)
+                        {
+                            ushort methodSymbol = AddOrGetSymbol(nameExp.Symbol.Content);
+                            if (binExp.Left is VariableExpression thisExp && thisExp.Symbol.Type == TokenType.KeywordThis)
+                            {
+                                // This method
+
+                                if (!IsInstanceMethod)
+                                {
+                                    throw new InvalidOperationException("'this' not allowed in static function.");
+                                }
+
+                                BCLInstruction getThis = new BCLInstruction(BCLOpcode.GetVariableValue, (ushort)0);
+                                size += getThis.Size;
+                                Instructions.Add(getThis);
+
+                                size += PushCallArguments(expr);
+
+                                BCLInstruction getFunction = new BCLInstruction(BCLOpcode.GetThisMemberFunction, AddOrGetSymbol(nameExp.Symbol.Content));
+                                size += getFunction.Size;
+                                Instructions.Add(getFunction);
+
+                                BCLInstruction jump = new BCLInstruction(BCLOpcode.JumpAbsolute, (sbyte)(expr.Arguments.Count + 1)); // Add the implicit 'this' argument
+                                size += jump.Size;
+                                Instructions.Add(jump);
+                            }
+                            else
+                            {
+                                // Standard method
+                                size += binExp.Left.AcceptVisitor(this, context);
+
+                                size += PushCallArguments(expr);
+
+                                BCLInstruction getTarget = null;
+                                if (expr.Arguments.Count == 0)
+                                {
+                                    getTarget = new BCLInstruction(BCLOpcode.Dup);
+                                }
+                                else
+                                {
+                                    getTarget = new BCLInstruction(BCLOpcode.Pull, (sbyte)(expr.Arguments.Count + 1));
+                                }
+                                size += getTarget.Size;
+                                Instructions.Add(getTarget);
+
+                                BCLInstruction getFunction = new BCLInstruction(BCLOpcode.GetMemberFunction, AddOrGetSymbol(nameExp.Symbol.Content));
+                                size += getFunction.Size;
+                                Instructions.Add(getFunction);
+
+                                BCLInstruction jump = new BCLInstruction(BCLOpcode.JumpAbsolute, (sbyte)(expr.Arguments.Count + 1)); // Add the implicit 'this' argument
+                                size += jump.Size;
+                                Instructions.Add(jump);
+                            }
+                        }
+                        else if (binExp.Operation.Type == TokenType.ColonColon)
+                        {
+                            if (binExp.Left is VariableExpression ns)
+                            {
+                                // Game function lookup
+                                size += PushCallArguments(expr);
+
+                                BCLInstruction call = new BCLInstruction(BCLOpcode.CallGameFunction, AddOrGetString(ns.Symbol.Content), AddOrGetString(nameExp.Symbol.Content), (sbyte)expr.Arguments.Count);
+                                size += call.Size;
+                                Instructions.Add(call);
+                            }
+                            else
+                            {
+                                throw new ArgumentException("Game function namespace must be a symbol.");
+                            }
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Expression is not standard-invokable.");
+                        }
+                    }
+                    else
+                    {
+                        // Dynamic lookups
+                        if (binExp.Operation.Type == TokenType.PeriodDollarSign)
+                        {
+                            // Dynamic method lookup
+                            size += binExp.Left.AcceptVisitor(this, context);
+
+                            size += PushCallArguments(expr);
+
+                            BCLInstruction getTarget = null;
+                            if (expr.Arguments.Count == 0)
+                            {
+                                getTarget = new BCLInstruction(BCLOpcode.Dup);
+                            }
+                            else
+                            {
+                                getTarget = new BCLInstruction(BCLOpcode.Pull, (sbyte)(expr.Arguments.Count + 1));
+                            }
+                            size += getTarget.Size;
+                            Instructions.Add(getTarget);
+
+                            size += binExp.Right.AcceptVisitor(this, context); // Method name
+
+                            BCLInstruction getFunction = new BCLInstruction(BCLOpcode.GetMemberFunctionFromString);
+                            size += getFunction.Size;
+                            Instructions.Add(getFunction);
+
+                            BCLInstruction jump = new BCLInstruction(BCLOpcode.JumpAbsolute, (sbyte)(expr.Arguments.Count + 1)); // Add the implicit 'this' argument
+                            size += jump.Size;
+                            Instructions.Add(jump);
+                        }
+                        else if (binExp.Operation.Type == TokenType.ColonColonDollarSign)
+                        {
+                            if (binExp.Left is VariableExpression ns)
+                            {
+                                // Dynamic game function lookup
+                                size += PushCallArguments(expr);
+
+                                size += binExp.Right.AcceptVisitor(this, context);
+
+                                BCLInstruction call = new BCLInstruction(BCLOpcode.CallGameFunction, AddOrGetString(ns.Symbol.Content), (sbyte)expr.Arguments.Count);
+                                size += call.Size;
+                                Instructions.Add(call);
+                            }
+                            else
+                            {
+                                throw new ArgumentException("Game function namespace must be a symbol.");
+                            }
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Expression is not dynamic-invokable.");
+                        }
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException("Expression is not invokable.");
+                }
+                return size;
             }
 
             public uint VisitConstructorExpression(ConstructorExpression expr, object context)

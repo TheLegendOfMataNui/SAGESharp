@@ -76,13 +76,14 @@
         '\"',
         '\'',
         '\''};
-            this.SourceTextBox.AutoScrollMinSize = new System.Drawing.Size(339, 42);
+            this.SourceTextBox.AutoScrollMinSize = new System.Drawing.Size(803, 1176);
             this.SourceTextBox.BackBrush = null;
             this.SourceTextBox.CharHeight = 14;
             this.SourceTextBox.CharWidth = 8;
             this.SourceTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.SourceTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.SourceTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SourceTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.SourceTextBox.IsReplaceMode = false;
             this.SourceTextBox.Location = new System.Drawing.Point(0, 0);
             this.SourceTextBox.Name = "SourceTextBox";
@@ -91,7 +92,7 @@
             this.SourceTextBox.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("SourceTextBox.ServiceColors")));
             this.SourceTextBox.Size = new System.Drawing.Size(396, 407);
             this.SourceTextBox.TabIndex = 0;
-            this.SourceTextBox.Text = "function TestFunction(param1, param2) {\r\n    \r\n}";
+            this.SourceTextBox.Text = resources.GetString("SourceTextBox.Text");
             this.SourceTextBox.Zoom = 100;
             // 
             // ResultTextBox
@@ -114,6 +115,7 @@
             this.ResultTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.ResultTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.ResultTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ResultTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.ResultTextBox.IsReplaceMode = false;
             this.ResultTextBox.Location = new System.Drawing.Point(0, 0);
             this.ResultTextBox.Name = "ResultTextBox";

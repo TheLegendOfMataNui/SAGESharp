@@ -135,6 +135,92 @@
         CgAAAAAAAAAAjQABAAH4/////P///woAAAAAAAAAAKQAAQAB9/////z///8KAAAAAAAAAACWAAEACw==
 </value>
   </data>
+  <data name="SourceTextBox.Text" xml:space="preserve">
+    <value>// Usage note: Press Ctrl+Enter to re-click the most recently used button ('Compile' by default)
+
+/*
+ * Things that generally work:
+ * - Scanning &amp; Parsing
+ * - Math &amp; logical operators (+, -, &lt;&lt;, &gt;&gt;, parentheses, #, !, &amp;&amp;, ||, ~, etc.)
+ * - Getting &amp; setting locals, parameters, and globals
+ * - Getting &amp; setting game variables &amp; member variables
+ * - Conditionals
+ * - While loops ('for' loops do not exist in LSS as of now, because I am lazy and they aren't
+ *   hard to make with 'while' loops)
+ * - Returning
+ *
+ * Things that do not work yet:
+ * - Function calls (member functions, static functions, game functions)
+ * - Array stuff (Array literals, element setting &amp; getting)
+ * - Intrinsics (color component access, array length &amp; manipulation, type conversions &amp; checks)
+ * - Class stuff (inheritence, constructors, etc)
+ */
+
+// Globals
+// These cannot be initialized here (for example, 'global thing = 10;' is not valid)
+global MyGlobal1;
+global MyGlobal2;
+
+// Functions
+// These are standalone bits of code
+function DoThing(param1, param2, otherStuff) {
+    // Declare a variable that's local to this scope (the curly braces that surround it) and 
+    // initialize it with a value
+    var local1 = 14.29;
+    // Assign to a global, do some math
+    MyGlobal1 = param2 + otherStuff * 10 + local1;
+    
+    // Assign to a game variable (JMMB says this is unimplemented in SAGE)
+    gcsaver::thing = "hello there";
+    // Get from game variable (JMMB says this is also unimplemented in SAGE)
+    local1 = gcsaver::otherThing;
+    
+    // Get and set member variables
+    // The variable names don't have to be correct when compiling, just when it's run
+    param1.name = "thing";
+    param2      = param1.name;
+    
+    
+    if (10 &gt; 100) {
+        local1 = "general";
+    }
+    else if (10 != 100) {
+        local1 = "kenobi!";
+    }
+    else {
+        local1 = "sup";
+    }
+    
+    
+    var local2 = 0;
+    while (local2 &lt; 10) {
+        MyGlobal2 = local2;
+    }
+    
+    // Returning exits the subroutine and sends the given value back to the caller
+    return "sup" + "guys";
+}
+
+class Person {
+    property FirstName;
+    property Age;
+    property LastName;
+    
+    // Constructors are methods with the same name as the class
+    // Methods have an implicit 'this' parameter
+    method Person(param) {
+        this.FirstName = param;
+        this.Lastname  = "";
+        this.Age       = 0;
+    }
+    
+    method OtherThing() {
+        var oldFirstName = this.FirstName;
+        this.FirstName = "";
+        return oldFirstName;
+    }
+}</value>
+  </data>
   <data name="ResultTextBox.ServiceColors" mimetype="application/x-microsoft.net.object.binary.base64">
     <value>
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdGYXN0Q29sb3JlZFRleHRCb3gsIFZlcnNpb249Mi4xNi4yNC4w
