@@ -282,10 +282,10 @@ namespace SAGESharp.LSS
             Token t = Consume();
             if (t.Type == TokenType.KeywordTrue || t.Type == TokenType.KeywordFalse
                 || t.Type == TokenType.KeywordNull || t.Type == TokenType.IntegerLiteral
-                || t.Type == TokenType.FloatLiteral || t.Type == TokenType.StringLiteral
-                || (t.Type >= TokenType.KeywordLength && t.Type <= TokenType.KeywordClassID))
+                || t.Type == TokenType.FloatLiteral || t.Type == TokenType.StringLiteral)
                 return new LiteralExpression(t);
-            else if (t.Type == TokenType.Symbol || t.Type == TokenType.KeywordThis)
+            else if (t.Type == TokenType.Symbol || t.Type == TokenType.KeywordThis
+                || (t.Type >= TokenType.KeywordLength && t.Type <= TokenType.KeywordClassID))
                 return new VariableExpression(t);
             else if (t.Type == TokenType.OpenParenthesis)
             {

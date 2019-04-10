@@ -219,17 +219,59 @@ namespace SAGESharp.LSS
                 {
                     if (expr.Right is VariableExpression symbol)
                     {
-                        ushort memberSymbol = AddOrGetSymbol(symbol.Symbol.Content);
 
                         BCLInstruction get = null;
-                        if (expr.Left is VariableExpression thisExpr)
+                        if (symbol.Symbol.Type == TokenType.Symbol)
                         {
-                            get = new BCLInstruction(BCLOpcode.GetThisMemberValue, memberSymbol);
+                            // Getting a member
+                            ushort memberSymbol = AddOrGetSymbol(symbol.Symbol.Content);
+                            if (expr.Left is VariableExpression thisExpr && thisExpr.Symbol.Type == TokenType.KeywordThis)
+                            {
+                                if (!this.IsInstanceMethod)
+                                    throw new ArgumentException("'this' keyword is only valid in an instance method.");
+                                get = new BCLInstruction(BCLOpcode.GetThisMemberValue, memberSymbol);
+                            }
+                            else
+                            {
+                                size += expr.Left.AcceptVisitor(this, null);
+                                get = new BCLInstruction(BCLOpcode.GetMemberValue, memberSymbol);
+                            }
                         }
                         else
                         {
-                            size += expr.Left.AcceptVisitor(this, null);
-                            get = new BCLInstruction(BCLOpcode.GetMemberValue, memberSymbol);
+                            // Getting a builtin
+                            if (expr.Left is VariableExpression thisExpr && thisExpr.Symbol.Type == TokenType.KeywordThis)
+                            {
+                                throw new ArgumentException("Cannot get value of type '" + symbol.Symbol.Type.ToString() + "' on 'this'.");
+                            }
+                            else
+                            {
+                                size += expr.Left.AcceptVisitor(this, null);
+                                if (symbol.Symbol.Type == TokenType.KeywordLength)
+                                {
+                                    get = new BCLInstruction(BCLOpcode.ElementsInArray);
+                                }
+                                else if (symbol.Symbol.Type == TokenType.KeywordRed)
+                                {
+                                    get = new BCLInstruction(BCLOpcode.GetRedValue);
+                                }
+                                else if (symbol.Symbol.Type == TokenType.KeywordGreen)
+                                {
+                                    get = new BCLInstruction(BCLOpcode.GetGreenValue);
+                                }
+                                else if (symbol.Symbol.Type == TokenType.KeywordBlue)
+                                {
+                                    get = new BCLInstruction(BCLOpcode.GetBlueValue);
+                                }
+                                else if (symbol.Symbol.Type == TokenType.KeywordAlpha)
+                                {
+                                    get = new BCLInstruction(BCLOpcode.GetAlphaValue);
+                                }
+                                else
+                                {
+                                    throw new ArgumentException("'" + symbol.Symbol.Content + "' of type '" + symbol.Symbol.Type.ToString() + "' is not a valid builtin property.");
+                                }
+                            }
                         }
                         Instructions.Add(get);
                         size += get.Size;
@@ -267,7 +309,7 @@ namespace SAGESharp.LSS
                 }
                 else if (expr.Operation.Type == TokenType.ColonColonDollarSign)
                 {
-                    throw new NotImplementedException();
+                    throw new NotImplementedException("Dynamic-lookup game variable are not implemented in SAGE.");
                 }
                 else
                 {
@@ -800,19 +842,54 @@ namespace SAGESharp.LSS
                 else if (s.Target is BinaryExpression memberExpr && memberExpr.Operation.Type == TokenType.Period && memberExpr.Right is VariableExpression member)
                 {
                     // Member assignment (.)
-                    ushort memberSymbol = AddOrGetSymbol(member.Symbol.Content);
                     uint size = 0;
-                    size += s.Value.AcceptVisitor(this, null);
-                    BCLInstruction setVariable = null; //= new BCLInstruction(BCLOpcode.SetMem)
-                    if (memberExpr.Left is VariableExpression instance && instance.Symbol.Type == TokenType.KeywordThis)
+                    BCLInstruction setVariable = null;
+                    if (member.Symbol.Type == TokenType.Symbol)
                     {
-                        setVariable = new BCLInstruction(BCLOpcode.SetThisMemberValue, (ushort)memberSymbol);
+                        size += s.Value.AcceptVisitor(this, null); // Value
+                        ushort memberSymbol = AddOrGetSymbol(member.Symbol.Content);
+                        if (memberExpr.Left is VariableExpression instance && instance.Symbol.Type == TokenType.KeywordThis)
+                        {
+                            setVariable = new BCLInstruction(BCLOpcode.SetThisMemberValue, (ushort)memberSymbol);
+                        }
+                        else
+                        {
+                            size += memberExpr.Left.AcceptVisitor(this, null); // Target
+
+                            setVariable = new BCLInstruction(BCLOpcode.SetMemberValue, (ushort)memberSymbol);
+                        }
                     }
                     else
                     {
-                        size += memberExpr.Left.AcceptVisitor(this, null);
+                        // Setting a builtin
+                        if (memberExpr.Left is VariableExpression instance && instance.Symbol.Type == TokenType.KeywordThis)
+                        {
+                            throw new ArgumentException("Cannot set a builtin member of 'this'.");
+                        }
+                        size += memberExpr.Left.AcceptVisitor(this, null); // Target
 
-                        setVariable = new BCLInstruction(BCLOpcode.SetMemberValue, (ushort)memberSymbol);
+                        size += s.Value.AcceptVisitor(this, null); // Value
+
+                        if (member.Symbol.Type == TokenType.KeywordRed)
+                        {
+                            setVariable = new BCLInstruction(BCLOpcode.SetRedValue);
+                        }
+                        else if (member.Symbol.Type == TokenType.KeywordGreen)
+                        {
+                            setVariable = new BCLInstruction(BCLOpcode.SetGreenValue);
+                        }
+                        else if (member.Symbol.Type == TokenType.KeywordBlue)
+                        {
+                            setVariable = new BCLInstruction(BCLOpcode.SetBlueValue);
+                        }
+                        else if (member.Symbol.Type == TokenType.KeywordAlpha)
+                        {
+                            setVariable = new BCLInstruction(BCLOpcode.SetAlphaValue);
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Symbol of type '" + member.Symbol.Type + "' is not a member nor a builtin and therefore cannot be assigned.");
+                        }
                     }
                     Instructions.Add(setVariable);
                     size += setVariable.Size;
