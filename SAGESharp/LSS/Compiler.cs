@@ -421,9 +421,67 @@ namespace SAGESharp.LSS
                 uint size = 0;
                 if (expr.Target is VariableExpression varExp)
                 {
-                    // Static function
-                    // TODO: Use a JumpRelative after pushing a const int that is determined when the subroutines are written to file
-                    throw new NotImplementedException();
+                    if (varExp.Symbol.Type == TokenType.Symbol)
+                    {
+                        // Static function
+                        // TODO: Use a JumpRelative after pushing a const int that is determined when the subroutines are written to file
+                        throw new NotImplementedException();
+                    }
+                    else
+                    {
+                        if (expr.Arguments.Count != 1)
+                        {
+                            throw new ArgumentException("Builtin function '" + varExp.Symbol.Content + "' requires exactly 1 argument.");
+                        }
+                        size += expr.Arguments[0].AcceptVisitor(this, context);
+                        BCLInstruction op = null;
+                        if (varExp.Symbol.Type == TokenType.KeywordToString)
+                        {
+                            op = new BCLInstruction(BCLOpcode.ConvertToString);
+                        }
+                        else if (varExp.Symbol.Type == TokenType.KeywordToFloat)
+                        {
+                            op = new BCLInstruction(BCLOpcode.ConvertToFloat);
+                        }
+                        else if (varExp.Symbol.Type == TokenType.KeywordToInt)
+                        {
+                            op = new BCLInstruction(BCLOpcode.ConvertToInteger);
+                        }
+                        else if (varExp.Symbol.Type == TokenType.KeywordIsInt)
+                        {
+                            op = new BCLInstruction(BCLOpcode.IsInteger);
+                        }
+                        else if (varExp.Symbol.Type == TokenType.KeywordIsFloat)
+                        {
+                            op = new BCLInstruction(BCLOpcode.IsFloat);
+                        }
+                        else if (varExp.Symbol.Type == TokenType.KeywordIsString)
+                        {
+                            op = new BCLInstruction(BCLOpcode.IsString);
+                        }
+                        else if (varExp.Symbol.Type == TokenType.KeywordIsInstance)
+                        {
+                            op = new BCLInstruction(BCLOpcode.IsAnObject);
+                        }
+                        else if (varExp.Symbol.Type == TokenType.KeywordIsObject)
+                        {
+                            op = new BCLInstruction(BCLOpcode.IsGameObject);
+                        }
+                        else if (varExp.Symbol.Type == TokenType.KeywordIsArray)
+                        {
+                            op = new BCLInstruction(BCLOpcode.IsArray);
+                        }
+                        else if (varExp.Symbol.Type == TokenType.KeywordClassID)
+                        {
+                            op = new BCLInstruction(BCLOpcode.GetObjectClassID);
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Not invokable.");
+                        }
+                        size += op.Size;
+                        Instructions.Add(op);
+                    }
                 }
                 else if (expr.Target is BinaryExpression binExp)
                 {
@@ -432,56 +490,120 @@ namespace SAGESharp.LSS
                         // Standard symbol
                         if (binExp.Operation.Type == TokenType.Period)
                         {
-                            ushort methodSymbol = AddOrGetSymbol(nameExp.Symbol.Content);
-                            if (binExp.Left is VariableExpression thisExp && thisExp.Symbol.Type == TokenType.KeywordThis)
+                            if (nameExp.Symbol.Type == TokenType.Symbol)
                             {
-                                // This method
-
-                                if (!IsInstanceMethod)
+                                ushort methodSymbol = AddOrGetSymbol(nameExp.Symbol.Content);
+                                if (binExp.Left is VariableExpression thisExp && thisExp.Symbol.Type == TokenType.KeywordThis)
                                 {
-                                    throw new InvalidOperationException("'this' not allowed in static function.");
-                                }
+                                    // This method
 
-                                BCLInstruction getThis = new BCLInstruction(BCLOpcode.GetVariableValue, (ushort)0);
-                                size += getThis.Size;
-                                Instructions.Add(getThis);
+                                    if (!IsInstanceMethod)
+                                    {
+                                        throw new InvalidOperationException("'this' not allowed in static function.");
+                                    }
 
-                                size += PushCallArguments(expr);
+                                    BCLInstruction getThis = new BCLInstruction(BCLOpcode.GetVariableValue, (ushort)0);
+                                    size += getThis.Size;
+                                    Instructions.Add(getThis);
 
-                                BCLInstruction getFunction = new BCLInstruction(BCLOpcode.GetThisMemberFunction, AddOrGetSymbol(nameExp.Symbol.Content));
-                                size += getFunction.Size;
-                                Instructions.Add(getFunction);
+                                    size += PushCallArguments(expr);
 
-                                BCLInstruction jump = new BCLInstruction(BCLOpcode.JumpAbsolute, (sbyte)(expr.Arguments.Count + 1)); // Add the implicit 'this' argument
-                                size += jump.Size;
-                                Instructions.Add(jump);
-                            }
-                            else
-                            {
-                                // Standard method
-                                size += binExp.Left.AcceptVisitor(this, context);
+                                    BCLInstruction getFunction = new BCLInstruction(BCLOpcode.GetThisMemberFunction, AddOrGetSymbol(nameExp.Symbol.Content));
+                                    size += getFunction.Size;
+                                    Instructions.Add(getFunction);
 
-                                size += PushCallArguments(expr);
-
-                                BCLInstruction getTarget = null;
-                                if (expr.Arguments.Count == 0)
-                                {
-                                    getTarget = new BCLInstruction(BCLOpcode.Dup);
+                                    BCLInstruction jump = new BCLInstruction(BCLOpcode.JumpAbsolute, (sbyte)(expr.Arguments.Count + 1)); // Add the implicit 'this' argument
+                                    size += jump.Size;
+                                    Instructions.Add(jump);
                                 }
                                 else
                                 {
-                                    getTarget = new BCLInstruction(BCLOpcode.Pull, (sbyte)(expr.Arguments.Count + 1));
+                                    // Standard method
+                                    size += binExp.Left.AcceptVisitor(this, context);
+
+                                    size += PushCallArguments(expr);
+
+                                    BCLInstruction getTarget = null;
+                                    if (expr.Arguments.Count == 0)
+                                    {
+                                        getTarget = new BCLInstruction(BCLOpcode.Dup);
+                                    }
+                                    else
+                                    {
+                                        getTarget = new BCLInstruction(BCLOpcode.Pull, (sbyte)(expr.Arguments.Count + 1));
+                                    }
+                                    size += getTarget.Size;
+                                    Instructions.Add(getTarget);
+
+                                    BCLInstruction getFunction = new BCLInstruction(BCLOpcode.GetMemberFunction, AddOrGetSymbol(nameExp.Symbol.Content));
+                                    size += getFunction.Size;
+                                    Instructions.Add(getFunction);
+
+                                    BCLInstruction jump = new BCLInstruction(BCLOpcode.JumpAbsolute, (sbyte)(expr.Arguments.Count + 1)); // Add the implicit 'this' argument
+                                    size += jump.Size;
+                                    Instructions.Add(jump);
                                 }
-                                size += getTarget.Size;
-                                Instructions.Add(getTarget);
+                            }
+                            else
+                            {
+                                // Builtin function (all for arrays for now)
+                                if (nameExp.Symbol.Type == TokenType.KeywordAppend)
+                                {
+                                    if (expr.Arguments.Count != 1)
+                                        throw new ArgumentException("Builtin 'append' requires 1 argument.");
 
-                                BCLInstruction getFunction = new BCLInstruction(BCLOpcode.GetMemberFunction, AddOrGetSymbol(nameExp.Symbol.Content));
-                                size += getFunction.Size;
-                                Instructions.Add(getFunction);
+                                    size += binExp.Left.AcceptVisitor(this, context); // Push array
 
-                                BCLInstruction jump = new BCLInstruction(BCLOpcode.JumpAbsolute, (sbyte)(expr.Arguments.Count + 1)); // Add the implicit 'this' argument
-                                size += jump.Size;
-                                Instructions.Add(jump);
+                                    BCLInstruction dupArray = new BCLInstruction(BCLOpcode.Dup); // Make a copy, so we 'return' the original array
+                                    size += dupArray.Size;
+                                    Instructions.Add(dupArray);
+
+                                    size += expr.Arguments[0].AcceptVisitor(this, context); // Push value
+
+                                    BCLInstruction append = new BCLInstruction(BCLOpcode.AppendToArray);
+                                    size += append.Size;
+                                    Instructions.Add(append);
+                                }
+                                else if (nameExp.Symbol.Type == TokenType.KeywordRemoveAt)
+                                {
+                                    if (expr.Arguments.Count != 1)
+                                        throw new ArgumentException("Builtin 'removeat' requires 1 argument.");
+
+                                    size += binExp.Left.AcceptVisitor(this, context); // Push array
+
+                                    BCLInstruction dupArray = new BCLInstruction(BCLOpcode.Dup); // Make a copy, so we 'return' the original array
+                                    size += dupArray.Size;
+                                    Instructions.Add(dupArray);
+
+                                    size += expr.Arguments[0].AcceptVisitor(this, context); // Push index
+
+                                    BCLInstruction append = new BCLInstruction(BCLOpcode.RemoveFromArray);
+                                    size += append.Size;
+                                    Instructions.Add(append);
+                                }
+                                else if (nameExp.Symbol.Type == TokenType.KeywordInsertAt)
+                                {
+                                    if (expr.Arguments.Count != 2)
+                                        throw new ArgumentException("Builtin 'insertat' requires 2 arguments.");
+
+                                    size += binExp.Left.AcceptVisitor(this, context); // Push array
+
+                                    BCLInstruction dupArray = new BCLInstruction(BCLOpcode.Dup); // Make a copy, so we 'return' the original array
+                                    size += dupArray.Size;
+                                    Instructions.Add(dupArray);
+
+                                    size += expr.Arguments[0].AcceptVisitor(this, context); // Push index
+
+                                    size += expr.Arguments[1].AcceptVisitor(this, context); // Push value
+
+                                    BCLInstruction append = new BCLInstruction(BCLOpcode.InsertIntoArray);
+                                    size += append.Size;
+                                    Instructions.Add(append);
+                                }
+                                else
+                                {
+                                    throw new ArgumentException("Member expression not invokable.");
+                                }
                             }
                         }
                         else if (binExp.Operation.Type == TokenType.ColonColon)
