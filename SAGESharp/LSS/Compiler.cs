@@ -424,8 +424,25 @@ namespace SAGESharp.LSS
                     if (varExp.Symbol.Type == TokenType.Symbol)
                     {
                         // Static function
-                        // TODO: Use a JumpRelative after pushing a const int that is determined when the subroutines are written to file
-                        throw new NotImplementedException();
+                        bool found = false;
+                        foreach (OSIFile.FunctionInfo func in OSI.Functions)
+                        {
+                            if (func.Name == varExp.Symbol.Content)
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found)
+                        {
+                            throw new ArgumentException("Static function '" + varExp.Symbol.Content + "' not found.");
+                        }
+
+                        size += PushCallArguments(expr);
+
+                        JumpStaticInstruction jmp = new JumpStaticInstruction(varExp.Symbol.Content, (sbyte)expr.Arguments.Count);
+                        size += jmp.Size;
+                        Instructions.Add(jmp);
                     }
                     else
                     {

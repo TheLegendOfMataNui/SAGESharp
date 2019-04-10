@@ -87,6 +87,7 @@
     <Compile Include="OSI\ControlFlow\SubroutineGraph.cs" />
     <Compile Include="OSI\ControlFlow\Jump.cs" />
     <Compile Include="OSI\ControlFlow\Node.cs" />
+    <Compile Include="OSI\JumpStaticInstruction.cs" />
     <Compile Include="OSI\OSIFile.cs" />
     <Compile Include="OSI\Instruction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

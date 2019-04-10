@@ -44,10 +44,6 @@ namespace ShoefitterDX
             //browser.LoadOSI(osi);
             //Application.Run(browser);
 
-            /*string expr = "param1 < ((param2 - param3) % 10) ^ 3 + 3 ^ 3";
-            List<SAGESharp.LSS.Token> tokens = SAGESharp.LSS.Scanner.Scan(expr, new List<SAGESharp.LSS.SyntaxError>(), true, true);
-            var result = new SAGESharp.LSS.Parser().ParseExpression(tokens);*/
-
             LSSInteractive IDE = new LSSInteractive();
             Application.Run(IDE);
 

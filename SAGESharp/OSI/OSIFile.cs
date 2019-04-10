@@ -190,6 +190,8 @@ namespace SAGESharp.OSI
                     reader.ReadByte(); // Null terminator
                 }
             }
+
+            TransformToJumpStatic();
         }
 
         private static List<Instruction> ReadBytecode(BinaryReader reader, uint startOffset)
@@ -223,6 +225,78 @@ namespace SAGESharp.OSI
 
             reader.BaseStream.Position = offset;
             return result;
+        }
+
+        private void InsertJumpStatic(List<Instruction> instructions)
+        {
+            for (int i = instructions.Count - 2; i > 0; i--)
+            {
+                if (instructions[i] is BCLInstruction addr && addr.Opcode == BCLOpcode.PushConstanti32
+                    && instructions[i + 1] is BCLInstruction jmp && jmp.Opcode == BCLOpcode.JumpRelative)
+                {
+                    JumpStaticInstruction jmpStatic = new JumpStaticInstruction(this, addr, jmp);
+                    instructions.RemoveAt(i + 1);
+                    instructions[i] = jmpStatic;
+                }
+            }
+
+        }
+
+        public void TransformToJumpStatic()
+        {
+            foreach (FunctionInfo func in Functions)
+            {
+                InsertJumpStatic(func.Instructions);
+            }
+            foreach (ClassInfo cls in Classes)
+            {
+                foreach (MethodInfo method in cls.Methods)
+                {
+                    InsertJumpStatic(method.Instructions);
+                }
+            }
+        }
+
+        private void RemoveJumpStatic(List<Instruction> instructions)
+        {
+            for (int i = instructions.Count - 1; i > 0; i--)
+            {
+                if (instructions[i] is JumpStaticInstruction jmpStatic)
+                {
+                    uint? destination = null;
+                    foreach (FunctionInfo func in Functions)
+                    {
+                        if (func.Name == jmpStatic.FunctionName)
+                        {
+                            destination = func.BytecodeOffset;
+                        }
+                    }
+                    if (!destination.HasValue)
+                    {
+                        throw new ArgumentException("Function '" + jmpStatic.FunctionName + "' does not exist.");
+                    }
+
+                    BCLInstruction addr = new BCLInstruction(BCLOpcode.PushConstanti32, (int)destination.Value);
+                    BCLInstruction jmp = new BCLInstruction(BCLOpcode.JumpRelative, (sbyte)jmpStatic.ArgumentCount);
+                    instructions[i] = jmp;
+                    instructions.Insert(i, addr);
+                }
+            }
+        }
+
+        public void TransformRemoveJumpStatic()
+        {
+            foreach (FunctionInfo func in Functions)
+            {
+                RemoveJumpStatic(func.Instructions);
+            }
+            foreach (ClassInfo cls in Classes)
+            {
+                foreach (MethodInfo method in cls.Methods)
+                {
+                    RemoveJumpStatic(method.Instructions);
+                }
+            }
         }
 
         public override string ToString()
