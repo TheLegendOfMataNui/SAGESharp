@@ -40,10 +40,8 @@ namespace ShoefitterDX
             }
         }
 
-            //OSIBrowser browser = new OSIBrowser();
-            //browser.LoadOSI(osi);
-            //Application.Run(browser);
-
+        public static void Main(string[] args)
+        {
             LSSInteractive IDE = new LSSInteractive();
             Application.Run(IDE);
 
