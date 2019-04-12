@@ -709,7 +709,58 @@ namespace SAGESharp.LSS
 
             public uint VisitConstructorExpression(ConstructorExpression expr, object context)
             {
-                throw new NotImplementedException();
+                uint size = 0;
+
+                ushort? classIndex = null;
+                for (int i = 0; i < OSI.Classes.Count; i++)
+                {
+                    if (OSI.Classes[i].Name == expr.TypeName.Content)
+                    {
+                        classIndex = (ushort)i;
+                        break;
+                    }
+                }
+
+                if (!classIndex.HasValue)
+                    throw new ArgumentException("Type name '" + expr.TypeName.Content + "' is not a valid class!");
+
+                // Create the new instance
+                BCLInstruction create = new BCLInstruction(BCLOpcode.CreateObject, classIndex.Value);
+                size += create.Size;
+                Instructions.Add(create);
+
+                // The first constructor argument is the new instance
+                BCLInstruction dup = new BCLInstruction(BCLOpcode.Dup);
+                size += dup.Size;
+                Instructions.Add(dup);
+
+                // Push the rest of the arguments
+                foreach (Expression arg in expr.Arguments)
+                {
+                    size += arg.AcceptVisitor(this, context);
+                }
+
+                // Get the new instance to get the constructor method by pulling from earlier in the stack
+                BCLInstruction pull = new BCLInstruction(BCLOpcode.Pull, (sbyte)(expr.Arguments.Count() + 1));
+                size += pull.Size;
+                Instructions.Add(pull);
+
+                // Get the constructor function on the new instance that we just copied to the top of the stack
+                BCLInstruction getConstructor = new BCLInstruction(BCLOpcode.GetMemberFunction, AddOrGetSymbol(expr.TypeName.Content));
+                size += getConstructor.Size;
+                Instructions.Add(getConstructor);
+
+                // Call the constructor
+                BCLInstruction callConstructor = new BCLInstruction(BCLOpcode.JumpAbsolute, (sbyte)(expr.Arguments.Count() + 1));
+                size += callConstructor.Size;
+                Instructions.Add(callConstructor);
+
+                // Pop the result - the constructor doesn't return anything useful, and we still have the new instance on the stack
+                BCLInstruction pop = new BCLInstruction(BCLOpcode.Pop);
+                size += pop.Size;
+                Instructions.Add(pop);
+
+                return size;
             }
 
             public uint VisitGroupingExpression(GroupingExpression expr, object context)
