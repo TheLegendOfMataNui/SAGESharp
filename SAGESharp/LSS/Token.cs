@@ -70,8 +70,8 @@ namespace SAGESharp.LSS
         Caret, // ^
         Tilde, // ~
         PeriodDollarSign, // .$
-        PlusPlus, // ++
-        DashDash, // --
+        //PlusPlus, // ++
+        //DashDash, // --
         ColonColon, // ::
         PipePipe, // ||
         AmpersandAmpersand, // &&

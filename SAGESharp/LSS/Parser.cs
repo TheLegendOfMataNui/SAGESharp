@@ -425,7 +425,7 @@ namespace SAGESharp.LSS
             Expression result = ParseArrayExpression();
 
             SkipWhitespace();
-            while (ConsumeIfType(out Token token, TokenType.OpenSquareBracket, TokenType.PlusPlus, TokenType.DashDash))
+            while (ConsumeIfType(out Token token, TokenType.OpenSquareBracket))
             {
                 if (token.Type == TokenType.OpenSquareBracket)
                 {
@@ -436,11 +436,6 @@ namespace SAGESharp.LSS
                     // once we have a proper panic & sync system
                     result = new ArrayAccessExpression(result, index);
                 }
-                else if (token.Type == TokenType.PlusPlus || token.Type == TokenType.DashDash)
-                {
-                    result = new UnaryExpression(result, token, false);
-                    SkipWhitespace();
-                }
             }
             return result;
         }
@@ -449,7 +444,7 @@ namespace SAGESharp.LSS
         private Expression ParseUnaryExpression()
         {
             SkipWhitespace();
-            if (ConsumeIfType(out Token token, TokenType.Dash, TokenType.Exclamation, TokenType.Tilde, TokenType.PlusPlus, TokenType.DashDash))
+            if (ConsumeIfType(out Token token, TokenType.Dash, TokenType.Exclamation, TokenType.Tilde))
             {
                 Expression inner = ParseUnaryExpression();
                 if (token.Type == TokenType.Dash && inner is LiteralExpression literal && (literal.Value.Type == TokenType.IntegerLiteral || literal.Value.Type == TokenType.FloatLiteral))

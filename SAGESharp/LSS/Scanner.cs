@@ -126,17 +126,9 @@ namespace SAGESharp.LSS
             else if (start == ',')
                 return FinishToken(TokenType.Comma);
             else if (start == '-')
-            {
-                if (AdvanceIfMatches('-'))
-                    return FinishToken(TokenType.DashDash);
                 return FinishToken(TokenType.Dash);
-            }
             else if (start == '+')
-            {
-                if (AdvanceIfMatches('+'))
-                    return FinishToken(TokenType.PlusPlus);
                 return FinishToken(TokenType.Plus);
-            }
             else if (start == '*')
                 return FinishToken(TokenType.Asterisk);
             else if (start == '%')

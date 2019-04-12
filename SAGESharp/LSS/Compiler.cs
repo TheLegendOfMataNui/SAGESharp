@@ -772,45 +772,27 @@ namespace SAGESharp.LSS
             public uint VisitUnaryExpression(UnaryExpression expr, object context)
             {
                 uint size = 0;
-                if (expr.IsPrefix && (expr.Operation.Type == TokenType.PlusPlus || expr.Operation.Type == TokenType.DashDash))
+                size += expr.Contents.AcceptVisitor(this, context);
+                List<Instruction> ops = new List<Instruction>();
+                if (expr.Operation.Type == TokenType.Exclamation)
                 {
-                    // TODO: Increment or decrement the assignable before compiling the operand
-                    throw new NotImplementedException();
+                    ops.Add(new BCLInstruction(BCLOpcode.Not));
+                }
+                else if (expr.Operation.Type == TokenType.Tilde)
+                {
+                    ops.Add(new BCLInstruction(BCLOpcode.BitwiseNot));
+                }
+                else if (expr.Operation.Type == TokenType.Dash)
+                {
+                    ops.Add(new BCLInstruction(BCLOpcode.PushConstanti8, (sbyte)-1));
+                    ops.Add(new BCLInstruction(BCLOpcode.Multiply));
                 }
                 else
                 {
-                    size += expr.Contents.AcceptVisitor(this, context);
-                    List<Instruction> ops = new List<Instruction>();
-                    if (expr.Operation.Type == TokenType.Exclamation)
-                    {
-                        ops.Add(new BCLInstruction(BCLOpcode.Not));
-                    }
-                    else if (expr.Operation.Type == TokenType.Tilde)
-                    {
-                        ops.Add(new BCLInstruction(BCLOpcode.BitwiseNot));
-                    }
-                    else if (expr.Operation.Type == TokenType.Dash)
-                    {
-                        ops.Add(new BCLInstruction(BCLOpcode.PushConstanti8, (sbyte)-1));
-                        ops.Add(new BCLInstruction(BCLOpcode.Multiply));
-                    }
-                    else if (expr.Operation.Type == TokenType.PlusPlus)
-                    {
-                        // TODO: Increment the assignable
-                        throw new NotImplementedException();
-                    }
-                    else if (expr.Operation.Type == TokenType.DashDash)
-                    {
-                        // TODO: Decrement the assignable
-                        throw new NotImplementedException();
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("Invalid unary operator " + expr.Operation.Type);
-                    }
-                    Instructions.AddRange(ops);
-                    return size + (uint)ops.Sum(instruction => instruction.Size);
+                    throw new InvalidOperationException("Invalid unary operator " + expr.Operation.Type);
                 }
+                Instructions.AddRange(ops);
+                return size + (uint)ops.Sum(instruction => instruction.Size);
             }
 
             public uint VisitVariableExpression(VariableExpression expr, object context)
