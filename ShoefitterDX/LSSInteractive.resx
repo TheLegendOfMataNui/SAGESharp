@@ -148,12 +148,13 @@
  * - While loops ('for' loops do not exist in LSS as of now, because I am lazy and they aren't
  *   hard to make with 'while' loops)
  * - Returning
- *
- * Things that do not work yet:
  * - Function calls (member functions, static functions, game functions)
  * - Array stuff (Array literals, element setting &amp; getting)
  * - Intrinsics (color component access, array length &amp; manipulation, type conversions &amp; checks)
- * - Class stuff (inheritence, constructors, etc)
+ * - Instantiating classes
+ *
+ * Things that do not work yet:
+ * - Class inheritance
  */
 
 // Globals

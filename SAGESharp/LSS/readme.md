@@ -190,11 +190,8 @@ expression1 || expression2 // Checks whether at least one of the expressions are
 **Mathematic Operators**  
 LSS also contains operators for math operations, with a few deviations from the standard C operators, notably:  
  - Caret (`^`) is the power operator
+ - No increment or decrement operators
 ```
-++thing // Increment before use
-thing++ // Increment after use
---thing // Decrement before use
-thing-- // Decrement after use
 -thing // Negate
 thing ^ thing // Exponent
 thing * thing // Product
