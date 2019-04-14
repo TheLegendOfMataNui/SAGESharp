@@ -8,7 +8,7 @@ namespace SAGESharp.SLB.Cinematic.Sound
     public sealed class SoundTable : IEquatable<SoundTable>
     {
         [SLBElement(1)]
-        public IList<Pstringn> Sounds { get; set; }
+        public IList<string> Sounds { get; set; }
 
 
         public bool Equals(SoundTable other)
