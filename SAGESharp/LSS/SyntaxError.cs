@@ -9,21 +9,23 @@ namespace SAGESharp.LSS
     public class SyntaxError
     {
         public string Message { get; }
-        public long StartIndex { get; }
-        public long Length { get; }
-        public long StartLine { get; }
+        public SourceSpan Span { get; }
 
-        public SyntaxError(string message, long startIndex, long length, long startLine)
+        public SyntaxError(string message, string filename, long startIndex, uint startLine, long length)
         {
             this.Message = message;
-            this.StartIndex = startIndex;
-            this.Length = length;
-            this.StartLine = startLine;
+            this.Span = new SourceSpan(filename, startIndex, startLine, length);
+        }
+
+        public SyntaxError(string message, SourceSpan span)
+        {
+            this.Message = message;
+            this.Span = span;
         }
 
         public override string ToString()
         {
-            return "[" + StartIndex + "+" + Length + " (line " + StartLine + ")]: " + Message;
+            return "[" + Span.ToString() + "]: " + Message;
         }
     }
 }

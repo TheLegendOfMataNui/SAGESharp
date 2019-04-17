@@ -8,6 +8,7 @@ namespace SAGESharp.LSS.Expressions
 {
     public class LiteralExpression : Expression
     {
+        public override SourceSpan Span => Value.Span;
         public Token Value { get; }
 
         public LiteralExpression(Token value)

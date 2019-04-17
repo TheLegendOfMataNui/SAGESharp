@@ -8,12 +8,14 @@ namespace SAGESharp.LSS.Statements
 {
     public class IfStatement : InstructionStatement
     {
+        public override SourceSpan Span { get; }
         public Expressions.Expression Condition { get; } // Could be null for an 'else' statement
         public InstructionStatement Body { get; }
         public IfStatement ElseStatement { get; } // Like a linked list, points to the next else (could be an 'else if' if it has a Condition)
 
-        public IfStatement(Expressions.Expression condition, InstructionStatement body, IfStatement elseStatement)
+        public IfStatement(SourceSpan span, Expressions.Expression condition, InstructionStatement body, IfStatement elseStatement)
         {
+            this.Span = span;
             this.Condition = condition;
             this.Body = body;
             this.ElseStatement = elseStatement;

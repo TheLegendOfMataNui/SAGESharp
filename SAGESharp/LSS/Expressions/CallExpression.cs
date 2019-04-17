@@ -8,11 +8,13 @@ namespace SAGESharp.LSS.Expressions
 {
     public class CallExpression : Expression
     {
+        public override SourceSpan Span { get; }
         public Expression Target { get; }
         public List<Expression> Arguments { get; }
 
-        public CallExpression(Expression target, IEnumerable<Expression> arguments)
+        public CallExpression(SourceSpan span, Expression target, IEnumerable<Expression> arguments)
         {
+            this.Span = span;
             this.Target = target;
             this.Arguments = new List<Expression>(arguments); // copies the elements of 'arguments'
         }

@@ -23,8 +23,7 @@ namespace SAGESharp.LSS.Statements
 
     public abstract class Statement
     {
-        public TextLocation SourceLocation;
-        public int SourceLength;
+        public abstract SourceSpan Span { get; }
 
         public abstract T AcceptVisitor<T>(StatementVisitor<T> visitor);
     }

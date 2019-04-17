@@ -8,6 +8,8 @@ namespace SAGESharp.LSS.Statements
 {
     public class ReturnStatement : InstructionStatement
     {
+        public override SourceSpan Span => ReturnKeyword.Span + Value.Span;
+
         public Token ReturnKeyword { get; }
         public Expressions.Expression Value { get; }
 

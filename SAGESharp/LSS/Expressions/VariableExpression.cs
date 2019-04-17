@@ -8,6 +8,7 @@ namespace SAGESharp.LSS.Expressions
 {
     public class VariableExpression : Expression
     {
+        public override SourceSpan Span => Symbol.Span;
         public Token Symbol { get; }
 
         public VariableExpression(Token symbol)

@@ -8,12 +8,14 @@ namespace SAGESharp.LSS.Statements
 {
     public class SubroutineStatement : Statement
     {
+        public override SourceSpan Span { get; }
         public Token Name;
         public List<Token> Parameters = new List<Token>();
         public BlockStatement Body;
 
-        public SubroutineStatement(Token name, IEnumerable<Token> parameters, BlockStatement body)
+        public SubroutineStatement(SourceSpan span, Token name, IEnumerable<Token> parameters, BlockStatement body)
         {
+            this.Span = span;
             this.Name = name;
             this.Parameters = new List<Token>(parameters); // Copies the elements
             this.Body = body;

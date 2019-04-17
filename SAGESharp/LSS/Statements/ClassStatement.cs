@@ -8,10 +8,20 @@ namespace SAGESharp.LSS.Statements
 {
     public class ClassStatement : Statement
     {
+        public override SourceSpan Span { get; }
         public Token Name;
         public Token SuperclassName;
         public List<PropertyStatement> Properties = new List<PropertyStatement>();
         public List<SubroutineStatement> Methods = new List<SubroutineStatement>();
+
+        public ClassStatement(SourceSpan span, Token name, Token superclassName, List<PropertyStatement> properties, List<SubroutineStatement> methods)
+        {
+            this.Span = span;
+            this.Name = name;
+            this.SuperclassName = superclassName;
+            this.Properties = properties;
+            this.Methods = methods;
+        }
 
         public override T AcceptVisitor<T>(StatementVisitor<T> visitor)
         {

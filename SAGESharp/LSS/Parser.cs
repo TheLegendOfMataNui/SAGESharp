@@ -21,10 +21,14 @@ namespace SAGESharp.LSS
         private List<Token> Tokens;
         private List<SyntaxError> Errors;
         private int CurrentIndex;
-        private int CurrentLine;
+        private uint CurrentLine;
+        private string CurrentFilename;
 
-        public Result Parse(List<Token> tokens)
+        public Result Parse(List<Token> tokens, Compiler.Settings settings = null)
         {
+            if (settings == null)
+                settings = new Compiler.Settings();
+
             this.Tokens = tokens;
             this.CurrentIndex = 0;
             this.CurrentLine = 0;
@@ -34,7 +38,7 @@ namespace SAGESharp.LSS
             while (!IsAtEnd())
             {
                 SkipWhitespace();
-                if (ConsumeIfType(out _, TokenType.KeywordClass))
+                if (ConsumeIfType(out Token classToken, TokenType.KeywordClass))
                 {
                     SkipWhitespace();
                     // Header
@@ -49,9 +53,8 @@ namespace SAGESharp.LSS
                     }
                     ConsumeType(TokenType.OpenBrace, "Expected a class body.");
                     SkipWhitespace();
-                    ClassStatement cls = new ClassStatement();
-                    cls.Name = name;
-                    cls.SuperclassName = superclassName;
+                    List<PropertyStatement> properties = new List<PropertyStatement>();
+                    List<SubroutineStatement> methods = new List<SubroutineStatement>();
 
                     // Body
                     while (!IsAtEnd() && Peek().Type != TokenType.CloseBrace)
@@ -61,40 +64,42 @@ namespace SAGESharp.LSS
                         if (t.Type == TokenType.KeywordProperty)
                         {
                             Token propertyName = ConsumeType(TokenType.Symbol, "Expected a property name.");
-                            cls.Properties.Add(new PropertyStatement(propertyName));
+                            properties.Add(new PropertyStatement(t.Span + propertyName.Span, propertyName));
                             ConsumeType(TokenType.Semicolon, "Expected semicolon after property name.");
                         }
                         else if (t.Type == TokenType.KeywordMethod)
                         {
-                            cls.Methods.Add(ParseSubroutineStatement());
+                            methods.Add(ParseSubroutineStatement(t));
                         }
                         else
                         {
-                            Errors.Add(new SyntaxError("Expected property or method.", t.SourceLocation.Offset, t.SourceLength, CurrentLine));
+                            Errors.Add(new SyntaxError("Expected property or method.", t.Span));
                         }
                         SkipWhitespace();
                     }
 
-                    ConsumeType(TokenType.CloseBrace, "Expected a closing brace for class body.");
+                    Token closeBrace = ConsumeType(TokenType.CloseBrace, "Expected a closing brace for class body.");
+                    ClassStatement cls = new ClassStatement(classToken.Span + closeBrace.Span, name, superclassName, properties, methods);
                     result.Classes.Add(cls);
                 }
-                else if (ConsumeIfType(out _, TokenType.KeywordFunction))
+                else if (ConsumeIfType(out Token functionKeyword, TokenType.KeywordFunction))
                 {
                     SkipWhitespace();
-                    result.Functions.Add(ParseSubroutineStatement());
+                    result.Functions.Add(ParseSubroutineStatement(functionKeyword));
                 }
-                else if (ConsumeIfType(out _, TokenType.KeywordGlobal))
+                else if (ConsumeIfType(out Token globalKeyword, TokenType.KeywordGlobal))
                 {
                     SkipWhitespace();
-                    result.Globals.Add(new GlobalStatement(ConsumeType(TokenType.Symbol, "Expected a name for the global.")));
+                    Token globalName = ConsumeType(TokenType.Symbol, "Expected a name for the global.");
+                    result.Globals.Add(new GlobalStatement(globalKeyword.Span + globalName.Span, globalName));
                     ConsumeType(TokenType.Semicolon, "Expected a semicolon after global name.");
                 }
                 else
                 {
                     Token extra = Consume();
-                    if (extra.Type != TokenType.Whitespace && extra.Type != TokenType.Comment && extra.Type != TokenType.MultilineComment)
+                    if (extra.Type != TokenType.Whitespace && extra.Type != TokenType.Comment && extra.Type != TokenType.MultilineComment && extra.Type != TokenType.EndOfStream)
                     {
-                        result.Errors.Add(new SyntaxError("Expected global, class, or function", extra.SourceLocation.Offset, extra.SourceLength, CurrentLine));
+                        result.Errors.Add(new SyntaxError("Expected global, class, or function", extra.Span));
                     }
                 }
             }
@@ -102,7 +107,7 @@ namespace SAGESharp.LSS
             return result;
         }
 
-        private SubroutineStatement ParseSubroutineStatement()
+        private SubroutineStatement ParseSubroutineStatement(Token startKeyword)
         {
             Token name = ConsumeType(TokenType.Symbol, "Expected a name.");
             ConsumeType(TokenType.OpenParenthesis, "Expected an open parenthesis after subroutine name.");
@@ -123,21 +128,21 @@ namespace SAGESharp.LSS
             }
             if (IsAtEnd())
             {
-                Errors.Add(new SyntaxError("Unterminated parameter list by the end of the source.", CurrentIndex, 0, CurrentLine));
-                return new SubroutineStatement(name, parameters, new BlockStatement(new List<InstructionStatement>()));
+                Errors.Add(new SyntaxError("Unterminated parameter list by the end of the source.", Tokens.Count > 0 ? Tokens[Tokens.Count - 1].Span.Start.Filename : "<unknown>", CurrentIndex, CurrentLine, 0));
+                return new SubroutineStatement(startKeyword.Span + Peek().Span, name, parameters, new BlockStatement(Peek().Span, new List<InstructionStatement>()));
             }
             ConsumeType(TokenType.CloseParenthesis, "Unterminated subroutine parameter list by the end of the source.");
             SkipWhitespace();
 
             // Body
             BlockStatement body = ParseBlockStatement();
-            return new SubroutineStatement(name, parameters, body);
+            return new SubroutineStatement(startKeyword.Span + body.Span, name, parameters, body);
         }
 
         private BlockStatement ParseBlockStatement()
         {
             List<InstructionStatement> instructions = new List<InstructionStatement>();
-            ConsumeType(TokenType.OpenBrace, "Expected an open brace for subroutine body.");
+            Token openBrace = ConsumeType(TokenType.OpenBrace, "Expected an open brace for subroutine body.");
             SkipWhitespace();
 
             while (!IsAtEnd() && Peek().Type != TokenType.CloseBrace)
@@ -145,36 +150,28 @@ namespace SAGESharp.LSS
                 instructions.Add(ParseInstructionStatement());
                 SkipWhitespace();
             }
-            ConsumeType(TokenType.CloseBrace, "Unterminated subroutine body by the end of the source.");
+            Token closeBrace = ConsumeType(TokenType.CloseBrace, "Unterminated subroutine body by the end of the source.");
 
-            BlockStatement result = new BlockStatement(instructions);
+            BlockStatement result = new BlockStatement(openBrace.Span + closeBrace.Span, instructions);
             return result;
         }
 
-        public IfStatement ParseIfStatement()
+        private IfStatement ParseIfStatement()
         {
-            ConsumeType(TokenType.KeywordIf, "Expected if keyword.");
+            Token ifKeyword = ConsumeType(TokenType.KeywordIf, "Expected if keyword.");
+            SourceSpan span = ifKeyword.Span;
             SkipWhitespace();
             ConsumeType(TokenType.OpenParenthesis, "Expected an open parenthesis after if keyword.");
             Expression condition = ParseExpression();
             SkipWhitespace();
             ConsumeType(TokenType.CloseParenthesis, "Expected a close parenthesis after if condition.");
             InstructionStatement body = ParseInstructionStatement();
+            span = span + body.Span;
             SkipWhitespace();
             IfStatement elseStatement = null;
             if (ConsumeIfType(out Token elseKeyword, TokenType.KeywordElse))
             {
                 SkipWhitespace();
-                /*if (ConsumeIfType(out Token elseIfKeyword, TokenType.KeywordIf))
-                {
-                    SkipWhitespace();
-                    ConsumeType(TokenType.OpenParenthesis, "Expected an open parenthesis after else if keywords.");
-                    Expression elseIfCondition = ParseExpression();
-                    SkipWhitespace();
-                    ConsumeType(TokenType.CloseParenthesis, "Expected a close parenthesis after else if condition.");
-                    InstructionStatement elseIfBody = ParseInstructionStatement();
-
-                }*/
                 if (Peek().Type == TokenType.KeywordIf)
                 {
                     elseStatement = ParseIfStatement();
@@ -182,11 +179,12 @@ namespace SAGESharp.LSS
                 else
                 {
                     InstructionStatement elseBody = ParseInstructionStatement();
-                    elseStatement = new IfStatement(null, elseBody, null);
+                    elseStatement = new IfStatement(elseKeyword.Span + elseBody.Span, null, elseBody, null);
                 }
+                span = span + elseStatement.Span;
                 SkipWhitespace();
             }
-            return new IfStatement(condition, body, elseStatement);
+            return new IfStatement(span, condition, body, elseStatement);
         }
 
         private InstructionStatement ParseInstructionStatement()
@@ -209,7 +207,7 @@ namespace SAGESharp.LSS
                 SkipWhitespace();
                 ConsumeType(TokenType.CloseParenthesis, "Expected a close parenthesis after while condition.");
                 InstructionStatement body = ParseInstructionStatement();
-                return new WhileStatement(condition, body);
+                return new WhileStatement(whileKeyword.Span + body.Span, condition, body);
             }
             else if (ConsumeIfType(out Token returnKeyword, TokenType.KeywordReturn))
             {
@@ -237,7 +235,7 @@ namespace SAGESharp.LSS
                 }
                 SkipWhitespace();
                 ConsumeType(TokenType.Semicolon, "Expected a semicolon after variable initializer.");
-                return new VariableDeclarationStatement(name, initializer);
+                return new VariableDeclarationStatement(varKeyword.Span + name.Span, name, initializer);
             }
             else
             {
@@ -294,11 +292,11 @@ namespace SAGESharp.LSS
                 Token closeParen = Consume();
                 // TODO: Assert that closeParen is, in fact, a close parenthesis
                 // once we have a proper panic & sync mechanism
-                return new GroupingExpression(child);
+                return new GroupingExpression(t.Span + closeParen.Span, child);
             }
             else // TODO: Add proper panic & sync
             {
-                Errors.Add(new SyntaxError("Expected an expression.", t.SourceLocation.Offset, t.SourceLength, CurrentLine));
+                Errors.Add(new SyntaxError("Expected an expression.", t.Span));
                 throw new Exception("Expected an expression.");
             }
         }
@@ -327,8 +325,8 @@ namespace SAGESharp.LSS
                     SkipWhitespace();
                 }
 
-                ConsumeType(TokenType.CloseParenthesis, "Expected a close parenthesis after constructor call.");
-                return new ConstructorExpression(typeName, arguments);
+                Token closeParenthesis = ConsumeType(TokenType.CloseParenthesis, "Expected a close parenthesis after constructor call.");
+                return new ConstructorExpression(newKeyword.Span + closeParenthesis.Span, typeName, arguments);
             }
             else
             {
@@ -385,15 +383,15 @@ namespace SAGESharp.LSS
                     SkipWhitespace();
                 }
 
-                ConsumeType(TokenType.CloseParenthesis, "Expected a close parenthesis after function call.");
-                subroutine = new CallExpression(subroutine, arguments);
+                Token closeParenthesis = ConsumeType(TokenType.CloseParenthesis, "Expected a close parenthesis after function call.");
+                subroutine = new CallExpression(subroutine.Span + closeParenthesis.Span, subroutine, arguments);
             }
             return subroutine;
         }
 
         private Expression ParseArrayExpression()
         {
-            if (ConsumeIfType(out _, TokenType.OpenSquareBracket))
+            if (ConsumeIfType(out Token startToken, TokenType.OpenSquareBracket))
             {
                 SkipWhitespace();
                 List<Expression> elements = new List<Expression>();
@@ -410,8 +408,8 @@ namespace SAGESharp.LSS
                 }
 
                 SkipWhitespace();
-                ConsumeType(TokenType.CloseSquareBracket, "Expected a close brace after array expression.");
-                return new ArrayExpression(elements);
+                Token endToken = ConsumeType(TokenType.CloseSquareBracket, "Expected a close brace after array expression.");
+                return new ArrayExpression(startToken.Span + endToken.Span, elements);
             }
             else
             {
@@ -434,7 +432,7 @@ namespace SAGESharp.LSS
                     Token closeSquareBracket = Consume();
                     // TODO: Assert that that was actually a close square bracket
                     // once we have a proper panic & sync system
-                    result = new ArrayAccessExpression(result, index);
+                    result = new ArrayAccessExpression(result.Span + closeSquareBracket.Span, result, index);
                 }
             }
             return result;
@@ -452,12 +450,12 @@ namespace SAGESharp.LSS
                     if (literal.Value.Type == TokenType.IntegerLiteral)
                     {
                         string newContent = (-1 * Int32.Parse(literal.Value.Content)).ToString();
-                        return new LiteralExpression(new Token(TokenType.IntegerLiteral, newContent, token.SourceLocation.Offset, literal.Value.SourceLocation + literal.Value.SourceLength - token.SourceLocation.Offset));
+                        return new LiteralExpression(new Token(TokenType.IntegerLiteral, newContent, token.Span.Start.Filename, token.Span.Start.Offset, token.Span.Start.Line, literal.Value.Span.Start.Offset + literal.Value.Span.Length - token.Span.Start.Offset));
                     }
                     else //if (literal.Value.Type == TokenType.FloatLiteral)
                     {
                         string newContent = (-1.0f * Single.Parse(literal.Value.Content)).ToString();
-                        return new LiteralExpression(new Token(TokenType.FloatLiteral, newContent, token.SourceLocation.Offset, literal.Value.SourceLocation + literal.Value.SourceLength - token.SourceLocation.Offset));
+                        return new LiteralExpression(new Token(TokenType.FloatLiteral, newContent, token.Span.Start.Filename, token.Span.Start.Offset, token.Span.Start.Line, literal.Value.Span.Start.Offset + literal.Value.Span.Length - token.Span.Start.Offset));
                     }
                 }
                 else
@@ -635,14 +633,14 @@ namespace SAGESharp.LSS
         {
             if (CurrentIndex >= Tokens.Count)
             {
-                return new Token(TokenType.EndOfStream, "", CurrentIndex, 0);
+                return new Token(TokenType.EndOfStream, "", CurrentFilename, CurrentIndex, Tokens.Count > 0 ? Tokens[Tokens.Count - 1].Span.Start.Line : 0, 0);
             }
             return Tokens[CurrentIndex];
         }
 
         private void SkipWhitespace()
         {
-            while (!IsAtEnd() && (Peek().Type == TokenType.Whitespace || Peek().Type == TokenType.Comment && Peek().Type == TokenType.MultilineComment))
+            while (!IsAtEnd() && (Peek().Type == TokenType.Whitespace || Peek().Type == TokenType.Comment || Peek().Type == TokenType.MultilineComment))
             {
                 Token whitespace = Consume();
                 for (int i = 0; i < whitespace.Content.Length; i++)
@@ -670,21 +668,19 @@ namespace SAGESharp.LSS
 
         private Token ConsumeType(TokenType type, string failureMessage)
         {
-            if (CurrentIndex >= Tokens.Count)
-            {
-                return new Token(TokenType.EndOfStream, "", CurrentIndex, 0);
-            }
             Token result = Consume();
             if (result.Type != type)
             {
-                this.Errors.Add(new SyntaxError(failureMessage, result.SourceLocation.Offset, result.SourceLength, this.CurrentLine));
+                this.Errors.Add(new SyntaxError(failureMessage, result.Span));
             }
             return result;
         }
 
         private Token Consume()
         {
-            return Tokens[CurrentIndex++];
+            Token result = Tokens[CurrentIndex++];
+            CurrentFilename = result.Span.Start.Filename;
+            return result;
         }
 
         private bool IsAtEnd()

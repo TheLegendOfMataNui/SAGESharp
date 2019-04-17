@@ -8,10 +8,12 @@ namespace SAGESharp.LSS.Expressions
 {
     public class ArrayExpression : Expression
     {
+        public override SourceSpan Span { get; }
         public List<Expression> Elements { get; }
 
-        public ArrayExpression(IEnumerable<Expression> elements)
+        public ArrayExpression(SourceSpan span, IEnumerable<Expression> elements)
         {
+            this.Span = span;
             this.Elements = new List<Expression>(elements);
         }
 

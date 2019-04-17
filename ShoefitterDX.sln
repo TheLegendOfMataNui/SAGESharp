@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2050
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoefitterDX", "ShoefitterDX\ShoefitterDX.csproj", "{F09DD53A-FF8A-4877-BD3B-3F0B6C767251}"
 EndProject
@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAGESharpTests", "SAGESharpTests\SAGESharpTests.csproj", "{62E3C5E4-4C83-48FF-8C4E-4547A13DB764}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LSS CLI", "LSS CLI\LSS CLI.csproj", "{0AA5F7B1-E492-4A40-B735-6B27A150E747}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +34,10 @@ Global
 		{62E3C5E4-4C83-48FF-8C4E-4547A13DB764}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62E3C5E4-4C83-48FF-8C4E-4547A13DB764}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62E3C5E4-4C83-48FF-8C4E-4547A13DB764}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AA5F7B1-E492-4A40-B735-6B27A150E747}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AA5F7B1-E492-4A40-B735-6B27A150E747}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AA5F7B1-E492-4A40-B735-6B27A150E747}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AA5F7B1-E492-4A40-B735-6B27A150E747}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

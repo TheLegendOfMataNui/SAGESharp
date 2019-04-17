@@ -8,11 +8,13 @@ namespace SAGESharp.LSS.Expressions
 {
     public class ArrayAccessExpression : Expression
     {
+        public override SourceSpan Span { get; }
         public Expression Array { get; }
         public Expression Index { get; }
 
-        public ArrayAccessExpression(Expression array, Expression index)
+        public ArrayAccessExpression(SourceSpan span, Expression array, Expression index)
         {
+            this.Span = span;
             this.Array = array;
             this.Index = index;
         }

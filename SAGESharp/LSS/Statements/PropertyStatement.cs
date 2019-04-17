@@ -8,10 +8,12 @@ namespace SAGESharp.LSS.Statements
 {
     public class PropertyStatement : Statement
     {
+        public override SourceSpan Span { get; }
         public Token Name;
 
-        public PropertyStatement(Token name)
+        public PropertyStatement(SourceSpan span, Token name)
         {
+            this.Span = span;
             this.Name = name;
         }
 

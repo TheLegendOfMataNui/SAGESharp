@@ -10,8 +10,11 @@ namespace SAGESharp.LSS.Statements
     {
         public List<InstructionStatement> Instructions { get; }
 
-        public BlockStatement(IEnumerable<InstructionStatement> instructions)
+        public override SourceSpan Span { get; }
+
+        public BlockStatement(SourceSpan span, IEnumerable<InstructionStatement> instructions)
         {
+            this.Span = span;
             this.Instructions = new List<InstructionStatement>(instructions);
         }
 

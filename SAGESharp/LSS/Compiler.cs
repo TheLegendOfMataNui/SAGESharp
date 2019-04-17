@@ -11,6 +11,13 @@ namespace SAGESharp.LSS
 {
     public class Compiler
     {
+        public class Settings
+        {
+            public int VersionMajor { get; set; } = 4;
+            public int VersionMinor { get; set; } = 1;
+            public bool EmitLineNumbers { get; set; } = false;
+        }
+
         public class Result
         {
             public OSIFile OSI;
@@ -44,10 +51,12 @@ namespace SAGESharp.LSS
             private ushort LocalCount = 0;
             private SubroutineScope BaseScope { get; }
             private SubroutineScope CurrentScope { get; set; }
+            private Settings CompileSettings { get; }
 
-            public SubroutineContext(OSIFile osi, bool isInstanceMethod, IEnumerable<string> parameterNames)
+            public SubroutineContext(OSIFile osi, Settings compileSettings, bool isInstanceMethod, IEnumerable<string> parameterNames)
             {
                 this.OSI = osi;
+                this.CompileSettings = compileSettings;
                 BaseScope = new SubroutineScope(null);
                 CurrentScope = BaseScope;
                 foreach (string param in parameterNames) {
@@ -145,6 +154,24 @@ namespace SAGESharp.LSS
                     OSI.Symbols.Add(value);
                 }
                 return (ushort)index;
+            }
+
+            private uint EmitLineNumberAlt1(ushort lineNumber, string filename)
+            {
+                if (!CompileSettings.EmitLineNumbers)
+                    return 0;
+
+                uint size = 0;
+                int sourceFileIndex = OSI.SourceFilenames.IndexOf(filename);
+                if (sourceFileIndex == -1)
+                {
+                    sourceFileIndex = OSI.SourceFilenames.Count;
+                    OSI.SourceFilenames.Add(filename);
+                }
+                BCLInstruction lineNumberAlt1 = new BCLInstruction(BCLOpcode.LineNumberAlt1, lineNumber, (ushort)sourceFileIndex);
+                size += lineNumberAlt1.Size;
+                Instructions.Add(lineNumberAlt1);
+                return size;
             }
 
             private void EnterScope()
@@ -901,7 +928,10 @@ namespace SAGESharp.LSS
 
             public uint VisitExpressionStatement(ExpressionStatement s)
             {
-                uint size = s.Expression.AcceptVisitor(this, null);
+                uint size = 0;
+                if (s.Span.Start.Line.HasValue)
+                    size += EmitLineNumberAlt1((ushort)s.Span.Start.Line.Value, s.Span.Start.Filename);
+                size += s.Expression.AcceptVisitor(this, null);
                 BCLInstruction popInstruction = new BCLInstruction(BCLOpcode.Pop);
                 Instructions.Add(popInstruction);
                 size += popInstruction.Size;
@@ -912,6 +942,8 @@ namespace SAGESharp.LSS
             {
                 List<Instruction> ops = new List<Instruction>();
                 uint size = 0;
+                if (s.Span.Start.Line.HasValue)
+                    size += EmitLineNumberAlt1((ushort)s.Span.Start.Line.Value, s.Span.Start.Filename);
                 if (s.Value != null)
                 {
                     size += s.Value.AcceptVisitor(this, null);
@@ -928,6 +960,8 @@ namespace SAGESharp.LSS
             public uint VisitIfStatement(IfStatement s)
             {
                 uint size = 0;
+                if (s.Span.Start.Line.HasValue)
+                    size += EmitLineNumberAlt1((ushort)s.Span.Start.Line.Value, s.Span.Start.Filename);
 
                 BCLInstruction mainBranchInstruction = null;
 
@@ -966,6 +1000,8 @@ namespace SAGESharp.LSS
             public uint VisitWhileStatement(WhileStatement s)
             {
                 uint size = 0;
+                if (s.Span.Start.Line.HasValue)
+                    size += EmitLineNumberAlt1((ushort)s.Span.Start.Line.Value, s.Span.Start.Filename);
 
                 size += s.Condition.AcceptVisitor(this, null);
                 BCLInstruction exitBranch = new BCLInstruction(BCLOpcode.CompareAndBranchIfFalse);
@@ -987,6 +1023,10 @@ namespace SAGESharp.LSS
 
             public uint VisitAssignmentStatement(AssignmentStatement s)
             {
+                uint size = 0;
+                if (s.Span.Start.Line.HasValue)
+                    size += EmitLineNumberAlt1((ushort)s.Span.Start.Line.Value, s.Span.Start.Filename);
+
                 if (s.Target is VariableExpression varExpr)
                 {
                     // Local variable or global variable assignment
@@ -999,7 +1039,6 @@ namespace SAGESharp.LSS
 
                     if (variableID.HasValue)
                     {
-                        uint size = 0;
                         size += s.Value.AcceptVisitor(this, null);
                         BCLInstruction setVariable = new BCLInstruction(BCLOpcode.SetVariableValue, variableID.Value);
                         Instructions.Add(setVariable);
@@ -1014,7 +1053,6 @@ namespace SAGESharp.LSS
                 else if (s.Target is BinaryExpression memberExpr && memberExpr.Operation.Type == TokenType.Period && memberExpr.Right is VariableExpression member)
                 {
                     // Member assignment (.)
-                    uint size = 0;
                     BCLInstruction setVariable = null;
                     if (member.Symbol.Type == TokenType.Symbol)
                     {
@@ -1070,7 +1108,6 @@ namespace SAGESharp.LSS
                 else if (s.Target is BinaryExpression lookupExpr && lookupExpr.Operation.Type == TokenType.PeriodDollarSign)
                 {
                     // Dynamic member assignment (.$)
-                    uint size = 0;
                     // Push value
                     size += s.Value.AcceptVisitor(this, null);
 
@@ -1089,7 +1126,6 @@ namespace SAGESharp.LSS
                 else if (s.Target is BinaryExpression gameExpr && gameExpr.Operation.Type == TokenType.ColonColon && gameExpr.Left is VariableExpression ns && gameExpr.Right is VariableExpression name)
                 {
                     // Game variable assignment (::)
-                    uint size = 0;
                     size += s.Value.AcceptVisitor(this, null);
 
                     BCLInstruction setValue = new BCLInstruction(BCLOpcode.SetGameVariable, AddOrGetString(ns.Symbol.Content), AddOrGetString(name.Symbol.Content));
@@ -1101,7 +1137,6 @@ namespace SAGESharp.LSS
                 else if (s.Target is ArrayAccessExpression arrayExpr)
                 {
                     // Array assignment ([ ])
-                    uint size = 0;
 
                     size += arrayExpr.Array.AcceptVisitor(this, null);
 
@@ -1129,6 +1164,9 @@ namespace SAGESharp.LSS
                 }
 
                 uint size = 0;
+                if (s.Span.Start.Line.HasValue)
+                    size += EmitLineNumberAlt1((ushort)s.Span.Start.Line.Value, s.Span.Start.Filename);
+
                 ushort localIndex = (ushort)AddLocal(s.Name.Content);
                 List<Instruction> ops = new List<Instruction>();
                 if (s.Initializer != null)
@@ -1143,9 +1181,12 @@ namespace SAGESharp.LSS
         }
 
         // Compiles a single source string into an OSI.
-        public Result Compile(string source, byte versionMajor = 4, byte versionMinor = 1)
+        public Result Compile(string source, string filename, Settings settings = null)
         {
-            OSIFile osi = new OSIFile(versionMajor, versionMinor);
+            if (settings == null)
+                settings = new Settings();
+
+            OSIFile osi = new OSIFile((ushort)settings.VersionMajor, (ushort)settings.VersionMinor);
             Result result = new Result(osi);
             Parser.Result parseResults;
             Parser p = new Parser();
@@ -1154,13 +1195,13 @@ namespace SAGESharp.LSS
             using (System.IO.StreamReader reader = new System.IO.StreamReader(ms))
             {
                 List<SyntaxError> scanErrors = new List<SyntaxError>();
-                List<Token> tokens = Scanner.Scan(source, scanErrors, true, true);
+                List<Token> tokens = Scanner.Scan(source, filename, scanErrors, true, true);
                 if (scanErrors.Count == 0)
                 {
                     parseResults = p.Parse(tokens);
                     if (parseResults.Errors.Count == 0)
                     {
-                        CompileInto(result, parseResults);
+                        CompileInto(result, settings, parseResults);
                     }
                     else
                     {
@@ -1177,9 +1218,12 @@ namespace SAGESharp.LSS
         }
 
         // Compiles the given files into an OSI.
-        public Result CompileFiles(IEnumerable<string> filenames, byte versionMajor = 4, byte versionMinor = 1)
+        public Result CompileFiles(IEnumerable<string> filenames, Settings settings = null)
         {
-            OSIFile osi = new OSIFile(versionMajor, versionMinor);
+            if (settings == null)
+                settings = new Settings();
+
+            OSIFile osi = new OSIFile((ushort)settings.VersionMajor, (ushort)settings.VersionMinor);
             Result result = new Result(osi);
             Parser p = new Parser();
             List<Parser.Result> parseResults = new List<Parser.Result>();
@@ -1189,7 +1233,7 @@ namespace SAGESharp.LSS
                 using (System.IO.StreamReader reader = new System.IO.StreamReader(filename))
                 {
                     List<SyntaxError> scanErrors = new List<SyntaxError>();
-                    List<Token> tokens = Scanner.Scan(reader.ReadToEnd(), scanErrors, true, true);
+                    List<Token> tokens = Scanner.Scan(reader.ReadToEnd(), filename, scanErrors, true, true);
                     if (scanErrors.Count == 0)
                     {
                         Parser.Result parseResult = p.Parse(tokens);
@@ -1209,25 +1253,29 @@ namespace SAGESharp.LSS
                     }
                 }
             }
-            CompileInto(result, parseResults.ToArray());
+            CompileInto(result, settings, parseResults.ToArray());
             return result;
         }
 
-        public Result CompileParsed(Parser.Result parseResult)
+        public Result CompileParsed(Parser.Result parseResult, Settings settings = null)
         {
-            Result result = new Result(new OSIFile());
-            CompileInto(result, parseResult);
+            if (settings == null)
+                settings = new Settings();
+
+            Result result = new Result(new OSIFile((ushort)settings.VersionMajor, (ushort)settings.VersionMinor));
+            CompileInto(result, settings, parseResult);
             return result;
         }
 
-        private void CompileInto(Result result, params Parser.Result[] parseResults)
+        private void CompileInto(Result result, Settings settings = null, params Parser.Result[] parseResults)
         {
+            if (settings == null)
+                settings = new Settings();
+
             Dictionary<string, ushort> strings = new Dictionary<string, ushort>();
             Dictionary<string, ushort> symbols = new Dictionary<string, ushort>();
             Dictionary<string, ushort> globals = new Dictionary<string, ushort>();
 
-            //List<string> functions = new List<string>();
-            //List<string> classes = new List<string>();
             Dictionary<string, OSIFile.FunctionInfo> functions = new Dictionary<string, OSIFile.FunctionInfo>();
             Dictionary<string, OSIFile.ClassInfo> classes = new Dictionary<string, OSIFile.ClassInfo>();
 
@@ -1252,7 +1300,7 @@ namespace SAGESharp.LSS
                     List<OSIFile.MethodInfo> methods = new List<OSIFile.MethodInfo>();
                     if (classes.ContainsKey(cls.Name.Content))
                     {
-                        result.Errors.Add(new SyntaxError("Class already exists with same name.", cls.Name.SourceLocation.Offset, cls.Name.SourceLength, 0));
+                        result.Errors.Add(new SyntaxError("Class already exists with same name.", cls.Name.Span));
                     }
                     else
                     {
@@ -1294,7 +1342,7 @@ namespace SAGESharp.LSS
                 {
                     if (functions.ContainsKey(func.Name.Content))
                     {
-                        result.Errors.Add(new SyntaxError("Function already exists with same name.", func.Name.SourceLocation.Offset, func.Name.SourceLength, 0));
+                        result.Errors.Add(new SyntaxError("Function already exists with same name.", func.Name.Span));
                     }
                     else
                     {
@@ -1323,7 +1371,7 @@ namespace SAGESharp.LSS
                 // Compile the functions
                 foreach (SubroutineStatement function in parseResult.Functions)
                 {
-                    SubroutineContext context = new SubroutineContext(result.OSI, false, function.Parameters.Select(token => token.Content));
+                    SubroutineContext context = new SubroutineContext(result.OSI, settings, false, function.Parameters.Select(token => token.Content));
                     foreach (InstructionStatement stmt in function.Body.Instructions)
                     {
                         stmt.AcceptVisitor(context);
@@ -1342,7 +1390,7 @@ namespace SAGESharp.LSS
                         List<string> parameters = new List<string>();
                         parameters.Add("this");
                         parameters.AddRange(method.Parameters.Select(token => token.Content));
-                        SubroutineContext context = new SubroutineContext(result.OSI, true, parameters);
+                        SubroutineContext context = new SubroutineContext(result.OSI, settings, true, parameters);
                         foreach (InstructionStatement stmt in method.Body.Instructions)
                         {
                             stmt.AcceptVisitor(context);

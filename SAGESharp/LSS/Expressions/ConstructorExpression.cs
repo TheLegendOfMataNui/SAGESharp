@@ -8,18 +8,13 @@ namespace SAGESharp.LSS.Expressions
 {
     public class ConstructorExpression : Expression
     {
+        public override SourceSpan Span { get; }
         public Token TypeName { get; }
-        //public CallExpression Call { get; }
         public IEnumerable<Expression> Arguments { get; }
-        
-        /*public ConstructorExpression(Token typeName, CallExpression call)
-        {
-            this.TypeName = typeName;
-            this.Call = call;
-        }*/
 
-        public ConstructorExpression(Token typeName, IEnumerable<Expression> arguments)
+        public ConstructorExpression(SourceSpan span, Token typeName, IEnumerable<Expression> arguments)
         {
+            this.Span = span;
             this.TypeName = typeName;
             this.Arguments = arguments;
         }

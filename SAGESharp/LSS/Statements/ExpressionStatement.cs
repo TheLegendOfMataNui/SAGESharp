@@ -10,6 +10,8 @@ namespace SAGESharp.LSS.Statements
     {
         public Expressions.Expression Expression { get; }
 
+        public override SourceSpan Span => Expression.Span;
+
         public ExpressionStatement(Expressions.Expression expression)
         {
             this.Expression = expression;

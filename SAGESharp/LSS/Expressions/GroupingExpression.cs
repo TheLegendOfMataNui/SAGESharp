@@ -8,10 +8,12 @@ namespace SAGESharp.LSS.Expressions
 {
     public class GroupingExpression : Expression
     {
+        public override SourceSpan Span { get; }
         public Expression Contents { get; }
 
-        public GroupingExpression(Expression contents)
+        public GroupingExpression(SourceSpan span, Expression contents)
         {
+            this.Span = span;
             this.Contents = contents;
         }
 

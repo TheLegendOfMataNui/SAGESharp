@@ -96,23 +96,45 @@ namespace SAGESharp.LSS
         EndOfStream
     }
 
-    public struct TextLocation
+    public struct SourceLocation
     {
+        public string Filename { get; }
         public long Offset { get; }
+        public uint? Line { get; }
 
-        public TextLocation(long offset)
+        public SourceLocation(string filename, long offset, uint? line)
         {
+            this.Filename = filename;
             this.Offset = offset;
+            this.Line = line;
         }
 
-        public void CalculatePosition(string textContents, out long line, out long column)
+        public override string ToString()
         {
-            throw new NotImplementedException();
+            return Filename + ":" + (Line.HasValue ? (Line.Value + 1).ToString() : "?");
+        }
+    }
+
+    public struct SourceSpan
+    {
+        public SourceLocation Start { get; }
+        public long Length { get; }
+        public long End => Start.Offset + Length;
+
+        public SourceSpan(string filename, long offset, uint? line, long length)
+        {
+            this.Start = new SourceLocation(filename, offset, line);
+            this.Length = length;
         }
 
-        public static implicit operator long(TextLocation location)
+        public override string ToString()
         {
-            return location.Offset;
+            return Start.ToString(); // TODO: Somehow get column. If we can get column, then also show length.
+        }
+
+        public static SourceSpan operator+(SourceSpan start, SourceSpan end)
+        {
+            return new SourceSpan(start.Start.Filename, start.Start.Offset, start.Start.Line, end.End - start.Start.Offset);
         }
     }
 
@@ -120,20 +142,18 @@ namespace SAGESharp.LSS
     {
         public TokenType Type { get; }
         public string Content { get; }
-        public TextLocation SourceLocation { get; }
-        public long SourceLength { get; }
+        public SourceSpan Span { get; }
 
-        public Token(TokenType type, string content, long sourceOffset, long sourceLength)
+        public Token(TokenType type, string content, string filename, long sourceOffset, uint? sourceLine, long sourceLength)
         {
             this.Type = type;
             this.Content = content;
-            this.SourceLocation = new TextLocation(sourceOffset);
-            this.SourceLength = sourceLength;
+            this.Span = new SourceSpan(filename, sourceOffset, sourceLine, sourceLength);
         }
 
         public override string ToString()
         {
-            return Type.ToString() + " [" + SourceLocation.Offset + "+" + SourceLength + "] '" + Content + "'";
+            return Type.ToString() + " [" + Span.ToString() + "] '" + Content + "'";
         }
     }
 }

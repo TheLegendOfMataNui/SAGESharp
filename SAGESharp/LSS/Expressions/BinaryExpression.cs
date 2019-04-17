@@ -8,6 +8,7 @@ namespace SAGESharp.LSS.Expressions
 {
     public class BinaryExpression : Expression
     {
+        public override SourceSpan Span => Left.Span + Right.Span;
         public Expression Left { get; }
         public Token Operation { get; }
         public Expression Right { get; }

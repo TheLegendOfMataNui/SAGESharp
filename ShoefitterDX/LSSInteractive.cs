@@ -25,7 +25,7 @@ namespace ShoefitterDX
         private bool TryScan(out List<Token> tokens)
         {
             List<SyntaxError> errors = new List<SyntaxError>();
-            tokens = Scanner.Scan(SourceTextBox.Text, errors, false, true);
+            tokens = Scanner.Scan(SourceTextBox.Text.Replace("\r\n", "\n"), "<LSSInteractive>", errors, false, false);
             if (errors.Count == 0)
             {
                 return true;
@@ -54,7 +54,7 @@ namespace ShoefitterDX
                 catch (Exception ex)
                 {
                     result = new Parser.Result();
-                    result.Errors.Add(new SyntaxError("Parser exception: \n\n" + ex.ToString(), 0, 0, 0));
+                    result.Errors.Add(new SyntaxError("Parser exception: \n\n" + ex.ToString(),"<LSSInteractive>", 0, 0, 0));
                 }
                 if (result.Errors.Count == 0)
                 {
@@ -90,7 +90,7 @@ namespace ShoefitterDX
                 catch (Exception ex)
                 {
                     result = new Compiler.Result(new SAGESharp.OSI.OSIFile());
-                    result.Errors.Add(new SyntaxError("Compiler exception: \n\n" + ex.ToString(), 0, 0, 0));
+                    result.Errors.Add(new SyntaxError("Compiler exception: \n\n" + ex.ToString(), "<LSSInteractive>", 0, 0, 0));
                 }
                 if (result.Errors.Count == 0)
                 {

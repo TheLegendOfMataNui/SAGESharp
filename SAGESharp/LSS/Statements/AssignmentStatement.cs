@@ -11,6 +11,8 @@ namespace SAGESharp.LSS.Statements
         public Expressions.Expression Target { get; }
         public Expressions.Expression Value { get; }
 
+        public override SourceSpan Span => Target.Span + Value.Span;
+
         public AssignmentStatement(Expressions.Expression target, Expressions.Expression value)
         {
             this.Target = target;

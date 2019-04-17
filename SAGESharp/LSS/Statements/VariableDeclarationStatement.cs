@@ -8,11 +8,13 @@ namespace SAGESharp.LSS.Statements
 {
     public class VariableDeclarationStatement : InstructionStatement
     {
+        public override SourceSpan Span { get; }
         public Token Name { get; }
         public Expressions.Expression Initializer { get; }
 
-        public VariableDeclarationStatement(Token name, Expressions.Expression initializer)
+        public VariableDeclarationStatement(SourceSpan span, Token name, Expressions.Expression initializer)
         {
+            this.Span = span;
             this.Name = name;
             this.Initializer = initializer;
         }

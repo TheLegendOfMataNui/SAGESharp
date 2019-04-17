@@ -10,9 +10,10 @@ namespace SAGESharp.LSS
     {
         // Wow, this really abuses ugly global state. I thought I was better than this...
         private static string Source;
+        private static string Filename;
         private static int StartIndex = 0;
         private static int CurrentIndex = 0;
-        private static int Line = 0;
+        private static uint Line = 0;
         private static List<Token> Result = new List<Token>();
         private static List<SyntaxError> Errors;
 
@@ -66,9 +67,10 @@ namespace SAGESharp.LSS
                 return TokenType.Symbol;
         }
 
-        public static List<Token> Scan(string source, List<SyntaxError> errors, bool ignoreWhitespace = false, bool ignoreComments = false)
+        public static List<Token> Scan(string source, string filename, List<SyntaxError> errors, bool ignoreWhitespace = false, bool ignoreComments = false)
         {
             Source = source;
+            Filename = filename;
             Errors = errors;
             StartIndex = 0;
             CurrentIndex = 0;
@@ -83,7 +85,7 @@ namespace SAGESharp.LSS
                     Result.Add(result);
             }
 
-            Result.Add(new Token(TokenType.EndOfStream, "", CurrentIndex, 0));
+            Result.Add(new Token(TokenType.EndOfStream, "", filename, CurrentIndex, (uint)Line, 0));
 
             return Result;
         }
@@ -177,7 +179,7 @@ namespace SAGESharp.LSS
                 {
                     while (Peek() != '\n' && !IsAtEnd())
                         Advance();
-                    CurrentIndex--; // Newline is not part of a comment.
+                    //CurrentIndex--; // Newline is not part of a comment.
                     return FinishToken(TokenType.Comment);
                 }
                 else if (Peek() == '*')
@@ -241,9 +243,9 @@ namespace SAGESharp.LSS
                     Line++;
                 while (Char.IsWhiteSpace(Peek()))
                 {
-                    Advance();
                     if (Peek() == '\n')
                         Line++;
+                    Advance();
                 }
                 return FinishToken(TokenType.Whitespace);
             }
@@ -260,12 +262,12 @@ namespace SAGESharp.LSS
 
         private static Token FinishToken(TokenType type)
         {
-            return new Token(type, Source.Substring(StartIndex, CurrentIndex - StartIndex), StartIndex, CurrentIndex - StartIndex);
+            return new Token(type, Source.Substring(StartIndex, CurrentIndex - StartIndex), Filename, StartIndex, (uint)Line, CurrentIndex - StartIndex);
         }
 
         private static Token FinishError(string message)
         {
-            Errors.Add(new SyntaxError(message, StartIndex, CurrentIndex - StartIndex, Line));
+            Errors.Add(new SyntaxError(message, Filename, StartIndex, Line, CurrentIndex - StartIndex));
             return FinishToken(TokenType.Invalid);
         }
 

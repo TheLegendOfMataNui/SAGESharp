@@ -8,11 +8,13 @@ namespace SAGESharp.LSS.Statements
 {
     public class WhileStatement : InstructionStatement
     {
+        public override SourceSpan Span { get; }
         public Expressions.Expression Condition { get; }
         public InstructionStatement Body { get; }
 
-        public WhileStatement(Expressions.Expression condition, InstructionStatement body)
+        public WhileStatement(SourceSpan span, Expressions.Expression condition, InstructionStatement body)
         {
+            this.Span = span;
             this.Condition = condition;
             this.Body = body;
         }

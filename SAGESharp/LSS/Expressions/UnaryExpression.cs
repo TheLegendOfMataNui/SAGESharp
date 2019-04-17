@@ -8,6 +8,7 @@ namespace SAGESharp.LSS.Expressions
 {
     public class UnaryExpression : Expression
     {
+        public override SourceSpan Span => IsPrefix ? Operation.Span + Contents.Span : Contents.Span + Operation.Span;
         public Expression Contents { get; }
         public Token Operation { get; }
         public bool IsPrefix { get; }
