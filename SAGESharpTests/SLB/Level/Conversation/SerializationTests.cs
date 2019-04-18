@@ -5,9 +5,8 @@
  */
 using FluentAssertions;
 using NUnit.Framework;
-using SAGESharp.SLB.IO;
+using SAGESharp.IO;
 using SAGESharp.Testing;
-using System;
 using System.Collections.Generic;
 using System.IO;
 

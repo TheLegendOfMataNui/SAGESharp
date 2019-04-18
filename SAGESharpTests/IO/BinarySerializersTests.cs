@@ -8,7 +8,7 @@ using NSubstitute;
 using NUnit.Framework;
 using System.Collections.Generic;
 
-namespace SAGESharp.SLB.IO
+namespace SAGESharp.IO
 {
     class BinarySerializersTests
     {

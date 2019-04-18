@@ -4,7 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using Konvenience;
-using SAGESharp.SLB.IO;
+using SAGESharp.IO;
 using System;
 using System.Collections.Generic;
 

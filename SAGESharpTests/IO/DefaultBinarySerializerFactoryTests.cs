@@ -5,10 +5,11 @@
  */
 using FluentAssertions;
 using NUnit.Framework;
+using SAGESharp.SLB;
 using SAGESharp.Testing;
 using System.Collections.Generic;
 
-namespace SAGESharp.SLB.IO
+namespace SAGESharp.IO
 {
     class DefaultBinarySerializerFactoryTests
     {

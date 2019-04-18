@@ -10,7 +10,7 @@ using System;
 using System.IO;
 using System.Linq;
 
-namespace SAGESharp.SLB.IO
+namespace SAGESharp.IO
 {
     class BinaryReaderWrapperTests
     {

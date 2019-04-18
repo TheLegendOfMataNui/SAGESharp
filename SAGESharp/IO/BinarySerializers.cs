@@ -10,7 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace SAGESharp.SLB.IO
+namespace SAGESharp.IO
 {
     /// <summary>
     /// Represents an object that serialize objects of type <typeparamref name="T"/>.

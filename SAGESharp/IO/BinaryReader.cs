@@ -7,7 +7,7 @@ using Konvenience;
 using System;
 using System.IO;
 
-namespace SAGESharp.SLB.IO
+namespace SAGESharp.IO
 {
     /// <summary>
     /// Interface to read chunks of binary data as numbers.

@@ -4,10 +4,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using Konvenience;
+using SAGESharp.SLB;
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharp.SLB.IO
+namespace SAGESharp.IO
 {
     /// <summary>
     /// Interface to create instances of <see cref="IBinarySerializer"/>.

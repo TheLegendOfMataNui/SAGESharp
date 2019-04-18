@@ -53,6 +53,9 @@
     <Compile Include="BCLFile.cs" />
     <Compile Include="BHDFile.cs" />
     <Compile Include="INIConfig.cs" />
+    <Compile Include="IO\BinaryReader.cs" />
+    <Compile Include="IO\BinarySerializerFactory.cs" />
+    <Compile Include="IO\BinarySerializers.cs" />
     <Compile Include="LSS\Compiler.cs" />
     <Compile Include="LSS\Expressions\ArrayAccessExpression.cs" />
     <Compile Include="LSS\Expressions\ArrayExpression.cs" />
@@ -98,9 +101,6 @@
     <Compile Include="SLB\EqualityUtils.cs" />
     <Compile Include="SLB\Footer.cs" />
     <Compile Include="SLB\Identifier.cs" />
-    <Compile Include="SLB\IO\BinaryReader.cs" />
-    <Compile Include="SLB\IO\BinarySerializerFactory.cs" />
-    <Compile Include="SLB\IO\BinarySerializers.cs" />
     <Compile Include="SLB\ISLBBinaryWriter.cs" />
     <Compile Include="SLB\Level\Conversation\Character.cs" />
     <Compile Include="SLB\Level\Conversation\CharacterBinaryWriter.cs" />
