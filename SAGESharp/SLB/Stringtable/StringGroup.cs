@@ -11,7 +11,7 @@ namespace SAGESharp.SLB.Stringtable
         public StringTableID Id { get; set; }
 
         [SLBElement(2)]
-        public IList<Pstringn> Strings { get; set; }
+        public IList<string> Strings { get; set; }
 
 
         public bool Equals(StringGroup other)
