@@ -10,13 +10,13 @@ namespace SAGESharp.SLB.Cinematic.Camera
 {
     public sealed class Frame : IEquatable<Frame>
     {
-        [SLBElement(1)]
+        [SerializableProperty(1)]
         public float Time { get; set; }
 
-        [SLBElement(2)]
+        [SerializableProperty(2)]
         public Point3D Position { get; set; }
 
-        [SLBElement(3)]
+        [SerializableProperty(3)]
         public Point3D Target { get; set; }
 
         public bool Equals(Frame other)

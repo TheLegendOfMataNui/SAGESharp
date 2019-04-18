@@ -73,26 +73,26 @@ namespace SAGESharp.SLB.IO
     }
 
     /// <summary>
-    /// Specifies a property that should be serialized/deserialized for an SLB object.
+    /// Specifies a property that should be serialized/deserialized.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
-    public sealed class SLBElementAttribute : Attribute
+    public sealed class SerializablePropertyAttribute : Attribute
     {
         /// <summary>
-        /// Initializes a new attribute to mark SLB elements.
+        /// Initializes a new attribute to mark a serializable property.
         /// </summary>
         /// 
-        /// <param name="order">The order of the SLB property.</param>
-        public SLBElementAttribute(byte order) => Order = order;
+        /// <param name="binaryOrder">The binary order of property (see <see cref="BinaryOrder"/>).</param>
+        public SerializablePropertyAttribute(byte binaryOrder) => BinaryOrder = binaryOrder;
 
         /// <summary>
-        /// The order of the SLB property.
+        /// The order to serialize/deserialize the property as binary data.
         /// </summary>
         /// 
         /// <remarks>
-        /// A single class/struct should not have two or more properties with the same value for Order.
+        /// A single class/struct should not have duplicated values for <see cref="BinaryOrder"/>.
         /// </remarks>
-        public byte Order { get; private set; }
+        public byte BinaryOrder { get; private set; }
     }
 
     internal sealed class PrimitiveBinarySerializer<T> : IBinarySerializer<T>
@@ -274,7 +274,7 @@ namespace SAGESharp.SLB.IO
         {
             if (setters.Length == 0)
             {
-                throw new BadTypeException(type, $"Type has no property annotated with {nameof(SLBElementAttribute)}");
+                throw new BadTypeException(type, $"Type has no property annotated with {nameof(SerializablePropertyAttribute)}");
             }
 
             if (setters.Length != setters.Select(s => s.Order).Distinct().Count())
@@ -314,9 +314,9 @@ namespace SAGESharp.SLB.IO
             }
 
             public static PropertySetter From(PropertyInfo property, IBinarySerializerFactory factory) => property
-                .GetCustomAttribute<SLBElementAttribute>()
+                .GetCustomAttribute<SerializablePropertyAttribute>()
                 ?.Also(_ => AssertWritableProperty(property))
-                ?.Let(a => new PropertySetter(property, a.Order, GetReadFunction(property.PropertyType, factory)));
+                ?.Let(a => new PropertySetter(property, a.BinaryOrder, GetReadFunction(property.PropertyType, factory)));
 
             private static void AssertWritableProperty(PropertyInfo property)
             {

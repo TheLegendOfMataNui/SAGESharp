@@ -22,16 +22,16 @@ namespace SAGESharp.SLB.Level.Conversation
         /// in that order.
         internal const int BINARY_SIZE = 20;
 
-        [SLBElement(1)]
+        [SerializableProperty(1)]
         public Identifier ToaName { get; set; }
 
-        [SLBElement(2)]
+        [SerializableProperty(2)]
         public Identifier CharName { get; set; }
 
-        [SLBElement(3)]
+        [SerializableProperty(3)]
         public Identifier CharCont { get; set; }
 
-        [SLBElement(4)]
+        [SerializableProperty(4)]
         public IList<Info> Entries { get; set; }
 
         public bool Equals(Character other)

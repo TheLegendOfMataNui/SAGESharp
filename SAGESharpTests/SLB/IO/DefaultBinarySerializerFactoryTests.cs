@@ -112,7 +112,7 @@ namespace SAGESharp.SLB.IO
 
         class TestClass
         {
-            [SLBElement(0)]
+            [SerializableProperty(0)]
             public int Int { get; set; }
         }
         #endregion
@@ -131,7 +131,7 @@ namespace SAGESharp.SLB.IO
 
         struct TestStruct
         {
-            [SLBElement(1)]
+            [SerializableProperty(1)]
             public byte Byte { get; set; }
         }
 

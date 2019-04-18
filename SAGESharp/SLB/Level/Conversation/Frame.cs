@@ -20,22 +20,22 @@ namespace SAGESharp.SLB.Level.Conversation
         /// offset where the actual string is located is stored instead.
         internal const int BINARY_SIZE = 24;
 
-        [SLBElement(1)]
+        [SerializableProperty(1)]
         public int ToaAnimation { get; set;  }
 
-        [SLBElement(2)]
+        [SerializableProperty(2)]
         public int CharAnimation { get; set; }
 
-        [SLBElement(3)]
+        [SerializableProperty(3)]
         public int CameraPositionTarget { get; set; }
 
-        [SLBElement(4)]
+        [SerializableProperty(4)]
         public int CameraDistance { get; set; }
 
-        [SLBElement(5)]
+        [SerializableProperty(5)]
         public int StringIndex { get; set; }
 
-        [SLBElement(6)]
+        [SerializableProperty(6)]
         public string ConversationSounds { get; set; }
 
         public bool Equals(Frame other)

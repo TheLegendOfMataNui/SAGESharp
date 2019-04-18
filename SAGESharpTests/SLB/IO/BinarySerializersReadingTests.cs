@@ -288,28 +288,28 @@ namespace SAGESharp.SLB.IO
 
         class CustomClass
         {
-            [SLBElement(8)]
+            [SerializableProperty(8)]
             public string String { get; set; }
 
-            [SLBElement(4)]
+            [SerializableProperty(4)]
             public byte Byte { get; set; }
 
-            [SLBElement(3)]
+            [SerializableProperty(3)]
             public short Short { get; set; }
 
-            [SLBElement(2)]
+            [SerializableProperty(2)]
             public int Int { get; set; }
 
-            [SLBElement(5)]
+            [SerializableProperty(5)]
             public float Float { get; set; }
 
-            [SLBElement(6)]
+            [SerializableProperty(6)]
             public double Double { get; set; }
 
-            [SLBElement(1)]
+            [SerializableProperty(1)]
             public Identifier Identifier { get; set; }
 
-            [SLBElement(7)]
+            [SerializableProperty(7)]
             public IList<char> List { get; set; }
 
             public CustomClass IgnoredValue { get; set; }
@@ -332,7 +332,7 @@ namespace SAGESharp.SLB.IO
             {
             }
 
-            [SLBElement(1)]
+            [SerializableProperty(1)]
             public int Int { get; set; }
         }
 
@@ -341,7 +341,7 @@ namespace SAGESharp.SLB.IO
             .Invoking(_ => new DefaultBinarySerializer<ClassWithNoAnnotations>(factory))
             .Should()
             .Throw<BadTypeException>()
-            .WithMessage($"Type has no property annotated with {nameof(SLBElementAttribute)}")
+            .WithMessage($"Type has no property annotated with {nameof(SerializablePropertyAttribute)}")
             .And
             .Type
             .Should()
@@ -365,7 +365,7 @@ namespace SAGESharp.SLB.IO
 
         class ClassWithAnnotatedPropertyWithNoSetter
         {
-            [SLBElement(1)]
+            [SerializableProperty(1)]
             public int Int { get; }
         }
 
@@ -382,10 +382,10 @@ namespace SAGESharp.SLB.IO
 
         class ClassWithPropertiesWithDuplicatedAttributeOrder
         {
-            [SLBElement(1)]
+            [SerializableProperty(1)]
             public int Int { get;  set; }
 
-            [SLBElement(1)]
+            [SerializableProperty(1)]
             public byte Byte { get;  set; }
         }
     }

@@ -10,13 +10,13 @@ namespace SAGESharp.SLB
 {
     public sealed class Point3D : IEquatable<Point3D>
     {
-        [SLBElement(1)]
+        [SerializableProperty(1)]
         public float X { get; set; }
 
-        [SLBElement(2)]
+        [SerializableProperty(2)]
         public float Y { get; set; }
 
-        [SLBElement(3)]
+        [SerializableProperty(3)]
         public float Z { get; set; }
 
         public bool Equals(Point3D other)
