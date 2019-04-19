@@ -1211,6 +1211,9 @@ namespace SAGESharp.LSS
                 branchToEnd.Arguments[0].SetValue((short)bodySize);
                 branchBack.Arguments[0].SetValue((short)-(conditionSize + bodySize));
 
+                // Pop the stored max index
+                size += EmitBCLInstruction(BCLOpcode.Pop);
+
                 LeaveScope();
                 return size;
             }
