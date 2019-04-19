@@ -195,6 +195,7 @@ namespace SAGESharp.LSS
             /*span += */ConsumeType(TokenType.OpenParenthesis, "Expected open parenthesis after foreach keyword.")/*.Span*/;
             SkipWhitespace();
             ConsumeType(TokenType.KeywordVar, "Expected var keyword when declaring iteration variable.");
+            SkipWhitespace();
             Token variableName = ConsumeType(TokenType.Symbol, "Expected name of iteration variable.");
             //span += variableName.Span;
             SkipWhitespace();
@@ -323,7 +324,7 @@ namespace SAGESharp.LSS
             else // TODO: Add proper panic & sync
             {
                 Errors.Add(new SyntaxError("Expected an expression.", t.Span));
-                throw new Exception("Expected an expression.");
+                throw new Exception("Expected an expression, found a " + t.Type.ToString());
             }
         }
 
