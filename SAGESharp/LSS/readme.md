@@ -100,7 +100,7 @@ foreach (var thing : collection)
     statement
 ```
 For Each statements execute their attached statement one time for each element in the given collection, with the declared variable taking on the value of the element.  
-Note that unlike many other languages, the collection expression is evaluated each time the value variable is evaluated.  
+Note that unlike many other languages, the collection expression is evaluated once to find the length, and then again each time the value variable is evaluated.  
 Also unlike many languages, the `var` keyword must be used - you can't re-use an existing variable as the iteration variable.
 
 **While**
