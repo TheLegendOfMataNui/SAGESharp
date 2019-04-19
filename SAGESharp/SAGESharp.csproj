@@ -70,6 +70,7 @@
     <Compile Include="LSS\Statements\BlockStatement.cs" />
     <Compile Include="LSS\Statements\ClassStatement.cs" />
     <Compile Include="LSS\Statements\ExpressionStatement.cs" />
+    <Compile Include="LSS\Statements\ForEachStatement.cs" />
     <Compile Include="LSS\Statements\GlobalStatement.cs" />
     <Compile Include="LSS\Statements\IfStatement.cs" />
     <Compile Include="LSS\Statements\InstructionStatement.cs" />

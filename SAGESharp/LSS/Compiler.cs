@@ -32,7 +32,7 @@ namespace SAGESharp.LSS
 
         private class SubroutineScope
         {
-            public Dictionary<string, int> Locals = new Dictionary<string, int>();
+            public Dictionary<string, Variable> Variables = new Dictionary<string, Variable>();
             public SubroutineScope ParentScope { get; }
 
             public SubroutineScope(SubroutineScope parentScope)
@@ -41,14 +41,86 @@ namespace SAGESharp.LSS
             }
         }
 
+        private abstract class Variable
+        {
+            public string Name { get; }
+
+            public Variable(string name)
+            {
+                this.Name = name;
+            }
+
+            public abstract uint EmitRead(SubroutineContext context);
+            public abstract uint EmitWrite(SubroutineContext context, Expression value);
+        }
+
+        private class StandardVariable : Variable
+        {
+            public ushort Index { get; }
+
+            public StandardVariable(string name, ushort index) : base(name)
+            {
+                this.Index = index;
+            }
+
+            public override uint EmitRead(SubroutineContext context)
+            {
+                uint size = 0;
+                BCLInstruction getVariable = new BCLInstruction(BCLOpcode.GetVariableValue, Index);
+                context.Instructions.Add(getVariable);
+                size += getVariable.Size;
+                return size;
+            }
+
+            public override uint EmitWrite(SubroutineContext context, Expression value)
+            {
+                uint size = 0;
+                size += value.AcceptVisitor(context, null);
+                BCLInstruction setVariable = new BCLInstruction(BCLOpcode.SetVariableValue, Index);
+                context.Instructions.Add(setVariable);
+                size += setVariable.Size;
+                return size;
+            }
+        }
+
+        private class IterationVariable : Variable
+        {
+            public Variable IndexVariable { get; }
+            public Expression Collection { get; }
+
+            public IterationVariable(string name, Variable indexVariable, Expression collection) : base(name)
+            {
+                this.IndexVariable = indexVariable;
+                this.Collection = collection;
+            }
+
+            public override uint EmitRead(SubroutineContext context)
+            {
+                uint size = 0;
+                size += Collection.AcceptVisitor(context, null);
+                size += IndexVariable.EmitRead(context);
+                BCLInstruction getElement = new BCLInstruction(BCLOpcode.GetArrayValue);
+                size += getElement.Size;
+                context.Instructions.Add(getElement);
+                return size;
+            }
+
+            public override uint EmitWrite(SubroutineContext context, Expression value)
+            {
+                // TODO: Panic & Sync
+                throw new InvalidOperationException("Cannot set an iteration variable.");
+            }
+        }
+
         private class SubroutineContext : ExpressionVisitor<uint, object>, Statements.StatementVisitor<uint>
         {
+            private const string ITERATION_INDEX_LOCAL_NAME = "@";
             public List<Instruction> Instructions { get; } = new List<Instruction>();
             private OSIFile OSI { get; }
             public bool IsFinalized { get; private set; }
             public bool IsInstanceMethod { get; }
             private ushort ParameterCount { get; } // Including 'this'
-            private ushort LocalCount = 0;
+            private ushort VariableCount = 0; // The locals (which includes iteration indices, even though they aren't directly accessed by the user)
             private SubroutineScope BaseScope { get; }
             private SubroutineScope CurrentScope { get; set; }
             private Settings CompileSettings { get; }
@@ -62,7 +134,7 @@ namespace SAGESharp.LSS
                 foreach (string param in parameterNames) {
                     AddLocal(param);
                 }
-                ParameterCount = LocalCount;
+                ParameterCount = VariableCount;
                 this.IsInstanceMethod = isInstanceMethod;
             }
 
@@ -70,9 +142,9 @@ namespace SAGESharp.LSS
             {
                 if (IsFinalized)
                     throw new InvalidOperationException("Cannot modify a SubroutineContext after it has been finalized.");
-                if (LocalCount > ParameterCount)
+                if (VariableCount > ParameterCount)
                 {
-                    Instructions.Insert(0, new BCLInstruction(BCLOpcode.CreateStackVariables, (sbyte)(LocalCount - ParameterCount)));
+                    Instructions.Insert(0, new BCLInstruction(BCLOpcode.CreateStackVariables, (sbyte)(VariableCount - ParameterCount)));
                 }
                 if (this.IsInstanceMethod && ParameterCount > 0)
                 {
@@ -85,49 +157,68 @@ namespace SAGESharp.LSS
                 }
             }
 
-            private int AddLocal(string localName)
+            private StandardVariable AddLocal(string localName)
             {
                 if (IsFinalized)
                     throw new InvalidOperationException("Cannot modify a SubroutineContext after it has been finalized.");
                 SubroutineScope scope = CurrentScope;
                 while (scope != null)
                 {
-                    if (scope.Locals.ContainsKey(localName))
+                    if (scope.Variables.ContainsKey(localName))
                         throw new ArgumentException("Variable is already declared, and would conflict.");
                     scope = scope.ParentScope;
                 }
-                CurrentScope.Locals.Add(localName, LocalCount);
-                return LocalCount++;
+                StandardVariable result = new StandardVariable(localName, VariableCount);
+                CurrentScope.Variables.Add(localName, result);
+                VariableCount++;
+                return result;
+            }
+
+            private IterationVariable AddIterationVariable(string name, Variable indexVariable, Expression collection)
+            {
+                if (IsFinalized)
+                    throw new InvalidOperationException("Cannot modify a SubroutineContext after it has been finalized.");
+                SubroutineScope scope = CurrentScope;
+                while (scope != null)
+                {
+                    if (scope.Variables.ContainsKey(name))
+                        throw new ArgumentException("Variable is already declared, and would conflict.");
+                    scope = scope.ParentScope;
+                }
+                IterationVariable result = new IterationVariable(name, indexVariable, collection);
+                CurrentScope.Variables.Add(name, result);
+                return result;
             }
 
             // Could be a local in one of the current scopes or a global.
-            private ushort? FindVariable(string name)
+            private Variable FindVariable(string name)
             {
-                ushort? variableID = null;
+                Variable result = null;
 
                 // Local?
                 SubroutineScope scope = CurrentScope;
                 while (scope != null)
                 {
-                    if (scope.Locals.ContainsKey(name))
+                    if (scope.Variables.ContainsKey(name))
                     {
-                        variableID = (ushort)scope.Locals[name];
+                        result = scope.Variables[name];
                         break;
                     }
                     scope = scope.ParentScope;
                 }
 
                 // Global?
-                if (!variableID.HasValue)
+                if (result == null)
                 {
                     if (OSI.Globals.Contains(name))
                     {
                         // Highest bit (0x8000) means global
-                        variableID = (ushort)(OSI.Globals.IndexOf(name) | (1 << 15));
+                        // TODO: Optimization - Keep these around so we don't constantly create them all the time
+                        result = new StandardVariable(name, (ushort)(OSI.Globals.IndexOf(name) | (1 << 15)));
                     }
                 }
 
-                return variableID;
+                return result;
             }
 
             private ushort AddOrGetString(string value)
@@ -876,13 +967,11 @@ namespace SAGESharp.LSS
             public uint VisitVariableExpression(VariableExpression expr, object context)
             {
                 uint size = 0;
-                ushort? variableID = FindVariable(expr.Symbol.Content);
+                Variable variable = FindVariable(expr.Symbol.Content);
 
-                if (variableID.HasValue)
+                if (variable != null)
                 {
-                    BCLInstruction getVariable = new BCLInstruction(BCLOpcode.GetVariableValue, variableID.Value);
-                    Instructions.Add(getVariable);
-                    size += getVariable.Size;
+                    size += variable.EmitRead(this);
                 }
                 else
                 {
@@ -1035,14 +1124,11 @@ namespace SAGESharp.LSS
                         throw new ArgumentException("'this' is not allowed to be modified.");
                     }
 
-                    ushort? variableID = FindVariable(varExpr.Symbol.Content);
+                    Variable variable = FindVariable(varExpr.Symbol.Content);
 
-                    if (variableID.HasValue)
+                    if (variable != null)
                     {
-                        size += s.Value.AcceptVisitor(this, null);
-                        BCLInstruction setVariable = new BCLInstruction(BCLOpcode.SetVariableValue, variableID.Value);
-                        Instructions.Add(setVariable);
-                        size += setVariable.Size;
+                        size += variable.EmitWrite(this, s.Value);
                         return size;
                     }
                     else
@@ -1167,15 +1253,80 @@ namespace SAGESharp.LSS
                 if (s.Span.Start.Line.HasValue)
                     size += EmitLineNumberAlt1((ushort)s.Span.Start.Line.Value, s.Span.Start.Filename);
 
-                ushort localIndex = (ushort)AddLocal(s.Name.Content);
+                Variable local = AddLocal(s.Name.Content);
                 List<Instruction> ops = new List<Instruction>();
                 if (s.Initializer != null)
                 {
-                    size += s.Initializer.AcceptVisitor(this, null);
-                    ops.Add(new BCLInstruction(BCLOpcode.SetVariableValue, (ushort)localIndex));
+                    /*size += s.Initializer.AcceptVisitor(this, null);
+                    ops.Add(new BCLInstruction(BCLOpcode.SetVariableValue, (ushort)localIndex));*/
+                    size += local.EmitWrite(this, s.Initializer);
                 }
                 Instructions.AddRange(ops);
                 return size + (uint)ops.Sum(instruction => instruction.Size);
+            }
+
+            public uint VisitForEachStatement(ForEachStatement s)
+            {
+                uint size = 0;
+                EnterScope(); // A scope just for storing the index variable
+
+                // Create the index variable
+                StandardVariable indexVar = AddLocal(ITERATION_INDEX_LOCAL_NAME);
+
+                // Push the max index = <collection>.length - 1
+                size += s.Collection.AcceptVisitor(this, null);
+                BCLInstruction getLength = new BCLInstruction(BCLOpcode.ElementsInArray);
+                size += getLength.Size;
+                Instructions.Add(getLength);
+                BCLInstruction constOne = new BCLInstruction(BCLOpcode.PushConstanti8, (sbyte)1);
+                size += constOne.Size;
+                Instructions.Add(constOne);
+                BCLInstruction subtract = new BCLInstruction(BCLOpcode.Subtract);
+                size += subtract.Size;
+                Instructions.Add(subtract);
+
+                // Initialize the index variable
+                BCLInstruction constZero = new BCLInstruction(BCLOpcode.PushConstant0);
+                size += constZero.Size;
+                Instructions.Add(constZero);
+                BCLInstruction initializeIndex = new BCLInstruction(BCLOpcode.SetVariableValue, indexVar.Index);
+                size += initializeIndex.Size;
+                Instructions.Add(initializeIndex);
+
+                // The iteration condition that is checked each loop
+                uint conditionStart = size;
+                BCLInstruction maxDup = new BCLInstruction(BCLOpcode.Dup);
+                size += maxDup.Size;
+                Instructions.Add(maxDup);
+                size += indexVar.EmitRead(this);
+                BCLInstruction indexCompare = new BCLInstruction(BCLOpcode.GreaterOrEqual);
+                size += indexCompare.Size;
+                Instructions.Add(indexCompare);
+                BCLInstruction branchToEnd = new BCLInstruction(BCLOpcode.CompareAndBranchIfFalse, (short)0); // Set this after we know the size of the loop body
+                size += branchToEnd.Size;
+                Instructions.Add(branchToEnd);
+                int conditionSize = (int)size - (int)conditionStart; // len1
+
+                // Set up the iteration variable
+                IterationVariable iterationVar = AddIterationVariable(s.Variable.Content, indexVar, s.Collection);
+
+                // The body of the loop
+                uint bodyStart = size;
+                size += s.Body.AcceptVisitor(this);
+                BCLInstruction incrementIndex = new BCLInstruction(BCLOpcode.IncrementVariable, indexVar.Index);
+                size += incrementIndex.Size;
+                Instructions.Add(incrementIndex);
+                BCLInstruction branchBack = new BCLInstruction(BCLOpcode.BranchAlways, (short)0); // Set this after we know the size of the loop body
+                size += branchBack.Size;
+                Instructions.Add(branchBack);
+                int bodySize = (int)size - (int)bodyStart;
+
+                // Now we know the size of the body
+                branchToEnd.Arguments[0].SetValue((short)bodySize);
+                branchBack.Arguments[0].SetValue((short)-(conditionSize + bodySize));
+
+                LeaveScope();
+                return size;
             }
             #endregion
         }

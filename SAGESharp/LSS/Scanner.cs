@@ -33,6 +33,7 @@ namespace SAGESharp.LSS
                 _keywords.Add("while", TokenType.KeywordWhile);
                 _keywords.Add("if", TokenType.KeywordIf);
                 _keywords.Add("else", TokenType.KeywordElse);
+                _keywords.Add("foreach", TokenType.KeywordForEach);
                 _keywords.Add("return", TokenType.KeywordReturn);
                 _keywords.Add("this", TokenType.KeywordThis);
                 _keywords.Add("true", TokenType.KeywordTrue);

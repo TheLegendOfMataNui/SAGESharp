@@ -76,7 +76,7 @@
         '\"',
         '\'',
         '\''};
-            this.SourceTextBox.AutoScrollMinSize = new System.Drawing.Size(803, 1190);
+            this.SourceTextBox.AutoScrollMinSize = new System.Drawing.Size(411, 84);
             this.SourceTextBox.BackBrush = null;
             this.SourceTextBox.CharHeight = 14;
             this.SourceTextBox.CharWidth = 8;
@@ -91,7 +91,8 @@
             this.SourceTextBox.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("SourceTextBox.ServiceColors")));
             this.SourceTextBox.Size = new System.Drawing.Size(396, 407);
             this.SourceTextBox.TabIndex = 0;
-            this.SourceTextBox.Text = resources.GetString("SourceTextBox.Text");
+            this.SourceTextBox.Text = "function test() {\r\n    var things = [ 0, 10, null, \"hello there\" ];\r\n    foreach " +
+    "(var k : things) {\r\n        debug::print(k);\r\n    }\r\n}";
             this.SourceTextBox.Zoom = 100;
             // 
             // ResultTextBox

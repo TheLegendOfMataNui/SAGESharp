@@ -19,6 +19,7 @@ namespace SAGESharp.LSS
         KeywordWhile,
         KeywordIf,
         KeywordElse,
+        KeywordForEach,
         KeywordReturn,
         KeywordThis,
         KeywordTrue,

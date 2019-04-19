@@ -187,6 +187,28 @@ namespace SAGESharp.LSS
             return new IfStatement(span, condition, body, elseStatement);
         }
 
+        private ForEachStatement ParseForEachStatement()
+        {
+            Token forEachKeyword = ConsumeType(TokenType.KeywordForEach, "Expected foreach keyword.");
+            SourceSpan span = forEachKeyword.Span;
+            SkipWhitespace();
+            /*span += */ConsumeType(TokenType.OpenParenthesis, "Expected open parenthesis after foreach keyword.")/*.Span*/;
+            SkipWhitespace();
+            ConsumeType(TokenType.KeywordVar, "Expected var keyword when declaring iteration variable.");
+            Token variableName = ConsumeType(TokenType.Symbol, "Expected name of iteration variable.");
+            //span += variableName.Span;
+            SkipWhitespace();
+            ConsumeType(TokenType.Colon, "Expected colon after iteration variable.");
+            SkipWhitespace();
+            Expression collection = ParseExpression();
+            SkipWhitespace();
+            ConsumeType(TokenType.CloseParenthesis, "Expected close parenthesis after collection.");
+            SkipWhitespace();
+            InstructionStatement body = ParseInstructionStatement();
+            span += body.Span;
+            return new ForEachStatement(span, variableName, collection, body);
+        }
+
         private InstructionStatement ParseInstructionStatement()
         {
             // { means block
@@ -198,6 +220,10 @@ namespace SAGESharp.LSS
             else if (Peek().Type == TokenType.KeywordIf)
             {
                 return ParseIfStatement();
+            }
+            else if (Peek().Type == TokenType.KeywordForEach)
+            {
+                return ParseForEachStatement();
             }
             else if (ConsumeIfType(out Token whileKeyword, TokenType.KeywordWhile))
             {

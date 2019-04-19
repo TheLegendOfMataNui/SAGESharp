@@ -19,6 +19,7 @@ namespace SAGESharp.LSS.Statements
         T VisitWhileStatement(WhileStatement s);
         T VisitAssignmentStatement(AssignmentStatement s);
         T VisitVariableDeclarationStatement(VariableDeclarationStatement s);
+        T VisitForEachStatement(ForEachStatement s);
     }
 
     public abstract class Statement
