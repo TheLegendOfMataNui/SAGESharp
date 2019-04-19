@@ -218,6 +218,39 @@ namespace SAGESharp.IO
         }
     }
 
+    /// <summary>
+    /// Interface with methods to serialize a property from <typeparamref name="T"/>.
+    /// </summary>
+    /// 
+    /// <typeparam name="T">The type that defines the property.</typeparam>
+    internal interface IPropertyBinarySerializer<T>
+    {
+        /// <summary>
+        /// Reads from the <paramref name="reader"/> and sets the value in <paramref name="obj"/>.
+        /// </summary>
+        /// 
+        /// <param name="reader">The reader where the data will be read.</param>
+        /// <param name="obj"></param>
+        void ReadAndSet(IBinaryReader reader, T obj);
+    }
+
+    internal sealed class DefaultPropertyBinarySerializer<T, V> : IPropertyBinarySerializer<T>
+    {
+        private readonly IBinarySerializer<V> serializer;
+
+        private readonly PropertyInfo propertyInfo;
+
+        public DefaultPropertyBinarySerializer(IBinarySerializer<V> serializer, PropertyInfo propertyInfo)
+        {
+            this.serializer = serializer;
+            this.propertyInfo = propertyInfo;
+        }
+
+        public void ReadAndSet(IBinaryReader reader, T obj) => serializer
+            .Read(reader)
+            .Also(v => propertyInfo.SetValue(obj, v));
+    }
+
     /*
      * This class deserves some documentation:
      * 
