@@ -558,54 +558,162 @@ namespace SAGESharp.LSS
                     }
                     else
                     {
-                        if (expr.Arguments.Count != 1)
+                        if (varExp.Symbol.Type == TokenType.KeywordRGBA)
                         {
-                            throw new ArgumentException("Builtin function '" + varExp.Symbol.Content + "' requires exactly 1 argument.");
-                        }
-                        size += expr.Arguments[0].AcceptVisitor(this, context);
-                        if (varExp.Symbol.Type == TokenType.KeywordToString)
-                        {
-                            size += EmitBCLInstruction(BCLOpcode.ConvertToString);
-                        }
-                        else if (varExp.Symbol.Type == TokenType.KeywordToFloat)
-                        {
-                            size += EmitBCLInstruction(BCLOpcode.ConvertToFloat);
-                        }
-                        else if (varExp.Symbol.Type == TokenType.KeywordToInt)
-                        {
-                            size += EmitBCLInstruction(BCLOpcode.ConvertToInteger);
-                        }
-                        else if (varExp.Symbol.Type == TokenType.KeywordIsInt)
-                        {
-                            size += EmitBCLInstruction(BCLOpcode.IsInteger);
-                        }
-                        else if (varExp.Symbol.Type == TokenType.KeywordIsFloat)
-                        {
-                            size += EmitBCLInstruction(BCLOpcode.IsFloat);
-                        }
-                        else if (varExp.Symbol.Type == TokenType.KeywordIsString)
-                        {
-                            size += EmitBCLInstruction(BCLOpcode.IsString);
-                        }
-                        else if (varExp.Symbol.Type == TokenType.KeywordIsInstance)
-                        {
-                            size += EmitBCLInstruction(BCLOpcode.IsAnObject);
-                        }
-                        else if (varExp.Symbol.Type == TokenType.KeywordIsObject)
-                        {
-                            size += EmitBCLInstruction(BCLOpcode.IsGameObject);
-                        }
-                        else if (varExp.Symbol.Type == TokenType.KeywordIsArray)
-                        {
-                            size += EmitBCLInstruction(BCLOpcode.IsArray);
-                        }
-                        else if (varExp.Symbol.Type == TokenType.KeywordClassID)
-                        {
-                            size += EmitBCLInstruction(BCLOpcode.GetObjectClassID);
+                            if (expr.Arguments.Count != 4)
+                            {
+                                throw new ArgumentException("Builtin function '" + varExp.Symbol.Content + "' requires exactly 4 arguments.");
+                            }
+                            else
+                            {
+                                uint initialColor = 0x00000000;
+                                bool complexR = false;
+                                bool complexG = false;
+                                bool complexB = false;
+                                bool complexA = false;
+                                if (expr.Arguments[0] is LiteralExpression rLiteral && rLiteral.Value.Type == TokenType.IntegerLiteral)
+                                {
+                                    int value = Int32.Parse(rLiteral.Value.Content);
+                                    if (value > Byte.MaxValue || value < Byte.MinValue)
+                                    {
+                                        throw new ArgumentException("Value is out of the acceptable range (0 - 255) for R component.");
+                                    }
+                                    else
+                                    {
+                                        initialColor |= ((uint)value & 0xFF) << 24;
+                                    }
+                                }
+                                else
+                                {
+                                    complexR = true;
+                                }
+
+                                if (expr.Arguments[1] is LiteralExpression gLiteral && gLiteral.Value.Type == TokenType.IntegerLiteral)
+                                {
+                                    int value = Int32.Parse(gLiteral.Value.Content);
+                                    if (value > Byte.MaxValue || value < Byte.MinValue)
+                                    {
+                                        throw new ArgumentException("Value is out of the acceptable range (0 - 255) for G component.");
+                                    }
+                                    else
+                                    {
+                                        initialColor |= ((uint)value & 0xFF) << 16;
+                                    }
+                                }
+                                else
+                                {
+                                    complexG = true;
+                                }
+
+                                if (expr.Arguments[2] is LiteralExpression bLiteral && bLiteral.Value.Type == TokenType.IntegerLiteral)
+                                {
+                                    int value = Int32.Parse(bLiteral.Value.Content);
+                                    if (value > Byte.MaxValue || value < Byte.MinValue)
+                                    {
+                                        throw new ArgumentException("Value is out of the acceptable range (0 - 255) for B component.");
+                                    }
+                                    else
+                                    {
+                                        initialColor |= ((uint)value & 0xFF) << 8;
+                                    }
+                                }
+                                else
+                                {
+                                    complexB = true;
+                                }
+
+                                if (expr.Arguments[3] is LiteralExpression aLiteral && aLiteral.Value.Type == TokenType.IntegerLiteral)
+                                {
+                                    int value = Int32.Parse(aLiteral.Value.Content);
+                                    if (value > Byte.MaxValue || value < Byte.MinValue)
+                                    {
+                                        throw new ArgumentException("Value is out of the acceptable range (0 - 255) for A component.");
+                                    }
+                                    else
+                                    {
+                                        initialColor |= ((uint)value & 0xFF);
+                                    }
+                                }
+                                else
+                                {
+                                    complexA = true;
+                                }
+
+                                size += EmitBCLInstruction(BCLOpcode.PushConstantColor8888, (uint)initialColor);
+
+                                if (complexR)
+                                {
+                                    size += expr.Arguments[0].AcceptVisitor(this, context);
+                                    size += EmitBCLInstruction(BCLOpcode.SetRedValue);
+                                }
+                                if (complexG)
+                                {
+                                    size += expr.Arguments[1].AcceptVisitor(this, context);
+                                    size += EmitBCLInstruction(BCLOpcode.SetGreenValue);
+                                }
+                                if (complexB)
+                                {
+                                    size += expr.Arguments[2].AcceptVisitor(this, context);
+                                    size += EmitBCLInstruction(BCLOpcode.SetBlueValue);
+                                }
+                                if (complexA)
+                                {
+                                    size += expr.Arguments[3].AcceptVisitor(this, context);
+                                    size += EmitBCLInstruction(BCLOpcode.SetAlphaValue);
+                                }
+                            }
                         }
                         else
                         {
-                            throw new ArgumentException("Not invokable.");
+                            if (expr.Arguments.Count != 1)
+                            {
+                                throw new ArgumentException("Builtin function '" + varExp.Symbol.Content + "' requires exactly 1 argument.");
+                            }
+                            size += expr.Arguments[0].AcceptVisitor(this, context);
+                            if (varExp.Symbol.Type == TokenType.KeywordToString)
+                            {
+                                size += EmitBCLInstruction(BCLOpcode.ConvertToString);
+                            }
+                            else if (varExp.Symbol.Type == TokenType.KeywordToFloat)
+                            {
+                                size += EmitBCLInstruction(BCLOpcode.ConvertToFloat);
+                            }
+                            else if (varExp.Symbol.Type == TokenType.KeywordToInt)
+                            {
+                                size += EmitBCLInstruction(BCLOpcode.ConvertToInteger);
+                            }
+                            else if (varExp.Symbol.Type == TokenType.KeywordIsInt)
+                            {
+                                size += EmitBCLInstruction(BCLOpcode.IsInteger);
+                            }
+                            else if (varExp.Symbol.Type == TokenType.KeywordIsFloat)
+                            {
+                                size += EmitBCLInstruction(BCLOpcode.IsFloat);
+                            }
+                            else if (varExp.Symbol.Type == TokenType.KeywordIsString)
+                            {
+                                size += EmitBCLInstruction(BCLOpcode.IsString);
+                            }
+                            else if (varExp.Symbol.Type == TokenType.KeywordIsInstance)
+                            {
+                                size += EmitBCLInstruction(BCLOpcode.IsAnObject);
+                            }
+                            else if (varExp.Symbol.Type == TokenType.KeywordIsObject)
+                            {
+                                size += EmitBCLInstruction(BCLOpcode.IsGameObject);
+                            }
+                            else if (varExp.Symbol.Type == TokenType.KeywordIsArray)
+                            {
+                                size += EmitBCLInstruction(BCLOpcode.IsArray);
+                            }
+                            else if (varExp.Symbol.Type == TokenType.KeywordClassID)
+                            {
+                                size += EmitBCLInstruction(BCLOpcode.GetObjectClassID);
+                            }
+                            else
+                            {
+                                throw new ArgumentException("Not invokable.");
+                            }
                         }
                     }
                 }
@@ -1113,18 +1221,22 @@ namespace SAGESharp.LSS
                         if (member.Symbol.Type == TokenType.KeywordRed)
                         {
                             size += EmitBCLInstruction(BCLOpcode.SetRedValue);
+                            size += EmitBCLInstruction(BCLOpcode.Pop); // Because SetRedValue pushes the resulting color
                         }
                         else if (member.Symbol.Type == TokenType.KeywordGreen)
                         {
                             size += EmitBCLInstruction(BCLOpcode.SetGreenValue);
+                            size += EmitBCLInstruction(BCLOpcode.Pop); // Because SetGreenValue pushes the resulting color
                         }
                         else if (member.Symbol.Type == TokenType.KeywordBlue)
                         {
                             size += EmitBCLInstruction(BCLOpcode.SetBlueValue);
+                            size += EmitBCLInstruction(BCLOpcode.Pop); // Because SetBlueValue pushes the resulting color
                         }
                         else if (member.Symbol.Type == TokenType.KeywordAlpha)
                         {
                             size += EmitBCLInstruction(BCLOpcode.SetAlphaValue);
+                            size += EmitBCLInstruction(BCLOpcode.Pop); // Because SetAlphaValue pushes the resulting color
                         }
                         else
                         {

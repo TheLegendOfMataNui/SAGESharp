@@ -315,7 +315,7 @@ namespace SAGESharp.LSS
                 || t.Type == TokenType.FloatLiteral || t.Type == TokenType.StringLiteral)
                 return new LiteralExpression(t);
             else if (t.Type == TokenType.Symbol || t.Type == TokenType.KeywordThis
-                || (t.Type >= TokenType.KeywordLength && t.Type <= TokenType.KeywordClassID))
+                || (t.Type >= TokenType.KeywordRGBA && t.Type <= TokenType.KeywordClassID))
                 return new VariableExpression(t);
             else if (t.Type == TokenType.OpenParenthesis)
             {

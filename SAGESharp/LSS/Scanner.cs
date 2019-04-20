@@ -42,7 +42,7 @@ namespace SAGESharp.LSS
                 _keywords.Add("new", TokenType.KeywordNew);
                 //_keywords.Add("and", TokenType.KeywordAnd);
                 //_keywords.Add("or", TokenType.KeywordOr);
-                _keywords.Add("rgb", TokenType.KeywordRGB);
+                _keywords.Add("rgba", TokenType.KeywordRGBA);
                 _keywords.Add("__length", TokenType.KeywordLength);
                 _keywords.Add("__append", TokenType.KeywordAppend);
                 _keywords.Add("__removeat", TokenType.KeywordRemoveAt);

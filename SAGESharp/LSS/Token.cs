@@ -28,7 +28,7 @@ namespace SAGESharp.LSS
         KeywordNew,
         //KeywordAnd,
         //KeywordOr,
-        KeywordRGB,
+        KeywordRGBA,
         KeywordLength,
         KeywordAppend,
         KeywordRemoveAt,
