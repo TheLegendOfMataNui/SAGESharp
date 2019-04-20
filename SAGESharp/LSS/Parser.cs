@@ -41,46 +41,8 @@ namespace SAGESharp.LSS
                 if (ConsumeIfType(out Token classToken, TokenType.KeywordClass))
                 {
                     SkipWhitespace();
-                    // Header
-                    Token name = ConsumeType(TokenType.Symbol, "Expected a class name.");
-                    SkipWhitespace();
-                    Token superclassName = null;
-                    if (ConsumeIfType(out _, TokenType.Colon))
-                    {
-                        SkipWhitespace();
-                        superclassName = ConsumeType(TokenType.Symbol, "Expected a superclass name.");
-                        SkipWhitespace();
-                    }
-                    ConsumeType(TokenType.OpenBrace, "Expected a class body.");
-                    SkipWhitespace();
-                    List<PropertyStatement> properties = new List<PropertyStatement>();
-                    List<SubroutineStatement> methods = new List<SubroutineStatement>();
-
-                    // Body
-                    while (!IsAtEnd() && Peek().Type != TokenType.CloseBrace)
-                    {
-                        Token t = Consume();
-                        SkipWhitespace();
-                        if (t.Type == TokenType.KeywordProperty)
-                        {
-                            Token propertyName = ConsumeType(TokenType.Symbol, "Expected a property name.");
-                            properties.Add(new PropertyStatement(t.Span + propertyName.Span, propertyName));
-                            ConsumeType(TokenType.Semicolon, "Expected semicolon after property name.");
-                        }
-                        else if (t.Type == TokenType.KeywordMethod)
-                        {
-                            methods.Add(ParseSubroutineStatement(t));
-                        }
-                        else
-                        {
-                            Errors.Add(new SyntaxError("Expected property or method.", t.Span));
-                        }
-                        SkipWhitespace();
-                    }
-
-                    Token closeBrace = ConsumeType(TokenType.CloseBrace, "Expected a closing brace for class body.");
-                    ClassStatement cls = new ClassStatement(classToken.Span + closeBrace.Span, name, superclassName, properties, methods);
-                    result.Classes.Add(cls);
+                    
+                    result.Classes.Add(ParseClassStatement(classToken));
                 }
                 else if (ConsumeIfType(out Token functionKeyword, TokenType.KeywordFunction))
                 {
@@ -105,6 +67,49 @@ namespace SAGESharp.LSS
             }
 
             return result;
+        }
+
+        private ClassStatement ParseClassStatement(Token classKeyword)
+        {
+            // Header
+            Token name = ConsumeType(TokenType.Symbol, "Expected a class name.");
+            SkipWhitespace();
+            Token superclassName = null;
+            if (ConsumeIfType(out _, TokenType.Colon))
+            {
+                SkipWhitespace();
+                superclassName = ConsumeType(TokenType.Symbol, "Expected a superclass name.");
+                SkipWhitespace();
+            }
+            ConsumeType(TokenType.OpenBrace, "Expected a class body.");
+            SkipWhitespace();
+            List<PropertyStatement> properties = new List<PropertyStatement>();
+            List<SubroutineStatement> methods = new List<SubroutineStatement>();
+
+            // Body
+            while (!IsAtEnd() && Peek().Type != TokenType.CloseBrace)
+            {
+                Token t = Consume();
+                SkipWhitespace();
+                if (t.Type == TokenType.KeywordProperty)
+                {
+                    Token propertyName = ConsumeType(TokenType.Symbol, "Expected a property name.");
+                    properties.Add(new PropertyStatement(t.Span + propertyName.Span, propertyName));
+                    ConsumeType(TokenType.Semicolon, "Expected semicolon after property name.");
+                }
+                else if (t.Type == TokenType.KeywordMethod)
+                {
+                    methods.Add(ParseSubroutineStatement(t));
+                }
+                else
+                {
+                    Errors.Add(new SyntaxError("Expected property or method.", t.Span));
+                }
+                SkipWhitespace();
+            }
+
+            Token closeBrace = ConsumeType(TokenType.CloseBrace, "Expected a closing brace for class body.");
+            return new ClassStatement(classKeyword.Span + closeBrace.Span, name, superclassName, properties, methods);
         }
 
         private SubroutineStatement ParseSubroutineStatement(Token startKeyword)

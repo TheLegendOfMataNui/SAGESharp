@@ -270,7 +270,8 @@ namespace SAGESharp.LSS
                     sourceFileIndex = OSI.SourceFilenames.Count;
                     OSI.SourceFilenames.Add(filename);
                 }
-                size += EmitBCLInstruction(BCLOpcode.LineNumberAlt1, lineNumber, (ushort)sourceFileIndex);
+                size += EmitBCLInstruction(BCLOpcode.LineNumberAlt1, lineNumber, (ushort)sourceFileIndex);
+
                 return size;
             }
 
@@ -308,7 +309,8 @@ namespace SAGESharp.LSS
 
                 size += expr.Index.AcceptVisitor(this, context);
 
-                size += EmitBCLInstruction(BCLOpcode.GetArrayValue);
+                size += EmitBCLInstruction(BCLOpcode.GetArrayValue);
+
 
                 return size;
             }
@@ -317,15 +319,18 @@ namespace SAGESharp.LSS
             {
                 uint size = 0;
 
-                size += EmitBCLInstruction(BCLOpcode.CreateArray);
+                size += EmitBCLInstruction(BCLOpcode.CreateArray);
+
 
                 foreach (Expression value in expr.Elements)
                 {
-                    size += EmitBCLInstruction(BCLOpcode.Dup);
+                    size += EmitBCLInstruction(BCLOpcode.Dup);
+
 
                     size += value.AcceptVisitor(this, context);
 
-                    size += EmitBCLInstruction(BCLOpcode.AppendToArray);
+                    size += EmitBCLInstruction(BCLOpcode.AppendToArray);
+
                 }
 
                 return size;
@@ -623,12 +628,15 @@ namespace SAGESharp.LSS
                                         throw new InvalidOperationException("'this' not allowed in static function.");
                                     }
 
-                                    size += EmitBCLInstruction(BCLOpcode.GetVariableValue, (ushort)0);
+                                    size += EmitBCLInstruction(BCLOpcode.GetVariableValue, (ushort)0);
+
 
                                     size += PushCallArguments(expr);
 
-                                    size += EmitBCLInstruction(BCLOpcode.GetThisMemberFunction, AddOrGetSymbol(nameExp.Symbol.Content));
-                                    size += EmitBCLInstruction(BCLOpcode.JumpAbsolute, (sbyte)(expr.Arguments.Count + 1)); // Add the implicit 'this' argument                                }
+                                    size += EmitBCLInstruction(BCLOpcode.GetThisMemberFunction, AddOrGetSymbol(nameExp.Symbol.Content));
+
+                                    size += EmitBCLInstruction(BCLOpcode.JumpAbsolute, (sbyte)(expr.Arguments.Count + 1)); // Add the implicit 'this' argument
+                                }
                                 else
                                 {
                                     // Standard method
@@ -645,8 +653,10 @@ namespace SAGESharp.LSS
                                         size += EmitBCLInstruction(BCLOpcode.Pull, (sbyte)(expr.Arguments.Count + 1));
                                     }
 
-                                    size += EmitBCLInstruction(BCLOpcode.GetMemberFunction, AddOrGetSymbol(nameExp.Symbol.Content));
-                                    size += EmitBCLInstruction(BCLOpcode.JumpAbsolute, (sbyte)(expr.Arguments.Count + 1)); // Add the implicit 'this' argument                                }
+                                    size += EmitBCLInstruction(BCLOpcode.GetMemberFunction, AddOrGetSymbol(nameExp.Symbol.Content));
+
+                                    size += EmitBCLInstruction(BCLOpcode.JumpAbsolute, (sbyte)(expr.Arguments.Count + 1)); // Add the implicit 'this' argument
+                                }
                             }
                             else
                             {
@@ -658,11 +668,13 @@ namespace SAGESharp.LSS
 
                                     size += binExp.Left.AcceptVisitor(this, context); // Push array
 
-                                    size += EmitBCLInstruction(BCLOpcode.Dup); // Make a copy, so we 'return' the original array
+                                    size += EmitBCLInstruction(BCLOpcode.Dup); // Make a copy, so we 'return' the original array
+
 
                                     size += expr.Arguments[0].AcceptVisitor(this, context); // Push value
 
-                                    size += EmitBCLInstruction(BCLOpcode.AppendToArray);
+                                    size += EmitBCLInstruction(BCLOpcode.AppendToArray);
+
                                 }
                                 else if (nameExp.Symbol.Type == TokenType.KeywordRemoveAt)
                                 {
@@ -671,11 +683,13 @@ namespace SAGESharp.LSS
 
                                     size += binExp.Left.AcceptVisitor(this, context); // Push array
 
-                                    size += EmitBCLInstruction(BCLOpcode.Dup); // Make a copy, so we 'return' the original array
+                                    size += EmitBCLInstruction(BCLOpcode.Dup); // Make a copy, so we 'return' the original array
+
 
                                     size += expr.Arguments[0].AcceptVisitor(this, context); // Push index
 
-                                    size += EmitBCLInstruction(BCLOpcode.RemoveFromArray);
+                                    size += EmitBCLInstruction(BCLOpcode.RemoveFromArray);
+
                                 }
                                 else if (nameExp.Symbol.Type == TokenType.KeywordInsertAt)
                                 {
@@ -684,13 +698,15 @@ namespace SAGESharp.LSS
 
                                     size += binExp.Left.AcceptVisitor(this, context); // Push array
 
-                                    size += EmitBCLInstruction(BCLOpcode.Dup); // Make a copy, so we 'return' the original array
+                                    size += EmitBCLInstruction(BCLOpcode.Dup); // Make a copy, so we 'return' the original array
+
 
                                     size += expr.Arguments[0].AcceptVisitor(this, context); // Push index
 
                                     size += expr.Arguments[1].AcceptVisitor(this, context); // Push value
 
-                                    size += EmitBCLInstruction(BCLOpcode.InsertIntoArray);
+                                    size += EmitBCLInstruction(BCLOpcode.InsertIntoArray);
+
                                 }
                                 else
                                 {
@@ -705,7 +721,8 @@ namespace SAGESharp.LSS
                                 // Game function lookup
                                 size += PushCallArguments(expr);
 
-                                size += EmitBCLInstruction(BCLOpcode.CallGameFunction, AddOrGetString(ns.Symbol.Content), AddOrGetString(nameExp.Symbol.Content), (sbyte)expr.Arguments.Count);
+                                size += EmitBCLInstruction(BCLOpcode.CallGameFunction, AddOrGetString(ns.Symbol.Content), AddOrGetString(nameExp.Symbol.Content), (sbyte)expr.Arguments.Count);
+
                             }
                             else
                             {
@@ -738,9 +755,11 @@ namespace SAGESharp.LSS
 
                             size += binExp.Right.AcceptVisitor(this, context); // Method name
 
-                            size += EmitBCLInstruction(BCLOpcode.GetMemberFunctionFromString);
+                            size += EmitBCLInstruction(BCLOpcode.GetMemberFunctionFromString);
 
-                            size += EmitBCLInstruction(BCLOpcode.JumpAbsolute, (sbyte)(expr.Arguments.Count + 1)); // Add the implicit 'this' argument
+
+                            size += EmitBCLInstruction(BCLOpcode.JumpAbsolute, (sbyte)(expr.Arguments.Count + 1)); // Add the implicit 'this' argument
+
                         }
                         else if (binExp.Operation.Type == TokenType.ColonColonDollarSign)
                         {
@@ -751,7 +770,8 @@ namespace SAGESharp.LSS
 
                                 size += binExp.Right.AcceptVisitor(this, context);
 
-                                size += EmitBCLInstruction(BCLOpcode.CallGameFunction, AddOrGetString(ns.Symbol.Content), (sbyte)expr.Arguments.Count);
+                                size += EmitBCLInstruction(BCLOpcode.CallGameFunction, AddOrGetString(ns.Symbol.Content), (sbyte)expr.Arguments.Count);
+
                             }
                             else
                             {
@@ -789,10 +809,12 @@ namespace SAGESharp.LSS
                     throw new ArgumentException("Type name '" + expr.TypeName.Content + "' is not a valid class!");
 
                 // Create the new instance
-                size += EmitBCLInstruction(BCLOpcode.CreateObject, classIndex.Value);
+                size += EmitBCLInstruction(BCLOpcode.CreateObject, classIndex.Value);
+
 
                 // The first constructor argument is the new instance
-                size += EmitBCLInstruction(BCLOpcode.Dup);
+                size += EmitBCLInstruction(BCLOpcode.Dup);
+
 
                 // Push the rest of the arguments
                 foreach (Expression arg in expr.Arguments)
@@ -801,16 +823,20 @@ namespace SAGESharp.LSS
                 }
 
                 // Get the new instance to get the constructor method by pulling from earlier in the stack
-                size += EmitBCLInstruction(BCLOpcode.Pull, (sbyte)(expr.Arguments.Count() + 1));
+                size += EmitBCLInstruction(BCLOpcode.Pull, (sbyte)(expr.Arguments.Count() + 1));
+
 
                 // Get the constructor function on the new instance that we just copied to the top of the stack
-                size += EmitBCLInstruction(BCLOpcode.GetMemberFunction, AddOrGetSymbol(expr.TypeName.Content));
+                size += EmitBCLInstruction(BCLOpcode.GetMemberFunction, AddOrGetSymbol(expr.TypeName.Content));
+
 
                 // Call the constructor
-                size += EmitBCLInstruction(BCLOpcode.JumpAbsolute, (sbyte)(expr.Arguments.Count() + 1));
+                size += EmitBCLInstruction(BCLOpcode.JumpAbsolute, (sbyte)(expr.Arguments.Count() + 1));
+
 
                 // Pop the result - the constructor doesn't return anything useful, and we still have the new instance on the stack
-                size += EmitBCLInstruction(BCLOpcode.Pop);
+                size += EmitBCLInstruction(BCLOpcode.Pop);
+
 
                 return size;
             }
