@@ -15,6 +15,17 @@ namespace ShoefitterDX
     public partial class LSSInteractive : WeifenLuo.WinFormsUI.Docking.DockContent
     {
         private Button LastClicked; // Store the last-clicked button for the Ctrl+Enter command.
+        private SAGESharp.OSI.OSIFile _lastResult = null;
+        private SAGESharp.OSI.OSIFile LastResult
+        {
+            get => _lastResult;
+            set
+            {
+                _lastResult = value;
+                SaveResultButton.Enabled = value != null;
+            }
+        }
+        private string LastSavedFilename = "";
 
         public LSSInteractive()
         {
@@ -118,6 +129,7 @@ namespace ShoefitterDX
         private void ScanButton_Click(object sender, EventArgs e)
         {
             LastClicked = ScanButton;
+            LastResult = null;
 
             ResultTextBox.BeginUpdate(); // Don't re-render on text change
             if (TryScan(out List<Token> tokens))
@@ -134,6 +146,7 @@ namespace ShoefitterDX
         private void ParseButton_Click(object sender, EventArgs e)
         {
             LastClicked = ParseButton;
+            LastResult = null;
 
             ResultTextBox.BeginUpdate();
             if (TryParse(out Parser.Result result))
@@ -164,6 +177,11 @@ namespace ShoefitterDX
             {
                 ResultTextBox.Text = "";
                 ResultTextBox.AppendText(result.OSI.ToString());
+                LastResult = result.OSI;
+            }
+            else
+            {
+                LastResult = null;
             }
             ResultTextBox.EndUpdate();
         }
@@ -176,6 +194,34 @@ namespace ShoefitterDX
                 return true;
             }
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void SaveResultButton_Click(object sender, EventArgs e)
+        {
+            if (LastResult != null)
+            {
+                SaveFileDialog dialog = new SaveFileDialog();
+                dialog.Filter = "OSI File (*.osi)|*.osi";
+                dialog.FileName = System.IO.Path.GetFileName(LastSavedFilename);
+                dialog.InitialDirectory = System.IO.Path.GetDirectoryName(LastSavedFilename);
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    LastSavedFilename = dialog.FileName;
+                    try
+                    {
+                        using (System.IO.FileStream stream = new System.IO.FileStream(dialog.FileName, System.IO.FileMode.Create))
+                        using (System.IO.BinaryWriter writer = new System.IO.BinaryWriter(stream))
+                        {
+                            LastResult.Write(writer);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // TODO: Actual logging solution
+                        MessageBox.Show("Exception writing OSI:\n\n" + ex.ToString());
+                    }
+                }
+            }
         }
     }
 }

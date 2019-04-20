@@ -36,6 +36,7 @@
             this.CompileButton = new System.Windows.Forms.Button();
             this.ScanButton = new System.Windows.Forms.Button();
             this.ParseButton = new System.Windows.Forms.Button();
+            this.SaveResultButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -159,11 +160,24 @@
             this.ParseButton.UseVisualStyleBackColor = true;
             this.ParseButton.Click += new System.EventHandler(this.ParseButton_Click);
             // 
+            // SaveResultButton
+            // 
+            this.SaveResultButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.SaveResultButton.Enabled = false;
+            this.SaveResultButton.Location = new System.Drawing.Point(682, 415);
+            this.SaveResultButton.Name = "SaveResultButton";
+            this.SaveResultButton.Size = new System.Drawing.Size(106, 23);
+            this.SaveResultButton.TabIndex = 4;
+            this.SaveResultButton.Text = "Save Result...";
+            this.SaveResultButton.UseVisualStyleBackColor = true;
+            this.SaveResultButton.Click += new System.EventHandler(this.SaveResultButton_Click);
+            // 
             // LSSInteractive
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.SaveResultButton);
             this.Controls.Add(this.ParseButton);
             this.Controls.Add(this.ScanButton);
             this.Controls.Add(this.CompileButton);
@@ -188,5 +202,6 @@
         private FastColoredTextBoxNS.FastColoredTextBox ResultTextBox;
         private System.Windows.Forms.Button ScanButton;
         private System.Windows.Forms.Button ParseButton;
+        private System.Windows.Forms.Button SaveResultButton;
     }
 }
