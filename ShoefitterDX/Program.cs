@@ -40,13 +40,19 @@ namespace ShoefitterDX
             }
         }
 
-        public static void Main(string[] args)
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        static void Main()
         {
-            LSSInteractive IDE = new LSSInteractive();
-            Application.Run(IDE);
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            Config = new SAGESharp.INIConfig(INIFilename);
+
+            // Shoefitter-DX Entrypoint
+
             Window = new Window();
             Application.Run(Window);
             Config.Write(INIFilename);

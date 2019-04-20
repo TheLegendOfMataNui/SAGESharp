@@ -12,7 +12,7 @@ using SAGESharp.OSI.ControlFlow;
 
 namespace ShoefitterDX
 {
-    public partial class OSIBrowser : Form
+    public partial class OSIBrowser : WeifenLuo.WinFormsUI.Docking.DockContent
     {
         public OSIFile OSI { get; private set; } = null;
 
@@ -21,6 +21,8 @@ namespace ShoefitterDX
         public OSIBrowser()
         {
             InitializeComponent();
+            TabText = "OSI Browser";
+            DockAreas = WeifenLuo.WinFormsUI.Docking.DockAreas.Document | WeifenLuo.WinFormsUI.Docking.DockAreas.Float;
         }
 
         public void LoadOSI(OSIFile osi)

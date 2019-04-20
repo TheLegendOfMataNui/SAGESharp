@@ -19,6 +19,10 @@ namespace ShoefitterDX
         {
             InitializeComponent();
 
+            dockPanel1.Theme = new WeifenLuo.WinFormsUI.Docking.VS2015DarkTheme();
+            dockPanel1.Theme.ApplyTo(menuStrip1);
+            dockPanel1.Theme.ApplyTo(statusStrip1);
+
             GameExplorer = new Panes.GameExplorerPane();
             GameExplorer.Show(dockPanel1, WeifenLuo.WinFormsUI.Docking.DockState.DockRight);
 
@@ -154,6 +158,31 @@ namespace ShoefitterDX
         private void openProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowOpenProject();
+        }
+
+        private void LSSInteractiveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LSSInteractive lssInteractive = new LSSInteractive();
+            lssInteractive.Show(dockPanel1, WeifenLuo.WinFormsUI.Docking.DockState.Document);
+        }
+
+        private void OSIBrowserToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "OSI File (*.osi)|*.osi";
+            // TODO: Remember last used directory
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                using (System.IO.FileStream stream = new System.IO.FileStream(dialog.FileName, System.IO.FileMode.Open))
+                using (System.IO.BinaryReader reader = new System.IO.BinaryReader(stream))
+                {
+                    SAGESharp.OSI.OSIFile osi = new SAGESharp.OSI.OSIFile(reader);
+                    OSIBrowser osiBrowser = new OSIBrowser();
+                    osiBrowser.LoadOSI(osi);
+                    osiBrowser.TabText += " - " + System.IO.Path.GetFileName(dialog.FileName);
+                    osiBrowser.Show(dockPanel1, WeifenLuo.WinFormsUI.Docking.DockState.Document);
+                }
+            }
         }
     }
 }

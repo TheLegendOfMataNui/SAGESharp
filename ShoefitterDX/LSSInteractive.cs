@@ -12,13 +12,14 @@ using SAGESharp.LSS;
 
 namespace ShoefitterDX
 {
-    public partial class LSSInteractive : Form
+    public partial class LSSInteractive : WeifenLuo.WinFormsUI.Docking.DockContent
     {
         private Button LastClicked; // Store the last-clicked button for the Ctrl+Enter command.
 
         public LSSInteractive()
         {
             InitializeComponent();
+            TabText = "LSSInteractive";
             LastClicked = CompileButton;
         }
 
