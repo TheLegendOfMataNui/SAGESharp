@@ -7,6 +7,8 @@ using Konvenience;
 using SAGESharp.SLB;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace SAGESharp.IO
 {
@@ -37,6 +39,31 @@ namespace SAGESharp.IO
         /// The singleton instance of the <see cref="IBinarySerializerFactory"/> interface.
         /// </summary>
         public static IBinarySerializerFactory Factory { get => instance.Value; }
+    }
+
+    /// <summary>
+    /// Interfaces to generate a list of <see cref="IPropertyBinarySerializer{T}"/> for a given type.
+    /// </summary>
+    internal interface IPropertyBinarySerializerFactory
+    {
+        /// <summary>
+        /// Inspects the type <typeparamref name="T"/> and gets the list serializers for all its serialzable properties.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">The type to inspect.</typeparam>
+        /// 
+        /// <param name="binarySerializerFactory">
+        /// The <see cref="IBinarySerializerFactory"/> that will be used to get the serializers for the types of each property.
+        /// </param>
+        /// 
+        /// <returns>A list of <see cref="IPropertyBinarySerializer{T}"/> objects for the type <typeparamref name="T"/>.</returns>
+        /// 
+        /// <exception cref="BadTypeException">
+        /// If the type doesn't have any serializable property
+        /// or if a property is marked as serializable but doesn't have a setter
+        /// or if any of the properties has a duplicated binary order.
+        /// </exception>
+        IReadOnlyList<IPropertyBinarySerializer<T>> GetPropertySerializersForType<T>(IBinarySerializerFactory binarySerializerFactory);
     }
 
     class DefaultBinarySerializerFactory : IBinarySerializerFactory
@@ -110,5 +137,65 @@ namespace SAGESharp.IO
             ?.TakeReferenceUnless(t => t.IsInterface)
             ?.Let(t => true)
             ?? false;
+    }
+
+    internal sealed class DefaultPropertyBinarySerializerFactory : IPropertyBinarySerializerFactory
+    {
+        public IReadOnlyList<IPropertyBinarySerializer<T>> GetPropertySerializersForType<T>(IBinarySerializerFactory binarySerializerFactory)
+            => typeof(T)
+                .GetProperties()
+                .Where(HasSerializableAttribute)
+                .OrderBy(GetBinaryOrder)
+                .Also(ValidateProperties<T>)
+                .Select(p => BuildSerializer<T>(p, binarySerializerFactory))
+                .ToList();
+
+        private static bool HasSerializableAttribute(PropertyInfo propertyInfo)
+            => propertyInfo.GetCustomAttribute<SerializablePropertyAttribute>() != null;
+
+        private static int GetBinaryOrder(PropertyInfo propertyInfo)
+            => propertyInfo.GetCustomAttribute<SerializablePropertyAttribute>().BinaryOrder;
+
+        private static void ValidateProperties<T>(IEnumerable<PropertyInfo> properties)
+        {
+            var type = typeof(T);
+            var propertiesCount = properties.Count();
+
+            if (propertiesCount == 0)
+            {
+                throw BadTypeException.For<T>($"Type has no property annotated with {nameof(SerializablePropertyAttribute)}");
+            }
+
+            var orderCount = properties
+                .Select(GetBinaryOrder)
+                .Distinct()
+                .Count();
+
+            if (propertiesCount != orderCount)
+            {
+                throw BadTypeException.For<T>("Type has more than one property with the same order");
+            }
+
+            foreach (var property in properties)
+            {
+                if (property.GetSetMethod() is null)
+                {
+                    throw BadTypeException.For<T>($"Property {property.Name} doesn't have a setter");
+                }
+            }
+        }
+
+        private static IPropertyBinarySerializer<T> BuildSerializer<T>(PropertyInfo propertyInfo, IBinarySerializerFactory binarySerializerFactory)
+            => typeof(DefaultPropertyBinarySerializer<,>)
+                .MakeGenericType(new Type[] { typeof(T), propertyInfo.PropertyType })
+                .GetConstructor(new Type[] { typeof(IBinarySerializer<>).MakeGenericType(propertyInfo.PropertyType), typeof(PropertyInfo) })
+                .Invoke(new object[] { GetSerializerForPropertyType(propertyInfo, binarySerializerFactory), propertyInfo })
+                .As<IPropertyBinarySerializer<T>>();
+
+        private static object GetSerializerForPropertyType(PropertyInfo propertyInfo, IBinarySerializerFactory binarySerializerFactory)
+            => typeof(IBinarySerializerFactory)
+                .GetMethod(nameof(IBinarySerializerFactory.GetSerializerForType))
+                .MakeGenericMethod(new Type[] { propertyInfo.PropertyType })
+                .Invoke(binarySerializerFactory, Array.Empty<object>());
     }
 }
