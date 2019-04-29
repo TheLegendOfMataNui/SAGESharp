@@ -70,6 +70,44 @@ namespace SAGESharp.IO
         /// The type that cannot be serialized.
         /// </summary>
         public Type Type { get; }
+
+        /// <summary>
+        /// Creates a "type safe" <see cref="BadTypeException"/>.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">The type that cannot be serialized.</typeparam>
+        /// 
+        /// <returns>An instance of <see cref="BadTypeException"/> with type <typeparamref name="T"/>.</returns>
+        public static BadTypeException For<T>()
+            => new BadTypeException(typeof(T));
+
+        /// <summary>
+        /// Creates a "type safe" <see cref="BadTypeException"/>.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">The type that cannot be serialized.</typeparam>
+        /// 
+        /// <param name="message">The message that describes the error.</param>
+        /// 
+        /// <returns>
+        /// An instance of <see cref="BadTypeException"/> with type <typeparamref name="T"/> and <paramref name="message"/>.
+        /// </returns>
+        public static BadTypeException For<T>(string message)
+            => new BadTypeException(typeof(T), message);
+
+        /// <summary>
+        /// Creates a "type safe" <see cref="BadTypeException"/>.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">The type that cannot be serialized.</typeparam>
+        /// 
+        /// <param name="message">The message that describes the error.</param>
+        /// 
+        /// <returns>
+        /// An instance of <see cref="BadTypeException"/> with type <typeparamref name="T"/>, <paramref name="message"/> and <paramref name="innerException"/>.
+        /// </returns>
+        public static BadTypeException For<T>(string message, Exception innerException)
+            => new BadTypeException(typeof(T), message, innerException);
     }
 
     /// <summary>
