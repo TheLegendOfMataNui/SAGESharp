@@ -33,7 +33,9 @@ namespace SAGESharp.IO
     public static class BinarySerializers
     {
         private static readonly Lazy<IBinarySerializerFactory> instance
-            = new Lazy<IBinarySerializerFactory>(() => new DefaultBinarySerializerFactory());
+            = new Lazy<IBinarySerializerFactory>(
+                () => new DefaultBinarySerializerFactory(new DefaultPropertyBinarySerializerFactory())
+            );
 
         /// <summary>
         /// The singleton instance of the <see cref="IBinarySerializerFactory"/> interface.
@@ -68,6 +70,11 @@ namespace SAGESharp.IO
 
     class DefaultBinarySerializerFactory : IBinarySerializerFactory
     {
+        private readonly IPropertyBinarySerializerFactory propertyBinarySerializerFactory;
+
+        public DefaultBinarySerializerFactory(IPropertyBinarySerializerFactory propertyBinarySerializerFactory)
+            => this.propertyBinarySerializerFactory = propertyBinarySerializerFactory;
+
         public IBinarySerializer<T> GetSerializerForType<T>()
         {
             if (typeof(T).IsPrimitive)
@@ -117,7 +124,9 @@ namespace SAGESharp.IO
             }
             else if (IsConcreteClassType<T>())
             {
-                return new DefaultBinarySerializer<T>(this);
+                return propertyBinarySerializerFactory
+                    .GetPropertySerializersForType<T>(this)
+                    .Let(ss => new DefaultBinarySerializer<T>(ss));
             }
             else
             {

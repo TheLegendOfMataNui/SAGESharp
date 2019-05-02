@@ -289,126 +289,22 @@ namespace SAGESharp.IO
             .Also(v => propertyInfo.SetValue(obj, v));
     }
 
-    /*
-     * This class deserves some documentation:
-     * 
-     * The way it works is:
-     *     - From the input type get the default constructor.
-     *     - For each property in the type, create a `PropertySetter` with
-     *       `PropertySetter.From` unless the property is not annotated
-     *       with `SLBElementAttribute` in that case it will be null.
-     *     - Filter all the null `PropertySetter`
-     *     - Order by `SLBElementAttribute.Order`
-     *     - Create an array from there
-     *     - Assert that:
-     *         1. The input type has at least one property with `SLBElementAttribute`
-     *         2. No two properties have the same value for `SLBElementAttribute.Order`
-     * 
-     * At the time of reading (`Read` method) from the `IBinaryReader`,
-     * the `PropertySetter` is used to use the correct method (or object)
-     * in the reader and set the value in the property of the object result
-     * of `Read`.
-     */
     internal sealed class DefaultBinarySerializer<T> : IBinarySerializer<T>
     {
-        private readonly ConstructorInfo constructor;
+        private readonly Func<T> constructor;
 
-        private readonly PropertySetter[] setters;
+        private readonly IReadOnlyList<IPropertyBinarySerializer<T>> propertyBinarySerializers;
 
-        public DefaultBinarySerializer(IBinarySerializerFactory factory)
+        public DefaultBinarySerializer(IReadOnlyList<IPropertyBinarySerializer<T>> propertyBinarySerializers)
         {
-            var type = typeof(T);
+            constructor = typeof(T).GetConstructor(Array.Empty<Type>())
+                ?.Let<ConstructorInfo, Func<T>>(ci => () => (T)ci.Invoke(Array.Empty<object>()))
+                ?? throw new BadTypeException(typeof(T), $"Type {typeof(T).Name} has no public constructor with no arguments");
 
-            constructor = type.GetConstructor(Array.Empty<Type>())
-                ?? throw new BadTypeException(type, "Type has no public constructor with no arguments");
-            setters = type.GetProperties()
-                .Select(p => PropertySetter.From(p, factory))
-                .Where(ss => ss != null)
-                .OrderBy(ss => ss.Order)
-                .ToArray()
-                .Also(ss => AssertValidSetters(ss, type));
+            this.propertyBinarySerializers = propertyBinarySerializers;
         }
 
-        public T Read(IBinaryReader binaryReader)
-        {
-            var result = constructor.Invoke(Array.Empty<object>());
-
-            foreach (var setter in setters)
-            {
-                setter.ReadAndSet(binaryReader, result);
-            }
-
-            return (T)result;
-        }
-
-        private static void AssertValidSetters(PropertySetter[] setters, Type type)
-        {
-            if (setters.Length == 0)
-            {
-                throw new BadTypeException(type, $"Type has no property annotated with {nameof(SerializablePropertyAttribute)}");
-            }
-
-            if (setters.Length != setters.Select(s => s.Order).Distinct().Count())
-            {
-                throw new BadTypeException(type, "Type has more than one property with the same order");
-            }
-        }
-
-        private class PropertySetter
-        {
-            private static readonly MethodInfo GET_SERIALIZER_FOR_TYPE_METHOD =
-                typeof(IBinarySerializerFactory)
-                .GetMethod(nameof(IBinarySerializerFactory.GetSerializerForType));
-
-            private static readonly Type[] SERIALIZER_READ_METHOD_ARGUMENT_TYPES = new Type[]
-            {
-                typeof(IBinaryReader)
-            };
-
-            private PropertySetter(PropertyInfo property, int order, Func<IBinaryReader, object> readFunction)
-            {
-                Property = property;
-                Order = order;
-                ReadFunction = readFunction;
-            }
-
-            private PropertyInfo Property { get; }
-
-            public int Order { get; }
-
-            private Func<IBinaryReader, object> ReadFunction { get; }
-
-            public void ReadAndSet(IBinaryReader reader, object obj)
-            {
-                var value = ReadFunction(reader);
-                Property.SetValue(obj, value);
-            }
-
-            public static PropertySetter From(PropertyInfo property, IBinarySerializerFactory factory) => property
-                .GetCustomAttribute<SerializablePropertyAttribute>()
-                ?.Also(_ => AssertWritableProperty(property))
-                ?.Let(a => new PropertySetter(property, a.BinaryOrder, GetReadFunction(property.PropertyType, factory)));
-
-            private static void AssertWritableProperty(PropertyInfo property)
-            {
-                if (property.GetSetMethod() == null)
-                {
-                    throw new BadTypeException(property.DeclaringType, $"Property {property.Name} doesn't have a setter");
-                }
-            }
-
-            private static Func<IBinaryReader, object> GetReadFunction(Type type, IBinarySerializerFactory factory)
-            {
-                var readMethod = typeof(IBinarySerializer<>)
-                    .MakeGenericType(type)
-                    .GetMethod(nameof(Read), SERIALIZER_READ_METHOD_ARGUMENT_TYPES);
-
-                var serializer = GET_SERIALIZER_FOR_TYPE_METHOD
-                    .MakeGenericMethod(type)
-                    .Invoke(factory, Array.Empty<object>());
-
-                return r => readMethod.Invoke(serializer, new object[] { r });
-            }
-        }
+        public T Read(IBinaryReader binaryReader) => constructor()
+            .Also(o => propertyBinarySerializers.ForEach(pbs => pbs.ReadAndSet(binaryReader, o)));
     }
 }

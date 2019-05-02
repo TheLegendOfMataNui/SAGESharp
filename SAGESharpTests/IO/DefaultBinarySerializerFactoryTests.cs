@@ -4,6 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using FluentAssertions;
+using NSubstitute;
 using NUnit.Framework;
 using SAGESharp.SLB;
 using SAGESharp.Testing;
@@ -13,7 +14,13 @@ namespace SAGESharp.IO
 {
     class DefaultBinarySerializerFactoryTests
     {
-        private readonly IBinarySerializerFactory factory = new DefaultBinarySerializerFactory();
+        private readonly IPropertyBinarySerializerFactory propertyBinarySerializerFactory
+            = Substitute.For<IPropertyBinarySerializerFactory>();
+
+        private readonly IBinarySerializerFactory factory;
+
+        public DefaultBinarySerializerFactoryTests()
+            => factory = new DefaultBinarySerializerFactory(propertyBinarySerializerFactory);
 
         #region Primitive test cases
         [TestCaseSource(nameof(PRIMITIVE_TEST_CASES))]
@@ -106,12 +113,23 @@ namespace SAGESharp.IO
 
         #region Class test cases
         [TestCase]
-        public void Test_Get_Serialier_For_Class() => factory
-            .GetSerializerForType<TestClass>()
-            .Should()
-            .BeOfType<DefaultBinarySerializer<TestClass>>();
+        public void Test_Get_Serialier_For_Class()
+        {
+            propertyBinarySerializerFactory
+                .GetPropertySerializersForType<TestClass>(factory)
+                .Returns(new List<IPropertyBinarySerializer<TestClass>>());
 
-        class TestClass
+            factory
+                .GetSerializerForType<TestClass>()
+                .Should()
+                .BeOfType<DefaultBinarySerializer<TestClass>>();
+
+            propertyBinarySerializerFactory
+                .Received()
+                .GetPropertySerializersForType<TestClass>(factory);
+        }
+
+        public class TestClass
         {
             [SerializableProperty(0)]
             public int Int { get; set; }
