@@ -56,6 +56,7 @@
     <Compile Include="IO\BinaryReader.cs" />
     <Compile Include="IO\BinarySerializerFactory.cs" />
     <Compile Include="IO\BinarySerializers.cs" />
+    <Compile Include="IO\BinaryWriter.cs" />
     <Compile Include="LSS\Compiler.cs" />
     <Compile Include="LSS\Expressions\ArrayAccessExpression.cs" />
     <Compile Include="LSS\Expressions\ArrayExpression.cs" />
