@@ -95,8 +95,7 @@ namespace LSS_CLI
                 }
             }
 
-            Compiler compiler = new Compiler();
-            Compiler.Result result = compiler.CompileFiles(inputs);
+            Compiler.Result result = Compiler.CompileFiles(inputs);
 
             // TODO: Count the number of messages that are actually errors
             if (result.Errors.Count > 0)
@@ -141,7 +140,6 @@ namespace LSS_CLI
 
         private static int DoDecompile(CLIOptions options)
         {
-            Compiler c = new Compiler();
             OSIFile osi = null;
 
             string osiFilename = options.Inputs.ElementAt(0);
@@ -153,7 +151,12 @@ namespace LSS_CLI
                 osi = new OSIFile(reader);
             }
 
-            c.DecompileOSIProject(osi, outputDirectory);
+            if (!System.IO.Directory.Exists(outputDirectory))
+            {
+                System.IO.Directory.CreateDirectory(outputDirectory);
+            }
+
+            Compiler.DecompileOSIProject(osi, outputDirectory);
             return EXIT_SUCCESS;
         }
 

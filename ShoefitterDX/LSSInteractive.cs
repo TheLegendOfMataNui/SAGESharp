@@ -94,10 +94,9 @@ namespace ShoefitterDX
         {
             if (TryParse(out Parser.Result parsed))
             {
-                Compiler c = new Compiler();
                 try
                 {
-                    result = c.CompileParsed(parsed);
+                    result = Compiler.CompileParsed(parsed);
                 }
                 catch (Exception ex)
                 {

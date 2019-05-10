@@ -9,7 +9,7 @@ using SAGESharp.OSI;
 
 namespace SAGESharp.LSS
 {
-    public class Compiler
+    public static class Compiler
     {
         public class Settings
         {
@@ -1361,7 +1361,7 @@ namespace SAGESharp.LSS
         //private class DecompileSubroutineContext : ExpressionVisitor<object, object>
 
         // Compiles a single source string into an OSI.
-        public Result Compile(string source, string filename, Settings settings = null)
+        public static Result Compile(string source, string filename, Settings settings = null)
         {
             if (settings == null)
                 settings = new Settings();
@@ -1398,7 +1398,7 @@ namespace SAGESharp.LSS
         }
 
         // Compiles the given files into an OSI.
-        public Result CompileFiles(IEnumerable<string> filenames, Settings settings = null)
+        public static Result CompileFiles(IEnumerable<string> filenames, Settings settings = null)
         {
             if (settings == null)
                 settings = new Settings();
@@ -1437,7 +1437,7 @@ namespace SAGESharp.LSS
             return result;
         }
 
-        public Result CompileParsed(Parser.Result parseResult, Settings settings = null)
+        public static Result CompileParsed(Parser.Result parseResult, Settings settings = null)
         {
             if (settings == null)
                 settings = new Settings();
@@ -1447,7 +1447,7 @@ namespace SAGESharp.LSS
             return result;
         }
 
-        private void CompileInto(Result result, Settings settings = null, params Parser.Result[] parseResults)
+        private static void CompileInto(Result result, Settings settings = null, params Parser.Result[] parseResults)
         {
             if (settings == null)
                 settings = new Settings();
@@ -1584,7 +1584,7 @@ namespace SAGESharp.LSS
             }
         }
 
-        public Parser.Result DecompileOSI(OSIFile osi)
+        public static Parser.Result DecompileOSI(OSIFile osi)
         {
             Parser.Result result = new Parser.Result();
 
@@ -1606,10 +1606,34 @@ namespace SAGESharp.LSS
                 result.Functions.Add(Decompiler.DecompileSubroutine(osi, function.Name, parameters, function.Instructions, span));
             }
 
+            foreach (OSIFile.ClassInfo cls in osi.Classes)
+            {
+                List<PropertyStatement> properties = new List<PropertyStatement>();
+                foreach (ushort propSymbolIndex in cls.PropertySymbols)
+                {
+                    properties.Add(new PropertyStatement(span, new Token(TokenType.Symbol, osi.Symbols[propSymbolIndex], span)));
+                }
+                List<SubroutineStatement> methods = new List<SubroutineStatement>();
+                foreach (OSIFile.MethodInfo method in cls.Methods)
+                {
+                    List<Token> parameters = new List<Token>();
+                    if (method.Instructions.Count > 0 && method.Instructions[0] is BCLInstruction argCheck && argCheck.Opcode == BCLOpcode.MemberFunctionArgumentCheck)
+                    {
+                        for (int i = 0; i < argCheck.Arguments[0].GetValue<sbyte>(); i++)
+                        {
+                            parameters.Add(new Token(TokenType.Symbol, "param" + (i + 1), span));
+                        }
+                    }
+                    methods.Add(Decompiler.DecompileSubroutine(osi, osi.Symbols[method.NameSymbol], parameters, method.Instructions, span));
+                }
+                // TODO: Find SuperclassName
+                result.Classes.Add(new ClassStatement(span, new Token(TokenType.Symbol, cls.Name, span), null, properties, methods));
+            }
+
             return result;
         }
 
-        public void DecompileOSIProject(OSIFile osi, string outputDirectory, string classesDirectoryName = "classes", string functionsDirectoryName = "functions")
+        public static void DecompileOSIProject(OSIFile osi, string outputDirectory, string classesDirectoryName = "classes", string functionsDirectoryName = "functions")
         {
             Parser.Result decompiled = DecompileOSI(osi);
 
@@ -1619,21 +1643,24 @@ namespace SAGESharp.LSS
             System.IO.Directory.CreateDirectory(System.IO.Path.Combine(outputDirectory, functionsDirectoryName));
 
             // Write globals
+            StringBuilder globalText = new StringBuilder();
+            foreach (GlobalStatement global in decompiled.Globals)
+            {
+                globalText.AppendLine(PrettyPrinter.Print(global));
+            }
+            System.IO.File.WriteAllText(System.IO.Path.Combine(outputDirectory, "globals.lss"), globalText.ToString());
 
             // Write functions
             foreach (SubroutineStatement function in decompiled.Functions)
             {
-
+                System.IO.File.WriteAllText(System.IO.Path.Combine(outputDirectory, functionsDirectoryName, function.Name.Content + ".lss"), "function " + PrettyPrinter.Print(function));
             }
 
             // Write classes
+            foreach (ClassStatement cls in decompiled.Classes)
+            {
+                System.IO.File.WriteAllText(System.IO.Path.Combine(outputDirectory, classesDirectoryName, cls.Name.Content + ".lss"), PrettyPrinter.Print(cls));
+            }
         }
-
-        //public string DecompileInstructions(OSIFile osi, List<Instruction> instructions, uint bytecodeOffset)
-        //{
-        //    SAGESharp.OSI.ControlFlow.SubroutineGraph graph = new OSI.ControlFlow.SubroutineGraph(instructions, bytecodeOffset);
-        //    // TODO
-        //    return "(Not Implemented)";
-        //}
     }
 }
