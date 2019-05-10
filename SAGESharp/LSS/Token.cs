@@ -152,6 +152,13 @@ namespace SAGESharp.LSS
             this.Span = new SourceSpan(filename, sourceOffset, sourceLine, sourceLength);
         }
 
+        public Token(TokenType type, string content, SourceSpan span)
+        {
+            this.Type = type;
+            this.Content = content;
+            this.Span = span;
+        }
+
         public override string ToString()
         {
             return Type.ToString() + " [" + Span.ToString() + "] '" + Content + "'";

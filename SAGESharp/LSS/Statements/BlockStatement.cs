@@ -18,9 +18,9 @@ namespace SAGESharp.LSS.Statements
             this.Instructions = new List<InstructionStatement>(instructions);
         }
 
-        public override T AcceptVisitor<T>(StatementVisitor<T> visitor)
+        public override T AcceptVisitor<T, C>(StatementVisitor<T, C> visitor, C context)
         {
-            return visitor.VisitBlockStatement(this);
+            return visitor.VisitBlockStatement(this, context);
         }
 
         public override string ToString()

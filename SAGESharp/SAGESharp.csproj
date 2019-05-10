@@ -61,6 +61,7 @@
     <Compile Include="IO\BinarySerializers.cs" />
     <Compile Include="IO\BinaryWriter.cs" />
     <Compile Include="LSS\Compiler.cs" />
+    <Compile Include="LSS\Decompiler.cs" />
     <Compile Include="LSS\Expressions\ArrayAccessExpression.cs" />
     <Compile Include="LSS\Expressions\ArrayExpression.cs" />
     <Compile Include="LSS\Expressions\BinaryExpression.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="LSS\Expressions\UnaryExpression.cs" />
     <Compile Include="LSS\Expressions\VariableExpression.cs" />
     <Compile Include="LSS\Parser.cs" />
+    <Compile Include="LSS\PrettyPrinter.cs" />
     <Compile Include="LSS\Scanner.cs" />
     <Compile Include="LSS\Statements\AssignmentStatement.cs" />
     <Compile Include="LSS\Statements\BlockStatement.cs" />

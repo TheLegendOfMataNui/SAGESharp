@@ -26,9 +26,9 @@ namespace SAGESharp.LSS.Expressions
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append("{ ");
+            sb.Append("[ ");
             sb.Append(String.Join(", ", Elements));
-            sb.Append(" }");
+            sb.Append(" ]");
 
             return sb.ToString();
         }

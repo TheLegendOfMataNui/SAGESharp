@@ -151,19 +151,7 @@ namespace ShoefitterDX
             ResultTextBox.BeginUpdate();
             if (TryParse(out Parser.Result result))
             {
-                ResultTextBox.Text = "";
-                foreach (var g in result.Globals)
-                {
-                    ResultTextBox.AppendText(g.ToString() + "\n\n");
-                }
-                foreach (SAGESharp.LSS.Statements.ClassStatement cls in result.Classes)
-                {
-                    ResultTextBox.AppendText(cls.ToString() + "\n\n");
-                }
-                foreach (var f in result.Functions)
-                {
-                    ResultTextBox.AppendText("function " + f.ToString() + "\n\n");
-                }
+                ResultTextBox.Text = PrettyPrinter.Print(result);
             }
             ResultTextBox.EndUpdate();
         }
