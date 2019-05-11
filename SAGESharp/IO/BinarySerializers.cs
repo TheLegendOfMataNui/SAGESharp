@@ -12,20 +12,28 @@ using System.Text;
 namespace SAGESharp.IO
 {
     /// <summary>
-    /// Represents an object that serialize objects of type <typeparamref name="T"/>.
+    /// Represents an object that serializes objects of type <typeparamref name="T"/>.
     /// </summary>
     /// 
     /// <typeparam name="T">Type of the objects to serialize.</typeparam>
     public interface IBinarySerializer<T>
     {
         /// <summary>
-        /// Reads an objects from the input <paramref name="binaryReader"/>.
+        /// Reads an object of type <typeparamref name="T"/> from the input <paramref name="binaryReader"/>.
         /// </summary>
         /// 
         /// <param name="binaryReader">The binary reader used to read the object.</param>
         /// 
-        /// <returns>The objec read from the <paramref name="binaryReader"/>.</returns>
+        /// <returns>The object read from the <paramref name="binaryReader"/>.</returns>
         T Read(IBinaryReader binaryReader);
+
+        /// <summary>
+        /// Writes <paramref name="value"/> to the output <paramref name="binaryWriter"/>.
+        /// </summary>
+        /// 
+        /// <param name="binaryWriter">The output binary writer were the object will be written.</param>
+        /// <param name="value">The object to write.</param>
+        void Write(IBinaryWriter binaryWriter, T value);
     }
 
     /// <summary>
@@ -173,6 +181,11 @@ namespace SAGESharp.IO
                 throw new BadTypeException(typeof(T), "Type is not a supported primitive");
             }
         }
+
+        public void Write(IBinaryWriter binaryWriter, T value)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     internal sealed class CastSerializer<T, U> : IBinarySerializer<T>
@@ -188,6 +201,11 @@ namespace SAGESharp.IO
             // the only way to perform the casting here.
             dynamic result = innerSerializer.Read(binaryReader);
             return (T)result;
+        }
+
+        public void Write(IBinaryWriter binaryWriter, T value)
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -210,6 +228,11 @@ namespace SAGESharp.IO
                     .Let(Encoding.ASCII.GetChars)
                     .Let(bs => string.Concat(bs));
             });
+        }
+
+        public void Write(IBinaryWriter binaryWriter, string value)
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -252,6 +275,11 @@ namespace SAGESharp.IO
             });
 
             return (IList<T>)result;
+        }
+
+        public void Write(IBinaryWriter binaryWriter, IList<T> value)
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -305,5 +333,10 @@ namespace SAGESharp.IO
 
         public T Read(IBinaryReader binaryReader) => constructor()
             .Also(o => propertyBinarySerializers.ForEach(pbs => pbs.ReadAndSet(binaryReader, o)));
+
+        public void Write(IBinaryWriter binaryWriter, T value)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
