@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BKD.cs" />
     <Compile Include="BCLFile.cs" />
     <Compile Include="BHDFile.cs" />
     <Compile Include="INIConfig.cs" />

@@ -71,6 +71,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BKDTests.cs" />
     <Compile Include="IO\BinaryReaderWrapperTests.cs" />
     <Compile Include="IO\BinarySerializableSerializerTests.cs" />
     <Compile Include="IO\BinarySerializersReadingTests.cs" />
