@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IO\BinaryReaderWrapperTests.cs" />
+    <Compile Include="IO\BinarySerializableSerializerTests.cs" />
     <Compile Include="IO\BinarySerializersReadingTests.cs" />
     <Compile Include="IO\BinaryWriterWrapperTests.cs" />
     <Compile Include="IO\DefaultBinarySerializerFactoryTests.cs" />

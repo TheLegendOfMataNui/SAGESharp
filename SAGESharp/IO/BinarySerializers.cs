@@ -37,6 +37,26 @@ namespace SAGESharp.IO
     }
 
     /// <summary>
+    /// Represents an object that can serialize itself.
+    /// </summary>
+    public interface IBinarySerializable
+    {
+        /// <summary>
+        /// Reads data from the <paramref name="binaryReader"/> into the object itself.
+        /// </summary>
+        /// 
+        /// <param name="binaryReader">The input reader.</param>
+        void Read(IBinaryReader binaryReader);
+
+        /// <summary>
+        /// Writes data to the <paramref name="binaryWriter"/> from the object itself.
+        /// </summary>
+        /// 
+        /// <param name="binaryWriter">The output writer.</param>
+        void Write(IBinaryWriter binaryWriter);
+    }
+
+    /// <summary>
     /// The exception that is thrown when a type cannot be serialized.
     /// </summary>
     public class BadTypeException : Exception
@@ -281,6 +301,30 @@ namespace SAGESharp.IO
         {
             throw new NotImplementedException();
         }
+    }
+
+    internal sealed class BinarySerializableSerializer<T> : IBinarySerializer<T> where T : IBinarySerializable
+    {
+        private readonly Func<T> constructor;
+
+        public BinarySerializableSerializer()
+        {
+            constructor = typeof(T).GetConstructor(Array.Empty<Type>())
+                ?.Let<ConstructorInfo, Func<T>>(ci => () => (T)ci.Invoke(Array.Empty<object>()))
+                ?? throw new BadTypeException(typeof(T), $"Type {typeof(T).Name} has no public constructor with no arguments");
+        }
+
+        public T Read(IBinaryReader binaryReader)
+        {
+            T result = constructor();
+
+            result.Read(binaryReader);
+
+            return result;
+        }
+
+        public void Write(IBinaryWriter binaryWriter, T value)
+            => value.Write(binaryWriter);
     }
 
     /// <summary>
