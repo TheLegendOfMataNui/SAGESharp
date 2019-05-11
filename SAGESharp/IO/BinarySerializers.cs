@@ -6,7 +6,6 @@
 using Konvenience;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -17,7 +16,7 @@ namespace SAGESharp.IO
     /// </summary>
     /// 
     /// <typeparam name="T">Type of the objects to serialize.</typeparam>
-    public interface IBinarySerializer<out T>
+    public interface IBinarySerializer<T>
     {
         /// <summary>
         /// Reads an objects from the input <paramref name="binaryReader"/>.
@@ -214,7 +213,7 @@ namespace SAGESharp.IO
         }
     }
 
-    internal sealed class ListBinarySerializer<T> : IBinarySerializer<List<T>>
+    internal sealed class ListBinarySerializer<T> : IBinarySerializer<IList<T>>
     {
         private readonly ConstructorInfo constructor;
 
@@ -231,7 +230,7 @@ namespace SAGESharp.IO
             this.serializer = serializer;
         }
 
-        public List<T> Read(IBinaryReader binaryReader)
+        public IList<T> Read(IBinaryReader binaryReader)
         {
             if (binaryReader == null)
             {
@@ -252,7 +251,7 @@ namespace SAGESharp.IO
                 }
             });
 
-            return (List<T>)result;
+            return (IList<T>)result;
         }
     }
 

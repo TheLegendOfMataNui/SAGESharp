@@ -89,26 +89,12 @@ namespace SAGESharp.IO
         #endregion
 
         #region Lists test cases
-        [TestCaseSource(nameof(LISTS_TEST_CASES))]
-        public void Test_Get_Serializer_For_List_Type<T, U>(ListTestCase<T, U> testCaseData)
+        [Test]
+        public void Test_Get_Serializer_For_IList_Type()
             => factory
-                .GetSerializerForType<T>()
+                .GetSerializerForType<IList<int>>()
                 .Should()
-                .BeOfType<ListBinarySerializer<U>>();
-
-        static object[] LISTS_TEST_CASES() => new object[]
-        {
-            new ListTestCase<List<int>, int>(),
-            new ListTestCase<IList<int>, int>(),
-            new ListTestCase<IReadOnlyList<int>, int>()
-        };
-
-        public class ListTestCase<T, U> : AbstractTestCaseData
-        {
-            public ListTestCase() : base($"Test getting serializer to read {typeof(T).Name}")
-            {
-            }
-        }
+                .BeOfType<ListBinarySerializer<int>>();
         #endregion
 
         #region Class test cases

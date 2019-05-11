@@ -68,7 +68,7 @@ namespace SAGESharp.IO
         IReadOnlyList<IPropertyBinarySerializer<T>> GetPropertySerializersForType<T>(IBinarySerializerFactory binarySerializerFactory);
     }
 
-    class DefaultBinarySerializerFactory : IBinarySerializerFactory
+    internal sealed class DefaultBinarySerializerFactory : IBinarySerializerFactory
     {
         private readonly IPropertyBinarySerializerFactory propertyBinarySerializerFactory;
 
@@ -137,7 +137,7 @@ namespace SAGESharp.IO
         private static bool IsListType<T>() => typeof(T)
             .TakeReferenceIf(t => t.IsGenericType)
             ?.GetGenericTypeDefinition()
-            ?.Let(t => t == typeof(List<>) || t == typeof(IList<>) || t == typeof(IReadOnlyList<>))
+            ?.Let(t => t == typeof(IList<>))
             ?? false;
 
         private static bool IsConcreteClassType<T>() => typeof(T)
