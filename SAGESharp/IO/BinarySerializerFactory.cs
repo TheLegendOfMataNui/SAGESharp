@@ -130,6 +130,14 @@ namespace SAGESharp.IO
 
                 return (IBinarySerializer<T>)constructor.Invoke(new object[] { serializer });
             }
+            else if (typeof(IBinarySerializable).IsAssignableFrom(typeof(T)))
+            {
+                var constructor = typeof(BinarySerializableSerializer<>)
+                    .MakeGenericType(typeof(T))
+                    .GetConstructor(Array.Empty<Type>());
+
+                return (IBinarySerializer<T>)constructor.Invoke(Array.Empty<object>());
+            }
             else if (IsConcreteClassType<T>())
             {
                 return propertyBinarySerializerFactory

@@ -97,6 +97,24 @@ namespace SAGESharp.IO
                 .BeOfType<ListBinarySerializer<int>>();
         #endregion
 
+        #region IBinarySerializable test cases
+        [Test]
+        public void Test_Get_Serializer_For_An_IBinarySerializable_Type()
+            => factory
+                .GetSerializerForType<BinarySerializable>()
+                .Should()
+                .BeOfType<BinarySerializableSerializer<BinarySerializable>>();
+
+        class BinarySerializable : IBinarySerializable
+        {
+            public void Read(IBinaryReader binaryReader)
+                => throw new System.NotImplementedException();
+
+            public void Write(IBinaryWriter binaryWriter)
+                => throw new System.NotImplementedException();
+        }
+        #endregion
+
         #region Class test cases
         [TestCase]
         public void Test_Get_Serialier_For_Class()
