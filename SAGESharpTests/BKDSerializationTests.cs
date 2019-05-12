@@ -14,12 +14,11 @@ namespace SAGESharp
 {
     class BKDSerializationTests
     {
-        [TestCaseSource(nameof(TEST_CASES))]
-        public void Test_Reading_A_Conversation_File_Successfully(SerializationTestCaseData<BKD> testCaseData)
-        {
-            // Shouldn't use the serializer directly here
-            var serializer = new BinarySerializableSerializer<BKD>();
+        private readonly IBinarySerializer<BKD> serializer = BinarySerializers.ForBKDFiles;
 
+        [TestCaseSource(nameof(TEST_CASES))]
+        public void Test_Reading_BKD_File_Successfully(SerializationTestCaseData<BKD> testCaseData)
+        {
             using (var stream = new FileStream(testCaseData.TestFilePath, FileMode.Open))
             {
                 var reader = Reader.ForStream(stream);
@@ -28,6 +27,23 @@ namespace SAGESharp
                     .Read(reader)
                     .Should()
                     .Be(testCaseData.Expected);
+            }
+        }
+
+        [TestCaseSource(nameof(TEST_CASES))]
+        public void Test_Writing_BKD_File_Successfully(SerializationTestCaseData<BKD> testCaseData)
+        {
+            byte[] expected = File.ReadAllBytes(testCaseData.TestFilePath);
+
+            using (var stream = new MemoryStream())
+            {
+                var writer = Writer.ForStream(stream);
+
+                serializer.Write(writer, testCaseData.Expected);
+
+                stream.ToArray()
+                    .Should()
+                    .Equal(expected);
             }
         }
 

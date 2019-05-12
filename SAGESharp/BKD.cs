@@ -44,7 +44,35 @@ namespace SAGESharp
 
         public void Write(IBinaryWriter binaryWriter)
         {
-            throw new NotImplementedException();
+            void WriteObject(IBinarySerializable binarySerializable)
+            {
+                binarySerializable.Write(binaryWriter);
+            }
+
+            binaryWriter.WriteUInt16(Length);
+            binaryWriter.WriteUInt16((ushort)Entries.Count);
+
+            long[] offsetPositions = new long[Entries.Count];
+            Entries.ForEach((entry, n) =>
+            {
+                offsetPositions[n] = binaryWriter.Position + 8;
+                WriteObject(entry);
+            });
+
+            Entries.ForEach((entry, n) =>
+            {
+                long offsetPosition = offsetPositions[n];
+                binaryWriter.DoAtPosition(offsetPosition, offset => binaryWriter.WriteUInt32((uint)offset));
+                entry.TCBQuaternionData.ForEach(WriteObject);
+
+                offsetPosition += 4;
+                binaryWriter.DoAtPosition(offsetPosition, offset => binaryWriter.WriteUInt32((uint)offset));
+                entry.TCBInterpolatorData1.ForEach(WriteObject);
+
+                offsetPosition += 4;
+                binaryWriter.DoAtPosition(offsetPosition, offset => binaryWriter.WriteUInt32((uint)offset));
+                entry.TCBInterpolatorData2.ForEach(WriteObject);
+            });
         }
         #endregion
 
@@ -172,7 +200,13 @@ namespace SAGESharp
 
         public void Write(IBinaryWriter binaryWriter)
         {
-            throw new NotImplementedException();
+            binaryWriter.WriteUInt16(Id);
+            binaryWriter.WriteUInt16((ushort)TCBQuaternionData.Count);
+            binaryWriter.WriteUInt16((ushort)TCBInterpolatorData1.Count);
+            binaryWriter.WriteUInt16((ushort)TCBInterpolatorData2.Count);
+            binaryWriter.WriteUInt32(0); // TCBQuaternionData offset
+            binaryWriter.WriteUInt32(0); // TCBInterpolatorData1 offset
+            binaryWriter.WriteUInt32(0); // TCBInterpolatorData2 offset
         }
         #endregion
 
@@ -266,7 +300,11 @@ namespace SAGESharp
 
         public void Write(IBinaryWriter binaryWriter)
         {
-            throw new NotImplementedException();
+            binaryWriter.WriteInt16(Short1);
+            binaryWriter.WriteInt16(Short2);
+            binaryWriter.WriteInt16(Short3);
+            binaryWriter.WriteInt16(Short4);
+            binaryWriter.WriteInt16(Short5);
         }
         #endregion
 
@@ -359,7 +397,10 @@ namespace SAGESharp
 
         public void Write(IBinaryWriter binaryWriter)
         {
-            throw new NotImplementedException();
+            binaryWriter.WriteInt32(Long1);
+            binaryWriter.WriteFloat(Float1);
+            binaryWriter.WriteFloat(Float2);
+            binaryWriter.WriteFloat(Float3);
         }
         #endregion
 

@@ -41,6 +41,14 @@ namespace SAGESharp.IO
         /// The singleton instance of the <see cref="IBinarySerializerFactory"/> interface.
         /// </summary>
         public static IBinarySerializerFactory Factory { get => instance.Value; }
+
+        private static readonly Lazy<IBinarySerializer<BKD>> bkdBinarySerializer
+            = new Lazy<IBinarySerializer<BKD>>(() => new BinarySerializableSerializer<BKD>());
+
+        /// <summary>
+        /// The singleton instance to serialize <see cref="BKD"/> files.
+        /// </summary>
+        public static IBinarySerializer<BKD> ForBKDFiles { get => bkdBinarySerializer.Value; }
     }
 
     /// <summary>
