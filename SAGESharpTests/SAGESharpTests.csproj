@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BKDEqualityTests.cs" />
+    <Compile Include="BKDSerializationTests.cs" />
     <Compile Include="BKDTests.cs" />
     <Compile Include="EqualityUtilsTests.cs" />
     <Compile Include="IO\BinaryReaderWrapperTests.cs" />
@@ -115,6 +116,15 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Test Data\ComplexBKD.bkd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Test Data\EmptyBKD.bkd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Test Data\SimpleBKD.bkd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Test Data\SLB\Level\Conversation\ComplexConversation.slb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

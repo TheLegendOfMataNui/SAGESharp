@@ -3,6 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+using Konvenience;
 using SAGESharp.IO;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,19 @@ namespace SAGESharp
         #region IBinarySerializable
         public void Read(IBinaryReader binaryReader)
         {
-            throw new NotImplementedException();
+            ushort newLength = binaryReader.ReadUInt16();
+            ushort newEntriesCount = binaryReader.ReadUInt16();
+
+            IList<BKDEntry> newEntries = new List<BKDEntry>(newEntriesCount);
+            for (int n = 0; n < newEntriesCount; n++)
+            {
+                BKDEntry entry = new BKDEntry();
+                entry.Read(binaryReader);
+                newEntries.Add(entry);
+            }
+
+            Length = newLength;
+            Entries = newEntries;
         }
 
         public void Write(IBinaryWriter binaryWriter)
@@ -122,7 +135,39 @@ namespace SAGESharp
         #region IBinarySerializable
         public void Read(IBinaryReader binaryReader)
         {
-            throw new NotImplementedException();
+            ushort newId = binaryReader.ReadUInt16();
+            ushort newTCBQuaternionDataCount = binaryReader.ReadUInt16();
+            ushort newTCBInterpolatorData1Count = binaryReader.ReadUInt16();
+            ushort newTCBInterpolatorData2Count = binaryReader.ReadUInt16();
+
+            IList<TCBQuaternionData> newTCBQuaternionData = ReadEntry<TCBQuaternionData>(binaryReader, newTCBQuaternionDataCount);
+
+            IList<TCBInterpolationData> newTCBInterpolatorData1 = ReadEntry<TCBInterpolationData>(binaryReader, newTCBInterpolatorData1Count);
+
+            IList<TCBInterpolationData> newTCBInterpolatorData2 = ReadEntry<TCBInterpolationData>(binaryReader, newTCBInterpolatorData2Count);
+
+            Id = newId;
+            TCBQuaternionData = newTCBQuaternionData;
+            TCBInterpolatorData1 = newTCBInterpolatorData1;
+            TCBInterpolatorData2 = newTCBInterpolatorData2;
+        }
+
+        private static IList<T> ReadEntry<T>(IBinaryReader binaryReader, ushort count) where T : IBinarySerializable, new()
+        {
+            uint offset = binaryReader.ReadUInt32();
+            IList <T> result = new List<T>(count);
+            if (count != 0)
+            {
+                binaryReader.DoAtPosition(offset, () =>
+                {
+                    for (int n = 0; n < count; ++n)
+                    {
+                        result.Add(new T().Also(e => e.Read(binaryReader)));
+                    }
+                });
+            }
+
+            return result;
         }
 
         public void Write(IBinaryWriter binaryWriter)
@@ -206,7 +251,17 @@ namespace SAGESharp
         #region IBinarySerializable
         public void Read(IBinaryReader binaryReader)
         {
-            throw new NotImplementedException();
+            short newShort1 = binaryReader.ReadInt16();
+            short newShort2 = binaryReader.ReadInt16();
+            short newShort3 = binaryReader.ReadInt16();
+            short newShort4 = binaryReader.ReadInt16();
+            short newShort5 = binaryReader.ReadInt16();
+
+            Short1 = newShort1;
+            Short2 = newShort2;
+            Short3 = newShort3;
+            Short4 = newShort4;
+            Short5 = newShort5;
         }
 
         public void Write(IBinaryWriter binaryWriter)
@@ -274,7 +329,7 @@ namespace SAGESharp
             $"{nameof(Short2)}={Short2}, " +
             $"{nameof(Short3)}={Short3}, " +
             $"{nameof(Short4)}={Short4}, " +
-            $"{nameof(Short5)}={Short5})" +
+            $"{nameof(Short5)}={Short5}" +
         ")";
     }
 
@@ -291,7 +346,15 @@ namespace SAGESharp
         #region IBinarySerializable
         public void Read(IBinaryReader binaryReader)
         {
-            throw new NotImplementedException();
+            int newLong1 = binaryReader.ReadInt32();
+            float newFloat1 = binaryReader.ReadFloat();
+            float newFloat2 = binaryReader.ReadFloat();
+            float newFloat3 = binaryReader.ReadFloat();
+
+            Long1 = newLong1;
+            Float1 = newFloat1;
+            Float2 = newFloat2;
+            Float3 = newFloat3;
         }
 
         public void Write(IBinaryWriter binaryWriter)
