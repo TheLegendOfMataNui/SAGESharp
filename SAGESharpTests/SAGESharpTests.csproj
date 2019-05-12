@@ -118,6 +118,7 @@
     <Compile Include="Testing\AbstractEqualityByRefTests.cs" />
     <Compile Include="Testing\AbstractEqualityByValTests.cs" />
     <Compile Include="Testing\SerializationTestCaseData.cs" />
+    <Compile Include="ValidationsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

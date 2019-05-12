@@ -129,6 +129,7 @@
     <Compile Include="SLB\Point3D.cs" />
     <Compile Include="SLB\StreamExtensions.cs" />
     <Compile Include="SLB\StringBinaryWriter.cs" />
+    <Compile Include="Validations.cs" />
     <Compile Include="XFile.cs" />
     <Compile Include="XUtils.cs" />
   </ItemGroup>
