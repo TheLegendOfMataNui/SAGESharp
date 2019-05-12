@@ -236,9 +236,6 @@ LSS also contains operators for bitwise integer operations, with a few deviation
  These members only succeed on array or color values, and so are not permitted on `this`, which can never be an array or color value.
  ```
  thing.__length // Gets array length
- thing.__append(elementToAppend) // Appends to array, returns the input array, which has been mutated.
- thing.__removeat(index) // Removes the array element at the given index, returns the input array, which has been mutated.
- thing.__insertat(index, elementToInsert) // Inserts the given element at the given index, returns the input array, which has been mutated.
  thing.__red // Get or set Red component of color primitive
  thing.__green // Get or set Green component of color primitive
  thing.__blue // Get or set Blue component of color primitive
@@ -249,6 +246,9 @@ LSS also contains operators for bitwise integer operations, with a few deviation
  LSS reserves some keywords for builtin functions, which start with two underscores, for type manipulation.
  Unlike builtin members, these may be called on `this`.
  ```
+ thing.__append(elementToAppend) // Appends to array, returns the input array, which has been mutated.
+ thing.__removeat(index) // Removes the array element at the given index, returns the input array, which has been mutated.
+ thing.__insertat(index, elementToInsert) // Inserts the given element at the given index, returns the input array, which has been mutated.
  __tostring(expression)
  __tofloat(expression)
  __toint(expression)

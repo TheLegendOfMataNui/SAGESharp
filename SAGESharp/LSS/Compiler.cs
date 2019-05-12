@@ -293,11 +293,6 @@ namespace SAGESharp.LSS
                 }
             }
 
-            private string UnescapeString(string value)
-            {
-                return value.Replace("\\\"", "\"").Replace("\\n", "\n");
-            }
-
             // TODO: Make a corresponding EscapeString and use it in OSIFile.ToString()
 
             #region Expressions
@@ -1358,6 +1353,16 @@ namespace SAGESharp.LSS
             #endregion
         }
 
+        public static string UnescapeString(string value)
+        {
+            return value.Replace("\\\"", "\"").Replace("\\n", "\n");
+        }
+
+        public static string EscapeString(string value)
+        {
+            return value.Replace("\"", "\\\"").Replace("\n", "\\n");
+        }
+
         //private class DecompileSubroutineContext : ExpressionVisitor<object, object>
 
         // Compiles a single source string into an OSI.
@@ -1581,85 +1586,6 @@ namespace SAGESharp.LSS
                         destination.Instructions.AddRange(context.Instructions);
                     }
                 }
-            }
-        }
-
-        public static Parser.Result DecompileOSI(OSIFile osi)
-        {
-            Parser.Result result = new Parser.Result();
-
-            SourceSpan span = new SourceSpan("<Decompiled>", 0, 0, 0);
-            foreach (string global in osi.Globals)
-            {
-                result.Globals.Add(new GlobalStatement(span, new Token(TokenType.Symbol, global, span.Start.Filename, span.Start.Offset, span.Start.Line, span.Length)));
-            }
-
-            foreach (OSIFile.FunctionInfo function in osi.Functions)
-            {
-                List<Token> parameters = new List<Token>();
-
-                for (int i = 0; i < function.ParameterCount; i++)
-                {
-                    parameters.Add(new Token(TokenType.Symbol, "param" + (i + 1), span));
-                }
-
-                result.Functions.Add(Decompiler.DecompileSubroutine(osi, function.Name, parameters, function.Instructions, span));
-            }
-
-            foreach (OSIFile.ClassInfo cls in osi.Classes)
-            {
-                List<PropertyStatement> properties = new List<PropertyStatement>();
-                foreach (ushort propSymbolIndex in cls.PropertySymbols)
-                {
-                    properties.Add(new PropertyStatement(span, new Token(TokenType.Symbol, osi.Symbols[propSymbolIndex], span)));
-                }
-                List<SubroutineStatement> methods = new List<SubroutineStatement>();
-                foreach (OSIFile.MethodInfo method in cls.Methods)
-                {
-                    List<Token> parameters = new List<Token>();
-                    if (method.Instructions.Count > 0 && method.Instructions[0] is BCLInstruction argCheck && argCheck.Opcode == BCLOpcode.MemberFunctionArgumentCheck)
-                    {
-                        for (int i = 0; i < argCheck.Arguments[0].GetValue<sbyte>(); i++)
-                        {
-                            parameters.Add(new Token(TokenType.Symbol, "param" + (i + 1), span));
-                        }
-                    }
-                    methods.Add(Decompiler.DecompileSubroutine(osi, osi.Symbols[method.NameSymbol], parameters, method.Instructions, span));
-                }
-                // TODO: Find SuperclassName
-                result.Classes.Add(new ClassStatement(span, new Token(TokenType.Symbol, cls.Name, span), null, properties, methods));
-            }
-
-            return result;
-        }
-
-        public static void DecompileOSIProject(OSIFile osi, string outputDirectory, string classesDirectoryName = "classes", string functionsDirectoryName = "functions")
-        {
-            Parser.Result decompiled = DecompileOSI(osi);
-
-            // Create directories
-            System.IO.Directory.CreateDirectory(outputDirectory);
-            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(outputDirectory, classesDirectoryName));
-            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(outputDirectory, functionsDirectoryName));
-
-            // Write globals
-            StringBuilder globalText = new StringBuilder();
-            foreach (GlobalStatement global in decompiled.Globals)
-            {
-                globalText.AppendLine(PrettyPrinter.Print(global));
-            }
-            System.IO.File.WriteAllText(System.IO.Path.Combine(outputDirectory, "globals.lss"), globalText.ToString());
-
-            // Write functions
-            foreach (SubroutineStatement function in decompiled.Functions)
-            {
-                System.IO.File.WriteAllText(System.IO.Path.Combine(outputDirectory, functionsDirectoryName, function.Name.Content + ".lss"), "function " + PrettyPrinter.Print(function));
-            }
-
-            // Write classes
-            foreach (ClassStatement cls in decompiled.Classes)
-            {
-                System.IO.File.WriteAllText(System.IO.Path.Combine(outputDirectory, classesDirectoryName, cls.Name.Content + ".lss"), PrettyPrinter.Print(cls));
             }
         }
     }
