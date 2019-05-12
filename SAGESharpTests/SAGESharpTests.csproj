@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BKDTests.cs" />
+    <Compile Include="EqualityUtilsTests.cs" />
     <Compile Include="IO\BinaryReaderWrapperTests.cs" />
     <Compile Include="IO\BinarySerializableSerializerTests.cs" />
     <Compile Include="IO\BinarySerializersReadingTests.cs" />
@@ -83,7 +84,6 @@
     <Compile Include="SLB\ASCIIExtensionsTests.cs" />
     <Compile Include="SLB\Cinematic\Camera\CameraEqualityTests.cs" />
     <Compile Include="SLB\Cinematic\Camera\FrameEqualityTests.cs" />
-    <Compile Include="SLB\EqualityUtilsTests.cs" />
     <Compile Include="SLB\FooterEntryTests.cs" />
     <Compile Include="SLB\IdentifierEqualityTests.cs" />
     <Compile Include="SLB\IdentifierTests.cs" />

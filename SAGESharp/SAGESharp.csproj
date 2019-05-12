@@ -53,6 +53,7 @@
     <Compile Include="BKD.cs" />
     <Compile Include="BCLFile.cs" />
     <Compile Include="BHDFile.cs" />
+    <Compile Include="EqualityUtils.cs" />
     <Compile Include="INIConfig.cs" />
     <Compile Include="IO\BinaryReader.cs" />
     <Compile Include="IO\BinarySerializerFactory.cs" />
@@ -100,7 +101,6 @@
     <Compile Include="SLB\ASCIIExtensions.cs" />
     <Compile Include="SLB\Cinematic\Camera\Camera.cs" />
     <Compile Include="SLB\Cinematic\Camera\Frame.cs" />
-    <Compile Include="SLB\EqualityUtils.cs" />
     <Compile Include="SLB\Footer.cs" />
     <Compile Include="SLB\Identifier.cs" />
     <Compile Include="SLB\ISLBBinaryWriter.cs" />
