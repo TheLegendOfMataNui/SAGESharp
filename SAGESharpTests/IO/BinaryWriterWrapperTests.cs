@@ -64,6 +64,26 @@ namespace SAGESharp.IO
                 .Throw<ArgumentNullException>();
         }
 
+        [Test]
+        public void Test_DoAtPosition_Without_Result()
+        {
+            long originalPosition = 30;
+
+            writer.Position = originalPosition;
+
+            long newPosition = 40;
+            long? positionInLambda = null;
+
+            writer.DoAtPosition(newPosition, pos =>
+            {
+                pos.Should().Be(originalPosition);
+                positionInLambda = writer.Position;
+            });
+
+            stream.Position.Should().Be(originalPosition);
+            positionInLambda.Should().Be(newPosition);
+        }
+
         static object[] TEST_CASES_DATA() => new object[]
         {
             new TestCaseData<byte>(
