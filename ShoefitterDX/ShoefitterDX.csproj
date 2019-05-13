@@ -70,6 +70,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dialogs\CreateProjectDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\CreateProjectDialog.Designer.cs">
+      <DependentUpon>CreateProjectDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editors\EditorBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Editors\TextEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Panes\GameExplorerPane.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Project.cs" />
     <Compile Include="LSSInteractive.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -90,6 +106,15 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Dialogs\CreateProjectDialog.resx">
+      <DependentUpon>CreateProjectDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editors\TextEditor.resx">
+      <DependentUpon>TextEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panes\GameExplorerPane.resx">
+      <DependentUpon>GameExplorerPane.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="LSSInteractive.resx">
       <DependentUpon>LSSInteractive.cs</DependentUpon>
     </EmbeddedResource>
@@ -104,7 +129,6 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
     </Compile>
     <EmbeddedResource Include="Window.resx">
       <DependentUpon>Window.cs</DependentUpon>
@@ -128,9 +152,6 @@
       <Project>{ca7ebe43-febb-49f4-ad76-04075fba3b13}</Project>
       <Name>SAGESharp</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\CleanData_16x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

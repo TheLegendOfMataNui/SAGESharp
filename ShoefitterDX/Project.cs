@@ -9,9 +9,19 @@ namespace ShoefitterDX
     public class Project : SAGESharp.INIConfig
     {
         public const string PROJECT_EXTENSION = "sfdx";
-        public const string SUBDIRECTORY_SCRIPT = "src";
-        public const string SUBDIRECTORY_DATA = "data";
-        public const string SUBDIRECTORY_OUTPUT = "build";
+        public const string PROJECT_SUBDIRECTORY_BLOCKFILES = "blockfiles";
+        public const string PROJECT_SUBDIRECTORY_DATA = "data";
+        public const string PROJECT_SUBDIRECTORY_NATIVE = "native";
+        public const string PROJECT_SUBDIRECTORY_SCRIPT = "script";
+        public const string PROJECT_SUBDIRECTORY_TOOLS = "tools";
+        public const string PROJECT_SUBDIRECTORY_BUILD = "build";
+        public const string PROJECT_SUBDIRECTORY_PACKAGED = "packaged";
+        public static readonly string[] PROJECT_REQUIRED_SUBDIRECTORIES = {
+            PROJECT_SUBDIRECTORY_BLOCKFILES,
+            PROJECT_SUBDIRECTORY_NATIVE,
+            PROJECT_SUBDIRECTORY_SCRIPT,
+            PROJECT_SUBDIRECTORY_TOOLS,
+        };
 
         /// <summary>
         /// A string property of a <see cref="Project"/>, with an event which is fired when the value is set via the <see cref="Value"/> property.
@@ -70,32 +80,28 @@ namespace ShoefitterDX
             }
         }
 
-        public ProjectProperty Name;
-        public ProjectProperty GameDirectory;
-        public ProjectProperty GameExecutable;
+        public ProjectProperty ExecutableName;
         public ProjectProperty CompressOutput;
 
         public string Filename { get; private set; } = "";
 
-        public Project(string name, string gameDirectory, string gameExecutable) : this()
-        {
-            this.Name.Value = name;
-            this.GameDirectory.Value = gameDirectory;
-            this.GameExecutable.Value = gameExecutable;
-        }
-
         public Project(string filename) : this()
         {
-            this.Read(filename, true);
             this.Filename = filename;
+        }
+
+        public static Project Load(string filename)
+        {
+            Project result = new Project();
+            result.Read(filename, true);
+            result.Filename = filename;
+            return result;
         }
 
         private Project()
         {
-            this.Name = new ProjectProperty(this, "Project", "Name", "");
-            this.GameDirectory = new ProjectProperty(this, "Project", "GameDirectory", "");
-            this.GameExecutable = new ProjectProperty(this, "Project", "GameExecutable", "");
-            this.CompressOutput = new ProjectProperty(this, "Project", "CompressOutput", "False");
+            this.ExecutableName = new ProjectProperty(this, "Project", nameof(ExecutableName), "");
+            this.CompressOutput = new ProjectProperty(this, "Project", nameof(CompressOutput), "False");
         }
 
         public void Save(string filename = null)

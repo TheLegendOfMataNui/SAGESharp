@@ -15,8 +15,8 @@ namespace ShoefitterDX
     {
         private const string INIFilename = "ShoefitterDX.ini";
 
-        public static SAGESharp.INIConfig Config { get; private set; }
-        public static Window Window { get; private set; }
+        public static SAGESharp.INIConfig Config { get; private set; } = null;
+        public static Window Window { get; private set; } = null;
 
         public static event EventHandler<Project> ProjectClosed;
         public static event EventHandler<Project> ProjectOpened;
@@ -31,10 +31,8 @@ namespace ShoefitterDX
                     ProjectClosed?.Invoke(null, Project);
                 }
                 _project = value;
-                AssetManager = null;
                 if (Project != null)
                 {
-                    AssetManager = new IO.AssetManager(System.IO.Path.Combine(Project.GameDirectory, GAME_DATA_DIRECTORY), System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Project.Filename), Project.SUBDIRECTORY_DATA));
                     ProjectOpened?.Invoke(null, Project);
                 }
             }
@@ -52,6 +50,8 @@ namespace ShoefitterDX
             Config = new SAGESharp.INIConfig(INIFilename);
 
             // Shoefitter-DX Entrypoint
+            Window = new Window();
+            Application.Run(Window);
 
             Window = new Window();
             Application.Run(Window);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShoefitterDX.Dialogs;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,6 +15,17 @@ namespace ShoefitterDX
     {
         public Panes.GameExplorerPane GameExplorer;
         public Panes.OutputPane Output;
+
+        private Dictionary<string, Editors.EditorBase> OpenEditors = new Dictionary<string, Editors.EditorBase>();
+
+        private Dictionary<string, Func<string, Editors.EditorBase>> ExtensionMappings = new Dictionary<string, Func<string, Editors.EditorBase>>()
+        {
+            { ".txt", (filename) => new Editors.TextEditor(filename, FastColoredTextBoxNS.Language.Custom) },
+            { ".json", (filename) => new Editors.TextEditor(filename, FastColoredTextBoxNS.Language.Custom) },
+            { "", (filename) => new Editors.TextEditor(filename, FastColoredTextBoxNS.Language.Custom) },
+            { ".md", (filename) => new Editors.TextEditor(filename, FastColoredTextBoxNS.Language.Custom) },
+            { ".osas", (filename) => new Editors.TextEditor(filename, FastColoredTextBoxNS.Language.Custom) },
+        };
 
         public Window()
         {
@@ -89,30 +101,30 @@ namespace ShoefitterDX
             if (!EnsureCloseAllowed())
                 return;
 
-            ShoefitterDX.Dialogs.CreateProjectDialog dialog = new Dialogs.CreateProjectDialog();
+            CreateProjectDialog dialog = new CreateProjectDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                Dialogs.ProjectTemplate template = dialog.Template;
+                ProjectTemplate template = dialog.Template;
                 if (template == null)
                 {
                     MessageBox.Show("No template selected.");
                     return;
                 }
 
-                Project newProject = new Project(dialog.ProjectName, dialog.GameDirectory, dialog.GameExecutable);
                 string projectDirectory = System.IO.Path.Combine(dialog.ContainingDirectory, dialog.ProjectName);
                 string projectFilename = System.IO.Path.Combine(projectDirectory, dialog.ProjectName + "." + Project.PROJECT_EXTENSION);
+                Project newProject = new Project(projectFilename);
 
                 template.Apply(newProject);
 
                 System.IO.Directory.CreateDirectory(projectDirectory);
-                System.IO.Directory.CreateDirectory(System.IO.Path.Combine(projectDirectory, Project.SUBDIRECTORY_DATA));
-                System.IO.Directory.CreateDirectory(System.IO.Path.Combine(projectDirectory, Project.SUBDIRECTORY_SCRIPT));
-                System.IO.Directory.CreateDirectory(System.IO.Path.Combine(projectDirectory, Project.SUBDIRECTORY_OUTPUT));
+                foreach (string subdirectory in Project.PROJECT_REQUIRED_SUBDIRECTORIES)
+                    System.IO.Directory.CreateDirectory(System.IO.Path.Combine(projectDirectory, subdirectory));
 
                 newProject.Save(projectFilename);
                 Program.Project = newProject;
             }
+
         }
 
         public void ShowOpenProject()
@@ -126,7 +138,7 @@ namespace ShoefitterDX
             {
                 try
                 {
-                    Project project = new Project(dialog.FileName);
+                    Project project = Project.Load(dialog.FileName);
                     Program.Project = project;
                 }
                 catch (Exception ex)
@@ -139,6 +151,29 @@ namespace ShoefitterDX
         public void ShowContent(WeifenLuo.WinFormsUI.Docking.DockContent content)
         {
             content.Show(dockPanel1, WeifenLuo.WinFormsUI.Docking.DockState.Document);
+        }
+
+        public void OpenFileEditor(string filename)
+        {
+            if (OpenEditors.ContainsKey(filename))
+            {
+                OpenEditors[filename].Show(dockPanel1);
+            }
+            else
+            {
+                string extension = System.IO.Path.GetExtension(filename);
+                if (ExtensionMappings.ContainsKey(extension))
+                {
+                    Editors.EditorBase newEditor = ExtensionMappings[extension](filename);
+                    OpenEditors.Add(filename, newEditor);
+                    newEditor.FormClosed += (sender, e) => OpenEditors.Remove(filename);
+                    newEditor.Show(dockPanel1);
+                }
+                else
+                {
+                    MessageBox.Show("No editor for file type '" + extension + "'.");
+                }
+            }
         }
 
         //
