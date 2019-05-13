@@ -20,14 +20,11 @@ namespace ShoefitterDX.Panes
 
             // Dock content options
             this.DockAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
-
-            // Connect to output event
-            Program.OutputWritten += Program_OutputWritten;
         }
 
-        private void Program_OutputWritten(object sender, string e)
+        public void WriteText(string text)
         {
-            OutputTextBox.AppendText(e);
+            OutputTextBox.AppendText(text);
         }
 
         private void InitializeComponent()

@@ -53,8 +53,6 @@ namespace ShoefitterDX
             Window = new Window();
             Application.Run(Window);
 
-            Window = new Window();
-            Application.Run(Window);
             Config.Write(INIFilename);
         }
     }
