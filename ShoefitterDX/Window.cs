@@ -25,6 +25,7 @@ namespace ShoefitterDX
             { "", (filename) => new Editors.TextEditor(filename, FastColoredTextBoxNS.Language.Custom) },
             { ".md", (filename) => new Editors.TextEditor(filename, FastColoredTextBoxNS.Language.Custom) },
             { ".osas", (filename) => new Editors.TextEditor(filename, FastColoredTextBoxNS.Language.Custom) },
+            { ".bkd", (filename) => new Editors.BKDEditor(filename) }
         };
 
         public Window()

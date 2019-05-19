@@ -70,11 +70,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\AssetChoiceControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\AssetChoiceControl.Designer.cs">
+      <DependentUpon>AssetChoiceControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\CreateProjectDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Dialogs\CreateProjectDialog.Designer.cs">
       <DependentUpon>CreateProjectDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editors\BKDEditor.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Editors\EditorBase.cs">
       <SubType>Form</SubType>
@@ -109,8 +118,14 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Controls\AssetChoiceControl.resx">
+      <DependentUpon>AssetChoiceControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\CreateProjectDialog.resx">
       <DependentUpon>CreateProjectDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editors\BKDEditor.resx">
+      <DependentUpon>BKDEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editors\TextEditor.resx">
       <DependentUpon>TextEditor.cs</DependentUpon>
@@ -159,6 +174,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\CleanData_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Settings_Inverse_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Upload_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ShiftToLeft_16x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
