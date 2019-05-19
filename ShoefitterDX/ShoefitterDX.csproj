@@ -115,6 +115,9 @@
     <EmbeddedResource Include="Editors\TextEditor.resx">
       <DependentUpon>TextEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="LSSInteractive.resx">
+      <DependentUpon>LSSInteractive.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Panes\GameExplorerPane.resx">
       <DependentUpon>GameExplorerPane.cs</DependentUpon>
     </EmbeddedResource>

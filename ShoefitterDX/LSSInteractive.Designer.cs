@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LSSInteractive));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.SourceTextBox = new FastColoredTextBoxNS.FastColoredTextBox();
             this.ResultTextBox = new FastColoredTextBoxNS.FastColoredTextBox();
@@ -84,12 +83,13 @@
             this.SourceTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.SourceTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.SourceTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SourceTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.SourceTextBox.IsReplaceMode = false;
             this.SourceTextBox.Location = new System.Drawing.Point(0, 0);
             this.SourceTextBox.Name = "SourceTextBox";
             this.SourceTextBox.Paddings = new System.Windows.Forms.Padding(0);
             this.SourceTextBox.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.SourceTextBox.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("SourceTextBox.ServiceColors")));
+            this.SourceTextBox.ServiceColors = null;
             this.SourceTextBox.Size = new System.Drawing.Size(396, 407);
             this.SourceTextBox.TabIndex = 0;
             this.SourceTextBox.Text = "function test() {\r\n    var things = [ 0, 10, null, \"hello there\" ];\r\n    foreach " +
@@ -116,13 +116,14 @@
             this.ResultTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.ResultTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.ResultTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ResultTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.ResultTextBox.IsReplaceMode = false;
             this.ResultTextBox.Location = new System.Drawing.Point(0, 0);
             this.ResultTextBox.Name = "ResultTextBox";
             this.ResultTextBox.Paddings = new System.Windows.Forms.Padding(0);
             this.ResultTextBox.ReadOnly = true;
             this.ResultTextBox.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.ResultTextBox.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("ResultTextBox.ServiceColors")));
+            this.ResultTextBox.ServiceColors = null;
             this.ResultTextBox.Size = new System.Drawing.Size(396, 407);
             this.ResultTextBox.TabIndex = 0;
             this.ResultTextBox.Zoom = 100;
