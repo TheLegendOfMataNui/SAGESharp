@@ -195,6 +195,7 @@ namespace ShoefitterDX.Panes
             this.treeView1.ShowLines = false;
             this.treeView1.Size = new System.Drawing.Size(284, 261);
             this.treeView1.TabIndex = 0;
+            this.treeView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.TreeView1_ItemDrag);
             this.treeView1.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.TreeView1_NodeMouseDoubleClick);
             // 
             // GameExplorerPane
@@ -216,6 +217,15 @@ namespace ShoefitterDX.Panes
                 {
                     Program.Window.OpenFileEditor(meta.Path);
                 }
+            }
+        }
+
+        private void TreeView1_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            TreeEntryMeta nodeMeta = ((e.Item as TreeNode)?.Tag as TreeEntryMeta);
+            if (nodeMeta != null && !nodeMeta.IsDirectory)
+            {
+                DoDragDrop(nodeMeta.Path, DragDropEffects.Link);
             }
         }
     }

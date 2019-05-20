@@ -32,6 +32,7 @@ namespace ShoefitterDX.Controls
         public AssetChoiceControl()
         {
             InitializeComponent();
+            AllowDrop = true;
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -106,6 +107,20 @@ namespace ShoefitterDX.Controls
         {
             Program.Window.GameExplorer.SelectedAsset = SelectedFilename;
             Program.Window.GameExplorer.Focus();
+        }
+
+        private void AssetChoiceControl_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Link;
+        }
+
+        private void AssetChoiceControl_DragDrop(object sender, DragEventArgs e)
+        {
+            string data = e.Data.GetData(typeof(string)) as string;
+            if (!String.IsNullOrEmpty(data) && Program.Window.GameExplorer.AssetExists(data))
+            {
+                SelectedFilename = data;
+            }
         }
     }
 }

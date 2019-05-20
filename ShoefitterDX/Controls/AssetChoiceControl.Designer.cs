@@ -48,7 +48,7 @@
             this.clearToolStripMenuItem,
             this.selectInGameExplorerToolStripMenuItem});
             this.PathContextMenuStrip.Name = "PathContextMenuStrip";
-            this.PathContextMenuStrip.Size = new System.Drawing.Size(198, 120);
+            this.PathContextMenuStrip.Size = new System.Drawing.Size(198, 98);
             this.PathContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.PathContextMenuStrip_Opening);
             // 
             // copyPathToolStripMenuItem
@@ -105,6 +105,8 @@
             this.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "AssetChoiceControl";
             this.Size = new System.Drawing.Size(142, 24);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.AssetChoiceControl_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.AssetChoiceControl_DragEnter);
             this.PathContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
 
