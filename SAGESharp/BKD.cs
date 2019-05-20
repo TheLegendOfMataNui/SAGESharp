@@ -12,6 +12,8 @@ namespace SAGESharp
 {
     public sealed class BKD : IEquatable<BKD>, IBinarySerializable
     {
+        public const int FRAMES_PER_SECOND = 60;
+
         #region Fields
         private IList<BKDEntry> entries = new List<BKDEntry>();
         #endregion

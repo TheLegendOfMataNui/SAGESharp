@@ -189,7 +189,7 @@ namespace ShoefitterDX.Editors
                 skeleton = new BHDFile(skeletonReader);
             }
 
-            ColladaUtils.ExportCOLLADA(model, skeleton, dialog.FileName, SharpDX.Matrix.RotationX(-SharpDX.MathUtil.PiOverTwo), true, ".dds", true);
+            ColladaUtils.ExportCOLLADA(model, skeleton, bkd, dialog.FileName, SharpDX.Matrix.RotationX(-SharpDX.MathUtil.PiOverTwo), true, ".dds", true);
         }
     }
 }

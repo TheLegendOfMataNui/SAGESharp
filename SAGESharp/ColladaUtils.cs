@@ -67,6 +67,11 @@ namespace SAGESharp
             return new XElement((XNamespace)SCHEMA_URL + "matrix", String.Join(" ", m.ToArray()));
         }
 
+        private static float DecompressShort(short value)
+        {
+            return (float)value * 0.000030517578f;
+        }
+
         private static XObject ImportCOLLADAMesh(string name, XElement materialBinding, Matrix totalTransform, XElement geometryElement, Dictionary<string, XObject> materials, bool flipV, bool mergeVertices, List<List<int>> positionUsage = null)
         {
             XNamespace ns = SCHEMA_URL;
@@ -741,7 +746,7 @@ namespace SAGESharp
             return result;
         }
 
-        public static void ExportCOLLADA(XFile file, BHDFile bhd, string filename, Matrix transform, bool flipV = true, string textureExtension = null, bool stripUnusedMaterials = false)
+        public static void ExportCOLLADA(XFile file, BHDFile skeleton, BKD animation, string filename, Matrix transform, bool flipV = true, string textureExtension = null, bool stripUnusedMaterials = false)
         {
             XNamespace ns = SCHEMA_URL;
             XDocument doc = new XDocument();
@@ -763,6 +768,7 @@ namespace SAGESharp
             XElement library_effects = new XElement(ns + "library_effects");
             XElement library_geometries = new XElement(ns + "library_geometries");
             XElement library_controllers = new XElement(ns + "library_controllers");
+            XElement libarary_animations = new XElement(ns + "library_animations");
             XElement visual_scene = new XElement(ns + "visual_scene", new XAttribute("id", "Scene"), new XAttribute("name", "Scene"));
 
             List<int> usedMaterials = new List<int>();
@@ -1012,15 +1018,15 @@ namespace SAGESharp
                                 skinWeightObjects.Add(name, child.Object);
 
                                 // Detect biped vs non-biped
-                                if (bhd.NameSlots == null)
+                                if (skeleton.NameSlots == null)
                                 {
                                     if (name == BHDFile.BipedBoneNames[0])
                                     {
-                                        bhd.NameSlots = BHDFile.BipedBoneNames;
+                                        skeleton.NameSlots = BHDFile.BipedBoneNames;
                                     }
                                     else if (name == BHDFile.NonBipedBoneNames[0])
                                     {
-                                        bhd.NameSlots = BHDFile.NonBipedBoneNames;
+                                        skeleton.NameSlots = BHDFile.NonBipedBoneNames;
                                     }
                                     else
                                     {
@@ -1124,7 +1130,7 @@ namespace SAGESharp
 
                         library_geometries.Add(geometry);
 
-                        if (bhd == null)
+                        if (skeleton == null)
                         {
                             visual_scene.Add(new XElement(ns + "node", new XAttribute("name", "Mesh" + meshID + "Instance"), new XAttribute("id", "Mesh" + meshID + "Instance"), new XAttribute("sid", "Mesh" + meshID + "Instance"),
                                 new XElement(ns + "matrix", new XAttribute("sid", "matrix"), "1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0"),
@@ -1144,17 +1150,17 @@ namespace SAGESharp
                             List<List<Tuple<int, int>>> vertexData = new List<List<Tuple<int, int>>>(); // List of List of indexes into usedNames and weightsData
                             for (int i = 0; i < vertexCount; i++)
                                 vertexData.Add(new List<Tuple<int, int>>()); // Pre-populate with empty lists
-                            for (int bone = 0; bone < bhd.Bones.Count; bone++)
+                            for (int bone = 0; bone < skeleton.Bones.Count; bone++)
                             {
-                                BHDFile.Bone b = bhd.Bones[bone];
+                                BHDFile.Bone b = skeleton.Bones[bone];
                                 if (b.ParentIndex == bone) // Stand-alone (root) bones are their own parents.
                                 {
                                     // Create the bone nodes in the scene
-                                    visual_scene.Add(ExportCOLLADABone(b, Matrix.Transpose(transform), bhd.NameSlots));
+                                    visual_scene.Add(ExportCOLLADABone(b, Matrix.Transpose(transform), skeleton.NameSlots));
                                 }
                                 if (b.ParentIndex != 0xFFFFFFFF)
                                 {
-                                    string name = bhd.NameSlots[b.Index];
+                                    string name = skeleton.NameSlots[b.Index];
                                     usedNames.Add(name);
                                     XObject skinWeights = skinWeightObjects[name];
                                     List<float> matrixParts = new List<float>();
@@ -1186,7 +1192,7 @@ namespace SAGESharp
                                         }
                                     }
                                     if (usedCount == 0)
-                                        Console.WriteLine("        [WARNING]: Bone '" + bhd.NameSlots[b.Index] + "' influences zero vertices!");
+                                        Console.WriteLine("        [WARNING]: Bone '" + skeleton.NameSlots[b.Index] + "' influences zero vertices!");
                                 }
                             }
                             for (int vertex = 0; vertex < vertexData.Count; vertex++)
@@ -1240,7 +1246,7 @@ namespace SAGESharp
 
                             visual_scene.Add(new XElement(ns + "node", new XAttribute("name", "Mesh" + meshID + "Instance"), new XAttribute("id", "Mesh" + meshID + "Instance"), new XAttribute("sid", "Mesh" + meshID + "Instance"),
                                 new XElement(ns + "instance_controller", new XAttribute("url", "#libctl-Mesh" + meshID + "-SKIN"),
-                                    new XElement(ns + "skeleton", "#" + bhd.NameSlots[0]), // HACK: assume there is always exactly one valid root bone, and it is the first bone.
+                                    new XElement(ns + "skeleton", "#" + skeleton.NameSlots[0]), // HACK: assume there is always exactly one valid root bone, and it is the first bone.
                                     new XElement(ns + "bind_material",
                                         bindMaterialCommon))));
                         }
@@ -1250,12 +1256,157 @@ namespace SAGESharp
                 }
             }
 
+            if (animation != null)
+            {
+                foreach (BKDEntry track in animation.Entries)
+                {
+                    // Glob keys in the same frame together.
+                    Dictionary<int, Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>> keyframes = new Dictionary<int, Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>>();
+                    foreach (TCBQuaternionData quat in track.TCBQuaternionData)
+                    {
+                        keyframes.Add(quat.Short1, new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(quat, null, null));
+                    }
+                    foreach (TCBInterpolationData trans in track.TCBInterpolatorData1)
+                    {
+                        if (keyframes.ContainsKey(trans.Long1))
+                        {
+                            keyframes[trans.Long1] = new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(keyframes[trans.Long1].Item1, trans, null);
+                        }
+                        else 
+                        {
+                            keyframes.Add(trans.Long1, new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(null, trans, null));
+                        }
+                    }
+                    foreach (TCBInterpolationData scale in track.TCBInterpolatorData2)
+                    {
+                        if (keyframes.ContainsKey(scale.Long1))
+                        {
+                            keyframes[scale.Long1] = new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(keyframes[scale.Long1].Item1, keyframes[scale.Long1].Item2, scale);
+                        }
+                        else
+                        {
+                            keyframes.Add(scale.Long1, new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(null, null, scale));
+                        }
+                    }
+
+                    string boneName = skeleton.NameSlots[track.Id];
+
+                    // Keyframe times
+                    XElement timeFloatArray = new XElement(ns + "float_array", new XAttribute("id", boneName + "-Matrix-animation-input-array"), new XAttribute("count", keyframes.Count.ToString()));
+                    StringBuilder sb = new StringBuilder();
+                    foreach (int frame in keyframes.Keys)
+                    {
+                        sb.Append((float)frame / BKD.FRAMES_PER_SECOND);
+                        sb.Append(" ");
+                    }
+                    timeFloatArray.Value = sb.ToString();
+                    XElement timeSource = new XElement(ns + "source", new XAttribute("id", boneName + "-Matrix-animation-input"),
+                        timeFloatArray,
+                        new XElement(ns + "technique_common",
+                            new XElement(ns + "accessor", new XAttribute("source", "#" + boneName + "-Matrix-animation-input-array"), new XAttribute("count", keyframes.Count.ToString()),
+                                new XElement(ns + "param", new XAttribute("name", "TIME"), new XAttribute("type", "float")))));
+
+                    // Keyframe values
+                    XElement transformFloatArray = new XElement(ns + "float_array", new XAttribute("id", boneName + "-Matrix-animation-output-transform-array"), new XAttribute("count", keyframes.Count * 16));
+                    sb.Clear();
+                    foreach (var pair in keyframes)
+                    {
+                        // Calculate the transform at this keyframe
+                        Matrix bindPoseTransform = skeleton.Bones[track.Id].Transform;
+                        bindPoseTransform.Transpose();
+                        Vector3 scale = Vector3.One;
+                        if (pair.Value.Item3 != null)
+                        {
+                            //bindPoseTransform.Decompose(out scale, out _, out _);
+                            //scale = new Vector3(scale.X * pair.Value.Item3.Float1, scale.Y * pair.Value.Item3.Float2, scale.Z * pair.Value.Item3.Float3);
+                            scale = new Vector3(pair.Value.Item3.Float1, pair.Value.Item3.Float2, pair.Value.Item3.Float3);
+                        }
+                        else
+                        {
+                            bindPoseTransform.Decompose(out scale, out _, out _);
+                        }
+                        Vector3 translation = Vector3.Zero;
+                        if (pair.Value.Item2 != null)
+                        {
+                            //translation = bindPoseTransform.TranslationVector;
+                            //translation += new Vector3(pair.Value.Item2.Float1, pair.Value.Item2.Float2, pair.Value.Item2.Float3);
+                            translation = new Vector3(pair.Value.Item2.Float1, pair.Value.Item2.Float2, pair.Value.Item2.Float3);
+                        }
+                        else
+                        {
+                            translation = bindPoseTransform.TranslationVector;
+                        }
+                        Quaternion rotation = Quaternion.Identity;
+                        if (pair.Value.Item1 != null)
+                        {
+                            //bindPoseTransform.Decompose(out _, out rotation, out _);
+                            //rotation = new Quaternion(DecompressShort(pair.Value.Item1.Short2), DecompressShort(pair.Value.Item1.Short3), DecompressShort(pair.Value.Item1.Short4),
+                            //    DecompressShort(pair.Value.Item1.Short5)) * rotation;
+                            rotation = new Quaternion(DecompressShort(pair.Value.Item1.Short2), DecompressShort(pair.Value.Item1.Short3), DecompressShort(pair.Value.Item1.Short4),
+                                DecompressShort(pair.Value.Item1.Short5));
+                        }
+                        else
+                        {
+                            bindPoseTransform.Decompose(out _, out rotation, out _);
+                        }
+                        //rotation = Quaternion.RotationMatrix(transform) * rotation;
+                        Matrix trans = Matrix.Scaling(scale) * Matrix.RotationQuaternion(rotation) * Matrix.Translation(translation);
+
+                        //trans = bindPoseTransform;
+
+                        if (track.Id == 0)
+                            trans = trans * transform;
+
+                        trans.Transpose();
+                        float[] elements = trans.ToArray();
+                        for (int j = 0; j < 16; j++)
+                        {
+                            sb.Append(elements[j]);
+                            sb.Append(" ");
+                        }
+                    }
+                    transformFloatArray.Value = sb.ToString();
+                    XElement transformSource = new XElement(ns + "source", new XAttribute("id", boneName + "-Matrix-animation-output-transform"),
+                        transformFloatArray,
+                        new XElement(ns + "technique_common",
+                            new XElement(ns + "accessor", new XAttribute("source", "#" + boneName + "-Matrix-animation-output-transform-array"), new XAttribute("count", keyframes.Count.ToString()), new XAttribute("stride", "16"),
+                                new XElement(ns + "param", new XAttribute("type", "float4x4")))));
+
+                    // Keyframe interpolations
+                    XElement interpolationNameArray = new XElement(ns + "Name_array", new XAttribute("id", boneName + "-Interpolations-array"), new XAttribute("count", keyframes.Count.ToString()));
+                    sb.Clear();
+                    for (int k = 0; k < keyframes.Count; k++)
+                        sb.Append("LINEAR ");
+                    interpolationNameArray.Value = sb.ToString();
+                    XElement interpolationSource = new XElement(ns + "source", new XAttribute("id", boneName + "-Interpolations"),
+                        interpolationNameArray,
+                        new XElement(ns + "technique_common",
+                            new XElement(ns + "accessor", new XAttribute("source", "#" + boneName + "-Interpolations-array"), new XAttribute("count", keyframes.Count.ToString()),
+                                new XElement(ns + "param", new XAttribute("type", "name")))));
+
+                    XElement animationTrack = new XElement(ns + "animation", new XAttribute("id", boneName + "-anim"), new XAttribute("name", boneName),
+                        new XElement(ns + "animation",
+                            timeSource,
+                            transformSource,
+                            interpolationSource,
+                            new XElement(ns + "sampler", new XAttribute("id", boneName + "-Matrix-animation-transform"),
+                                new XElement(ns + "input", new XAttribute("semantic", "INPUT"), new XAttribute("source", "#" + boneName + "-Matrix-animation-input")),
+                                new XElement(ns + "input", new XAttribute("semantic", "OUTPUT"), new XAttribute("source", "#" + boneName + "-Matrix-animation-output-transform")),
+                                new XElement(ns + "input", new XAttribute("semantic", "INTERPOLATION"), new XAttribute("source", "#" + boneName + "-Interpolations"))),
+                            new XElement(ns + "channel", new XAttribute("source", "#" + boneName + "-Matrix-animation-transform"), new XAttribute("target", boneName + "/matrix"))));
+
+                    libarary_animations.Add(animationTrack);
+                }
+            }
+
             COLLADA.Add(library_images);
             COLLADA.Add(library_materials);
             COLLADA.Add(library_effects);
             COLLADA.Add(library_geometries);
-            if (bhd != null)
+            if (skeleton != null)
                 COLLADA.Add(library_controllers);
+            if (animation != null)
+                COLLADA.Add(libarary_animations);
             COLLADA.Add(new XElement(ns + "library_visual_scenes", visual_scene));
             COLLADA.Add(new XElement(ns + "scene",
                 new XElement(ns + "instance_visual_scene", new XAttribute("url", "#Scene"))));
