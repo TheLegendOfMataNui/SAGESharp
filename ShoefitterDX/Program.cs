@@ -53,6 +53,11 @@ namespace ShoefitterDX
             Window = new Window();
             Application.Run(Window);
 
+            SaveConfig();
+        }
+
+        public static void SaveConfig()
+        {
             Config.Write(INIFilename);
         }
     }
