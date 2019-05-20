@@ -53,6 +53,7 @@
     <Compile Include="BKD.cs" />
     <Compile Include="BCLFile.cs" />
     <Compile Include="BHDFile.cs" />
+    <Compile Include="ColladaUtils.cs" />
     <Compile Include="EqualityUtils.cs" />
     <Compile Include="INIConfig.cs" />
     <Compile Include="IO\BinaryReader.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="LSS\Statements\WhileStatement.cs" />
     <Compile Include="LSS\SyntaxError.cs" />
     <Compile Include="LSS\Token.cs" />
+    <Compile Include="OCLFile.cs" />
     <Compile Include="OSI\BCLInstruction.cs" />
     <Compile Include="OSI\ControlFlow\Analyzer.cs" />
     <Compile Include="OSI\ControlFlow\OSINode.cs" />
@@ -118,6 +120,8 @@
     <Compile Include="SLB\Point3D.cs" />
     <Compile Include="SLB\StreamExtensions.cs" />
     <Compile Include="SLB\StringBinaryWriter.cs" />
+    <Compile Include="XFile.cs" />
+    <Compile Include="XUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LSS\readme.md" />
