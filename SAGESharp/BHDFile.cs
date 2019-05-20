@@ -239,66 +239,58 @@ namespace SAGESharp
         /// <summary>
         /// Creates a BHDFile by reading the data from the given file.
         /// </summary>
-        /// <param name="filename">The name of the file that data should be read from.</param>
-        public BHDFile(string filename)
+        /// <param name="reader">The BinaryReader that data should be read from.</param>
+        public BHDFile(BinaryReader reader)
         {
-            using (FileStream stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
-            using (BinaryReader reader = new BinaryReader(stream))
+            uint count = reader.ReadUInt32();
+            for (uint i = 0; i < count; i++)
             {
-                uint count = reader.ReadUInt32();
-                for (uint i = 0; i < count; i++)
+                Bone b = new Bone();
+                b.ParentIndex = reader.ReadUInt32();
+                b.Index = i;
+                b.Transform = Matrix.Identity;
+                Bones.Add(b);
+            }
+            for (int i = 0; i < count; i++)
+            {
+                Bone b = Bones[i];
+                if (b.ParentIndex != 0xFFFFFFFF && b.ParentIndex != i)
                 {
-                    Bone b = new Bone();
-                    b.ParentIndex = reader.ReadUInt32();
-                    b.Index = i;
-                    b.Transform = Matrix.Identity;
-                    Bones.Add(b);
+                    Bones[(int)b.ParentIndex].Children.Add(b);
                 }
-                for (int i = 0; i < count; i++)
-                {
-                    Bone b = Bones[i];
-                    if (b.ParentIndex != 0xFFFFFFFF && b.ParentIndex != i)
-                    {
-                        Bones[(int)b.ParentIndex].Children.Add(b);
-                    }
 
-                    b.Transform.Column1 = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), 0.0f);
-                    b.Transform.Column2 = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), 0.0f);
-                    b.Transform.Column3 = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), 0.0f);
-                    b.Transform.Column4 = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), 1.0f);
-                }
+                b.Transform.Column1 = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), 0.0f);
+                b.Transform.Column2 = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), 0.0f);
+                b.Transform.Column3 = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), 0.0f);
+                b.Transform.Column4 = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), 1.0f);
             }
         }
 
         /// <summary>
         /// Writes this BHDFile to the given file.
         /// </summary>
-        /// <param name="filename">The filename to write to.</param>
-        public void Write(string filename)
+        /// <param name="writer">The BinaryWriter to write to.</param>
+        public void Write(BinaryWriter writer)
         {
-            using (FileStream stream = new FileStream(filename, FileMode.Create, FileAccess.Write, FileShare.Read))
-            using (BinaryWriter writer = new BinaryWriter(stream))
+            writer.Write((uint)Bones.Count);
+            foreach (Bone b in Bones)
             {
-                writer.Write((uint)Bones.Count);
-                foreach (Bone b in Bones)
-                {
-                    writer.Write(b.ParentIndex);
-                }
-                foreach (Bone b in Bones)
-                {
-                    writer.Write(b.Transform.Column1.X);
-                    writer.Write(b.Transform.Column1.Y);
-                    writer.Write(b.Transform.Column1.Z);
-                    writer.Write(b.Transform.Column2.X);
-                    writer.Write(b.Transform.Column2.Y);
-                    writer.Write(b.Transform.Column2.Z);
-                    writer.Write(b.Transform.Column3.X);
-                    writer.Write(b.Transform.Column3.Y);
-                    writer.Write(b.Transform.Column3.Z);
-                    writer.Write(b.Transform.Column4.X);
-                    writer.Write(b.Transform.Column4.Y);
-                    writer.Write(b.Transform.Column4.Z);
-                }
+                writer.Write(b.ParentIndex);
+            }
+            foreach (Bone b in Bones)
+            {
+                writer.Write(b.Transform.Column1.X);
+                writer.Write(b.Transform.Column1.Y);
+                writer.Write(b.Transform.Column1.Z);
+                writer.Write(b.Transform.Column2.X);
+                writer.Write(b.Transform.Column2.Y);
+                writer.Write(b.Transform.Column2.Z);
+                writer.Write(b.Transform.Column3.X);
+                writer.Write(b.Transform.Column3.Y);
+                writer.Write(b.Transform.Column3.Z);
+                writer.Write(b.Transform.Column4.X);
+                writer.Write(b.Transform.Column4.Y);
+                writer.Write(b.Transform.Column4.Z);
             }
         }
     }

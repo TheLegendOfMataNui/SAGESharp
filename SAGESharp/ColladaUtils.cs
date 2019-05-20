@@ -11,7 +11,7 @@ using SharpDX;
 
 namespace SAGESharp
 {
-    public static class Utils
+    public static class ColladaUtils
     {
         private const string SCHEMA_URL = "http://www.collada.org/2005/11/COLLADASchema";
 
@@ -750,7 +750,7 @@ namespace SAGESharp
             COLLADA.Add(new XElement(ns + "asset",
                 new XElement(ns + "contributor",
                     new XElement(ns + "author"),
-                    new XElement(ns + "authoring_tool", "LOMNTool " + System.Reflection.Assembly.GetAssembly(typeof(Utils)).GetName().Version.ToString()),
+                    new XElement(ns + "authoring_tool", "LOMNTool " + System.Reflection.Assembly.GetAssembly(typeof(ColladaUtils)).GetName().Version.ToString()),
                     new XElement(ns + "comments")),
                 new XElement(ns + "created", DateTime.Now.ToString("o")),
                 new XElement(ns + "keywords"),

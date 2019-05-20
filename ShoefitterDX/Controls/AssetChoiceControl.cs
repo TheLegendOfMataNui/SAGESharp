@@ -29,6 +29,14 @@ namespace ShoefitterDX.Controls
             }
         }
 
+        public bool HasSelectedAsset
+        {
+            get
+            {
+                return !String.IsNullOrEmpty(SelectedFilename);
+            }
+        }
+
         public AssetChoiceControl()
         {
             InitializeComponent();
