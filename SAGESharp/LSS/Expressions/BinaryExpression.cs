@@ -25,6 +25,11 @@ namespace SAGESharp.LSS.Expressions
             return visitor.VisitBinaryExpression(this, context);
         }
 
+        public override Expression Duplicate()
+        {
+            return new BinaryExpression(Left.Duplicate(), Operation, Right.Duplicate()); // Operation is immutable
+        }
+
         public override string ToString()
         {
             if (Operation.Type == TokenType.Period

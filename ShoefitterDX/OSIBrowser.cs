@@ -64,6 +64,7 @@ namespace ShoefitterDX
         private void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             SubroutineGraph g = null;
+            bool isMemberMethod = false;
             if (e.Node.Tag is OSIFile.FunctionInfo func)
             {
                 g = new SubroutineGraph(func.Instructions, func.BytecodeOffset);
@@ -71,6 +72,7 @@ namespace ShoefitterDX
             else if (e.Node.Tag is OSIFile.MethodInfo meth)
             {
                 g = new SubroutineGraph(meth.Instructions, meth.BytecodeOffset);
+                isMemberMethod = true;
             }
 
             if (g != null)
@@ -94,6 +96,16 @@ namespace ShoefitterDX
                 if (g.Nodes.Count == 3)
                 {
                     textBox1.Text = g.StartNode.OutAlwaysJump.Destination.ToString().Replace("\n", "\r\n");
+                    textBox1.AppendText("\r\n\r\nDecompiled LSS:\r\n");
+                    try
+                    {
+                        textBox1.AppendText(SAGESharp.LSS.PrettyPrinter.Print(isMemberMethod ? SAGESharp.LSS.Decompiler.DecompileMethod(OSI, e.Node.Tag as OSIFile.MethodInfo, new SAGESharp.LSS.SourceSpan()) : SAGESharp.LSS.Decompiler.DecompileFunction(OSI, e.Node.Tag as OSIFile.FunctionInfo, new SAGESharp.LSS.SourceSpan())));
+                    }
+                    catch (NotImplementedException ex)
+                    {
+                        textBox1.AppendText("<Exception decompiling!>\r\n");
+                        textBox1.AppendText(ex.ToString() + "\r\n");
+                    }
                 }
                 else
                 {

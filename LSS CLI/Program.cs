@@ -153,15 +153,7 @@ namespace LSS_CLI
 
             // TEMP TESTING
             OSIFile.MethodInfo method = osi.Classes[1].Methods[0];
-            List<Token> parameters = new List<Token>();
-            if (method.Instructions.Count > 0 && method.Instructions[0] is BCLInstruction argCheck && argCheck.Opcode == BCLOpcode.MemberFunctionArgumentCheck)
-            {
-                for (int i = 0; i < argCheck.Arguments[0].GetValue<sbyte>() - 1; i++)
-                {
-                    parameters.Add(new Token(TokenType.Symbol, "param" + (i + 1), new SourceSpan()));
-                }
-            }
-            System.Diagnostics.Debug.WriteLine("method " + PrettyPrinter.Print(Decompiler.DecompileSubroutine(osi, osi.Symbols[method.NameSymbol], true, parameters, method.Instructions, new SourceSpan())));
+            System.Diagnostics.Debug.WriteLine("method " + PrettyPrinter.Print(Decompiler.DecompileMethod(osi, method, new SourceSpan())));
 
             if (!System.IO.Directory.Exists(outputDirectory))
             {

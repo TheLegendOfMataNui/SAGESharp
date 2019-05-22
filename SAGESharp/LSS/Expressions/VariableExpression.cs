@@ -21,6 +21,11 @@ namespace SAGESharp.LSS.Expressions
             return visitor.VisitVariableExpression(this, context);
         }
 
+        public override Expression Duplicate()
+        {
+            return new VariableExpression(Symbol); // Symbol is immutable
+        }
+
         public override string ToString()
         {
             return Symbol.Content;

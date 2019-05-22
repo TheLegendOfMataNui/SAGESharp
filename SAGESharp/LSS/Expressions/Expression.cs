@@ -24,5 +24,7 @@ namespace SAGESharp.LSS.Expressions
         public abstract SourceSpan Span { get; }
 
         public abstract T AcceptVisitor<T, C>(ExpressionVisitor<T, C> visitor, C context);
+
+        public abstract Expression Duplicate();
     }
 }

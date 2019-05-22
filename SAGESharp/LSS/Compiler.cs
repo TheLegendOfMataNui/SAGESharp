@@ -293,8 +293,6 @@ namespace SAGESharp.LSS
                 }
             }
 
-            // TODO: Make a corresponding EscapeString and use it in OSIFile.ToString()
-
             #region Expressions
             public uint VisitArrayAccessExpression(ArrayAccessExpression expr, object context)
             {
@@ -771,7 +769,7 @@ namespace SAGESharp.LSS
 
                                     size += binExp.Left.AcceptVisitor(this, context); // Push array
 
-                                    size += EmitBCLInstruction(BCLOpcode.Dup); // Make a copy, so we 'return' the original array
+                                    //size += EmitBCLInstruction(BCLOpcode.Dup); // Make a copy, so we 'return' the original array
 
 
                                     size += expr.Arguments[0].AcceptVisitor(this, context); // Push value

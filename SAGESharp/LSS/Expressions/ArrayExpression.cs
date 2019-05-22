@@ -22,6 +22,16 @@ namespace SAGESharp.LSS.Expressions
             return visitor.VisitArrayExpression(this, context);
         }
 
+        public override Expression Duplicate()
+        {
+            List<Expression> clonedElements = new List<Expression>();
+            foreach (Expression element in Elements)
+            {
+                clonedElements.Add(element.Duplicate());
+            }
+            return new ArrayExpression(Span, clonedElements);
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();

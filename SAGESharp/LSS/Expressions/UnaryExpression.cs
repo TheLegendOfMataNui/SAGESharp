@@ -25,6 +25,11 @@ namespace SAGESharp.LSS.Expressions
             return visitor.VisitUnaryExpression(this, context);
         }
 
+        public override Expression Duplicate()
+        {
+            return new UnaryExpression(Contents.Duplicate(), Operation, IsPrefix); // Operation is immutable
+        }
+
         public override string ToString()
         {
             if (IsPrefix)

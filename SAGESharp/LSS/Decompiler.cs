@@ -23,6 +23,31 @@ namespace SAGESharp.LSS
             return new BinaryExpression(left, new Token(operatorType, op, span), right);
         }
 
+        public static SubroutineStatement DecompileFunction(OSIFile osi, OSIFile.FunctionInfo function, SourceSpan outputSpan)
+        {
+            List<Token> parameters = new List<Token>();
+
+            for (int i = 0; i < function.ParameterCount; i++)
+            {
+                parameters.Add(new Token(TokenType.Symbol, "param" + (i + 1), outputSpan));
+            }
+
+            return DecompileSubroutine(osi, function.Name, false, parameters, function.Instructions, outputSpan);
+        }
+
+        public static SubroutineStatement DecompileMethod(OSIFile osi, OSIFile.MethodInfo method, SourceSpan outputSpan)
+        {
+            List<Token> parameters = new List<Token>();
+            if (method.Instructions.Count > 0 && method.Instructions[0] is BCLInstruction argCheck && argCheck.Opcode == BCLOpcode.MemberFunctionArgumentCheck)
+            {
+                for (int i = 0; i < argCheck.Arguments[0].GetValue<sbyte>() - 1; i++)
+                {
+                    parameters.Add(new Token(TokenType.Symbol, "param" + (i + 1), outputSpan));
+                }
+            }
+            return DecompileSubroutine(osi, osi.Symbols[method.NameSymbol], true, parameters, method.Instructions, outputSpan);
+        }
+
         public static SubroutineStatement DecompileSubroutine(OSIFile osi, string name, bool isMemberMethod, List<Token> parameters, List<Instruction> instructions, SourceSpan outputSpan)
         {
             List<InstructionStatement> statements = new List<InstructionStatement>();
@@ -51,9 +76,8 @@ namespace SAGESharp.LSS
                             {
                                 Expression value = stack.Pop();
                                 Expression array = stack.Pop();
-                                Expression arrayAlso = stack.Pop();
                                 // TODO: if array is ArrayExpression, collapse into it
-                                stack.Push(new CallExpression(outputSpan, DecompileBinaryExpression(stack, array, new VariableExpression(new Token(TokenType.KeywordAppend, "__append", outputSpan)), TokenType.Period, ".", outputSpan), new Expression[] { value }));
+                                statements.Add(new ExpressionStatement(new CallExpression(outputSpan, DecompileBinaryExpression(stack, array, new VariableExpression(new Token(TokenType.KeywordAppend, "__append", outputSpan)), TokenType.Period, ".", outputSpan), new Expression[] { value })));
                                 break;
                             }
                         case BCLOpcode.BitwiseAnd:
@@ -68,12 +92,6 @@ namespace SAGESharp.LSS
                         case BCLOpcode.BitwiseXor:
                             stack.Push(DecompileBinaryExpression(stack, TokenType.Octothorpe, "#", outputSpan));
                             break;
-                        case BCLOpcode.CallGameFunction:
-                            throw new NotImplementedException();
-                        case BCLOpcode.CallGameFunctionDirect:
-                            throw new NotImplementedException();
-                        case BCLOpcode.CallGameFunctionFromString:
-                            throw new NotImplementedException();
                         case BCLOpcode.ConvertToFloat:
                             stack.Push(new CallExpression(outputSpan, new VariableExpression(new Token(TokenType.KeywordToFloat, "__tofloat", outputSpan)), new Expression[] { stack.Pop() }));
                             break;
@@ -101,7 +119,7 @@ namespace SAGESharp.LSS
                             stack.Push(new LiteralExpression(new Token(TokenType.IntegerLiteral, instructions[i].Arguments[0].GetValue<int>().ToString(), outputSpan)));
                             break;
                         case BCLOpcode.PushConstantf32:
-                            stack.Push(new LiteralExpression(new Token(TokenType.FloatLiteral, instructions[i].Arguments[0].GetValue<float>().ToString(), outputSpan)));
+                            stack.Push(new LiteralExpression(new Token(TokenType.FloatLiteral, instructions[i].Arguments[0].GetValue<float>().ToString("0.0##############"), outputSpan)));
                             break;
                         case BCLOpcode.PushConstantColor8888:
                             stack.Push(new CallExpression(outputSpan, new VariableExpression(new Token(TokenType.KeywordRGBA, "rgba", outputSpan)), new Expression[]
@@ -124,8 +142,12 @@ namespace SAGESharp.LSS
                         case BCLOpcode.PushConstantColor5551:
                             throw new NotImplementedException();
                         case BCLOpcode.GetVariableValue:
-                            stack.Push(new VariableExpression(new Token(TokenType.Symbol, variables[instructions[i].Arguments[0].GetValue<ushort>()], outputSpan)));
-                            break;
+                            {
+                                ushort index = instructions[i].Arguments[0].GetValue<ushort>();
+                                string variableName = (index & (1 << 15)) > 0 ? osi.Globals[index & ~(1 << 15)] : variables[index];
+                                stack.Push(new VariableExpression(new Token(TokenType.Symbol, variableName, outputSpan)));
+                                break;
+                            }
                         case BCLOpcode.SetThisMemberValue:
                             statements.Add(new AssignmentStatement(new BinaryExpression(new VariableExpression(new Token(TokenType.KeywordThis, "this", outputSpan)), new Token(TokenType.Period, ".", outputSpan), new VariableExpression(new Token(TokenType.Symbol, osi.Symbols[instructions[i].Arguments[0].GetValue<ushort>()], outputSpan))), stack.Pop()));
                             break;
@@ -149,6 +171,78 @@ namespace SAGESharp.LSS
                         case BCLOpcode.Pop:
                             statements.Add(new ExpressionStatement(stack.Pop()));
                             break;
+                        case BCLOpcode.SetMemberValue:
+                            {
+                                string memberName = osi.Symbols[instructions[i].Arguments[0].GetValue<ushort>()];
+                                Expression target = stack.Pop();
+                                Expression value = stack.Pop();
+                                statements.Add(new AssignmentStatement(new BinaryExpression(target, new Token(TokenType.Period, ".", outputSpan), new VariableExpression(new Token(TokenType.Symbol, memberName, outputSpan))), value));
+                                break;
+                            }
+                        case BCLOpcode.GetMemberValue:
+                            stack.Push(new BinaryExpression(stack.Pop(), new Token(TokenType.Period, ".", outputSpan), new VariableExpression(new Token(TokenType.Symbol, osi.Symbols[instructions[i].Arguments[0].GetValue<ushort>()], outputSpan))));
+                            break;
+                        case BCLOpcode.CreateStackVariables:
+                            {
+                                for (int j = 0; j < instructions[i].Arguments[0].GetValue<sbyte>(); j++)
+                                {
+                                    string localName = "var" + (j + 1);
+                                    variables.Add(localName);
+                                    statements.Add(new VariableDeclarationStatement(outputSpan, new Token(TokenType.Symbol, localName, outputSpan), null));
+                                    stack.Push(new VariableExpression(new Token(TokenType.Symbol, localName, outputSpan)));
+                                }
+                                break;
+                            }
+                        case BCLOpcode.GetMemberFunction:
+                            {
+                                // NOTE: Decompiling CreateObject includes the GetMemberFunction call there, so we can assume
+                                // that we aren't in a constructor call right now.
+                                string functionName = osi.Symbols[instructions[i].Arguments[0].GetValue<ushort>()];
+                                Expression target = stack.Pop();
+                                stack.Push(new BinaryExpression(target, new Token(TokenType.Period, ".", outputSpan), new VariableExpression(new Token(TokenType.Symbol, functionName, outputSpan))));
+                                break;
+                            }
+                        case BCLOpcode.GetThisMemberValue:
+                            stack.Push(new BinaryExpression(new VariableExpression(new Token(TokenType.KeywordThis, "this", outputSpan)), new Token(TokenType.Period, ".", outputSpan), new VariableExpression(new Token(TokenType.Symbol, osi.Symbols[instructions[i].Arguments[0].GetValue<ushort>()], outputSpan))));
+                            break;
+                        case BCLOpcode.Dup:
+                            stack.Push(stack.Peek().Duplicate());
+                            break;
+                        case BCLOpcode.Pull:
+                            stack.Push(stack.ToArray()[instructions[i].Arguments[0].GetValue<sbyte>() - 1].Duplicate());
+                            break;
+                        case BCLOpcode.CallGameFunction:
+                            {
+                                int argCount = instructions[i].Arguments[2].GetValue<sbyte>();
+                                string functionNamespace = osi.Strings[instructions[i].Arguments[0].GetValue<ushort>()];
+                                string functionName = osi.Strings[instructions[i].Arguments[1].GetValue<ushort>()];
+                                Expression[] arguments = new Expression[argCount];
+                                // Arguments are popped right to left.
+                                for (int j = argCount - 1; j >= 0; j--)
+                                {
+                                    arguments[j] = stack.Pop();
+                                }
+                                stack.Push(new CallExpression(outputSpan, new BinaryExpression(new VariableExpression(new Token(TokenType.Symbol, functionNamespace, outputSpan)), new Token(TokenType.ColonColon, "::", outputSpan), new VariableExpression(new Token(TokenType.Symbol, functionName, outputSpan))), arguments));
+                                break;
+                            }
+                        case BCLOpcode.SetVariableValue:
+                            {
+                                ushort index = instructions[i].Arguments[0].GetValue<ushort>();
+                                string variableName = (index & (1 << 15)) > 0 ? osi.Globals[index & ~(1 << 15)] : variables[index];
+                                statements.Add(new AssignmentStatement(new VariableExpression(new Token(TokenType.Symbol, variableName, outputSpan)), stack.Pop()));
+                                break;
+                            }
+                        case BCLOpcode.MemberFunctionArgumentCheck:
+                        case BCLOpcode.Nop:
+                        case BCLOpcode.DebugOn:
+                        case BCLOpcode.DebugOff:
+                        case BCLOpcode.LineNumber:
+                        case BCLOpcode.LineNumberAlt1:
+                        case BCLOpcode.LineNumberAlt2:
+                        case BCLOpcode.Halt:
+                            break;
+                        default:
+                            throw new NotImplementedException("Decompiling opcode '" + bcl.Opcode.ToString() + "' (0x" + ((byte)bcl.Opcode).ToString("X2") + ") is not implemented!");
                     }
                 }
                 else
@@ -173,14 +267,7 @@ namespace SAGESharp.LSS
 
             foreach (OSIFile.FunctionInfo function in osi.Functions)
             {
-                List<Token> parameters = new List<Token>();
-
-                for (int i = 0; i < function.ParameterCount; i++)
-                {
-                    parameters.Add(new Token(TokenType.Symbol, "param" + (i + 1), span));
-                }
-
-                result.Functions.Add(DecompileSubroutine(osi, function.Name, false, parameters, function.Instructions, span));
+                result.Functions.Add(DecompileFunction(osi, function, span));
             }
 
             foreach (OSIFile.ClassInfo cls in osi.Classes)
@@ -193,15 +280,7 @@ namespace SAGESharp.LSS
                 List<SubroutineStatement> methods = new List<SubroutineStatement>();
                 foreach (OSIFile.MethodInfo method in cls.Methods)
                 {
-                    List<Token> parameters = new List<Token>();
-                    if (method.Instructions.Count > 0 && method.Instructions[0] is BCLInstruction argCheck && argCheck.Opcode == BCLOpcode.MemberFunctionArgumentCheck)
-                    {
-                        for (int i = 0; i < argCheck.Arguments[0].GetValue<sbyte>() - 1; i++)
-                        {
-                            parameters.Add(new Token(TokenType.Symbol, "param" + (i + 1), span));
-                        }
-                    }
-                    methods.Add(DecompileSubroutine(osi, osi.Symbols[method.NameSymbol], true, parameters, method.Instructions, span));
+                    methods.Add(DecompileMethod(osi, method, span));
                 }
                 // TODO: Find SuperclassName
                 result.Classes.Add(new ClassStatement(span, new Token(TokenType.Symbol, cls.Name, span), null, properties, methods));

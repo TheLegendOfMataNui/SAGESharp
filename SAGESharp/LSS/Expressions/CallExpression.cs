@@ -24,6 +24,16 @@ namespace SAGESharp.LSS.Expressions
             return visitor.VisitCallExpression(this, context);
         }
 
+        public override Expression Duplicate()
+        {
+            List<Expression> clonedArguments = new List<Expression>();
+            foreach (Expression argument in Arguments)
+            {
+                clonedArguments.Add(argument.Duplicate());
+            }
+            return new CallExpression(Span, Target.Duplicate(), clonedArguments);
+        }
+
         public override string ToString()
         {
             return Target.ToString() + "(" + String.Join(", ", Arguments) + ")";
