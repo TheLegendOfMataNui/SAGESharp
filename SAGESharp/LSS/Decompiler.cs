@@ -76,8 +76,18 @@ namespace SAGESharp.LSS
                             {
                                 Expression value = stack.Pop();
                                 Expression array = stack.Pop();
-                                // TODO: if array is ArrayExpression, collapse into it
-                                statements.Add(new ExpressionStatement(new CallExpression(outputSpan, DecompileBinaryExpression(stack, array, new VariableExpression(new Token(TokenType.KeywordAppend, "__append", outputSpan)), TokenType.Period, ".", outputSpan), new Expression[] { value })));
+                                // If array is ArrayExpression, collapse into it
+                                if (array is ArrayExpression arrExpr && stack.Peek() == arrExpr)
+                                {
+                                    stack.Pop();
+                                    List<Expression> elements = new List<Expression>(arrExpr.Elements);
+                                    elements.Add(value);
+                                    stack.Push(new ArrayExpression(arrExpr.Span, elements));
+                                }
+                                else
+                                {
+                                    statements.Add(new ExpressionStatement(new CallExpression(outputSpan, DecompileBinaryExpression(stack, array, new VariableExpression(new Token(TokenType.KeywordAppend, "__append", outputSpan)), TokenType.Period, ".", outputSpan), new Expression[] { value })));
+                                }
                                 break;
                             }
                         case BCLOpcode.BitwiseAnd:
@@ -169,8 +179,31 @@ namespace SAGESharp.LSS
                                 break;
                             }
                         case BCLOpcode.Pop:
-                            statements.Add(new ExpressionStatement(stack.Pop()));
-                            break;
+                            {
+                                Expression value = stack.Pop();
+                                // Recognise the constructor call after instantiation
+                                if (value is CallExpression ctorCall
+                                    && ctorCall.Target is BinaryExpression binExp
+                                    && binExp.Left is ConstructorExpression ctor
+                                    && binExp.Right is VariableExpression ctorName
+                                    && ctor.TypeName.Content == ctorName.Symbol.Content
+                                    && stack.Count > 0
+                                    && stack.Peek() is ConstructorExpression ctorTop
+                                    && ctorTop.Arguments == null
+                                    && ctorTop.TypeName.Content == ctor.TypeName.Content)
+                                {
+                                    // We are popping off the result of the constructor call,
+                                    // so just silently remove it, and then use it to complete the
+                                    // half-baked ConstructorExpression.
+                                    stack.Pop(); // Pop the half-baked ConstructorExpression aka ctorTop
+                                    stack.Push(new ConstructorExpression(outputSpan, ctorTop.TypeName, ctorCall.Arguments));
+                                }
+                                else
+                                {
+                                    statements.Add(new ExpressionStatement(value));
+                                }
+                                break;
+                            }
                         case BCLOpcode.SetMemberValue:
                             {
                                 string memberName = osi.Symbols[instructions[i].Arguments[0].GetValue<ushort>()];
@@ -195,8 +228,6 @@ namespace SAGESharp.LSS
                             }
                         case BCLOpcode.GetMemberFunction:
                             {
-                                // NOTE: Decompiling CreateObject includes the GetMemberFunction call there, so we can assume
-                                // that we aren't in a constructor call right now.
                                 string functionName = osi.Symbols[instructions[i].Arguments[0].GetValue<ushort>()];
                                 Expression target = stack.Pop();
                                 stack.Push(new BinaryExpression(target, new Token(TokenType.Period, ".", outputSpan), new VariableExpression(new Token(TokenType.Symbol, functionName, outputSpan))));
@@ -206,10 +237,12 @@ namespace SAGESharp.LSS
                             stack.Push(new BinaryExpression(new VariableExpression(new Token(TokenType.KeywordThis, "this", outputSpan)), new Token(TokenType.Period, ".", outputSpan), new VariableExpression(new Token(TokenType.Symbol, osi.Symbols[instructions[i].Arguments[0].GetValue<ushort>()], outputSpan))));
                             break;
                         case BCLOpcode.Dup:
-                            stack.Push(stack.Peek().Duplicate());
+                            //stack.Push(stack.Peek().Duplicate());
+                            stack.Push(stack.Peek());
                             break;
                         case BCLOpcode.Pull:
-                            stack.Push(stack.ToArray()[instructions[i].Arguments[0].GetValue<sbyte>() - 1].Duplicate());
+                            //stack.Push(stack.ToArray()[instructions[i].Arguments[0].GetValue<sbyte>() - 1].Duplicate());
+                            stack.Push(stack.ToArray()[instructions[i].Arguments[0].GetValue<sbyte>() - 1]);
                             break;
                         case BCLOpcode.CallGameFunction:
                             {
@@ -232,6 +265,9 @@ namespace SAGESharp.LSS
                                 statements.Add(new AssignmentStatement(new VariableExpression(new Token(TokenType.Symbol, variableName, outputSpan)), stack.Pop()));
                                 break;
                             }
+                        case BCLOpcode.CreateObject:
+                            stack.Push(new ConstructorExpression(outputSpan, new Token(TokenType.Symbol, osi.Classes[instructions[i].Arguments[0].GetValue<ushort>()].Name, outputSpan), null));
+                            break;
                         case BCLOpcode.MemberFunctionArgumentCheck:
                         case BCLOpcode.Nop:
                         case BCLOpcode.DebugOn:
@@ -247,7 +283,7 @@ namespace SAGESharp.LSS
                 }
                 else
                 {
-                    throw new FormatException("Cannot decompile abstract instruction " + i.GetType().ToString());
+                    throw new FormatException("Cannot decompile abstract instruction " + instructions[i].GetType().ToString());
                 }
             }
 

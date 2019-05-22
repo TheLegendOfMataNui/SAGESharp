@@ -125,14 +125,19 @@ namespace SAGESharp.LSS
             public object VisitArrayExpression(ArrayExpression expr, object context)
             {
                 StringBuilder.Append("[ ");
+                PushIndent();
                 int i = 0;
                 foreach (Expression element in expr.Elements)
                 {
                     if (i > 0)
-                        StringBuilder.Append(", ");
+                    {
+                        StringBuilder.AppendLine(", ");
+                        StringBuilder.Append(IndentationContents);
+                    }
                     element.AcceptVisitor(this, context);
                     i++;
                 }
+                PopIndent();
                 StringBuilder.Append(" ]");
                 return null;
             }
