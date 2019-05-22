@@ -72,6 +72,48 @@ namespace SAGESharp.LSS
                         case BCLOpcode.And:
                             stack.Push(DecompileBinaryExpression(stack, TokenType.AmpersandAmpersand, "&&", outputSpan));
                             break;
+                        case BCLOpcode.EqualTo:
+                            stack.Push(DecompileBinaryExpression(stack, TokenType.EqualsEquals, "==", outputSpan));
+                            break;
+                        case BCLOpcode.LessThan:
+                            stack.Push(DecompileBinaryExpression(stack, TokenType.Less, "<", outputSpan));
+                            break;
+                        case BCLOpcode.GreaterThan:
+                            stack.Push(DecompileBinaryExpression(stack, TokenType.Greater, ">", outputSpan));
+                            break;
+                        case BCLOpcode.LessOrEqual:
+                            stack.Push(DecompileBinaryExpression(stack, TokenType.LessEquals, "<=", outputSpan));
+                            break;
+                        case BCLOpcode.GreaterOrEqual:
+                            stack.Push(DecompileBinaryExpression(stack, TokenType.GreaterEquals, ">=", outputSpan));
+                            break;
+                        case BCLOpcode.Or:
+                            stack.Push(DecompileBinaryExpression(stack, TokenType.PipePipe, "||", outputSpan));
+                            break;
+                        case BCLOpcode.Not:
+                            stack.Push(new UnaryExpression(stack.Pop(), new Token(TokenType.Exclamation, "!", outputSpan), true));
+                            break;
+                        case BCLOpcode.Subtract:
+                            stack.Push(DecompileBinaryExpression(stack, TokenType.Dash, "-", outputSpan));
+                            break;
+                        case BCLOpcode.Multiply:
+                            stack.Push(DecompileBinaryExpression(stack, TokenType.Asterisk, "*", outputSpan));
+                            break;
+                        case BCLOpcode.Divide:
+                            stack.Push(DecompileBinaryExpression(stack, TokenType.Slash, "/", outputSpan));
+                            break;
+                        case BCLOpcode.Power:
+                            stack.Push(DecompileBinaryExpression(stack, TokenType.Caret, "^", outputSpan));
+                            break;
+                        case BCLOpcode.Modulus:
+                            stack.Push(DecompileBinaryExpression(stack, TokenType.Percent, "%", outputSpan));
+                            break;
+                        case BCLOpcode.ShiftLeft:
+                            stack.Push(DecompileBinaryExpression(stack, TokenType.LessLess, "<<", outputSpan));
+                            break;
+                        case BCLOpcode.ShiftRight:
+                            stack.Push(DecompileBinaryExpression(stack, TokenType.GreaterGreater, ">>", outputSpan));
+                            break;
                         case BCLOpcode.AppendToArray:
                             {
                                 Expression value = stack.Pop();
