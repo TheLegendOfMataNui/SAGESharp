@@ -7,6 +7,7 @@ using FluentAssertions;
 using Konvenience;
 using NSubstitute;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 
 namespace SAGESharp.IO
@@ -15,26 +16,57 @@ namespace SAGESharp.IO
     {
         private readonly IBinaryReader reader = Substitute.For<IBinaryReader>();
 
+        private readonly List<IPropertyBinarySerializer<CustomClass>> propertySerializers = new List<IPropertyBinarySerializer<CustomClass>>();
+
+        [SetUp]
+        public void Setup()
+        {
+            propertySerializers.Clear();
+        }
+
         [Test]
         public void Test_Reading_A_Custom_Class()
         {
-            var propertySerializers = new List<IPropertyBinarySerializer<CustomClass>>
-            {
-                Substitute.For<IPropertyBinarySerializer<CustomClass>>().Also(
-                    pbs => pbs.ReadAndSet(Arg.Is(reader), Arg.Do<CustomClass>(o => o.String1 = "String1"))
-                ),
-                Substitute.For<IPropertyBinarySerializer<CustomClass>>().Also(
-                    pbs => pbs.ReadAndSet(Arg.Is(reader), Arg.Do<CustomClass>(o => o.String2 = "String2"))
-                )
-            };
+            propertySerializers.Add(Substitute.For<IPropertyBinarySerializer<CustomClass>>().Also(
+                pbs => pbs.ReadAndSet(Arg.Is(reader), Arg.Do<CustomClass>(o => o.String1 = "String1"))
+            ));
+            propertySerializers.Add(Substitute.For<IPropertyBinarySerializer<CustomClass>>().Also(
+                pbs => pbs.ReadAndSet(Arg.Is(reader), Arg.Do<CustomClass>(o => o.String2 = "String2"))
+            ));
 
-            CustomClass result = new DefaultBinarySerializer<CustomClass>(propertySerializers)
+            CustomClass result = BuildSerializer()
                 .Read(reader)
                 .Also(o => o.String1.Should().Be("String1"))
                 .Also(o => o.String2.Should().Be("String2"))
                 .Also(o => o.String3.Should().BeNull())
                 .Also(o => propertySerializers.ForEach(pbs => pbs.Received().ReadAndSet(reader, o)));
         }
+
+        [Test]
+        public void Test_Building_A_DefaultBinarySerializer_With_A_Null_List_Of_PropertySerializers()
+        {
+            Action action = () => new DefaultBinarySerializer<CustomClass>(null);
+
+            action
+                .Should()
+                .Throw<ArgumentNullException>()
+                .Where(e => e.Message.Contains("propertyBinarySerializers"));
+        }
+
+        [Test]
+        public void Test_Reading_From_A_Null_Reader()
+        {
+            IBinarySerializer<CustomClass> serialier = BuildSerializer();
+            Action action = () => serialier.Read(null);
+
+            action
+                .Should()
+                .Throw<ArgumentNullException>()
+                .Where(e => e.Message.Contains("binaryReader"));
+        }
+
+        private IBinarySerializer<CustomClass> BuildSerializer()
+            => new DefaultBinarySerializer<CustomClass>(propertySerializers);
 
         public class CustomClass
         {

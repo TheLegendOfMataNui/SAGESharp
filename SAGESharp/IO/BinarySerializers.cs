@@ -375,6 +375,8 @@ namespace SAGESharp.IO
 
         public DefaultBinarySerializer(IReadOnlyList<IPropertyBinarySerializer<T>> propertyBinarySerializers)
         {
+            Validate.ArgumentNotNull(nameof(propertyBinarySerializers), propertyBinarySerializers);
+
             constructor = typeof(T).GetConstructor(Array.Empty<Type>())
                 ?.Let<ConstructorInfo, Func<T>>(ci => () => (T)ci.Invoke(Array.Empty<object>()))
                 ?? throw new BadTypeException(typeof(T), $"Type {typeof(T).Name} has no public constructor with no arguments");
@@ -382,8 +384,13 @@ namespace SAGESharp.IO
             this.propertyBinarySerializers = propertyBinarySerializers;
         }
 
-        public T Read(IBinaryReader binaryReader) => constructor()
-            .Also(o => propertyBinarySerializers.ForEach(pbs => pbs.ReadAndSet(binaryReader, o)));
+        public T Read(IBinaryReader binaryReader)
+        {
+            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+
+            return constructor()
+                .Also(o => propertyBinarySerializers.ForEach(pbs => pbs.ReadAndSet(binaryReader, o)));
+        }
 
         public void Write(IBinaryWriter binaryWriter, T value)
         {
