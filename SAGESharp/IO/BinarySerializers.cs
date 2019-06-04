@@ -316,6 +316,8 @@ namespace SAGESharp.IO
 
         public T Read(IBinaryReader binaryReader)
         {
+            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+
             T result = constructor();
 
             result.Read(binaryReader);
@@ -324,7 +326,12 @@ namespace SAGESharp.IO
         }
 
         public void Write(IBinaryWriter binaryWriter, T value)
-            => value.Write(binaryWriter);
+        {
+            Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
+            Validate.ArgumentNotNull<object>(nameof(value), value);
+
+            value.Write(binaryWriter);
+        }
     }
 
     /// <summary>

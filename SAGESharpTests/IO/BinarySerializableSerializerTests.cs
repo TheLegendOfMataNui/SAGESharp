@@ -17,6 +17,8 @@ namespace SAGESharp.IO
 
         private readonly IBinaryWriter writer = Substitute.For<IBinaryWriter>();
 
+        private readonly IBinarySerializer<BinarySerializable> serializer = new BinarySerializableSerializer<BinarySerializable>();
+
         [SetUp]
         public void Setup()
         {
@@ -31,10 +33,7 @@ namespace SAGESharp.IO
 
             reader.ReadUInt32().Returns(value);
 
-            var result = new BinarySerializableSerializer<BinarySerializable>()
-                .Read(reader);
-
-            result.Value.Should().Be(value);
+            serializer.Read(reader).Value.Should().Be(value);
 
             reader.Received().ReadUInt32();
         }
@@ -47,10 +46,40 @@ namespace SAGESharp.IO
                 Value = 0xFFEECCDD
             };
 
-            new BinarySerializableSerializer<BinarySerializable>()
-                .Write(writer, serializable);
+            serializer.Write(writer, serializable);
 
             writer.Received().WriteUInt32(serializable.Value);
+        }
+
+        [Test]
+        public void Test_Reading_From_A_Null_BinaryReader()
+        {
+            Action action = () => serializer.Read(null);
+
+            action
+                .Should()
+                .Throw<ArgumentNullException>()
+                .Where(e => e.Message.Contains("binaryReader"));
+        }
+
+        [Test]
+        public void Test_Writing_To_A_Null_BinaryWriter()
+        {
+            Action action = () => serializer.Write(null, new BinarySerializable());
+
+            action.Should()
+                .Throw<ArgumentNullException>()
+                .Where(e => e.Message.Contains("binaryWriter"));
+        }
+
+        [Test]
+        public void Test_Writing_A_Null_Object()
+        {
+            Action action = () => serializer.Write(writer, null);
+
+            action.Should()
+                .Throw<ArgumentNullException>()
+                .Where(e => e.Message.Contains("value"));
         }
 
         [Test]
