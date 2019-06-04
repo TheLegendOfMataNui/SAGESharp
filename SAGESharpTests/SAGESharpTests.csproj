@@ -86,6 +86,7 @@
     <Compile Include="IO\BinarySerializersReadingTests.cs" />
     <Compile Include="IO\BinaryWriterWrapperTests.cs" />
     <Compile Include="IO\DefaultBinarySerializerFactoryTests.cs" />
+    <Compile Include="IO\DefaultBinarySerializerTests.cs" />
     <Compile Include="IO\DefaultPropertyBinarySerializerFactoryTests.cs" />
     <Compile Include="IO\DefaultPropertyBinarySerializerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
