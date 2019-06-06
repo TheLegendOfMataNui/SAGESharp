@@ -115,5 +115,17 @@ namespace SAGESharp.IO
                 .Type
                 .Should()
                 .Be(typeof(char));
+
+        [Test]
+        public void Test_Reading_From_A_Null_Reader()
+        {
+            IBinarySerializer<int> serializer = new PrimitiveBinarySerializer<int>();
+            Action action = () => serializer.Read(null);
+
+            action
+                .Should()
+                .Throw<ArgumentNullException>()
+                .Where(e => e.Message.Contains("binaryReader"));
+        }
     }
 }

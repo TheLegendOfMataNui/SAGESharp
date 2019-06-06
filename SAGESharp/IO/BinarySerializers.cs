@@ -162,7 +162,12 @@ namespace SAGESharp.IO
 
     internal sealed class PrimitiveBinarySerializer<T> : IBinarySerializer<T>
     {
-        public T Read(IBinaryReader binaryReader) => (T)ReadAsObject(binaryReader);
+        public T Read(IBinaryReader binaryReader)
+        {
+            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+
+            return (T)ReadAsObject(binaryReader);
+        }
 
         private object ReadAsObject(IBinaryReader binaryReader)
         {
