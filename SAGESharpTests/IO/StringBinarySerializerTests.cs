@@ -7,6 +7,7 @@ using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
+using System;
 
 namespace SAGESharp.IO
 {
@@ -56,6 +57,17 @@ namespace SAGESharp.IO
                 reader.ReadBytes(expected.Length);
                 reader.Position = 50;
             });
+        }
+
+        [Test]
+        public void Test_Reading_From_A_Null_Reader()
+        {
+            Action action = () => serializer.Read(null);
+
+            action
+                .Should()
+                .Throw<ArgumentNullException>()
+                .Where(e => e.Message.Contains("binaryReader"));
         }
     }
 }

@@ -238,10 +238,7 @@ namespace SAGESharp.IO
     {
         public string Read(IBinaryReader binaryReader)
         {
-            if (binaryReader == null)
-            {
-                throw new ArgumentNullException();
-            }
+            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
 
             var offset = binaryReader.ReadUInt32();
 
