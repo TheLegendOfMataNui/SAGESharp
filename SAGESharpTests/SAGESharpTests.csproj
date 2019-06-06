@@ -89,6 +89,7 @@
     <Compile Include="IO\DefaultBinarySerializerTests.cs" />
     <Compile Include="IO\DefaultPropertyBinarySerializerFactoryTests.cs" />
     <Compile Include="IO\DefaultPropertyBinarySerializerTests.cs" />
+    <Compile Include="IO\PrimitiveBinarySerializerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SLB\ASCIIExtensionsTests.cs" />
     <Compile Include="SLB\Cinematic\Camera\CameraEqualityTests.cs" />
