@@ -89,11 +89,6 @@ namespace SAGESharp.IO
             {
                 return new PrimitiveBinarySerializer<T>();
             }
-            else if (typeof(T) == typeof(Identifier))
-            {
-                dynamic result = new CastSerializer<Identifier, uint>(new PrimitiveBinarySerializer<uint>());
-                return (IBinarySerializer<T>)result;
-            }
             else if (typeof(T).IsEnum)
             {
                 var underlyingType = Enum.GetUnderlyingType(typeof(T));
@@ -211,11 +206,20 @@ namespace SAGESharp.IO
         }
 
         private static IPropertyBinarySerializer<T> BuildSerializer<T>(PropertyInfo propertyInfo, IBinarySerializerFactory binarySerializerFactory)
-            => typeof(DefaultPropertyBinarySerializer<,>)
-                .MakeGenericType(new Type[] { typeof(T), propertyInfo.PropertyType })
-                .GetConstructor(new Type[] { typeof(IBinarySerializer<>).MakeGenericType(propertyInfo.PropertyType), typeof(PropertyInfo) })
-                .Invoke(new object[] { GetSerializerForPropertyType(propertyInfo, binarySerializerFactory), propertyInfo })
-                .As<IPropertyBinarySerializer<T>>();
+        {
+            if (propertyInfo.PropertyType == typeof(Identifier))
+            {
+                return new IdentifierPropertyBinarySerializer<T>(propertyInfo);
+            }
+            else
+            {
+                return typeof(DefaultPropertyBinarySerializer<,>)
+                    .MakeGenericType(new Type[] { typeof(T), propertyInfo.PropertyType })
+                    .GetConstructor(new Type[] { typeof(IBinarySerializer<>).MakeGenericType(propertyInfo.PropertyType), typeof(PropertyInfo) })
+                    .Invoke(new object[] { GetSerializerForPropertyType(propertyInfo, binarySerializerFactory), propertyInfo })
+                    .As<IPropertyBinarySerializer<T>>();
+            }
+        }
 
         private static object GetSerializerForPropertyType(PropertyInfo propertyInfo, IBinarySerializerFactory binarySerializerFactory)
             => typeof(IBinarySerializerFactory)

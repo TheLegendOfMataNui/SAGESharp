@@ -7,6 +7,7 @@ using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
+using SAGESharp.SLB;
 using System.Collections.Generic;
 
 namespace SAGESharp.IO
@@ -30,7 +31,7 @@ namespace SAGESharp.IO
 
             serializers
                 .Should()
-                .HaveCount(3);
+                .HaveCount(4);
 
             serializers[0]
                 .Should()
@@ -43,6 +44,10 @@ namespace SAGESharp.IO
             serializers[2]
                 .Should()
                 .BeOfType<DefaultPropertyBinarySerializer<CustomClass, IList<byte>>>();
+
+            serializers[3]
+                .Should()
+                .BeOfType<IdentifierPropertyBinarySerializer<CustomClass>>();
 
             serializerFactory.Received().GetSerializerForType<int>();
             serializerFactory.Received().GetSerializerForType<string>();
@@ -60,6 +65,9 @@ namespace SAGESharp.IO
 
             [SerializableProperty(3)]
             public IList<byte> List { get; set; }
+
+            [SerializableProperty(4)]
+            public Identifier Identifier { get; set; }
 
             public CustomClass IgnoredValue { get; set; }
         }

@@ -6,7 +6,6 @@
 using FluentAssertions;
 using NSubstitute;
 using NUnit.Framework;
-using SAGESharp.SLB;
 using SAGESharp.Testing;
 using System.Collections.Generic;
 
@@ -59,7 +58,6 @@ namespace SAGESharp.IO
 
         static object[] CASTS_TEST_CASES() => new object[]
         {
-            new CastTestCase<Identifier, uint>(),
             new CastTestCase<ByteEnum, byte>(),
             new CastTestCase<Int32Enum, int>(),
             new CastTestCase<UInt32Enum, uint>()
