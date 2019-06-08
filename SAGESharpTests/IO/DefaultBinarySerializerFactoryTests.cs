@@ -81,7 +81,7 @@ namespace SAGESharp.IO
         #endregion
 
         #region String test cases
-        [TestCase]
+        [Test]
         public void Test_Get_Serializer_For_String() => factory
             .GetSerializerForType<string>()
             .Should()
@@ -116,7 +116,7 @@ namespace SAGESharp.IO
         #endregion
 
         #region Class test cases
-        [TestCase]
+        [Test]
         public void Test_Get_Serialier_For_Class()
         {
             propertyBinarySerializerFactory
@@ -141,7 +141,7 @@ namespace SAGESharp.IO
         #endregion
 
         #region Negative test cases
-        [TestCase]
+        [Test]
         public void Test_Get_Serializer_For_Struct() => factory
             .Invoking(f => f.GetSerializerForType<TestStruct>())
             .Should()
@@ -158,7 +158,7 @@ namespace SAGESharp.IO
             public byte Byte { get; set; }
         }
 
-        [TestCase]
+        [Test]
         public void Test_Get_Serializer_For_Interface() => factory
             .Invoking(f => f.GetSerializerForType<ITestInterface>())
             .Should()
@@ -173,7 +173,7 @@ namespace SAGESharp.IO
         {
         }
 
-        [TestCase]
+        [Test]
         public void Test_Get_Serializer_For_Abstract_Type() => factory
             .Invoking(f => f.GetSerializerForType<AbstractTestClass>())
             .Should()

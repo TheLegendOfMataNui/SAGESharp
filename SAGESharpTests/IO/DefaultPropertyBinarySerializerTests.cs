@@ -32,7 +32,7 @@ namespace SAGESharp.IO
             serializer.ClearSubstitute();
         }
 
-        [TestCase]
+        [Test]
         public void Test_Reading_A_Property_Into_An_Object()
         {
             var obj = new Class();
@@ -53,7 +53,7 @@ namespace SAGESharp.IO
             public string Property { get; set; }
         }
 
-        [TestCase]
+        [Test]
         public void Test_Build_A_DefaultPropertyBinarySerializer_With_A_Null_Serializer()
         {
             Action action = () => new DefaultPropertyBinarySerializer<Class, string>(null, propertyInfo);
@@ -64,7 +64,7 @@ namespace SAGESharp.IO
                 .Where(e => e.Message.Contains("serializer"));
         }
 
-        [TestCase]
+        [Test]
         public void Test_Build_A_DefaultPropertyBinarySerializer_With_A_Null_PropertyInfo()
         {
             Action action = () => new DefaultPropertyBinarySerializer<Class, string>(serializer, null);

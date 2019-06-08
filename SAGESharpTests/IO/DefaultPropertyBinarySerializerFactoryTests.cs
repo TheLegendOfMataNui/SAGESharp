@@ -23,7 +23,7 @@ namespace SAGESharp.IO
             serializerFactory.ClearSubstitute();
         }
 
-        [TestCase]
+        [Test]
         public void Test_Getting_Serializers_For_A_Valid_Class()
         {
             var serializers = factory.GetPropertySerializersForType<CustomClass>(serializerFactory);
@@ -64,7 +64,7 @@ namespace SAGESharp.IO
             public CustomClass IgnoredValue { get; set; }
         }
 
-        [TestCase]
+        [Test]
         public void Test_Getting_Serializers_For_A_Class_With_No_Annotations() => factory
             .Invoking(f => f.GetPropertySerializersForType<ClassWithNoAnnotations>(serializerFactory))
             .Should()
@@ -80,7 +80,7 @@ namespace SAGESharp.IO
             public int Int { get; set; }
         }
 
-        [TestCase]
+        [Test]
         public void Test_Reading_A_Class_With_An_Annotated_Property_With_No_Setter() => factory
             .Invoking(f => f.GetPropertySerializersForType<ClassWithAnnotatedPropertyWithNoSetter>(serializerFactory))
             .Should()
@@ -97,7 +97,7 @@ namespace SAGESharp.IO
             public int Int { get; }
         }
 
-        [TestCase]
+        [Test]
         public void Test_Reading_A_Class_With_Properties_With_Duplicated_Attribute_Order() => factory
             .Invoking(f => f.GetPropertySerializersForType<ClassWithPropertiesWithDuplicatedAttributeOrder>(serializerFactory))
             .Should()

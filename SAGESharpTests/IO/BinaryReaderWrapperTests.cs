@@ -28,13 +28,13 @@ namespace SAGESharp.IO
             stream.Position = 0;
         }
 
-        [TestCase]
+        [Test]
         public void Test_Create_A_Reader_With_A_Null_Stream() => this
             .Invoking(_ => new BinaryReaderWrapper(null))
             .Should()
             .Throw<ArgumentNullException>();
 
-        [TestCase]
+        [Test]
         public void Test_Getting_The_Position()
         {
             stream.Position = 50;
@@ -42,7 +42,7 @@ namespace SAGESharp.IO
             reader.Position.Should().Be(50);
         }
 
-        [TestCase]
+        [Test]
         public void Test_Setting_The_Position()
         {
             reader.Position = 30;
@@ -63,7 +63,7 @@ namespace SAGESharp.IO
             stream.Position.Should().Be(testData.Bytes.Length);
         }
 
-        [TestCase]
+        [Test]
         public void Test_Reading_A_Byte_Array()
         {
             var expected = new byte[] { 0x01, 0x02, 0x03 };
@@ -78,7 +78,7 @@ namespace SAGESharp.IO
             stream.Position.Should().Be(expected.Length);
         }
 
-        [TestCase]
+        [Test]
         public void Test_Reading_An_Empty_Byte_Array()
         {
             reader
@@ -103,7 +103,7 @@ namespace SAGESharp.IO
             stream.Position.Should().Be(subArray.Length);
         }
 
-        [TestCase]
+        [Test]
         public void Test_OnPositionDo_With_Result()
         {
             SetupStreamWithArray(array: new byte[] { 100 }, position: 40);
@@ -130,7 +130,7 @@ namespace SAGESharp.IO
                 .Be(20);
         }
 
-        [TestCase]
+        [Test]
         public void Test_OnPositionDo_Without_Result()
         {
             SetupStreamWithArray(array: new byte[] { 100 }, position: 40);
