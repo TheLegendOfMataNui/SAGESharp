@@ -8,8 +8,6 @@ using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
 using SAGESharp.SLB;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SAGESharp.IO
 {
@@ -61,41 +59,6 @@ namespace SAGESharp.IO
         {
             A = 0xAB,
             B = 0xBB
-        }
-
-        [Test]
-        public void Test_Reading_A_List()
-        {
-            var expected = new List<char>() { 'a', 'b', 'c', 'd', 'e' };
-            var serializer = Substitute.For<IBinarySerializer<char>>();
-
-            // Returns count and offset
-            reader.ReadUInt32().Returns((uint)expected.Count, (uint)70);
-
-            reader.Position.Returns(45);
-
-            // Returns the entire "expected" list from serailizer.Read(reader)
-            serializer.Read(reader).Returns(expected[0], expected.Skip(1).Cast<object>().ToArray());
-
-            new ListBinarySerializer<char>(serializer)
-                .Read(reader)
-                .Should()
-                .BeOfType<List<char>>()
-                .Which
-                .Should()
-                .Equal(expected);
-
-            Received.InOrder(() =>
-            {
-                reader.ReadUInt32();
-                reader.ReadUInt32();
-                reader.Position = 70;
-                foreach (var _ in expected)
-                {
-                    serializer.Read(reader);
-                }
-                reader.Position = 45;
-            });
         }
     }
 }
