@@ -310,8 +310,7 @@ namespace SAGESharp.IO
 
         public BinarySerializableSerializer()
         {
-            constructor = typeof(T).GetConstructor(Array.Empty<Type>())
-                .Let<ConstructorInfo, Func<T>>(ci => () => (T)ci.Invoke(Array.Empty<object>()));
+            constructor = () => (T)Activator.CreateInstance(typeof(T), null);
         }
 
         public T Read(IBinaryReader binaryReader)
