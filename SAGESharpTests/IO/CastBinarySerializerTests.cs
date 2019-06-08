@@ -10,24 +10,31 @@ using NUnit.Framework;
 
 namespace SAGESharp.IO
 {
-    class BinarySerializersReadingTests
+    class CastBinarySerializerTests
     {
-        private readonly IBinaryReader reader = Substitute.For<IBinaryReader>();
+        private readonly IBinaryReader reader;
 
-        private readonly IBinarySerializerFactory factory = Substitute.For<IBinarySerializerFactory>();
+        private readonly IBinarySerializer<byte> innerSerializer;
+
+        private readonly IBinarySerializer<TestEnum> serializer;
+
+        public CastBinarySerializerTests()
+        {
+            reader = Substitute.For<IBinaryReader>();
+            innerSerializer = Substitute.For<IBinarySerializer<byte>>();
+            serializer = new CastBinarySerializer<TestEnum, byte>(innerSerializer);
+        }
 
         [SetUp]
         public void Setup()
         {
             reader.ClearSubstitute();
-            factory.ClearSubstitute();
+            innerSerializer.ClearSubstitute();
         }
 
         [Test]
         public void Test_Reading_An_Enum_With_CastSerializer()
         {
-            var innerSerializer = Substitute.For<IBinarySerializer<byte>>();
-
             innerSerializer.Read(reader).Returns((byte)TestEnum.A);
 
             new CastBinarySerializer<TestEnum, byte>(innerSerializer)

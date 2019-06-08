@@ -83,8 +83,8 @@
     <Compile Include="EqualityUtilsTests.cs" />
     <Compile Include="IO\BinaryReaderWrapperTests.cs" />
     <Compile Include="IO\BinarySerializableSerializerTests.cs" />
-    <Compile Include="IO\BinarySerializersReadingTests.cs" />
     <Compile Include="IO\BinaryWriterWrapperTests.cs" />
+    <Compile Include="IO\CastBinarySerializerTests.cs" />
     <Compile Include="IO\DefaultBinarySerializerFactoryTests.cs" />
     <Compile Include="IO\DefaultBinarySerializerTests.cs" />
     <Compile Include="IO\DefaultPropertyBinarySerializerFactoryTests.cs" />
