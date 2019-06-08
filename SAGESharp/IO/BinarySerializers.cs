@@ -346,6 +346,8 @@ namespace SAGESharp.IO
         /// 
         /// <param name="reader">The reader where the data will be read.</param>
         /// <param name="obj"></param>
+        /// 
+        /// <exception cref="ArgumentNullException">If either argument is null.</exception>
         void ReadAndSet(IBinaryReader reader, T obj);
     }
 
@@ -357,13 +359,22 @@ namespace SAGESharp.IO
 
         public DefaultPropertyBinarySerializer(IBinarySerializer<V> serializer, PropertyInfo propertyInfo)
         {
+            Validate.ArgumentNotNull(nameof(serializer), serializer);
+            Validate.ArgumentNotNull(nameof(propertyInfo), propertyInfo);
+
             this.serializer = serializer;
             this.propertyInfo = propertyInfo;
         }
 
-        public void ReadAndSet(IBinaryReader reader, T obj) => serializer
-            .Read(reader)
-            .Also(v => propertyInfo.SetValue(obj, v));
+        public void ReadAndSet(IBinaryReader reader, T obj)
+        {
+            Validate.ArgumentNotNull(nameof(reader), reader);
+            Validate.ArgumentNotNull<object>(nameof(obj), obj);
+
+            serializer
+                .Read(reader)
+                .Also(v => propertyInfo.SetValue(obj, v));
+        }
     }
 
     internal sealed class DefaultBinarySerializer<T> : IBinarySerializer<T>

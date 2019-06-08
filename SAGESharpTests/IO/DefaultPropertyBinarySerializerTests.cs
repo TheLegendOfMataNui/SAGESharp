@@ -7,6 +7,7 @@ using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
+using System;
 using System.Reflection;
 
 namespace SAGESharp.IO
@@ -15,13 +16,13 @@ namespace SAGESharp.IO
     {
         private readonly IBinarySerializer<string> serializer = Substitute.For<IBinarySerializer<string>>();
 
+        private readonly PropertyInfo propertyInfo;
+
         private readonly IPropertyBinarySerializer<Class> propertySerializer;
 
         public DefaultPropertyBinarySerializerTests()
         {
-            PropertyInfo propertyInfo = typeof(Class)
-                .GetProperty(nameof(Class.Property));
-
+            propertyInfo = typeof(Class).GetProperty(nameof(Class.Property));
             propertySerializer = new DefaultPropertyBinarySerializer<Class, string>(serializer, propertyInfo);
         }
 
@@ -50,6 +51,28 @@ namespace SAGESharp.IO
         class Class
         {
             public string Property { get; set; }
+        }
+
+        [TestCase]
+        public void Test_Build_A_DefaultPropertyBinarySerializer_With_A_Null_Serializer()
+        {
+            Action action = () => new DefaultPropertyBinarySerializer<Class, string>(null, propertyInfo);
+
+            action
+                .Should()
+                .Throw<ArgumentNullException>()
+                .Where(e => e.Message.Contains("serializer"));
+        }
+
+        [TestCase]
+        public void Test_Build_A_DefaultPropertyBinarySerializer_With_A_Null_PropertyInfo()
+        {
+            Action action = () => new DefaultPropertyBinarySerializer<Class, string>(serializer, null);
+
+            action
+                .Should()
+                .Throw<ArgumentNullException>()
+                .Where(e => e.Message.Contains("propertyInfo"));
         }
     }
 }
