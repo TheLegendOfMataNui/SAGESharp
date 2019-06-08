@@ -268,6 +268,8 @@ namespace SAGESharp.IO
 
         public ListBinarySerializer(IBinarySerializer<T> serializer)
         {
+            Validate.ArgumentNotNull(nameof(serializer), serializer);
+
             var listType = typeof(List<T>);
 
             constructor = listType.GetConstructor(Array.Empty<Type>());
@@ -277,10 +279,7 @@ namespace SAGESharp.IO
 
         public IList<T> Read(IBinaryReader binaryReader)
         {
-            if (binaryReader == null)
-            {
-                throw new ArgumentNullException();
-            }
+            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
 
             var count = binaryReader.ReadUInt32();
             var offset = binaryReader.ReadUInt32();

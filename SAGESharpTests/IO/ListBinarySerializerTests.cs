@@ -7,6 +7,7 @@ using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -66,6 +67,28 @@ namespace SAGESharp.IO
                 }
                 reader.Position = 45;
             });
+        }
+
+        [Test]
+        public void Test_Building_A_ListBinarySerializer_With_A_Null_BinarySerializer()
+        {
+            Action action = () => new ListBinarySerializer<object>(null);
+
+            action
+                .Should()
+                .Throw<ArgumentNullException>()
+                .Where(e => e.Message.Contains("serializer"));
+        }
+
+        [Test]
+        public void Test_Test_Reading_From_A_Null_Reader()
+        {
+            Action action = () => serializer.Read(null);
+
+            action
+                .Should()
+                .Throw<ArgumentNullException>()
+                .Where(e => e.Message.Contains("binaryReader"));
         }
     }
 }
