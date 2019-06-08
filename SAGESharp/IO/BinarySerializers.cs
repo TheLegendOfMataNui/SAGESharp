@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
+using Identifier = SAGESharp.SLB.Identifier;
+
 namespace SAGESharp.IO
 {
     /// <summary>
@@ -374,6 +376,28 @@ namespace SAGESharp.IO
             serializer
                 .Read(reader)
                 .Also(v => propertyInfo.SetValue(obj, v));
+        }
+    }
+
+    internal sealed class IdentifierPropertyBinarySerializer<T> : IPropertyBinarySerializer<T>
+    {
+        private readonly PropertyInfo propertyInfo;
+
+        public IdentifierPropertyBinarySerializer(PropertyInfo propertyInfo)
+        {
+            Validate.ArgumentNotNull(nameof(propertyInfo), propertyInfo);
+
+            this.propertyInfo = propertyInfo;
+        }
+
+        public void ReadAndSet(IBinaryReader reader, T obj)
+        {
+            Validate.ArgumentNotNull(nameof(reader), reader);
+            Validate.ArgumentNotNull<object>(nameof(obj), obj);
+
+            Identifier identifier = reader.ReadUInt32();
+
+            propertyInfo.SetValue(obj, identifier);
         }
     }
 
