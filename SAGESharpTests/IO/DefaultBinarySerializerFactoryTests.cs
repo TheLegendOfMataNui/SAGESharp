@@ -54,7 +54,7 @@ namespace SAGESharp.IO
         public void Test_Get_Serializer_For_Castable_Type<T, U>(CastTestCase<T, U> testcaseData)
             => factory.GetSerializerForType<T>()
                 .Should()
-                .BeOfType<CastSerializer<T, U>>();
+                .BeOfType<CastBinarySerializer<T, U>>();
 
         static object[] CASTS_TEST_CASES() => new object[]
         {

@@ -98,7 +98,7 @@ namespace SAGESharp.IO
                     .GetConstructor(Array.Empty<Type>())
                     .Invoke(Array.Empty<object>());
 
-                var result = typeof(CastSerializer<,>)
+                var result = typeof(CastBinarySerializer<,>)
                     .MakeGenericType(typeof(T), underlyingType)
                     .GetConstructor(new Type[] { typeof(IBinarySerializer<>).MakeGenericType(underlyingType) })
                     .Invoke(new object[] { innerSerializer });

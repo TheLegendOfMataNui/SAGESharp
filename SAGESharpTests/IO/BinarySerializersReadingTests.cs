@@ -30,7 +30,7 @@ namespace SAGESharp.IO
 
             innerSerializer.Read(reader).Returns((byte)TestEnum.A);
 
-            new CastSerializer<TestEnum, byte>(innerSerializer)
+            new CastBinarySerializer<TestEnum, byte>(innerSerializer)
                 .Read(reader)
                 .Should()
                 .Be(TestEnum.A);

@@ -215,11 +215,11 @@ namespace SAGESharp.IO
         }
     }
 
-    internal sealed class CastSerializer<T, U> : IBinarySerializer<T>
+    internal sealed class CastBinarySerializer<T, U> : IBinarySerializer<T>
     {
         private readonly IBinarySerializer<U> innerSerializer;
 
-        public CastSerializer(IBinarySerializer<U> innerSerializer)
+        public CastBinarySerializer(IBinarySerializer<U> innerSerializer)
             => this.innerSerializer = innerSerializer;
 
         public T Read(IBinaryReader binaryReader)
