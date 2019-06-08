@@ -82,15 +82,6 @@ namespace SAGESharp.IO
                 .Where(e => e.Message.Contains("value"));
         }
 
-        [Test]
-        public void Test_Creating_A_BinarySerializableSerializer_For_A_Type_With_No_Public_Empty_Constructor()
-        {
-            this.Invoking(_ => new BinarySerializableSerializer<BinarySerializableWithPrivateConstructor>())
-                .Should()
-                .Throw<BadTypeException>()
-                .Where(e => e.Message.Contains($"Type {nameof(BinarySerializableWithPrivateConstructor)} has no public constructor with no arguments"));
-        }
-
         class BinarySerializable : IBinarySerializable
         {
             public uint Value { get; set; }

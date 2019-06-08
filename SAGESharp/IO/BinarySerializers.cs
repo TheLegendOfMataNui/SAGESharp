@@ -304,15 +304,14 @@ namespace SAGESharp.IO
         }
     }
 
-    internal sealed class BinarySerializableSerializer<T> : IBinarySerializer<T> where T : IBinarySerializable
+    internal sealed class BinarySerializableSerializer<T> : IBinarySerializer<T> where T : IBinarySerializable, new()
     {
         private readonly Func<T> constructor;
 
         public BinarySerializableSerializer()
         {
             constructor = typeof(T).GetConstructor(Array.Empty<Type>())
-                ?.Let<ConstructorInfo, Func<T>>(ci => () => (T)ci.Invoke(Array.Empty<object>()))
-                ?? throw new BadTypeException(typeof(T), $"Type {typeof(T).Name} has no public constructor with no arguments");
+                .Let<ConstructorInfo, Func<T>>(ci => () => (T)ci.Invoke(Array.Empty<object>()));
         }
 
         public T Read(IBinaryReader binaryReader)
