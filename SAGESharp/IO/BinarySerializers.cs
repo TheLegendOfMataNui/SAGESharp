@@ -224,9 +224,7 @@ namespace SAGESharp.IO
 
         public T Read(IBinaryReader binaryReader)
         {
-            // I don't like to use dynamic but it seems is
-            // the only way to perform the casting here.
-            dynamic result = innerSerializer.Read(binaryReader);
+            object result = innerSerializer.Read(binaryReader);
             return (T)result;
         }
 
