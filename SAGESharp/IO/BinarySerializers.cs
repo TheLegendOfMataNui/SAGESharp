@@ -220,10 +220,16 @@ namespace SAGESharp.IO
         private readonly IBinarySerializer<U> innerSerializer;
 
         public CastBinarySerializer(IBinarySerializer<U> innerSerializer)
-            => this.innerSerializer = innerSerializer;
+        {
+            Validate.ArgumentNotNull(nameof(innerSerializer), innerSerializer);
+
+            this.innerSerializer = innerSerializer;
+        }
 
         public T Read(IBinaryReader binaryReader)
         {
+            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+
             object result = innerSerializer.Read(binaryReader);
             return (T)result;
         }

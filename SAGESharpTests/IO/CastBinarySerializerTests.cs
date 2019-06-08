@@ -7,6 +7,7 @@ using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
+using System;
 
 namespace SAGESharp.IO
 {
@@ -49,6 +50,28 @@ namespace SAGESharp.IO
         {
             A = 0xAB,
             B = 0xBB
+        }
+
+        [Test]
+        public void Test_Read_From_A_Null_Reader()
+        {
+            Action action = () => new CastBinarySerializer<TestEnum, byte>(null);
+
+            action
+                .Should()
+                .Throw<ArgumentNullException>()
+                .Where(e => e.Message.Contains("innerSerializer"));
+        }
+
+        [Test]
+        public void Test_Read_To_A_Null_Object()
+        {
+            Action action = () => serializer.Read(null);
+
+            action
+                .Should()
+                .Throw<ArgumentNullException>()
+                .Where(e => e.Message.Contains("binaryReader"));
         }
     }
 }
