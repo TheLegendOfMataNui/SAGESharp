@@ -107,7 +107,7 @@ namespace SAGESharp.IO
             }
             else if (typeof(T) == typeof(string))
             {
-                dynamic result = new StringBinarySerializer();
+                object result = new StringBinarySerializer();
                 return (IBinarySerializer<T>)result;
             }
             else if (IsListType<T>())
