@@ -27,6 +27,8 @@ namespace SAGESharp.IO
         /// <param name="binaryReader">The binary reader used to read the object.</param>
         /// 
         /// <returns>The object read from the <paramref name="binaryReader"/>.</returns>
+        /// 
+        /// <exception cref="ArgumentNullException">If <paramref name="binaryReader"/> is null.</exception>
         T Read(IBinaryReader binaryReader);
 
         /// <summary>
@@ -35,6 +37,8 @@ namespace SAGESharp.IO
         /// 
         /// <param name="binaryWriter">The output binary writer were the object will be written.</param>
         /// <param name="value">The object to write.</param>
+        /// 
+        /// <exception cref="ArgumentNullException">If either <paramref name="binaryWriter"/> or <paramref name="value"/> are null.</exception>
         void Write(IBinaryWriter binaryWriter, T value);
     }
 
