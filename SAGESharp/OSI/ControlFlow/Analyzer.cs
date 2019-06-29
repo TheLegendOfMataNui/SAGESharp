@@ -138,7 +138,6 @@ namespace SAGESharp.OSI.ControlFlow
                     // If branch
                     // Remove outTrueJump's node and add the text to node, and then switch over all the jumps that came from out of outTrueJump's node
                     LSSNode trueNode = node.OutTrueJump.Destination as LSSNode;
-                    //node.Text += "if() {\n   " + trueNode.ToString().Replace("\n", "\n   ").TrimEnd(' ') + "}\n";
                     node.Statements.Add(new IfStatement(new SourceSpan(), node.EndConditional, new BlockStatement(new SourceSpan(), trueNode.Statements), null)); ;
 
                     trueNode.OutAlwaysJump.Destination.InJumps.Remove(trueNode);
@@ -157,8 +156,16 @@ namespace SAGESharp.OSI.ControlFlow
                     LSSNode trueNode = node.OutTrueJump.Destination as LSSNode;
                     LSSNode falseNode = node.OutFalseJump.Destination as LSSNode;
                     Node alwaysNode = trueNode.OutAlwaysJump.Destination;
-                    //node.Text += "if () {\n   " + trueNode.ToString().Replace("\n", "\n   ").TrimEnd(' ') + "}\nelse {\n   " + falseNode.ToString().Replace("\n", "\n   ").TrimEnd(' ') + "}\n";
-                    node.Statements.Add(new IfStatement(new SourceSpan(), node.EndConditional, new BlockStatement(new SourceSpan(), trueNode.Statements), new IfStatement(new SourceSpan(), null, new BlockStatement(new SourceSpan(), falseNode.Statements), null)));
+                    IfStatement elseIf = null;
+                    if (falseNode?.Statements.Count == 1 && falseNode.Statements[0] is IfStatement innerIf)
+                    {
+                        elseIf = innerIf;
+                    }
+                    else
+                    {
+                        elseIf = new IfStatement(new SourceSpan(), null, new BlockStatement(new SourceSpan(), falseNode.Statements), null);
+                    }
+                    node.Statements.Add(new IfStatement(new SourceSpan(), node.EndConditional, new BlockStatement(new SourceSpan(), trueNode.Statements), elseIf));
 
                     alwaysNode.InJumps.Remove(trueNode);
                     alwaysNode.InJumps.Remove(falseNode);
@@ -176,7 +183,6 @@ namespace SAGESharp.OSI.ControlFlow
                     // Loop
                     LSSNode bodyNode = node.OutTrueJump.Destination as LSSNode;
 
-                    //node.Text = "while (" + node.ToString().Replace("\n", "\n       ").TrimEnd(' ') + ") {\n   " + bodyNode.ToString().Replace("\n", "\n   ").TrimEnd(' ') + "}\n";
                     node.Statements.Add(new WhileStatement(new SourceSpan(), node.EndConditional, new BlockStatement(new SourceSpan(), bodyNode.Statements)));
 
                     node.OutJumps.Remove(bodyNode);
@@ -204,7 +210,6 @@ namespace SAGESharp.OSI.ControlFlow
 
                 node.OutJumps.Remove(follower);
 
-                //node.Text += follower.ToString();
                 node.Statements.AddRange(follower.Statements);
             }
 
