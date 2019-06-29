@@ -71,7 +71,7 @@ namespace SAGESharp.OSI.ControlFlow
                     }
                     else if (bcl.Opcode == BCLOpcode.CompareAndBranchIfFalse)
                     {
-                        currentNode.Instructions.Add(bcl);
+                        //currentNode.Instructions.Add(bcl);
 
                         short delta = bcl.Arguments[0].GetValue<short>();
 
@@ -114,7 +114,7 @@ namespace SAGESharp.OSI.ControlFlow
                     }
                     else if (bcl.Opcode == BCLOpcode.BranchAlways)
                     {
-                        currentNode.Instructions.Add(bcl);
+                        //currentNode.Instructions.Add(bcl);
 
                         short delta = bcl.Arguments[0].GetValue<short>();
 

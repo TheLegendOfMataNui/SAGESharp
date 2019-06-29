@@ -1279,7 +1279,7 @@ namespace SAGESharp.LSS
                 }
                 else
                 {
-                    throw new ArgumentException("Cannot assign into ");
+                    throw new ArgumentException("Cannot assign into " + s.Target.ToString());
                 }
             }
 

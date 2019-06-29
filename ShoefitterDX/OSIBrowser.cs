@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SAGESharp.LSS;
 using SAGESharp.OSI;
 using SAGESharp.OSI.ControlFlow;
 
@@ -65,14 +66,29 @@ namespace ShoefitterDX
         {
             SubroutineGraph g = null;
             bool isMemberMethod = false;
+            string name = "";
+            List<Token> parameters = new List<Token>();
             if (e.Node.Tag is OSIFile.FunctionInfo func)
             {
                 g = new SubroutineGraph(func.Instructions, func.BytecodeOffset);
+                name = func.Name;
+                for (int i = 0; i < func.ParameterCount; i++)
+                {
+                    parameters.Add(new Token(TokenType.Symbol, "param" + (i + 1), new SourceSpan()));
+                }
             }
             else if (e.Node.Tag is OSIFile.MethodInfo meth)
             {
                 g = new SubroutineGraph(meth.Instructions, meth.BytecodeOffset);
                 isMemberMethod = true;
+                name = OSI.Symbols[meth.NameSymbol];
+                if (meth.Instructions.Count > 0 && meth.Instructions[0] is BCLInstruction argCheck && argCheck.Opcode == BCLOpcode.MemberFunctionArgumentCheck)
+                {
+                    for (int i = 0; i < argCheck.Arguments[0].GetValue<sbyte>() - 1; i++)
+                    {
+                        parameters.Add(new Token(TokenType.Symbol, "param" + (i + 1), new SourceSpan()));
+                    }
+                }
             }
 
             if (g != null)
@@ -83,12 +99,12 @@ namespace ShoefitterDX
                 }
                 if (GeneratePseudocodeCheckBox.Checked)
                 {
-                    g = Analyzer.ReconstructControlFlow(g);
+                    g = Analyzer.ReconstructControlFlow(g, new SAGESharp.LSS.Decompiler.SubroutineContext(OSI, name, isMemberMethod, parameters, new SourceSpan()));
                 }
                 CurrentInspector = new OSISubroutineInspector(g);
                 if (!GeneratePseudocodeCheckBox.Checked)
                 {
-                    g = Analyzer.ReconstructControlFlow(g);
+                    g = Analyzer.ReconstructControlFlow(g, new SAGESharp.LSS.Decompiler.SubroutineContext(OSI, name, isMemberMethod, parameters, new SourceSpan()));
                 }
 
                 InspectorPanel.Controls.Add(CurrentInspector);

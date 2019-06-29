@@ -6,11 +6,65 @@ using System.Threading.Tasks;
 using SAGESharp.OSI;
 using SAGESharp.LSS.Statements;
 using SAGESharp.LSS.Expressions;
+using SAGESharp.OSI.ControlFlow;
 
 namespace SAGESharp.LSS
 {
     public static class Decompiler
     {
+        /// <summary>
+        /// Stores the state of decompilation so it can be used across continuous chunks of a subroutine.
+        /// </summary>
+        // TODO: Make private once the graph analysis is in Decompiler
+        public class SubroutineContext
+        {
+            public OSIFile OSI { get; }
+            public string Name { get; }
+            public bool IsMemberMethod { get; }
+            public List<Token> Parameters { get; }
+            //public List<Instruction> Instructions { get; }
+            public SourceSpan OutputSpan { get; }
+
+            public Stack<Expression> Stack { get; }
+            public List<string> Variables { get; }
+
+            public SubroutineContext(OSIFile osi, string name, bool isMemberMethod, List<Token> parameters, SourceSpan outputSpan)
+            {
+                this.OSI = osi;
+                this.Name = name;
+                this.IsMemberMethod = isMemberMethod;
+                this.Parameters = parameters;
+                this.OutputSpan = outputSpan;
+                this.Stack = new Stack<Expression>();
+                this.Variables = new List<string>();
+
+                if (this.IsMemberMethod)
+                    Variables.Add("this");
+                foreach (Token parameter in parameters)
+                    Variables.Add(parameter.Content);
+            }
+
+            public SubroutineContext(OSIFile osi, string name, bool isMemberMethod, List<Token> parameters, SourceSpan outputSpan, Stack<Expression> stack, List<string> variables)
+            {
+                this.OSI = osi;
+                this.Name = name;
+                this.IsMemberMethod = isMemberMethod;
+                this.Parameters = parameters;
+                this.OutputSpan = outputSpan;
+                this.Stack = stack;
+                this.Variables = variables;
+            }
+
+            /// <summary>
+            /// Returns a shallow clone of this SubroutineContext, with the stack cloned as well.
+            /// </summary>
+            /// <returns></returns>
+            public SubroutineContext CloneStack()
+            {
+                return new SubroutineContext(OSI, Name, IsMemberMethod, Parameters, OutputSpan, new Stack<Expression>(Stack.Reverse()), Variables);
+            }
+        }
+
         private static BinaryExpression DecompileBinaryExpression(Stack<Expression> stack, TokenType operatorType, string op, SourceSpan span)
         {
             Expression right = stack.Pop();
@@ -32,7 +86,7 @@ namespace SAGESharp.LSS
                 parameters.Add(new Token(TokenType.Symbol, "param" + (i + 1), outputSpan));
             }
 
-            return DecompileSubroutine(osi, function.Name, false, parameters, function.Instructions, outputSpan);
+            return DecompileSubroutine(osi, function.Name, false, parameters, function.Instructions, outputSpan, function.BytecodeOffset);
         }
 
         public static SubroutineStatement DecompileMethod(OSIFile osi, OSIFile.MethodInfo method, SourceSpan outputSpan)
@@ -45,20 +99,26 @@ namespace SAGESharp.LSS
                     parameters.Add(new Token(TokenType.Symbol, "param" + (i + 1), outputSpan));
                 }
             }
-            return DecompileSubroutine(osi, osi.Symbols[method.NameSymbol], true, parameters, method.Instructions, outputSpan);
+            return DecompileSubroutine(osi, osi.Symbols[method.NameSymbol], true, parameters, method.Instructions, outputSpan, method.BytecodeOffset);
         }
 
-        public static SubroutineStatement DecompileSubroutine(OSIFile osi, string name, bool isMemberMethod, List<Token> parameters, List<Instruction> instructions, SourceSpan outputSpan)
+        public static SubroutineStatement DecompileSubroutine(OSIFile osi, string name, bool isMemberMethod, List<Token> parameters, List<Instruction> instructions, SourceSpan outputSpan, uint bytecodeOffset)
+        {
+            //List<InstructionStatement> statements = new List<InstructionStatement>();
+
+            //Stack<Expression> stack = new Stack<Expression>();
+            //List<string> variables = new List<string>();
+
+            SubroutineGraph graph = Analyzer.ReconstructControlFlow(new SubroutineGraph(instructions, bytecodeOffset), new SubroutineContext(osi, name, isMemberMethod, parameters, outputSpan));
+
+            List<InstructionStatement> statements = (graph.StartNode.OutAlwaysJump.Destination as LSSNode).Statements;
+            BlockStatement body = new BlockStatement(outputSpan, statements);
+            return new SubroutineStatement(outputSpan, new Token(TokenType.Symbol, name, outputSpan), parameters, body);
+        }
+
+        public static List<InstructionStatement> DecompileSubroutineChunk(SubroutineContext context, List<Instruction> instructions)
         {
             List<InstructionStatement> statements = new List<InstructionStatement>();
-
-            Stack<Expression> stack = new Stack<Expression>();
-            List<string> variables = new List<string>();
-
-            if (isMemberMethod)
-                variables.Add("this");
-            foreach (Token parameter in parameters)
-                variables.Add(parameter.Content);
 
             for (int i = 0; i < instructions.Count; i++)
             {
@@ -67,178 +127,188 @@ namespace SAGESharp.LSS
                     switch (bcl.Opcode)
                     {
                         case BCLOpcode.Add:
-                            stack.Push(DecompileBinaryExpression(stack, TokenType.Plus, "+", outputSpan));
+                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.Plus, "+", context.OutputSpan));
                             break;
                         case BCLOpcode.And:
-                            stack.Push(DecompileBinaryExpression(stack, TokenType.AmpersandAmpersand, "&&", outputSpan));
+                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.AmpersandAmpersand, "&&", context.OutputSpan));
                             break;
                         case BCLOpcode.EqualTo:
-                            stack.Push(DecompileBinaryExpression(stack, TokenType.EqualsEquals, "==", outputSpan));
+                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.EqualsEquals, "==", context.OutputSpan));
                             break;
                         case BCLOpcode.LessThan:
-                            stack.Push(DecompileBinaryExpression(stack, TokenType.Less, "<", outputSpan));
+                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.Less, "<", context.OutputSpan));
                             break;
                         case BCLOpcode.GreaterThan:
-                            stack.Push(DecompileBinaryExpression(stack, TokenType.Greater, ">", outputSpan));
+                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.Greater, ">", context.OutputSpan));
                             break;
                         case BCLOpcode.LessOrEqual:
-                            stack.Push(DecompileBinaryExpression(stack, TokenType.LessEquals, "<=", outputSpan));
+                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.LessEquals, "<=", context.OutputSpan));
                             break;
                         case BCLOpcode.GreaterOrEqual:
-                            stack.Push(DecompileBinaryExpression(stack, TokenType.GreaterEquals, ">=", outputSpan));
+                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.GreaterEquals, ">=", context.OutputSpan));
                             break;
                         case BCLOpcode.Or:
-                            stack.Push(DecompileBinaryExpression(stack, TokenType.PipePipe, "||", outputSpan));
+                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.PipePipe, "||", context.OutputSpan));
                             break;
                         case BCLOpcode.Not:
-                            stack.Push(new UnaryExpression(stack.Pop(), new Token(TokenType.Exclamation, "!", outputSpan), true));
-                            break;
-                        case BCLOpcode.Subtract:
-                            stack.Push(DecompileBinaryExpression(stack, TokenType.Dash, "-", outputSpan));
-                            break;
-                        case BCLOpcode.Multiply:
-                            stack.Push(DecompileBinaryExpression(stack, TokenType.Asterisk, "*", outputSpan));
-                            break;
-                        case BCLOpcode.Divide:
-                            stack.Push(DecompileBinaryExpression(stack, TokenType.Slash, "/", outputSpan));
-                            break;
-                        case BCLOpcode.Power:
-                            stack.Push(DecompileBinaryExpression(stack, TokenType.Caret, "^", outputSpan));
-                            break;
-                        case BCLOpcode.Modulus:
-                            stack.Push(DecompileBinaryExpression(stack, TokenType.Percent, "%", outputSpan));
-                            break;
-                        case BCLOpcode.ShiftLeft:
-                            stack.Push(DecompileBinaryExpression(stack, TokenType.LessLess, "<<", outputSpan));
-                            break;
-                        case BCLOpcode.ShiftRight:
-                            stack.Push(DecompileBinaryExpression(stack, TokenType.GreaterGreater, ">>", outputSpan));
-                            break;
-                        case BCLOpcode.AppendToArray:
                             {
-                                Expression value = stack.Pop();
-                                Expression array = stack.Pop();
-                                // If array is ArrayExpression, collapse into it
-                                if (array is ArrayExpression arrExpr && stack.Peek() == arrExpr)
+                                Expression popped = context.Stack.Pop();
+                                if (popped is BinaryExpression binaryOperand && binaryOperand.Operation.Type == TokenType.EqualsEquals)
                                 {
-                                    stack.Pop();
-                                    List<Expression> elements = new List<Expression>(arrExpr.Elements);
-                                    elements.Add(value);
-                                    stack.Push(new ArrayExpression(arrExpr.Span, elements));
+                                    context.Stack.Push(new BinaryExpression(binaryOperand.Left, new Token(TokenType.ExclamationEquals, "!=", context.OutputSpan), binaryOperand.Right));
                                 }
                                 else
                                 {
-                                    statements.Add(new ExpressionStatement(new CallExpression(outputSpan, DecompileBinaryExpression(stack, array, new VariableExpression(new Token(TokenType.KeywordAppend, "__append", outputSpan)), TokenType.Period, ".", outputSpan), new Expression[] { value })));
+                                    context.Stack.Push(new UnaryExpression(popped, new Token(TokenType.Exclamation, "!", context.OutputSpan), true));
+                                }
+                                break;
+                            }
+                        case BCLOpcode.Subtract:
+                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.Dash, "-", context.OutputSpan));
+                            break;
+                        case BCLOpcode.Multiply:
+                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.Asterisk, "*", context.OutputSpan));
+                            break;
+                        case BCLOpcode.Divide:
+                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.Slash, "/", context.OutputSpan));
+                            break;
+                        case BCLOpcode.Power:
+                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.Caret, "^", context.OutputSpan));
+                            break;
+                        case BCLOpcode.Modulus:
+                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.Percent, "%", context.OutputSpan));
+                            break;
+                        case BCLOpcode.ShiftLeft:
+                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.LessLess, "<<", context.OutputSpan));
+                            break;
+                        case BCLOpcode.ShiftRight:
+                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.GreaterGreater, ">>", context.OutputSpan));
+                            break;
+                        case BCLOpcode.AppendToArray:
+                            {
+                                Expression value = context.Stack.Pop();
+                                Expression array = context.Stack.Pop();
+                                // If array is ArrayExpression, collapse into it
+                                if (array is ArrayExpression arrExpr && context.Stack.Peek() == arrExpr)
+                                {
+                                    context.Stack.Pop();
+                                    List<Expression> elements = new List<Expression>(arrExpr.Elements);
+                                    elements.Add(value);
+                                    context.Stack.Push(new ArrayExpression(arrExpr.Span, elements));
+                                }
+                                else
+                                {
+                                    statements.Add(new ExpressionStatement(new CallExpression(context.OutputSpan, DecompileBinaryExpression(context.Stack, array, new VariableExpression(new Token(TokenType.KeywordAppend, "__append", context.OutputSpan)), TokenType.Period, ".", context.OutputSpan), new Expression[] { value })));
                                 }
                                 break;
                             }
                         case BCLOpcode.BitwiseAnd:
-                            stack.Push(DecompileBinaryExpression(stack, TokenType.Ampersand, "&", outputSpan));
+                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.Ampersand, "&", context.OutputSpan));
                             break;
                         case BCLOpcode.BitwiseNot:
-                            stack.Push(new UnaryExpression(stack.Pop(), new Token(TokenType.Tilde, "~", outputSpan), false));
+                            context.Stack.Push(new UnaryExpression(context.Stack.Pop(), new Token(TokenType.Tilde, "~", context.OutputSpan), false));
                             break;
                         case BCLOpcode.BitwiseOr:
-                            stack.Push(DecompileBinaryExpression(stack, TokenType.PipePipe, "||", outputSpan));
+                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.PipePipe, "||", context.OutputSpan));
                             break;
                         case BCLOpcode.BitwiseXor:
-                            stack.Push(DecompileBinaryExpression(stack, TokenType.Octothorpe, "#", outputSpan));
+                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.Octothorpe, "#", context.OutputSpan));
                             break;
                         case BCLOpcode.ConvertToFloat:
-                            stack.Push(new CallExpression(outputSpan, new VariableExpression(new Token(TokenType.KeywordToFloat, "__tofloat", outputSpan)), new Expression[] { stack.Pop() }));
+                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordToFloat, "__tofloat", context.OutputSpan)), new Expression[] { context.Stack.Pop() }));
                             break;
                         case BCLOpcode.ConvertToInteger:
-                            stack.Push(new CallExpression(outputSpan, new VariableExpression(new Token(TokenType.KeywordToInt, "__toint", outputSpan)), new Expression[] { stack.Pop() }));
+                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordToInt, "__toint", context.OutputSpan)), new Expression[] { context.Stack.Pop() }));
                             break;
                         case BCLOpcode.ConvertToString:
-                            stack.Push(new CallExpression(outputSpan, new VariableExpression(new Token(TokenType.KeywordToString, "__tostring", outputSpan)), new Expression[] { stack.Pop() }));
+                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordToString, "__tostring", context.OutputSpan)), new Expression[] { context.Stack.Pop() }));
                             break;
                         case BCLOpcode.CreateArray:
-                            stack.Push(new ArrayExpression(outputSpan, new Expression[] { }));
+                            context.Stack.Push(new ArrayExpression(context.OutputSpan, new Expression[] { }));
                             break;
                         case BCLOpcode.PushConstant0:
-                            stack.Push(new LiteralExpression(new Token(TokenType.IntegerLiteral, "0", outputSpan)));
+                            context.Stack.Push(new LiteralExpression(new Token(TokenType.IntegerLiteral, "0", context.OutputSpan)));
                             break;
                         case BCLOpcode.PushConstanti8:
-                            stack.Push(new LiteralExpression(new Token(TokenType.IntegerLiteral, instructions[i].Arguments[0].GetValue<sbyte>().ToString(), outputSpan)));
+                            context.Stack.Push(new LiteralExpression(new Token(TokenType.IntegerLiteral, instructions[i].Arguments[0].GetValue<sbyte>().ToString(), context.OutputSpan)));
                             break;
                         case BCLOpcode.PushConstanti16:
-                            stack.Push(new LiteralExpression(new Token(TokenType.IntegerLiteral, instructions[i].Arguments[0].GetValue<short>().ToString(), outputSpan)));
+                            context.Stack.Push(new LiteralExpression(new Token(TokenType.IntegerLiteral, instructions[i].Arguments[0].GetValue<short>().ToString(), context.OutputSpan)));
                             break;
                         case BCLOpcode.PushConstanti24:
                             throw new NotImplementedException();
                         case BCLOpcode.PushConstanti32:
-                            stack.Push(new LiteralExpression(new Token(TokenType.IntegerLiteral, instructions[i].Arguments[0].GetValue<int>().ToString(), outputSpan)));
+                            context.Stack.Push(new LiteralExpression(new Token(TokenType.IntegerLiteral, instructions[i].Arguments[0].GetValue<int>().ToString(), context.OutputSpan)));
                             break;
                         case BCLOpcode.PushConstantf32:
-                            stack.Push(new LiteralExpression(new Token(TokenType.FloatLiteral, instructions[i].Arguments[0].GetValue<float>().ToString("0.0##############"), outputSpan)));
+                            context.Stack.Push(new LiteralExpression(new Token(TokenType.FloatLiteral, instructions[i].Arguments[0].GetValue<float>().ToString("0.0##############"), context.OutputSpan)));
                             break;
                         case BCLOpcode.PushConstantColor8888:
-                            stack.Push(new CallExpression(outputSpan, new VariableExpression(new Token(TokenType.KeywordRGBA, "rgba", outputSpan)), new Expression[]
+                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordRGBA, "rgba", context.OutputSpan)), new Expression[]
                             {
-                                new LiteralExpression(new Token(TokenType.IntegerLiteral, ((instructions[i].Arguments[0].GetValue<uint>() & 0xFF000000) >> 24).ToString(), outputSpan)),
-                                new LiteralExpression(new Token(TokenType.IntegerLiteral, ((instructions[i].Arguments[0].GetValue<uint>() & 0x00FF0000) >> 16).ToString(), outputSpan)),
-                                new LiteralExpression(new Token(TokenType.IntegerLiteral, ((instructions[i].Arguments[0].GetValue<uint>() & 0x0000FF00) >> 8).ToString(), outputSpan)),
-                                new LiteralExpression(new Token(TokenType.IntegerLiteral, ((instructions[i].Arguments[0].GetValue<uint>() & 0x000000FF) >> 0).ToString(), outputSpan))
+                                new LiteralExpression(new Token(TokenType.IntegerLiteral, ((instructions[i].Arguments[0].GetValue<uint>() & 0xFF000000) >> 24).ToString(), context.OutputSpan)),
+                                new LiteralExpression(new Token(TokenType.IntegerLiteral, ((instructions[i].Arguments[0].GetValue<uint>() & 0x00FF0000) >> 16).ToString(), context.OutputSpan)),
+                                new LiteralExpression(new Token(TokenType.IntegerLiteral, ((instructions[i].Arguments[0].GetValue<uint>() & 0x0000FF00) >> 8).ToString(), context.OutputSpan)),
+                                new LiteralExpression(new Token(TokenType.IntegerLiteral, ((instructions[i].Arguments[0].GetValue<uint>() & 0x000000FF) >> 0).ToString(), context.OutputSpan))
                             }));
                             break;
                         case BCLOpcode.PushNothing:
-                            stack.Push(new LiteralExpression(new Token(TokenType.KeywordNull, "null", outputSpan)));
+                            context.Stack.Push(new LiteralExpression(new Token(TokenType.KeywordNull, "null", context.OutputSpan)));
                             break;
                         case BCLOpcode.Return:
-                            statements.Add(new ReturnStatement(new Token(TokenType.KeywordReturn, "return", outputSpan), stack.Pop()));
+                            statements.Add(new ReturnStatement(new Token(TokenType.KeywordReturn, "return", context.OutputSpan), context.Stack.Pop()));
                             break;
                         case BCLOpcode.PushConstantString:
-                            stack.Push(new LiteralExpression(new Token(TokenType.StringLiteral, "\"" + Compiler.EscapeString(osi.Strings[instructions[i].Arguments[0].GetValue<ushort>()]) + "\"", outputSpan)));
+                            context.Stack.Push(new LiteralExpression(new Token(TokenType.StringLiteral, "\"" + Compiler.EscapeString(context.OSI.Strings[instructions[i].Arguments[0].GetValue<ushort>()]) + "\"", context.OutputSpan)));
                             break;
                         case BCLOpcode.PushConstantColor5551:
                             throw new NotImplementedException();
                         case BCLOpcode.GetVariableValue:
                             {
                                 ushort index = instructions[i].Arguments[0].GetValue<ushort>();
-                                string variableName = (index & (1 << 15)) > 0 ? osi.Globals[index & ~(1 << 15)] : variables[index];
-                                stack.Push(new VariableExpression(new Token(TokenType.Symbol, variableName, outputSpan)));
+                                string variableName = (index & (1 << 15)) > 0 ? context.OSI.Globals[index & ~(1 << 15)] : context.Variables[index];
+                                context.Stack.Push(new VariableExpression(new Token(TokenType.Symbol, variableName, context.OutputSpan)));
                                 break;
                             }
                         case BCLOpcode.SetThisMemberValue:
-                            statements.Add(new AssignmentStatement(new BinaryExpression(new VariableExpression(new Token(TokenType.KeywordThis, "this", outputSpan)), new Token(TokenType.Period, ".", outputSpan), new VariableExpression(new Token(TokenType.Symbol, osi.Symbols[instructions[i].Arguments[0].GetValue<ushort>()], outputSpan))), stack.Pop()));
+                            statements.Add(new AssignmentStatement(new BinaryExpression(new VariableExpression(new Token(TokenType.KeywordThis, "this", context.OutputSpan)), new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.Symbol, context.OSI.Symbols[instructions[i].Arguments[0].GetValue<ushort>()], context.OutputSpan))), context.Stack.Pop()));
                             break;
                         case BCLOpcode.GetThisMemberFunction:
-                            stack.Push(new BinaryExpression(new VariableExpression(new Token(TokenType.KeywordThis, "this", outputSpan)), new Token(TokenType.Period, ".", outputSpan), new VariableExpression(new Token(TokenType.Symbol, osi.Symbols[instructions[i].Arguments[0].GetValue<ushort>()], outputSpan))));
+                            context.Stack.Push(new BinaryExpression(new VariableExpression(new Token(TokenType.KeywordThis, "this", context.OutputSpan)), new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.Symbol, context.OSI.Symbols[instructions[i].Arguments[0].GetValue<ushort>()], context.OutputSpan))));
                             break;
                         case BCLOpcode.JumpAbsolute:
                             {
-                                Expression function = stack.Pop(); // Pop function
+                                Expression function = context.Stack.Pop(); // Pop function
                                 int argCount = instructions[i].Arguments[0].GetValue<sbyte>() - 1; // 'this' doesn't count as an argument
                                 List<Expression> arguments = new List<Expression>();
                                 for (int j = 0; j < argCount; j++)
                                 {
-                                    arguments.Insert(0, stack.Pop()); // Pop arguments right to left
+                                    arguments.Insert(0, context.Stack.Pop()); // Pop arguments right to left
                                 }
-                                stack.Pop(); // 'this' was the first argument
+                                context.Stack.Pop(); // 'this' was the first argument
                                 // TODO: Assert that this was really 'this'
-                                stack.Push(new CallExpression(outputSpan, function, arguments));
+                                context.Stack.Push(new CallExpression(context.OutputSpan, function, arguments));
                                 break;
                             }
                         case BCLOpcode.Pop:
                             {
-                                Expression value = stack.Pop();
+                                Expression value = context.Stack.Pop();
                                 // Recognise the constructor call after instantiation
                                 if (value is CallExpression ctorCall
                                     && ctorCall.Target is BinaryExpression binExp
                                     && binExp.Left is ConstructorExpression ctor
                                     && binExp.Right is VariableExpression ctorName
                                     && ctor.TypeName.Content == ctorName.Symbol.Content
-                                    && stack.Count > 0
-                                    && stack.Peek() is ConstructorExpression ctorTop
+                                    && context.Stack.Count > 0
+                                    && context.Stack.Peek() is ConstructorExpression ctorTop
                                     && ctorTop.Arguments == null
                                     && ctorTop.TypeName.Content == ctor.TypeName.Content)
                                 {
                                     // We are popping off the result of the constructor call,
                                     // so just silently remove it, and then use it to complete the
                                     // half-baked ConstructorExpression.
-                                    stack.Pop(); // Pop the half-baked ConstructorExpression aka ctorTop
-                                    stack.Push(new ConstructorExpression(outputSpan, ctorTop.TypeName, ctorCall.Arguments));
+                                    context.Stack.Pop(); // Pop the half-baked ConstructorExpression aka ctorTop
+                                    context.Stack.Push(new ConstructorExpression(context.OutputSpan, ctorTop.TypeName, ctorCall.Arguments));
                                 }
                                 else
                                 {
@@ -248,68 +318,194 @@ namespace SAGESharp.LSS
                             }
                         case BCLOpcode.SetMemberValue:
                             {
-                                string memberName = osi.Symbols[instructions[i].Arguments[0].GetValue<ushort>()];
-                                Expression target = stack.Pop();
-                                Expression value = stack.Pop();
-                                statements.Add(new AssignmentStatement(new BinaryExpression(target, new Token(TokenType.Period, ".", outputSpan), new VariableExpression(new Token(TokenType.Symbol, memberName, outputSpan))), value));
+                                string memberName = context.OSI.Symbols[instructions[i].Arguments[0].GetValue<ushort>()];
+                                Expression target = context.Stack.Pop();
+                                Expression value = context.Stack.Pop();
+                                statements.Add(new AssignmentStatement(new BinaryExpression(target, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.Symbol, memberName, context.OutputSpan))), value));
                                 break;
                             }
                         case BCLOpcode.GetMemberValue:
-                            stack.Push(new BinaryExpression(stack.Pop(), new Token(TokenType.Period, ".", outputSpan), new VariableExpression(new Token(TokenType.Symbol, osi.Symbols[instructions[i].Arguments[0].GetValue<ushort>()], outputSpan))));
+                            context.Stack.Push(new BinaryExpression(context.Stack.Pop(), new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.Symbol, context.OSI.Symbols[instructions[i].Arguments[0].GetValue<ushort>()], context.OutputSpan))));
                             break;
                         case BCLOpcode.CreateStackVariables:
                             {
                                 for (int j = 0; j < instructions[i].Arguments[0].GetValue<sbyte>(); j++)
                                 {
                                     string localName = "var" + (j + 1);
-                                    variables.Add(localName);
-                                    statements.Add(new VariableDeclarationStatement(outputSpan, new Token(TokenType.Symbol, localName, outputSpan), null));
-                                    stack.Push(new VariableExpression(new Token(TokenType.Symbol, localName, outputSpan)));
+                                    context.Variables.Add(localName);
+                                    statements.Add(new VariableDeclarationStatement(context.OutputSpan, new Token(TokenType.Symbol, localName, context.OutputSpan), null));
+                                    context.Stack.Push(new VariableExpression(new Token(TokenType.Symbol, localName, context.OutputSpan)));
                                 }
                                 break;
                             }
                         case BCLOpcode.GetMemberFunction:
                             {
-                                string functionName = osi.Symbols[instructions[i].Arguments[0].GetValue<ushort>()];
-                                Expression target = stack.Pop();
-                                stack.Push(new BinaryExpression(target, new Token(TokenType.Period, ".", outputSpan), new VariableExpression(new Token(TokenType.Symbol, functionName, outputSpan))));
+                                string functionName = context.OSI.Symbols[instructions[i].Arguments[0].GetValue<ushort>()];
+                                Expression target = context.Stack.Pop();
+                                context.Stack.Push(new BinaryExpression(target, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.Symbol, functionName, context.OutputSpan))));
                                 break;
                             }
                         case BCLOpcode.GetThisMemberValue:
-                            stack.Push(new BinaryExpression(new VariableExpression(new Token(TokenType.KeywordThis, "this", outputSpan)), new Token(TokenType.Period, ".", outputSpan), new VariableExpression(new Token(TokenType.Symbol, osi.Symbols[instructions[i].Arguments[0].GetValue<ushort>()], outputSpan))));
+                            context.Stack.Push(new BinaryExpression(new VariableExpression(new Token(TokenType.KeywordThis, "this", context.OutputSpan)), new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.Symbol, context.OSI.Symbols[instructions[i].Arguments[0].GetValue<ushort>()], context.OutputSpan))));
                             break;
                         case BCLOpcode.Dup:
-                            //stack.Push(stack.Peek().Duplicate());
-                            stack.Push(stack.Peek());
+                            //context.Stack.Push(context.Stack.Peek().Duplicate());
+                            context.Stack.Push(context.Stack.Peek());
                             break;
                         case BCLOpcode.Pull:
-                            //stack.Push(stack.ToArray()[instructions[i].Arguments[0].GetValue<sbyte>() - 1].Duplicate());
-                            stack.Push(stack.ToArray()[instructions[i].Arguments[0].GetValue<sbyte>() - 1]);
+                            //context.Stack.Push(context.Stack.ToArray()[instructions[i].Arguments[0].GetValue<sbyte>() - 1].Duplicate());
+                            context.Stack.Push(context.Stack.ToArray()[instructions[i].Arguments[0].GetValue<sbyte>() - 1]);
                             break;
                         case BCLOpcode.CallGameFunction:
                             {
                                 int argCount = instructions[i].Arguments[2].GetValue<sbyte>();
-                                string functionNamespace = osi.Strings[instructions[i].Arguments[0].GetValue<ushort>()];
-                                string functionName = osi.Strings[instructions[i].Arguments[1].GetValue<ushort>()];
+                                string functionNamespace = context.OSI.Strings[instructions[i].Arguments[0].GetValue<ushort>()];
+                                string functionName = context.OSI.Strings[instructions[i].Arguments[1].GetValue<ushort>()];
                                 Expression[] arguments = new Expression[argCount];
                                 // Arguments are popped right to left.
                                 for (int j = argCount - 1; j >= 0; j--)
                                 {
-                                    arguments[j] = stack.Pop();
+                                    arguments[j] = context.Stack.Pop();
                                 }
-                                stack.Push(new CallExpression(outputSpan, new BinaryExpression(new VariableExpression(new Token(TokenType.Symbol, functionNamespace, outputSpan)), new Token(TokenType.ColonColon, "::", outputSpan), new VariableExpression(new Token(TokenType.Symbol, functionName, outputSpan))), arguments));
+                                context.Stack.Push(new CallExpression(context.OutputSpan, new BinaryExpression(new VariableExpression(new Token(TokenType.Symbol, functionNamespace, context.OutputSpan)), new Token(TokenType.ColonColon, "::", context.OutputSpan), new VariableExpression(new Token(TokenType.Symbol, functionName, context.OutputSpan))), arguments));
                                 break;
                             }
                         case BCLOpcode.SetVariableValue:
                             {
                                 ushort index = instructions[i].Arguments[0].GetValue<ushort>();
-                                string variableName = (index & (1 << 15)) > 0 ? osi.Globals[index & ~(1 << 15)] : variables[index];
-                                statements.Add(new AssignmentStatement(new VariableExpression(new Token(TokenType.Symbol, variableName, outputSpan)), stack.Pop()));
+                                string variableName = (index & (1 << 15)) > 0 ? context.OSI.Globals[index & ~(1 << 15)] : context.Variables[index];
+                                statements.Add(new AssignmentStatement(new VariableExpression(new Token(TokenType.Symbol, variableName, context.OutputSpan)), context.Stack.Pop()));
                                 break;
                             }
                         case BCLOpcode.CreateObject:
-                            stack.Push(new ConstructorExpression(outputSpan, new Token(TokenType.Symbol, osi.Classes[instructions[i].Arguments[0].GetValue<ushort>()].Name, outputSpan), null));
+                            context.Stack.Push(new ConstructorExpression(context.OutputSpan, new Token(TokenType.Symbol, context.OSI.Classes[instructions[i].Arguments[0].GetValue<ushort>()].Name, context.OutputSpan), null));
                             break;
+                        case BCLOpcode.GetArrayValue:
+                            {
+                                Expression index = context.Stack.Pop();
+                                Expression array = context.Stack.Pop();
+                                context.Stack.Push(new ArrayAccessExpression(context.OutputSpan, array, index));
+                                break;
+                            }
+                        case BCLOpcode.ElementsInArray:
+                            {
+                                context.Stack.Push(new BinaryExpression(context.Stack.Pop(), new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordLength, "__length", context.OutputSpan))));
+                                break;
+                            }
+                        case BCLOpcode.SetArrayValue:
+                            {
+                                Expression value = context.Stack.Pop();
+                                Expression index = context.Stack.Pop();
+                                Expression array = context.Stack.Pop();
+                                statements.Add(new AssignmentStatement(new ArrayAccessExpression(context.OutputSpan, array, index), value));
+                                break;
+                            }
+                        case BCLOpcode.IncrementVariable:
+                            {
+                                ushort index = instructions[i].Arguments[0].GetValue<ushort>();
+                                string variableName = (index & (1 << 15)) > 0 ? context.OSI.Globals[index & ~(1 << 15)] : context.Variables[index];
+                                statements.Add(new AssignmentStatement(new VariableExpression(new Token(TokenType.Symbol, variableName, context.OutputSpan)), new BinaryExpression(new VariableExpression(new Token(TokenType.Symbol, variableName, context.OutputSpan)), new Token(TokenType.Plus, "+", context.OutputSpan), new LiteralExpression(new Token(TokenType.IntegerLiteral, "1", context.OutputSpan)))));
+                                break;
+                            }
+                        case BCLOpcode.DecrementVariable:
+                            {
+                                ushort index = instructions[i].Arguments[0].GetValue<ushort>();
+                                string variableName = (index & (1 << 15)) > 0 ? context.OSI.Globals[index & ~(1 << 15)] : context.Variables[index];
+                                statements.Add(new AssignmentStatement(new VariableExpression(new Token(TokenType.Symbol, variableName, context.OutputSpan)), new BinaryExpression(new VariableExpression(new Token(TokenType.Symbol, variableName, context.OutputSpan)), new Token(TokenType.Dash, "-", context.OutputSpan), new LiteralExpression(new Token(TokenType.IntegerLiteral, "1", context.OutputSpan)))));
+                                break;
+                            }
+                        case BCLOpcode.SetRedValue:
+                            {
+                                Expression value = context.Stack.Pop();
+                                Expression target = context.Stack.Pop();
+                                if (target is CallExpression colorCtor && colorCtor.Target is VariableExpression colorCtorName && colorCtorName.Symbol.Type == TokenType.KeywordRGBA)
+                                {
+                                    colorCtor.Arguments[0] = value;
+                                    context.Stack.Push(colorCtor);
+                                }
+                                else
+                                {
+                                    statements.Add(new AssignmentStatement(new BinaryExpression(target, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordRed, "__red", context.OutputSpan))), value));
+                                    if ((instructions[i + 1] as BCLInstruction)?.Opcode == BCLOpcode.Pop)
+                                    {
+                                        i++;
+                                    }
+                                    else
+                                    {
+                                        throw new FormatException("SetRedValue not on a RGBA constructor must be immediately followed by a Pop opcode!");
+                                    }
+                                }
+                                break;
+                            }
+                        case BCLOpcode.SetGreenValue:
+                            {
+                                Expression value = context.Stack.Pop();
+                                Expression target = context.Stack.Pop();
+                                if (target is CallExpression colorCtor && colorCtor.Target is VariableExpression colorCtorName && colorCtorName.Symbol.Type == TokenType.KeywordRGBA)
+                                {
+                                    colorCtor.Arguments[1] = value;
+                                    context.Stack.Push(colorCtor);
+                                }
+                                else
+                                {
+                                    statements.Add(new AssignmentStatement(new BinaryExpression(target, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordGreen, "__green", context.OutputSpan))), value));
+                                    if ((instructions[i + 1] as BCLInstruction)?.Opcode == BCLOpcode.Pop)
+                                    {
+                                        i++;
+                                    }
+                                    else
+                                    {
+                                        throw new FormatException("SetGreenValue not on a RGBA constructor must be immediately followed by a Pop opcode!");
+                                    }
+                                }
+                                break;
+                            }
+                        case BCLOpcode.SetBlueValue:
+                            {
+                                Expression value = context.Stack.Pop();
+                                Expression target = context.Stack.Pop();
+                                if (target is CallExpression colorCtor && colorCtor.Target is VariableExpression colorCtorName && colorCtorName.Symbol.Type == TokenType.KeywordRGBA)
+                                {
+                                    colorCtor.Arguments[2] = value;
+                                    context.Stack.Push(colorCtor);
+                                }
+                                else
+                                {
+                                    statements.Add(new AssignmentStatement(new BinaryExpression(target, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordBlue, "__blue", context.OutputSpan))), value));
+                                    if ((instructions[i + 1] as BCLInstruction)?.Opcode == BCLOpcode.Pop)
+                                    {
+                                        i++;
+                                    }
+                                    else
+                                    {
+                                        throw new FormatException("SetBlueValue not on a RGBA constructor must be immediately followed by a Pop opcode!");
+                                    }
+                                }
+                                break;
+                            }
+                        case BCLOpcode.SetAlphaValue:
+                            {
+                                Expression value = context.Stack.Pop();
+                                Expression target = context.Stack.Pop();
+                                if (target is CallExpression colorCtor && colorCtor.Target is VariableExpression colorCtorName && colorCtorName.Symbol.Type == TokenType.KeywordRGBA)
+                                {
+                                    colorCtor.Arguments[3] = value;
+                                    context.Stack.Push(colorCtor);
+                                }
+                                else
+                                {
+                                    statements.Add(new AssignmentStatement(new BinaryExpression(target, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordAlpha, "__alpha", context.OutputSpan))), value));
+                                    if ((instructions[i + 1] as BCLInstruction)?.Opcode == BCLOpcode.Pop)
+                                    {
+                                        i++;
+                                    }
+                                    else
+                                    {
+                                        throw new FormatException("SetAlphaValue not on a RGBA constructor must be immediately followed by a Pop opcode!");
+                                    }
+                                }
+                                break;
+                            }
                         case BCLOpcode.MemberFunctionArgumentCheck:
                         case BCLOpcode.Nop:
                         case BCLOpcode.DebugOn:
@@ -329,8 +525,7 @@ namespace SAGESharp.LSS
                 }
             }
 
-            BlockStatement body = new BlockStatement(outputSpan, statements);
-            return new SubroutineStatement(outputSpan, new Token(TokenType.Symbol, name, outputSpan), parameters, body);
+            return statements;
         }
 
         public static Parser.Result DecompileOSI(OSIFile osi)
