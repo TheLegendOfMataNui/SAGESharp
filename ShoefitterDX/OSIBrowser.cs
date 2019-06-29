@@ -111,10 +111,11 @@ namespace ShoefitterDX
                 CurrentInspector.Dock = DockStyle.Fill;
                 if (g.Nodes.Count == 3)
                 {
-                    textBox1.Text = g.StartNode.OutAlwaysJump.Destination.ToString().Replace("\n", "\r\n");
-                    textBox1.AppendText("\r\n\r\nDecompiled LSS:\r\n");
+                    //textBox1.Text = g.StartNode.OutAlwaysJump.Destination.ToString().Replace("\n", "\r\n");
+                    //textBox1.AppendText("\r\n\r\nDecompiled LSS:\r\n");
                     try
                     {
+                        textBox1.Text = "";
                         textBox1.AppendText(SAGESharp.LSS.PrettyPrinter.Print(isMemberMethod ? SAGESharp.LSS.Decompiler.DecompileMethod(OSI, e.Node.Tag as OSIFile.MethodInfo, new SAGESharp.LSS.SourceSpan()) : SAGESharp.LSS.Decompiler.DecompileFunction(OSI, e.Node.Tag as OSIFile.FunctionInfo, new SAGESharp.LSS.SourceSpan())));
                     }
                     catch (NotImplementedException ex)

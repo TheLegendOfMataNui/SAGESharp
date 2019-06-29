@@ -530,6 +530,16 @@ namespace SAGESharp.LSS
                             throw new NotImplementedException("Decompiling opcode '" + bcl.Opcode.ToString() + "' (0x" + ((byte)bcl.Opcode).ToString("X2") + ") is not implemented!");
                     }
                 }
+                else if (instructions[i] is JumpStaticInstruction jumpStatic)
+                {
+                    // Pop call arguments right to left
+                    List<Expression> arguments = new List<Expression>();
+                    for (int j = 0; j < jumpStatic.ArgumentCount; j++)
+                    {
+                        arguments.Insert(0, context.Stack.Pop());
+                    }
+                    context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.Symbol, jumpStatic.FunctionName, context.OutputSpan)), arguments));
+                }
                 else
                 {
                     throw new FormatException("Cannot decompile abstract instruction " + instructions[i].GetType().ToString());
