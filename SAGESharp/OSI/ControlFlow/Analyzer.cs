@@ -165,7 +165,31 @@ namespace SAGESharp.OSI.ControlFlow
                     {
                         elseIf = new IfStatement(new SourceSpan(), null, new BlockStatement(new SourceSpan(), falseNode.Statements), null);
                     }
-                    node.Statements.Add(new IfStatement(new SourceSpan(), node.EndConditional, new BlockStatement(new SourceSpan(), trueNode.Statements), elseIf));
+                    IfStatement ifStatement = new IfStatement(new SourceSpan(), node.EndConditional, new BlockStatement(new SourceSpan(), trueNode.Statements), elseIf);
+                    node.Statements.Add(ifStatement);
+
+                    // HACK: If we are coming from a switch statement (where the conditions use Dup, ???, EqualTo), shave off the Pop-ed expressiont that was switched
+                    if (node.EndConditional is BinaryExpression binExpr && binExpr.Operation.Type == TokenType.EqualsEquals && binExpr.Left is Expression dupedExpr)
+                    {
+                        bool same = true;
+                        IfStatement stmt = ifStatement;
+                        while (stmt != null && same)
+                        {
+                            if (stmt.Condition is BinaryExpression condBinExpr && condBinExpr.Operation.Type == TokenType.EqualsEquals && condBinExpr.Left == dupedExpr)
+                            {
+                                same = true;
+                            }
+                            else
+                            {
+                                same = false;
+                            }
+                            stmt = stmt.ElseStatement;
+                        }
+                        if (same && alwaysNode is LSSNode always && always.Statements.Count >= 1 && always.Statements[0] is ExpressionStatement extraStmt && !(extraStmt.Expression is CallExpression))
+                        {
+                            always.Statements.RemoveAt(0);
+                        }
+                    }
 
                     alwaysNode.InJumps.Remove(trueNode);
                     alwaysNode.InJumps.Remove(falseNode);

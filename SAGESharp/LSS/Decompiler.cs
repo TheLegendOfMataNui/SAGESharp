@@ -312,7 +312,18 @@ namespace SAGESharp.LSS
                                 }
                                 else
                                 {
-                                    statements.Add(new ExpressionStatement(value));
+                                    // Some if chains have an extra Pop at the end (probably emitted by compiling a switch statement).
+                                    // Consider the HACK: If we aren't popping a call, just discard.
+                                    // Instead, we do a more precise detectionn in Analyzer.AnalyzeIfElse
+                                    //if (value is CallExpression)
+                                    //{
+                                        statements.Add(new ExpressionStatement(value));
+                                    //}
+                                    //else
+                                    //{
+                                    //    // Comment out to discard non-call expression statements
+                                    //    statements.Add(new ExpressionStatement(value));
+                                    //}
                                 }
                                 break;
                             }
