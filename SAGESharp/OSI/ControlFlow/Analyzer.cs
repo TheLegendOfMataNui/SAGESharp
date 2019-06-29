@@ -209,6 +209,12 @@ namespace SAGESharp.OSI.ControlFlow
 
                     node.Statements.Add(new WhileStatement(new SourceSpan(), node.EndConditional, new BlockStatement(new SourceSpan(), bodyNode.Statements)));
 
+                    // Remove the iteration count expression that was popped after the loop
+                    if (node.OutFalseJump.Destination is LSSNode lssNode && lssNode.Statements.Count >= 1 && lssNode.Statements[0] is ExpressionStatement extraStmt && !(extraStmt is CallExpression))
+                    {
+                        lssNode.Statements.RemoveAt(0);
+                    }
+
                     node.OutJumps.Remove(bodyNode);
                     node.InJumps.Remove(bodyNode);
                     graph.Nodes.Remove(bodyNode);
