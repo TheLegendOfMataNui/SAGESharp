@@ -104,11 +104,6 @@ namespace SAGESharp.LSS
 
         public static SubroutineStatement DecompileSubroutine(OSIFile osi, string name, bool isMemberMethod, List<Token> parameters, List<Instruction> instructions, SourceSpan outputSpan, uint bytecodeOffset)
         {
-            //List<InstructionStatement> statements = new List<InstructionStatement>();
-
-            //Stack<Expression> stack = new Stack<Expression>();
-            //List<string> variables = new List<string>();
-
             SubroutineGraph graph = Analyzer.ReconstructControlFlow(new SubroutineGraph(instructions, bytecodeOffset), new SubroutineContext(osi, name, isMemberMethod, parameters, outputSpan));
 
             List<InstructionStatement> statements = (graph.StartNode.OutAlwaysJump.Destination as LSSNode).Statements;
@@ -314,7 +309,7 @@ namespace SAGESharp.LSS
                                 {
                                     // Some if chains have an extra Pop at the end (probably emitted by compiling a switch statement).
                                     // Consider the HACK: If we aren't popping a call, just discard.
-                                    // Instead, we do a more precise detectionn in Analyzer.AnalyzeIfElse
+                                    // Instead, we do a more precise detection in Analyzer.AnalyzeIfElse (for both switch -> if chains, and foreach -> while chains)
                                     //if (value is CallExpression)
                                     //{
                                         statements.Add(new ExpressionStatement(value));
@@ -436,18 +431,7 @@ namespace SAGESharp.LSS
                                 }
                                 else
                                 {
-                                    statements.Add(new AssignmentStatement(new BinaryExpression(target, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordRed, "__red", context.OutputSpan))), value));
-                                    if ((instructions[i + 1] as BCLInstruction)?.Opcode == BCLOpcode.Pop)
-                                    {
-                                        i++;
-                                    }
-                                    else
-                                    {
-
-                                        // TODO: This requires a total redesign of how colors work in LSS.
-                                        // Instead of assigning to the __red property, we need to builtin __withred(value) function.
-                                        throw new FormatException("SetRedValue not on a RGBA constructor must be immediately followed by a Pop opcode!");
-                                    }
+                                    context.Stack.Push(new CallExpression(context.OutputSpan, new BinaryExpression(target, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordWithRed, "__withred", context.OutputSpan))), new List<Expression> { value }));
                                 }
                                 break;
                             }
@@ -462,15 +446,7 @@ namespace SAGESharp.LSS
                                 }
                                 else
                                 {
-                                    statements.Add(new AssignmentStatement(new BinaryExpression(target, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordGreen, "__green", context.OutputSpan))), value));
-                                    if ((instructions[i + 1] as BCLInstruction)?.Opcode == BCLOpcode.Pop)
-                                    {
-                                        i++;
-                                    }
-                                    else
-                                    {
-                                        throw new FormatException("SetGreenValue not on a RGBA constructor must be immediately followed by a Pop opcode!");
-                                    }
+                                    context.Stack.Push(new CallExpression(context.OutputSpan, new BinaryExpression(target, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordWithGreen, "__withgreen", context.OutputSpan))), new List<Expression> { value }));
                                 }
                                 break;
                             }
@@ -485,15 +461,7 @@ namespace SAGESharp.LSS
                                 }
                                 else
                                 {
-                                    statements.Add(new AssignmentStatement(new BinaryExpression(target, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordBlue, "__blue", context.OutputSpan))), value));
-                                    if ((instructions[i + 1] as BCLInstruction)?.Opcode == BCLOpcode.Pop)
-                                    {
-                                        i++;
-                                    }
-                                    else
-                                    {
-                                        throw new FormatException("SetBlueValue not on a RGBA constructor must be immediately followed by a Pop opcode!");
-                                    }
+                                    context.Stack.Push(new CallExpression(context.OutputSpan, new BinaryExpression(target, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordWithBlue, "__withblue", context.OutputSpan))), new List<Expression> { value }));
                                 }
                                 break;
                             }
@@ -508,15 +476,7 @@ namespace SAGESharp.LSS
                                 }
                                 else
                                 {
-                                    statements.Add(new AssignmentStatement(new BinaryExpression(target, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordAlpha, "__alpha", context.OutputSpan))), value));
-                                    if ((instructions[i + 1] as BCLInstruction)?.Opcode == BCLOpcode.Pop)
-                                    {
-                                        i++;
-                                    }
-                                    else
-                                    {
-                                        throw new FormatException("SetAlphaValue not on a RGBA constructor must be immediately followed by a Pop opcode!");
-                                    }
+                                    context.Stack.Push(new CallExpression(context.OutputSpan, new BinaryExpression(target, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordWithAlpha, "__withalpha", context.OutputSpan))), new List<Expression> { value }));
                                 }
                                 break;
                             }

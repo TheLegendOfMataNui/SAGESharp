@@ -51,6 +51,10 @@ namespace SAGESharp.LSS
                 _keywords.Add("__green", TokenType.KeywordGreen);
                 _keywords.Add("__blue", TokenType.KeywordBlue);
                 _keywords.Add("__alpha", TokenType.KeywordAlpha);
+                _keywords.Add("__withred", TokenType.KeywordWithRed);
+                _keywords.Add("__withgreen", TokenType.KeywordWithGreen);
+                _keywords.Add("__withblue", TokenType.KeywordWithBlue);
+                _keywords.Add("__withalpha", TokenType.KeywordWithAlpha);
                 _keywords.Add("__tostring", TokenType.KeywordToString);
                 _keywords.Add("__tofloat", TokenType.KeywordToFloat);
                 _keywords.Add("__toint", TokenType.KeywordToInt);

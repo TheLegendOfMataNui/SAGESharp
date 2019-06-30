@@ -809,6 +809,50 @@ namespace SAGESharp.LSS
                                     size += EmitBCLInstruction(BCLOpcode.InsertIntoArray);
 
                                 }
+                                else if (nameExp.Symbol.Type == TokenType.KeywordWithRed)
+                                {
+                                    if (expr.Arguments.Count != 1)
+                                        throw new ArgumentException("Builtin 'withred' requires 1 argument.");
+
+                                    size += binExp.Left.AcceptVisitor(this, context); // Target
+
+                                    size += expr.Arguments[0].AcceptVisitor(this, context); // Value
+
+                                    size += EmitBCLInstruction(BCLOpcode.SetRedValue);
+                                }
+                                else if (nameExp.Symbol.Type == TokenType.KeywordWithGreen)
+                                {
+                                    if (expr.Arguments.Count != 1)
+                                        throw new ArgumentException("Builtin 'withgreen' requires 1 argument.");
+
+                                    size += binExp.Left.AcceptVisitor(this, context); // Target
+
+                                    size += expr.Arguments[0].AcceptVisitor(this, context); // Value
+
+                                    size += EmitBCLInstruction(BCLOpcode.SetGreenValue);
+                                }
+                                else if (nameExp.Symbol.Type == TokenType.KeywordWithBlue)
+                                {
+                                    if (expr.Arguments.Count != 1)
+                                        throw new ArgumentException("Builtin 'withblue' requires 1 argument.");
+
+                                    size += binExp.Left.AcceptVisitor(this, context); // Target
+
+                                    size += expr.Arguments[0].AcceptVisitor(this, context); // Value
+
+                                    size += EmitBCLInstruction(BCLOpcode.SetBlueValue);
+                                }
+                                else if (nameExp.Symbol.Type == TokenType.KeywordWithAlpha)
+                                {
+                                    if (expr.Arguments.Count != 1)
+                                        throw new ArgumentException("Builtin 'withalpha' requires 1 argument.");
+
+                                    size += binExp.Left.AcceptVisitor(this, context); // Target
+
+                                    size += expr.Arguments[0].AcceptVisitor(this, context); // Value
+
+                                    size += EmitBCLInstruction(BCLOpcode.SetAlphaValue);
+                                }
                                 else
                                 {
                                     throw new ArgumentException("Member expression not invokable.");
@@ -1207,7 +1251,7 @@ namespace SAGESharp.LSS
                         {
                             throw new ArgumentException("Cannot set a builtin member of 'this'.");
                         }
-                        size += memberExpr.Left.AcceptVisitor(this, context); // Target
+                        /*size += memberExpr.Left.AcceptVisitor(this, context); // Target
 
                         size += s.Value.AcceptVisitor(this, context); // Value
 
@@ -1231,7 +1275,7 @@ namespace SAGESharp.LSS
                             size += EmitBCLInstruction(BCLOpcode.SetAlphaValue);
                             size += EmitBCLInstruction(BCLOpcode.Pop); // Because SetAlphaValue pushes the resulting color
                         }
-                        else
+                        else*/
                         {
                             throw new ArgumentException("Symbol of type '" + member.Symbol.Type + "' is not a member nor a builtin and therefore cannot be assigned.");
                         }
