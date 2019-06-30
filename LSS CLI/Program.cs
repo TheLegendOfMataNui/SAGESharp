@@ -151,16 +151,12 @@ namespace LSS_CLI
                 osi = new OSIFile(reader);
             }
 
-            // TEMP TESTING
-            OSIFile.MethodInfo method = osi.Classes[1].Methods[0];
-            System.Diagnostics.Debug.WriteLine("method " + PrettyPrinter.Print(Decompiler.DecompileMethod(osi, method, new SourceSpan())));
-
             if (!System.IO.Directory.Exists(outputDirectory))
             {
                 System.IO.Directory.CreateDirectory(outputDirectory);
             }
 
-            //Decompiler.DecompileOSIProject(osi, outputDirectory);
+            Decompiler.DecompileOSIProject(osi, outputDirectory);
             return EXIT_SUCCESS;
         }
 
