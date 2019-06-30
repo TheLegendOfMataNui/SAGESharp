@@ -1405,8 +1405,6 @@ namespace SAGESharp.LSS
             return value.Replace("\"", "\\\"").Replace("\n", "\\n");
         }
 
-        //private class DecompileSubroutineContext : ExpressionVisitor<object, object>
-
         // Compiles a single source string into an OSI.
         public static Result Compile(string source, string filename, Settings settings = null)
         {
@@ -1505,6 +1503,7 @@ namespace SAGESharp.LSS
 
             Dictionary<string, OSIFile.FunctionInfo> functions = new Dictionary<string, OSIFile.FunctionInfo>();
             Dictionary<string, OSIFile.ClassInfo> classes = new Dictionary<string, OSIFile.ClassInfo>();
+            Dictionary<string, ClassStatement> lssClassesByName = new Dictionary<string, ClassStatement>();
 
             // Collect existing names
             for (int i = 0; i < result.OSI.Strings.Count; i++)
@@ -1563,6 +1562,8 @@ namespace SAGESharp.LSS
                     OSIFile.ClassInfo clsInfo = new OSIFile.ClassInfo(cls.Name.Content, propertySymbols, methods);
                     classes.Add(cls.Name.Content, clsInfo);
                     result.OSI.Classes.Add(clsInfo);
+
+                    lssClassesByName.Add(cls.Name.Content, cls);
                 }
 
                 foreach (Statements.SubroutineStatement func in parseResult.Functions)
@@ -1595,6 +1596,11 @@ namespace SAGESharp.LSS
                     }
                 }
 
+            }
+
+            // Compile subroutines
+            foreach (Parser.Result parseResult in parseResults)
+            {
                 // Compile the functions
                 foreach (SubroutineStatement function in parseResult.Functions)
                 {
@@ -1628,6 +1634,56 @@ namespace SAGESharp.LSS
                         destination.Instructions.AddRange(context.Instructions);
                     }
                 }
+
+            }
+
+            // Apply inheritance
+            // Until all the classes are applied, take a class, find the root-est that has not been applied of the tree, and apply it.
+            HashSet<ClassStatement> classesToApply = new HashSet<ClassStatement>(lssClassesByName.Values.Where(c => c.SuperclassName != null));
+            Stack<ClassStatement> loopDetector = new Stack<ClassStatement>();
+            while (classesToApply.Count > 0)
+            {
+                // Pick an arbitrary element to start with
+                ClassStatement toApply = classesToApply.ElementAt(0);
+                loopDetector.Clear();
+                loopDetector.Push(toApply);
+
+                // Find the parent-est LSS class that needs to be applied
+                while (toApply.SuperclassName != null && lssClassesByName.ContainsKey(toApply.SuperclassName.Content)
+                    && classesToApply.Contains(lssClassesByName[toApply.SuperclassName.Content]))
+                {
+                    toApply = lssClassesByName[toApply.SuperclassName.Content];
+                    if (loopDetector.Contains(toApply))
+                    {
+                        throw new Exception("Infinite loop in class inheritance. (" + String.Join(" -> ", loopDetector.Select(c => c.Name)) + ")");
+                    }
+                    else
+                    {
+                        loopDetector.Push(toApply);
+                    }
+                }
+
+                // Apply the inheritance
+                OSIFile.ClassInfo compiledClass = classes[toApply.Name.Content];
+                OSIFile.ClassInfo superclass = classes[toApply.SuperclassName.Content];
+                foreach (ushort propertySymbol in superclass.PropertySymbols)
+                {
+                    if (compiledClass.PropertySymbols.Contains(propertySymbol))
+                    {
+                        throw new Exception("Class " + toApply.Name.Content + " cannot declare property " + result.OSI.Symbols[propertySymbol] + " because its superclass " + superclass.Name + " already declares it.");
+                    }
+                    compiledClass.PropertySymbols.Add(propertySymbol);
+                }
+
+                foreach (OSIFile.MethodInfo method in superclass.Methods)
+                {
+                    if (!compiledClass.Methods.Any(m => m.NameSymbol == method.NameSymbol))
+                    {
+                        compiledClass.Methods.Add(new OSIFile.MethodInfo(method.NameSymbol, method));
+                    }
+                }
+
+                classesToApply.Remove(toApply);
             }
         }
     }
