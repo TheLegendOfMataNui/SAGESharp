@@ -366,60 +366,65 @@ namespace SAGESharp.LSS
             }
         }
 
-        // . .$ :: ::$
+        // . .$ :: ::$ call [ ]
         private Expression ParseScopeExpression()
         {
             Expression result = ParseConstructorExpression();
 
             SkipWhitespace();
-            while (ConsumeIfType(out Token token, TokenType.Period, TokenType.PeriodDollarSign, TokenType.ColonColon, TokenType.ColonColonDollarSign))
+            while (ConsumeIfType(out Token token, TokenType.Period, TokenType.PeriodDollarSign, TokenType.ColonColon, TokenType.ColonColonDollarSign, TokenType.OpenSquareBracket, TokenType.OpenParenthesis))
             {
                 Expression rhs = null;
-                if (token.Type == TokenType.PeriodDollarSign || token.Type == TokenType.ColonColonDollarSign)
+                if (token.Type == TokenType.OpenSquareBracket)
                 {
-                    // Don't allow function calls as part of the lookup expression - this would be ambiguous, consider thing.$foo(bar), is '(bar)' part of the lookup expression, or calling the looked-up function?
-                    rhs = ParseTerminalExpression();
+                    Expression index = ParseExpression();
+                    SkipWhitespace();
+                    Token closeSquareBracket = Consume();
+                    // TODO: Assert that that was actually a close square bracket
+                    // once we have a proper panic & sync system
+                    result = new ArrayAccessExpression(result.Span + closeSquareBracket.Span, result, index);
+                }
+                else if (token.Type == TokenType.OpenParenthesis)
+                {
+                    SkipWhitespace();
+                    List<Expression> arguments = new List<Expression>();
+
+                    bool isFirst = true;
+                    while (Peek().Type != TokenType.CloseParenthesis)
+                    {
+                        SkipWhitespace();
+                        if (!isFirst)
+                            ConsumeType(TokenType.Comma, "Expected a comma between call arguments.");
+
+                        Expression argument = ParseExpression();
+                        arguments.Add(argument);
+
+                        isFirst = false;
+                        SkipWhitespace();
+                    }
+
+                    Token closeParenthesis = ConsumeType(TokenType.CloseParenthesis, "Expected a close parenthesis after function call.");
+                    result = new CallExpression(result.Span + closeParenthesis.Span, result, arguments);
                 }
                 else
                 {
-                    rhs = ParseTerminalExpression();
+                    // . :: .$, ::$
+                    if (token.Type == TokenType.PeriodDollarSign || token.Type == TokenType.ColonColonDollarSign)
+                    {
+                        // Don't allow function calls as part of the lookup expression - this would be ambiguous, consider thing.$foo(bar), is '(bar)' part of the lookup expression, or calling the looked-up function?
+                        rhs = ParseTerminalExpression();
+                    }
+                    else
+                    {
+                        rhs = ParseTerminalExpression();
+                    }
+                    result = new BinaryExpression(result, token, rhs);
                 }
-                result = new BinaryExpression(result, token, rhs);
                 SkipWhitespace();
             }
             return result;
         }
 
-        // Function calls
-        private Expression ParseCallExpression()
-        {
-            Expression subroutine = ParseScopeExpression();
-
-            SkipWhitespace();
-            while (ConsumeIfType(out Token openParenthesis, TokenType.OpenParenthesis))
-            {
-                SkipWhitespace();
-                List<Expression> arguments = new List<Expression>();
-
-                bool isFirst = true;
-                while (Peek().Type != TokenType.CloseParenthesis)
-                {
-                    SkipWhitespace();
-                    if (!isFirst)
-                        ConsumeType(TokenType.Comma, "Expected a comma between call arguments.");
-
-                    Expression argument = ParseExpression();
-                    arguments.Add(argument);
-
-                    isFirst = false;
-                    SkipWhitespace();
-                }
-
-                Token closeParenthesis = ConsumeType(TokenType.CloseParenthesis, "Expected a close parenthesis after function call.");
-                subroutine = new CallExpression(subroutine.Span + closeParenthesis.Span, subroutine, arguments);
-            }
-            return subroutine;
-        }
 
         private Expression ParseArrayExpression()
         {
@@ -445,32 +450,11 @@ namespace SAGESharp.LSS
             }
             else
             {
-                return ParseCallExpression();
+                return ParseScopeExpression();
             }
         }
 
-        // [ ] ++ (postfix) -- (postfix) // Note: Right now parentheses are handled by ParseTerminalExpression()
-        private Expression ParsePostfixExpression()
-        {
-            Expression result = ParseArrayExpression();
-
-            SkipWhitespace();
-            while (ConsumeIfType(out Token token, TokenType.OpenSquareBracket))
-            {
-                if (token.Type == TokenType.OpenSquareBracket)
-                {
-                    Expression index = ParseExpression();
-                    SkipWhitespace();
-                    Token closeSquareBracket = Consume();
-                    // TODO: Assert that that was actually a close square bracket
-                    // once we have a proper panic & sync system
-                    result = new ArrayAccessExpression(result.Span + closeSquareBracket.Span, result, index);
-                }
-            }
-            return result;
-        }
-
-        // - ! ~ ++ (prefix) -- (prefix)
+        // - ! ~
         private Expression ParseUnaryExpression()
         {
             SkipWhitespace();
@@ -495,7 +479,7 @@ namespace SAGESharp.LSS
                     return new UnaryExpression(inner, token, true);
                 }
             }
-            return ParsePostfixExpression();
+            return ParseArrayExpression();
         }
 
         // ^

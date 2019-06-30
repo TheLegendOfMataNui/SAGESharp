@@ -201,7 +201,7 @@ namespace SAGESharp.LSS
                             context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.Ampersand, "&", context.OutputSpan));
                             break;
                         case BCLOpcode.BitwiseNot:
-                            context.Stack.Push(new UnaryExpression(context.Stack.Pop(), new Token(TokenType.Tilde, "~", context.OutputSpan), false));
+                            context.Stack.Push(new UnaryExpression(context.Stack.Pop(), new Token(TokenType.Tilde, "~", context.OutputSpan), true));
                             break;
                         case BCLOpcode.BitwiseOr:
                             context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.PipePipe, "||", context.OutputSpan));
@@ -592,14 +592,58 @@ namespace SAGESharp.LSS
 
             foreach (OSIFile.ClassInfo cls in osi.Classes)
             {
+                // Best-effort attempt to find the superclass
+                OSIFile.ClassInfo superclass = null;
+                int sharedMemberCount = 0;
+                foreach (OSIFile.ClassInfo otherCls in osi.Classes)
+                {
+                    if (cls != otherCls)
+                    {
+                        bool couldMatch = true;
+                        int membersInCommon = 0;
+                        foreach (ushort propSymbol in otherCls.PropertySymbols)
+                        {
+                            if (!cls.PropertySymbols.Contains(propSymbol))
+                            {
+                                couldMatch = false;
+                                break;
+                            }
+                            membersInCommon++;
+                        }
+                        if (couldMatch)
+                        {
+                            foreach (OSIFile.MethodInfo method in otherCls.Methods)
+                            {
+                                if (!cls.Methods.Any(m => m.NameSymbol == method.NameSymbol)) // TODO: Make sure the methods are actually the same
+                                {
+                                    couldMatch = false;
+                                    break;
+                                }
+                                membersInCommon++;
+                            }
+                        }
+                        if (couldMatch && membersInCommon > sharedMemberCount)
+                        {
+                            superclass = otherCls;
+                            sharedMemberCount = membersInCommon;
+                        }
+                    }
+                }
+
                 List<PropertyStatement> properties = new List<PropertyStatement>();
                 foreach (ushort propSymbolIndex in cls.PropertySymbols)
                 {
+                    if (superclass != null && superclass.PropertySymbols.Contains(propSymbolIndex))
+                        continue;
+
                     properties.Add(new PropertyStatement(span, new Token(TokenType.Symbol, osi.Symbols[propSymbolIndex], span)));
                 }
                 List<SubroutineStatement> methods = new List<SubroutineStatement>();
                 foreach (OSIFile.MethodInfo method in cls.Methods)
                 {
+                    if (superclass != null && superclass.Methods.Any(m => m.NameSymbol == method.NameSymbol && m.BytecodeOffset == method.BytecodeOffset))
+                        continue;
+
                     try
                     {
                         methods.Add(DecompileMethod(osi, method, span));
@@ -609,8 +653,29 @@ namespace SAGESharp.LSS
                         Console.WriteLine("[ERROR]: " + cls.Name + "." + osi.Symbols[method.NameSymbol] + ": \n\n" + ex.ToString());
                     }
                 }
-                // TODO: Find SuperclassName
-                result.Classes.Add(new ClassStatement(span, new Token(TokenType.Symbol, cls.Name, span), null, properties, methods));
+                result.Classes.Add(new ClassStatement(span, new Token(TokenType.Symbol, cls.Name, span), superclass == null ? null : new Token(TokenType.Symbol, superclass.Name, span), properties, methods));
+            }
+
+            // Ugly class tree printout
+            System.Diagnostics.Debug.WriteLine("\n\nCLASS HIERARCHY:\n\n");
+            foreach (ClassStatement cls in result.Classes)
+            {
+                if (cls.SuperclassName == null)
+                {
+                    // Pre-order traversal
+                    Stack<Tuple<ClassStatement, int>> stack = new Stack<Tuple<ClassStatement, int>>();
+                    stack.Push(new Tuple<ClassStatement, int>(cls, 0));
+
+                    while (stack.Count > 0)
+                    {
+                        Tuple<ClassStatement, int> stmt = stack.Pop();
+                        System.Diagnostics.Debug.WriteLine("".PadLeft(3 * stmt.Item2, ' ') + stmt.Item1.Name.Content);
+                        foreach (ClassStatement child in result.Classes.Where(c => c.SuperclassName?.Content == stmt.Item1.Name.Content))
+                        {
+                            stack.Push(new Tuple<ClassStatement, int>(child, stmt.Item2 + 1));
+                        }
+                    }
+                }
             }
 
             return result;
@@ -644,8 +709,22 @@ namespace SAGESharp.LSS
             // Write classes
             foreach (ClassStatement cls in decompiled.Classes)
             {
-                System.IO.File.WriteAllText(System.IO.Path.Combine(outputDirectory, classesDirectoryName, cls.Name.Content + ".lss"), PrettyPrinter.Print(cls));
+                string classDirectory = System.IO.Path.Combine(outputDirectory, classesDirectoryName, PathForClass(cls, decompiled.Classes));
+                System.IO.Directory.CreateDirectory(classDirectory);
+                System.IO.File.WriteAllText(System.IO.Path.Combine(classDirectory, cls.Name.Content + ".lss"), PrettyPrinter.Print(cls));
             }
+        }
+
+        private static string PathForClass(ClassStatement cls, List<ClassStatement> allClasses)
+        {
+            List<string> segments = new List<string>();
+            while (cls != null)
+            {
+                segments.Insert(0, cls.Name.Content);
+                cls = allClasses.FirstOrDefault(c => c.Name.Content == cls.SuperclassName?.Content);
+            }
+            segments.RemoveAt(segments.Count - 1);
+            return System.IO.Path.Combine(segments.ToArray());
         }
     }
 }
