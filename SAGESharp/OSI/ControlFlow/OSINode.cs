@@ -8,10 +8,12 @@ namespace SAGESharp.OSI.ControlFlow
 {
     public class OSINode : Node
     {
+        public uint StartOffset { get; set; }
         public List<Instruction> Instructions { get; }
 
-        public OSINode(List<Instruction> instructions) : base()
+        public OSINode(uint startOffset, List<Instruction> instructions) : base()
         {
+            this.StartOffset = startOffset;
             this.Instructions = instructions;
         }
 
