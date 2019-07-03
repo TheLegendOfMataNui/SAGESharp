@@ -194,6 +194,15 @@ namespace SAGESharp.LSS
                                 else
                                 {
                                     statements.Add(new ExpressionStatement(new CallExpression(context.OutputSpan, DecompileBinaryExpression(context.Stack, array, new VariableExpression(new Token(TokenType.KeywordAppend, "__append", context.OutputSpan)), TokenType.Period, ".", context.OutputSpan), new Expression[] { value })));
+                                    if (i < instructions.Count - 1 && instructions[i + 1] is BCLInstruction popBCL && popBCL.Opcode == BCLOpcode.Pop && context.Stack.Peek() == array)
+                                    {
+                                        context.Stack.Pop();
+                                        i++;
+                                    }
+                                    else
+                                    {
+                                        //throw new Exception("o no!");
+                                    }
                                 }
                                 break;
                             }
@@ -494,6 +503,16 @@ namespace SAGESharp.LSS
                                 //Expression alsoArray = context.Stack.Pop();
                                 //context.Stack.Push(new CallExpression(context.OutputSpan, new BinaryExpression(array, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordRemoveAt, "__removeat", context.OutputSpan))), new List<Expression> { index }));
                                 statements.Add(new ExpressionStatement(new CallExpression(context.OutputSpan, new BinaryExpression(array, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordRemoveAt, "__removeat", context.OutputSpan))), new List<Expression> { index })));
+                                if (i < instructions.Count - 1 && instructions[i + 1] is BCLInstruction popBCL && popBCL.Opcode == BCLOpcode.Pop && context.Stack.Peek() == array)
+                                {
+                                    context.Stack.Pop();
+                                    i++;
+                                }
+                                else
+                                {
+                                    //throw new Exception("o no!");
+                                }
+
                                 break;
                             }
                         case BCLOpcode.InsertIntoArray:
@@ -502,6 +521,16 @@ namespace SAGESharp.LSS
                                 Expression index = context.Stack.Pop();
                                 Expression array = context.Stack.Pop();
                                 statements.Add(new ExpressionStatement(new CallExpression(context.OutputSpan, new BinaryExpression(array, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordInsertAt, "__insertat", context.OutputSpan))), new List<Expression> { index, value })));
+                                if (i < instructions.Count - 1 && instructions[i + 1] is BCLInstruction popBCL && popBCL.Opcode == BCLOpcode.Pop && context.Stack.Peek() == array)
+                                {
+                                    context.Stack.Pop();
+                                    i++;
+                                }
+                                else
+                                {
+                                    //throw new Exception("o no!");
+                                }
+
                                 break;
                             }
                         case BCLOpcode.Increment:
@@ -577,6 +606,7 @@ namespace SAGESharp.LSS
 
         public static Parser.Result DecompileOSI(OSIFile osi)
         {
+            osi.TransformToJumpStatic();
             Parser.Result result = new Parser.Result();
 
             SourceSpan span = new SourceSpan("<Decompiled>", 0, 0, 0);

@@ -243,6 +243,26 @@ namespace SAGESharp.OSI.ControlFlow
                 node.Statements.AddRange(follower.Statements);
             }
 
+            // Bypass any empty nodes
+            List<Jump> removeDests = new List<Jump>();
+            foreach (Jump jmp in node.OutJumps.Values)
+            {
+                if (jmp.Destination is LSSNode lssNode && lssNode.Statements.Count == 0 && lssNode.OutAlwaysJump != null)
+                {
+                    removeDests.Add(jmp);
+                }
+            }
+            //foreach (Jump jmp in removeDests)
+            //{
+            //    jmp.Destination.InJumps.Remove(node);
+            //    node.OutJumps.Remove(jmp.Destination);
+            //    /*if (jmp.Destination.InJumps.Count == 0)
+            //    {
+            //        graph.Nodes.Remove(jmp.Destination);
+            //    }*/
+            //    node.CreateJumpTo(jmp.Destination.OutAlwaysJump.Destination, jmp.Type);
+            //}
+
             if (wipNodes.Pop() != node)
                 throw new Exception();
         }
@@ -255,6 +275,18 @@ namespace SAGESharp.OSI.ControlFlow
             result.StartNode.CreateJumpTo(entryNode, Jump.JumpType.Always);
 
             AnalyzeIfElse(result, result.StartNode.OutAlwaysJump.Destination as LSSNode, new Stack<Node>());
+
+            for (int i = graph.Nodes.Count - 1; i >= 0; i--)
+            {
+                if (graph.Nodes[i].InJumps.Count == 0)
+                {
+                    foreach (Jump jmp in graph.Nodes[i].OutJumps.Values)
+                    {
+                        jmp.Destination.InJumps.Remove(jmp.Source);
+                    }
+                    graph.Nodes.RemoveAt(i);
+                }
+            }
 
             return result;
         }

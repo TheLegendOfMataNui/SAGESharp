@@ -206,7 +206,7 @@ namespace SAGESharp.LSS
             }
             else if (start == '"')
             {
-                while (Peek() != '"' && !IsAtEnd() && Peek() != '\n')
+                while ((Peek() != '"' || Source[CurrentIndex - 1] == '\\') && !IsAtEnd() && Peek() != '\n')
                 {
                     Advance();
                 }

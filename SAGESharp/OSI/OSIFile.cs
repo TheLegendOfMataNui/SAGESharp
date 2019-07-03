@@ -632,15 +632,22 @@ namespace SAGESharp.OSI
 
         private void InsertJumpStatic(List<Instruction> instructions)
         {
-            for (int i = instructions.Count - 2; i > 0; i--)
+            for (int i = instructions.Count - 2; i >= 0; i--)
             {
-                if (instructions[i] is BCLInstruction addr && addr.Opcode == BCLOpcode.PushConstanti32
-                    && instructions[i + 1] is BCLInstruction jmp && jmp.Opcode == BCLOpcode.JumpRelative)
+                if (instructions[i + 1] is BCLInstruction jmp && jmp.Opcode == BCLOpcode.JumpRelative)
                 {
-                    JumpStaticInstruction jmpStatic = new JumpStaticInstruction(this, addr, jmp);
-                    instructions.RemoveAt(i + 1);
-                    instructions[i] = jmpStatic;
+                    if (instructions[i] is BCLInstruction addr && addr.Opcode == BCLOpcode.PushConstanti32)
+                    {
+                        JumpStaticInstruction jmpStatic = new JumpStaticInstruction(this, addr, jmp);
+                        instructions.RemoveAt(i + 1);
+                        instructions[i] = jmpStatic;
+                    }
+                    else
+                    {
+                        Console.WriteLine("[ERROR]: JumpRelative not preceeded by a PushConstanti32!");
+                    }
                 }
+                    
             }
 
         }
@@ -666,7 +673,7 @@ namespace SAGESharp.OSI
 
         private void RemoveJumpStatic(List<Instruction> instructions)
         {
-            for (int i = instructions.Count - 1; i > 0; i--)
+            for (int i = instructions.Count - 1; i >= 0; i--)
             {
                 if (instructions[i] is JumpStaticInstruction jmpStatic)
                 {

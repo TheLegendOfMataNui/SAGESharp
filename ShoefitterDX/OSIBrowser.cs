@@ -151,6 +151,18 @@ namespace ShoefitterDX
 
             LayoutNode(Graph.StartNode, 0, 0);
 
+            foreach (Node n in Graph.Nodes)
+            {
+                if (!NodeLocations.ContainsKey(n))
+                {
+                    NodeLocations.Add(n, new Rectangle(0, 0, 100, 10));
+                }
+                if (!NodeContents.ContainsKey(n))
+                {
+                    NodeContents.Add(n, "<Orphaned Node>");
+                }
+            }
+
             this.Resize += OSISubroutineInspector_Resize;
 
             DoubleBuffered = true;

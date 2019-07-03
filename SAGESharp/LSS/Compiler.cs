@@ -769,7 +769,7 @@ namespace SAGESharp.LSS
 
                                     size += binExp.Left.AcceptVisitor(this, context); // Push array
 
-                                    //size += EmitBCLInstruction(BCLOpcode.Dup); // Make a copy, so we 'return' the original array
+                                    size += EmitBCLInstruction(BCLOpcode.Dup); // Make a copy, so we 'return' the original array
 
 
                                     size += expr.Arguments[0].AcceptVisitor(this, context); // Push value
@@ -996,7 +996,7 @@ namespace SAGESharp.LSS
                 uint size = 0;
                 if (expr.Value.Type == TokenType.StringLiteral)
                 {
-                    ushort index = AddOrGetString(expr.Value.Content.Substring(1, expr.Value.Content.Length - 2));
+                    ushort index = AddOrGetString(UnescapeString(expr.Value.Content.Substring(1, expr.Value.Content.Length - 2)));
                     size += EmitBCLInstruction(BCLOpcode.PushConstantString, index);
                 }
                 else if (expr.Value.Type == TokenType.IntegerLiteral)

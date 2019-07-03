@@ -21,7 +21,7 @@ namespace SAGESharp.OSI.ControlFlow
             Nodes.Add(EndNode);
         }
 
-        public SubroutineGraph(IEnumerable<Instruction> instructions, uint bytecodeBaseOffset) : this()
+        public SubroutineGraph(List<Instruction> instructions, uint bytecodeBaseOffset) : this()
         {
             Dictionary<long, Node> nodeLocations = new Dictionary<long, Node>();
             Dictionary<Node, long> nodeStarts = new Dictionary<Node, long>();
@@ -57,7 +57,8 @@ namespace SAGESharp.OSI.ControlFlow
                     }
 
                     // Check whether we need to start a new block after this instruction as a jump source
-                    if (bcl.Opcode == BCLOpcode.Return)
+                    // HUUUUGE HACK: Don't make jumps to <End> for early returns, as this completely breaks control flow analysis.
+                    if (bcl.Opcode == BCLOpcode.Return && ins == instructions[instructions.Count - 1])
                     {
                         currentNode.Instructions.Add(bcl);
                         nodeLengths.Add(currentNode, offset + ins.Size - nodeStarts[currentNode]);
