@@ -588,7 +588,7 @@ namespace SAGESharp.OSI
                 offset += (uint)f.Name.Length + 7; // plus 1 name length, 4 bytecode, 2 parameters
 
             foreach (ClassInfo c in Classes)
-                offset += (uint)c.Name.Length + countSize * 2 + (uint)c.PropertySymbols.Count * 2 + (uint)c.Methods.Count * 6 + 6; // method: 2 name, 4 offset, class: 2 properties, 2 methods, 1 name length, 1 null terminator
+                offset += (uint)c.Name.Length + countSize * 2 + (uint)c.PropertySymbols.Count * 2 + (uint)c.Methods.Count * 6 + 2; // method: 2 name, 4 offset, class: count of properties, count of methods, 1 name length, 1 null terminator
 
             foreach (string s in Symbols)
                 offset += (uint)s.Length + 2; // plus 1 length, 1 null terminator
