@@ -163,8 +163,9 @@ namespace ShoefitterDX
             if (TryCompile(out Compiler.Result result))
             {
                 ResultTextBox.Text = "";
-                ResultTextBox.AppendText(result.OSI.ToString());
                 LastResult = result.OSI;
+                LastResult.UpdateBytecodeLayout();
+                ResultTextBox.AppendText(LastResult.ToString());
             }
             else
             {
