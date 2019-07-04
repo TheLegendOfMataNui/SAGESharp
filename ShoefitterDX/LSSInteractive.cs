@@ -189,8 +189,11 @@ namespace ShoefitterDX
             {
                 SaveFileDialog dialog = new SaveFileDialog();
                 dialog.Filter = "OSI File (*.osi)|*.osi";
-                dialog.FileName = System.IO.Path.GetFileName(LastSavedFilename);
-                dialog.InitialDirectory = System.IO.Path.GetDirectoryName(LastSavedFilename);
+                if (!String.IsNullOrEmpty(LastSavedFilename))
+                {
+                    dialog.FileName = System.IO.Path.GetFileName(LastSavedFilename);
+                    dialog.InitialDirectory = System.IO.Path.GetDirectoryName(LastSavedFilename);
+                }
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     LastSavedFilename = dialog.FileName;
