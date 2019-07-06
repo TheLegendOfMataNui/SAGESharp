@@ -4,15 +4,17 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using FluentAssertions;
+using Konvenience;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
+using SAGESharp.SLB;
 using SAGESharp.Testing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SAGESharp.SLB.IO
+namespace SAGESharp.IO
 {
     class BinarySerializersReadingTests
     {
@@ -109,7 +111,7 @@ namespace SAGESharp.SLB.IO
             }
         }
 
-        [TestCase]
+        [Test]
         public void Test_Reading_An_Unsupported_Primitive()
             => new PrimitiveBinarySerializer<char>()
                 .Invoking(s => s.Read(reader))
@@ -121,7 +123,7 @@ namespace SAGESharp.SLB.IO
                 .Should()
                 .Be(typeof(char));
 
-        [TestCase]
+        [Test]
         public void Test_Reading_An_Identifier_With_CastSerializer()
         {
             var value = 0xFEDCBA98;
@@ -137,7 +139,7 @@ namespace SAGESharp.SLB.IO
             innerSerializer.Received().Read(reader);
         }
 
-        [TestCase]
+        [Test]
         public void Test_Reading_An_Enum_With_CastSerializer()
         {
             var innerSerializer = Substitute.For<IBinarySerializer<byte>>();
@@ -158,7 +160,7 @@ namespace SAGESharp.SLB.IO
             B = 0xBB
         }
 
-        [TestCase]
+        [Test]
         public void Test_Reading_A_String()
         {
             var expected = "hello world";
@@ -194,7 +196,7 @@ namespace SAGESharp.SLB.IO
             });
         }
 
-        [TestCase]
+        [Test]
         public void Test_Reading_A_List()
         {
             var expected = new List<char>() { 'a', 'b', 'c', 'd', 'e' };
@@ -229,164 +231,48 @@ namespace SAGESharp.SLB.IO
             });
         }
 
-        [TestCase]
+        [Test]
         public void Test_Reading_A_Custom_Class()
         {
-            var expected = new CustomClass
+            var propertySerializers = new List<IPropertyBinarySerializer<CustomClass>>
             {
-                Int = 1,
-                Short = 2,
-                Byte = 3,
-                Float = 4.5f,
-                Double = 5.5,
-                List = new List<char> { 'a', 'b', 'c', 'd' },
-                String = "hello world"
+                Substitute.For<IPropertyBinarySerializer<CustomClass>>().Also(
+                    pbs => pbs.ReadAndSet(Arg.Is(reader), Arg.Do<CustomClass>(o => o.String1 = "String1"))
+                ),
+                Substitute.For<IPropertyBinarySerializer<CustomClass>>().Also(
+                    pbs => pbs.ReadAndSet(Arg.Is(reader), Arg.Do<CustomClass>(o => o.String2 = "String2"))
+                )
             };
 
-            IBinarySerializer<T> setupSerializer<T>(T expectedValue)
-            {
-                var serializer = Substitute.For<IBinarySerializer<T>>();
-
-                serializer.Read(reader).Returns(expectedValue);
-                factory.GetSerializerForType<T>().Returns(serializer);
-
-                return serializer;
-            }
-
-            var identifierSerializer = setupSerializer(expected.Identifier);
-            var intSerializer = setupSerializer(expected.Int);
-            var shortSerializer = setupSerializer(expected.Short);
-            var byteSerializer = setupSerializer(expected.Byte);
-            var floatSerializer = setupSerializer(expected.Float);
-            var doubleSerializer = setupSerializer(expected.Double);
-            var listSerializer = setupSerializer(expected.List);
-            var stringSerializer = setupSerializer(expected.String);
-
-            new DefaultBinarySerializer<CustomClass>(factory)
+            CustomClass result = new DefaultBinarySerializer<CustomClass>(propertySerializers)
                 .Read(reader)
-                .Should()
-                .BeOfType<CustomClass>()
-                .Which
-                .Should()
-                .BeEquivalentTo(expected);
-
-            factory.Received().GetSerializerForType<IList<char>>();
-            factory.Received().GetSerializerForType<string>();
-
-            Received.InOrder(() =>
-            {
-                identifierSerializer.Read(reader);
-                intSerializer.Read(reader);
-                shortSerializer.Read(reader);
-                byteSerializer.Read(reader);
-                floatSerializer.Read(reader);
-                doubleSerializer.Read(reader);
-                listSerializer.Read(reader);
-                stringSerializer.Read(reader);
-            });
+                .Also(o => o.String1.Should().Be("String1"))
+                .Also(o => o.String2.Should().Be("String2"))
+                .Also(o => o.String3.Should().BeNull())
+                .Also(o => propertySerializers.ForEach(pbs => pbs.Received().ReadAndSet(reader, o)));
         }
 
-        class CustomClass
+        public class CustomClass
         {
-            [SLBElement(8)]
-            public string String { get; set; }
+            public string String1 { get; set; }
 
-            [SLBElement(4)]
-            public byte Byte { get; set; }
+            public string String2 { get; set; }
 
-            [SLBElement(3)]
-            public short Short { get; set; }
-
-            [SLBElement(2)]
-            public int Int { get; set; }
-
-            [SLBElement(5)]
-            public float Float { get; set; }
-
-            [SLBElement(6)]
-            public double Double { get; set; }
-
-            [SLBElement(1)]
-            public Identifier Identifier { get; set; }
-
-            [SLBElement(7)]
-            public IList<char> List { get; set; }
-
-            public CustomClass IgnoredValue { get; set; }
+            public string String3 { get; set; }
         }
 
-        [TestCase]
-        public void Test_Reading_A_Class_With_Private_Constructor() => this
-            .Invoking(_ => new DefaultBinarySerializer<ClassWithPrivateConstructor>(factory))
+        [Test]
+        public void Test_Reading_A_Class_With_Private_Empty_Constructor() => this
+            .Invoking(_ => new DefaultBinarySerializer<ClassWithPrivateConstructor>(new List<IPropertyBinarySerializer<ClassWithPrivateConstructor>> { }))
             .Should()
             .Throw<BadTypeException>()
-            .WithMessage("Type has no public constructor with no arguments")
-            .And
-            .Type
-            .Should()
-            .Be(typeof(ClassWithPrivateConstructor));
+            .Where(e => e.Message.Contains($"Type {nameof(ClassWithPrivateConstructor)} has no public constructor with no arguments"));
 
         class ClassWithPrivateConstructor
         {
             private ClassWithPrivateConstructor()
             {
             }
-
-            [SLBElement(1)]
-            public int Int { get; set; }
-        }
-
-        [TestCase]
-        public void Test_Reading_A_Class_With_No_Annotations() => this
-            .Invoking(_ => new DefaultBinarySerializer<ClassWithNoAnnotations>(factory))
-            .Should()
-            .Throw<BadTypeException>()
-            .WithMessage($"Type has no property annotated with {nameof(SLBElementAttribute)}")
-            .And
-            .Type
-            .Should()
-            .Be(typeof(ClassWithNoAnnotations));
-
-        class ClassWithNoAnnotations
-        {
-            public int Int { get; set; }
-        }
-
-        [TestCase]
-        public void Test_Reading_A_Class_With_An_Annotated_Property_With_No_Setter() => this
-            .Invoking(_ => new DefaultBinarySerializer<ClassWithAnnotatedPropertyWithNoSetter>(factory))
-            .Should()
-            .Throw<BadTypeException>()
-            .WithMessage($"Property {nameof(ClassWithAnnotatedPropertyWithNoSetter.Int)} doesn't have a setter")
-            .And
-            .Type
-            .Should()
-            .Be(typeof(ClassWithAnnotatedPropertyWithNoSetter));
-
-        class ClassWithAnnotatedPropertyWithNoSetter
-        {
-            [SLBElement(1)]
-            public int Int { get; }
-        }
-
-        [TestCase]
-        public void Test_Reading_A_Class_With_Properties_With_Duplicated_Attribute_Order() => this
-            .Invoking(_ => new DefaultBinarySerializer<ClassWithPropertiesWithDuplicatedAttributeOrder>(factory))
-            .Should()
-            .Throw<BadTypeException>()
-            .WithMessage("Type has more than one property with the same order")
-            .And
-            .Type
-            .Should()
-            .Be(typeof(ClassWithPropertiesWithDuplicatedAttributeOrder));
-
-        class ClassWithPropertiesWithDuplicatedAttributeOrder
-        {
-            [SLBElement(1)]
-            public int Int { get;  set; }
-
-            [SLBElement(1)]
-            public byte Byte { get;  set; }
         }
     }
 }

@@ -22,6 +22,41 @@ namespace ShoefitterDX.Panes
             }
         }
 
+        public string SelectedAsset
+        {
+            get
+            {
+                TreeEntryMeta meta = treeView1.SelectedNode?.Tag as TreeEntryMeta;
+                if (meta != null && !meta.IsDirectory)
+                {
+                    return meta.Path;
+                }
+                else
+                {
+                    return "";
+                }
+            }
+            set
+            {
+                if (String.IsNullOrEmpty(value) && !String.IsNullOrEmpty(SelectedAsset))
+                {
+                    treeView1.SelectedNode = null;
+                }
+                else
+                {
+                    if (FileNodes.ContainsKey(value))
+                    {
+                        treeView1.SelectedNode = FileNodes[value];
+                    }
+                    else
+                    {
+                        Program.Window.Output.WriteText("[WARNING]: GameExplorerPane couldn't select path '" + value + "'!");
+                        Program.Window.Output.WriteText("           That isn't a valid relative path in the project.");
+                    }
+                }
+            }
+        }
+
         private TreeNode ProjectNode;
         private Dictionary<string, TreeNode> FileNodes = new Dictionary<string, TreeNode>(StringComparer.OrdinalIgnoreCase);
 
@@ -38,6 +73,9 @@ namespace ShoefitterDX.Panes
             Program.ProjectOpened += (_, p) => RefreshProject();
             Program.ProjectClosed += (_, p) => RefreshProject();
 
+            // Forward pane focus to the TreeView
+            this.GotFocus += GameExplorerPane_GotFocus;
+
             // Create tree nodes
             ProjectNode = new TreeNode("<ProjectNode>");
 
@@ -46,11 +84,22 @@ namespace ShoefitterDX.Panes
             RefreshProject();
         }
 
+        private void GameExplorerPane_GotFocus(object sender, EventArgs e)
+        {
+            treeView1.Focus();
+        }
+
+        public bool AssetExists(string filename)
+        {
+            return FileNodes.ContainsKey(filename);
+        }
+
         private void AddFileNode(string filename, TreeNode directoryNode)
         {
             TreeNode newNode = new TreeNode(System.IO.Path.GetFileName(filename));
-            newNode.Tag = new TreeEntryMeta(filename, false);
-            FileNodes.Add(filename, newNode);
+            string relativePath = Program.Project.MakePathRelative(filename);
+            newNode.Tag = new TreeEntryMeta(relativePath, false);
+            FileNodes.Add(relativePath, newNode);
             directoryNode.Nodes.Add(newNode);
         }
 
@@ -108,10 +157,14 @@ namespace ShoefitterDX.Panes
             // 
             this.treeView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView1.FullRowSelect = true;
+            this.treeView1.HideSelection = false;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
+            this.treeView1.ShowLines = false;
             this.treeView1.Size = new System.Drawing.Size(284, 261);
             this.treeView1.TabIndex = 0;
+            this.treeView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.TreeView1_ItemDrag);
             this.treeView1.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.TreeView1_NodeMouseDoubleClick);
             // 
             // GameExplorerPane
@@ -133,6 +186,15 @@ namespace ShoefitterDX.Panes
                 {
                     Program.Window.OpenFileEditor(meta.Path);
                 }
+            }
+        }
+
+        private void TreeView1_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            TreeEntryMeta nodeMeta = ((e.Item as TreeNode)?.Tag as TreeEntryMeta);
+            if (nodeMeta != null && !nodeMeta.IsDirectory)
+            {
+                DoDragDrop(nodeMeta.Path, DragDropEffects.Link);
             }
         }
     }

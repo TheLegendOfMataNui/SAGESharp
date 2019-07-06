@@ -4,15 +4,23 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using FluentAssertions;
+using NSubstitute;
 using NUnit.Framework;
+using SAGESharp.SLB;
 using SAGESharp.Testing;
 using System.Collections.Generic;
 
-namespace SAGESharp.SLB.IO
+namespace SAGESharp.IO
 {
     class DefaultBinarySerializerFactoryTests
     {
-        private readonly IBinarySerializerFactory factory = new DefaultBinarySerializerFactory();
+        private readonly IPropertyBinarySerializerFactory propertyBinarySerializerFactory
+            = Substitute.For<IPropertyBinarySerializerFactory>();
+
+        private readonly IBinarySerializerFactory factory;
+
+        public DefaultBinarySerializerFactoryTests()
+            => factory = new DefaultBinarySerializerFactory(propertyBinarySerializerFactory);
 
         #region Primitive test cases
         [TestCaseSource(nameof(PRIMITIVE_TEST_CASES))]
@@ -81,38 +89,35 @@ namespace SAGESharp.SLB.IO
         #endregion
 
         #region Lists test cases
-        [TestCaseSource(nameof(LISTS_TEST_CASES))]
-        public void Test_Get_Serializer_For_List_Type<T, U>(ListTestCase<T, U> testCaseData)
+        [Test]
+        public void Test_Get_Serializer_For_IList_Type()
             => factory
-                .GetSerializerForType<T>()
+                .GetSerializerForType<IList<int>>()
                 .Should()
-                .BeOfType<ListBinarySerializer<U>>();
-
-        static object[] LISTS_TEST_CASES() => new object[]
-        {
-            new ListTestCase<List<int>, int>(),
-            new ListTestCase<IList<int>, int>(),
-            new ListTestCase<IReadOnlyList<int>, int>()
-        };
-
-        public class ListTestCase<T, U> : AbstractTestCaseData
-        {
-            public ListTestCase() : base($"Test getting serializer to read {typeof(T).Name}")
-            {
-            }
-        }
+                .BeOfType<ListBinarySerializer<int>>();
         #endregion
 
         #region Class test cases
         [TestCase]
-        public void Test_Get_Serialier_For_Class() => factory
-            .GetSerializerForType<TestClass>()
-            .Should()
-            .BeOfType<DefaultBinarySerializer<TestClass>>();
-
-        class TestClass
+        public void Test_Get_Serialier_For_Class()
         {
-            [SLBElement(0)]
+            propertyBinarySerializerFactory
+                .GetPropertySerializersForType<TestClass>(factory)
+                .Returns(new List<IPropertyBinarySerializer<TestClass>>());
+
+            factory
+                .GetSerializerForType<TestClass>()
+                .Should()
+                .BeOfType<DefaultBinarySerializer<TestClass>>();
+
+            propertyBinarySerializerFactory
+                .Received()
+                .GetPropertySerializersForType<TestClass>(factory);
+        }
+
+        public class TestClass
+        {
+            [SerializableProperty(0)]
             public int Int { get; set; }
         }
         #endregion
@@ -131,7 +136,7 @@ namespace SAGESharp.SLB.IO
 
         struct TestStruct
         {
-            [SLBElement(1)]
+            [SerializableProperty(1)]
             public byte Byte { get; set; }
         }
 

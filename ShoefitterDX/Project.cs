@@ -23,6 +23,37 @@ namespace ShoefitterDX
             PROJECT_SUBDIRECTORY_TOOLS,
         };
 
+        // From https://stackoverflow.com/a/340454
+        /// <summary>
+        /// Creates a relative path from one file or folder to another.
+        /// </summary>
+        /// <param name="fromPath">Contains the directory that defines the start of the relative path.</param>
+        /// <param name="toPath">Contains the path that defines the endpoint of the relative path.</param>
+        /// <returns>The relative path from the start directory to the end path or <c>toPath</c> if the paths are not related.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="UriFormatException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        private static string MakeRelativePath(string fromPath, string toPath)
+        {
+            if (String.IsNullOrEmpty(fromPath)) throw new ArgumentNullException(nameof(fromPath));
+            if (String.IsNullOrEmpty(toPath)) throw new ArgumentNullException(nameof(toPath));
+
+            Uri fromUri = new Uri(fromPath);
+            Uri toUri = new Uri(toPath);
+
+            if (fromUri.Scheme != toUri.Scheme) { return toPath; } // path can't be made relative.
+
+            Uri relativeUri = fromUri.MakeRelativeUri(toUri);
+            string relativePath = Uri.UnescapeDataString(relativeUri.ToString());
+
+            if (toUri.Scheme.Equals("file", StringComparison.InvariantCultureIgnoreCase))
+            {
+                relativePath = relativePath.Replace(System.IO.Path.AltDirectorySeparatorChar, System.IO.Path.DirectorySeparatorChar);
+            }
+
+            return relativePath;
+        }
+        
         /// <summary>
         /// A string property of a <see cref="Project"/>, with an event which is fired when the value is set via the <see cref="Value"/> property.
         /// </summary>
@@ -117,6 +148,16 @@ namespace ShoefitterDX
             }
 
             this.Write(this.Filename);
+        }
+
+        public string MakePathRelative(string path)
+        {
+            return MakeRelativePath(System.IO.Path.GetDirectoryName(Filename) + System.IO.Path.DirectorySeparatorChar, path);
+        }
+
+        public string MakePathAbsolute(string path)
+        {
+            return System.IO.Path.IsPathRooted(path) ? path : System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Filename), path);
         }
     }
 }

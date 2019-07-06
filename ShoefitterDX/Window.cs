@@ -25,6 +25,7 @@ namespace ShoefitterDX
             { "", (filename) => new Editors.TextEditor(filename, FastColoredTextBoxNS.Language.Custom) },
             { ".md", (filename) => new Editors.TextEditor(filename, FastColoredTextBoxNS.Language.Custom) },
             { ".osas", (filename) => new Editors.TextEditor(filename, FastColoredTextBoxNS.Language.Custom) },
+            { ".bkd", (filename) => new Editors.BKDEditor(filename) }
         };
 
         public Window()
@@ -34,6 +35,9 @@ namespace ShoefitterDX
             dockPanel1.Theme = new WeifenLuo.WinFormsUI.Docking.VS2015DarkTheme();
             dockPanel1.Theme.ApplyTo(menuStrip1);
             dockPanel1.Theme.ApplyTo(statusStrip1);
+
+            Program.ProjectOpened += Program_ProjectOpened;
+            Program.ProjectClosed += Program_ProjectClosed;
 
             GameExplorer = new Panes.GameExplorerPane();
             GameExplorer.Show(dockPanel1, WeifenLuo.WinFormsUI.Docking.DockState.DockRight);
@@ -51,8 +55,7 @@ namespace ShoefitterDX
         {
             get
             {
-                // TODO: Enumerate open editors and return true if any are modified
-                return Program.Project != null;
+                return OpenEditors.Values.Any((editor) => editor.IsModified);
             }
         }
 
@@ -91,7 +94,11 @@ namespace ShoefitterDX
 
         public void SaveAll()
         {
-            // TODO: Enumerate all the open editors and save each
+            foreach (Editors.EditorBase editor in OpenEditors.Values)
+            {
+                if (editor.IsModified)
+                    editor.Save();
+            }
             // HACK: Save the project file directly (In the future, it will be saved or open in an edtior which will save it)
             Program.Project.Save();
         }
@@ -123,6 +130,7 @@ namespace ShoefitterDX
 
                 newProject.Save(projectFilename);
                 Program.Project = newProject;
+                Program.Config["Recents"]["LastProject"] = projectFilename;
             }
 
         }
@@ -140,6 +148,8 @@ namespace ShoefitterDX
                 {
                     Project project = Project.Load(dialog.FileName);
                     Program.Project = project;
+                    Program.Config["Recents"]["LastProject"] = dialog.FileName;
+                    Program.SaveConfig();
                 }
                 catch (Exception ex)
                 {
@@ -182,7 +192,20 @@ namespace ShoefitterDX
 
         private void Window_Load(object sender, EventArgs e)
         {
-            // TODO: Load last opened project if possible, otherwise show start page
+            string lastProject = Program.Config.GetValueOrDefault("Recents", "LastProject", "");
+            if (!String.IsNullOrEmpty(lastProject))
+            {
+                if (System.IO.File.Exists(lastProject))
+                {
+                    Project project = Project.Load(lastProject);
+                    Program.Project = project;
+                }
+                else
+                {
+                    Output.WriteText("[INFO]: Last opened project '" + lastProject + "' doesn't exist anymore.");
+                    Program.Config["Recents"]["LastProject"] = "";
+                }
+            }
         }
 
         private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -218,6 +241,16 @@ namespace ShoefitterDX
                     osiBrowser.Show(dockPanel1, WeifenLuo.WinFormsUI.Docking.DockState.Document);
                 }
             }
+        }
+
+        private void Program_ProjectClosed(object sender, Project e)
+        {
+            Text = "Shoefitter-DX";
+        }
+
+        private void Program_ProjectOpened(object sender, Project e)
+        {
+            Text = "Shoefitter-DX - " + System.IO.Path.GetFileNameWithoutExtension(Program.Project.Filename);
         }
     }
 }

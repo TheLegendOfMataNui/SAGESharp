@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Konvenience, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Konvenience.1.0.0\lib\net461\Konvenience.dll</HintPath>
+      <HintPath>..\packages\Konvenience.1.0.1\lib\net461\Konvenience.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpDX.4.2.0\lib\net45\SharpDX.dll</HintPath>
@@ -50,9 +50,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BKD.cs" />
     <Compile Include="BCLFile.cs" />
     <Compile Include="BHDFile.cs" />
+    <Compile Include="ColladaUtils.cs" />
+    <Compile Include="EqualityUtils.cs" />
     <Compile Include="INIConfig.cs" />
+    <Compile Include="IO\BinaryReader.cs" />
+    <Compile Include="IO\BinarySerializerFactory.cs" />
+    <Compile Include="IO\BinarySerializers.cs" />
+    <Compile Include="IO\BinaryWriter.cs" />
     <Compile Include="LSS\Compiler.cs" />
     <Compile Include="LSS\Expressions\ArrayAccessExpression.cs" />
     <Compile Include="LSS\Expressions\ArrayExpression.cs" />
@@ -82,6 +89,7 @@
     <Compile Include="LSS\Statements\WhileStatement.cs" />
     <Compile Include="LSS\SyntaxError.cs" />
     <Compile Include="LSS\Token.cs" />
+    <Compile Include="OCLFile.cs" />
     <Compile Include="OSI\BCLInstruction.cs" />
     <Compile Include="OSI\ControlFlow\Analyzer.cs" />
     <Compile Include="OSI\ControlFlow\OSINode.cs" />
@@ -95,12 +103,8 @@
     <Compile Include="SLB\ASCIIExtensions.cs" />
     <Compile Include="SLB\Cinematic\Camera\Camera.cs" />
     <Compile Include="SLB\Cinematic\Camera\Frame.cs" />
-    <Compile Include="SLB\EqualityUtils.cs" />
     <Compile Include="SLB\Footer.cs" />
     <Compile Include="SLB\Identifier.cs" />
-    <Compile Include="SLB\IO\BinaryReader.cs" />
-    <Compile Include="SLB\IO\BinarySerializerFactory.cs" />
-    <Compile Include="SLB\IO\BinarySerializers.cs" />
     <Compile Include="SLB\ISLBBinaryWriter.cs" />
     <Compile Include="SLB\Level\Conversation\Character.cs" />
     <Compile Include="SLB\Level\Conversation\CharacterBinaryWriter.cs" />
@@ -116,6 +120,8 @@
     <Compile Include="SLB\Point3D.cs" />
     <Compile Include="SLB\StreamExtensions.cs" />
     <Compile Include="SLB\StringBinaryWriter.cs" />
+    <Compile Include="XFile.cs" />
+    <Compile Include="XUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LSS\readme.md" />

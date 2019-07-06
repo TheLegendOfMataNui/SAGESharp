@@ -5,7 +5,7 @@
  */
 using System.Collections.Generic;
 
-namespace SAGESharp.SLB
+namespace SAGESharp
 {
     /// <summary>
     /// Class with extension methods so is easier to implement the Equals() and GetHashCode() methods.

@@ -3,20 +3,20 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-using SAGESharp.SLB.IO;
+using SAGESharp.IO;
 using System;
 
 namespace SAGESharp.SLB
 {
     public sealed class Point3D : IEquatable<Point3D>
     {
-        [SLBElement(1)]
+        [SerializableProperty(1)]
         public float X { get; set; }
 
-        [SLBElement(2)]
+        [SerializableProperty(2)]
         public float Y { get; set; }
 
-        [SLBElement(3)]
+        [SerializableProperty(3)]
         public float Z { get; set; }
 
         public bool Equals(Point3D other)

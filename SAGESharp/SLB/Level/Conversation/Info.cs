@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-using SAGESharp.SLB.IO;
+using SAGESharp.IO;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -21,22 +21,22 @@ namespace SAGESharp.SLB.Level.Conversation
         /// actual entries are saved instead.
         internal const int BINARY_SIZE = 28;
 
-        [SLBElement(1)]
+        [SerializableProperty(1)]
         public LineSide LineSide { get; set; }
 
-        [SLBElement(2)]
+        [SerializableProperty(2)]
         public uint ConditionStart { get; set; }
 
-        [SLBElement(3)]
+        [SerializableProperty(3)]
         public uint ConditionEnd { get; set; }
 
-        [SLBElement(4)]
+        [SerializableProperty(4)]
         public Identifier StringLabel { get; set; }
 
-        [SLBElement(5)]
+        [SerializableProperty(5)]
         public int StringIndex { get; set; }
 
-        [SLBElement(6)]
+        [SerializableProperty(6)]
         public IList<Frame> Frames { get; set; }
 
         public bool Equals(Info other)

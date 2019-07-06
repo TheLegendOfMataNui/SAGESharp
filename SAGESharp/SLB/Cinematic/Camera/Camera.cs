@@ -4,7 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using Konvenience;
-using SAGESharp.SLB.IO;
+using SAGESharp.IO;
 using System;
 using System.Collections.Generic;
 
@@ -12,19 +12,19 @@ namespace SAGESharp.SLB.Cinematic.Camera
 {
     public sealed class Camera : IEquatable<Camera>
     {
-        [SLBElement(1)]
+        [SerializableProperty(1)]
         public float ViewAngle { get; set; }
 
-        [SLBElement(2)]
+        [SerializableProperty(2)]
         public float SpinMaskTimes1 { get; set; }
 
-        [SLBElement(3)]
+        [SerializableProperty(3)]
         public float SpinMaskTimes2 { get; set; }
 
-        [SLBElement(4)]
+        [SerializableProperty(4)]
         public float SpinMaskTimes3 { get; set; }
 
-        [SLBElement(5)]
+        [SerializableProperty(5)]
         public IList<Frame> Frames { get; set; }
 
         public bool Equals(Camera other)
