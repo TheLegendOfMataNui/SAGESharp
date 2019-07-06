@@ -16,6 +16,7 @@ namespace SAGESharp.LSS
         KeywordMethod,
         KeywordGlobal,
         KeywordVar,
+        KeywordDo,
         KeywordWhile,
         KeywordIf,
         KeywordElse,

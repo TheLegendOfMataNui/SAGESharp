@@ -206,7 +206,7 @@ namespace SAGESharp.OSI.ControlFlow
                                 nodeLengths.Add(secondPart, nodeLengths[n] - l);
                                 nodeLengths[n] = l;
                                 //nodeStarts.Add(secondPart, nodeStarts[n] + l);
-                                secondPart.StartOffset = (uint)(node.StartOffset - l);
+                                secondPart.StartOffset = (uint)(node.StartOffset + l);
 
                                 dest = secondPart;
 

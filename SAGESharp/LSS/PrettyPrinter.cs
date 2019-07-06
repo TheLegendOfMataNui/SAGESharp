@@ -315,6 +315,16 @@ namespace SAGESharp.LSS
                 s.Body.AcceptVisitor(this, context);
                 return null;
             }
+
+            public object VisitDoWhileStatement(DoWhileStatement s, object context)
+            {
+                StringBuilder.Append("do ");
+                s.Body.AcceptVisitor(this, context);
+                StringBuilder.Append(" while (");
+                s.Condition.AcceptVisitor(this, context);
+                StringBuilder.Append(")");
+                return null;
+            }
         }
 
         public static string Print(params Statements.Statement[] statements)

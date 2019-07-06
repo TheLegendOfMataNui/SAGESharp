@@ -1200,6 +1200,23 @@ namespace SAGESharp.LSS
                 return size;
             }
 
+            public uint VisitDoWhileStatement(DoWhileStatement s, object context)
+            {
+                uint size = 0;
+
+                size += s.Body.AcceptVisitor(this, context);
+
+                size += s.Condition.AcceptVisitor(this, context);
+
+                // Invert the condition to produce a 'false' to branch
+                size += EmitBCLInstruction(BCLOpcode.Not);
+
+                size += EmitBCLInstruction(out BCLInstruction branch, BCLOpcode.CompareAndBranchIfFalse);
+                branch.Arguments[0].Value = (short)(-1 * (short)size);
+
+                return size;
+            }
+
             public uint VisitAssignmentStatement(AssignmentStatement s, object context)
             {
                 uint size = 0;

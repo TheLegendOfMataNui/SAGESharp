@@ -215,6 +215,21 @@ namespace SAGESharp.LSS
             return new ForEachStatement(span, variableName, collection, body);
         }
 
+        private DoWhileStatement ParseDoWhileStatement()
+        {
+            Token doKeyword = ConsumeType(TokenType.KeywordDo, "");
+            SkipWhitespace();
+            InstructionStatement body = ParseInstructionStatement();
+            SkipWhitespace();
+            ConsumeType(TokenType.KeywordWhile, "Expected do statement to have a while keyword after the body.");
+            SkipWhitespace();
+            ConsumeType(TokenType.OpenParenthesis, "Expected do statement to have a condition after the while");
+            Expression condition = ParseExpression();
+            SkipWhitespace();
+            Token endParenthesis = ConsumeType(TokenType.CloseParenthesis, "Expected do statement condition to have a closing parenthesis after the condition.");
+            return new DoWhileStatement(doKeyword.Span + endParenthesis.Span, body, condition);
+        }
+
         private InstructionStatement ParseInstructionStatement()
         {
             // { means block
@@ -230,6 +245,10 @@ namespace SAGESharp.LSS
             else if (Peek().Type == TokenType.KeywordForEach)
             {
                 return ParseForEachStatement();
+            }
+            else if (Peek().Type == TokenType.KeywordDo)
+            {
+                return ParseDoWhileStatement();
             }
             else if (ConsumeIfType(out Token whileKeyword, TokenType.KeywordWhile))
             {

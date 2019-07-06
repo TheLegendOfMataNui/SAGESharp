@@ -78,6 +78,7 @@
     <Compile Include="LSS\Statements\AssignmentStatement.cs" />
     <Compile Include="LSS\Statements\BlockStatement.cs" />
     <Compile Include="LSS\Statements\ClassStatement.cs" />
+    <Compile Include="LSS\Statements\DoWhileStatement.cs" />
     <Compile Include="LSS\Statements\ExpressionStatement.cs" />
     <Compile Include="LSS\Statements\ForEachStatement.cs" />
     <Compile Include="LSS\Statements\GlobalStatement.cs" />

@@ -30,6 +30,7 @@ namespace SAGESharp.LSS
                 _keywords.Add("method", TokenType.KeywordMethod);
                 _keywords.Add("global", TokenType.KeywordGlobal);
                 _keywords.Add("var", TokenType.KeywordVar);
+                _keywords.Add("do", TokenType.KeywordDo);
                 _keywords.Add("while", TokenType.KeywordWhile);
                 _keywords.Add("if", TokenType.KeywordIf);
                 _keywords.Add("else", TokenType.KeywordElse);

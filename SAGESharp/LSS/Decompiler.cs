@@ -65,16 +65,28 @@ namespace SAGESharp.LSS
             }
         }
 
-        private static BinaryExpression DecompileBinaryExpression(Stack<Expression> stack, TokenType operatorType, string op, SourceSpan span)
+        private static Expression DecompileBinaryExpression(Stack<Expression> stack, TokenType operatorType, string op, SourceSpan span)
         {
             Expression right = stack.Pop();
             Expression left = stack.Pop();
             return DecompileBinaryExpression(stack, left, right, operatorType, op, span);
         }
 
-        private static BinaryExpression DecompileBinaryExpression(Stack<Expression> stack, Expression left, Expression right, TokenType operatorType, string op, SourceSpan span)
+        private static Expression DecompileBinaryExpression(Stack<Expression> stack, Expression left, Expression right, TokenType operatorType, string op, SourceSpan span)
         {
-            return new BinaryExpression(left, new Token(operatorType, op, span), right);
+            return new GroupingExpression(span, new BinaryExpression(left, new Token(operatorType, op, span), right));
+        }
+
+        private static Expression Ungroup(Expression expr)
+        {
+            if (expr is GroupingExpression group)
+            {
+                return group.Contents;
+            }
+            else
+            {
+                return expr;
+            }
         }
 
         public static SubroutineStatement DecompileFunction(OSIFile osi, OSIFile.FunctionInfo function, SourceSpan outputSpan)
@@ -181,7 +193,7 @@ namespace SAGESharp.LSS
                             break;
                         case BCLOpcode.AppendToArray:
                             {
-                                Expression value = context.Stack.Pop();
+                                Expression value = Ungroup(context.Stack.Pop());
                                 Expression array = context.Stack.Pop();
                                 // If array is ArrayExpression, collapse into it
                                 if (array is ArrayExpression arrExpr && context.Stack.Peek() == arrExpr)
@@ -193,7 +205,7 @@ namespace SAGESharp.LSS
                                 }
                                 else
                                 {
-                                    statements.Add(new ExpressionStatement(new CallExpression(context.OutputSpan, DecompileBinaryExpression(context.Stack, array, new VariableExpression(new Token(TokenType.KeywordAppend, "__append", context.OutputSpan)), TokenType.Period, ".", context.OutputSpan), new Expression[] { value })));
+                                    statements.Add(new ExpressionStatement(new CallExpression(context.OutputSpan, new BinaryExpression(array, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordAppend, "__append", context.OutputSpan))), new Expression[] { value })));
                                     if (i < instructions.Count - 1 && instructions[i + 1] is BCLInstruction popBCL && popBCL.Opcode == BCLOpcode.Pop && context.Stack.Peek() == array)
                                     {
                                         context.Stack.Pop();
@@ -213,19 +225,19 @@ namespace SAGESharp.LSS
                             context.Stack.Push(new UnaryExpression(context.Stack.Pop(), new Token(TokenType.Tilde, "~", context.OutputSpan), true));
                             break;
                         case BCLOpcode.BitwiseOr:
-                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.PipePipe, "||", context.OutputSpan));
+                            context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.Pipe, "|", context.OutputSpan));
                             break;
                         case BCLOpcode.BitwiseXor:
                             context.Stack.Push(DecompileBinaryExpression(context.Stack, TokenType.Octothorpe, "#", context.OutputSpan));
                             break;
                         case BCLOpcode.ConvertToFloat:
-                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordToFloat, "__tofloat", context.OutputSpan)), new Expression[] { context.Stack.Pop() }));
+                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordToFloat, "__tofloat", context.OutputSpan)), new Expression[] { Ungroup(context.Stack.Pop()) }));
                             break;
                         case BCLOpcode.ConvertToInteger:
-                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordToInt, "__toint", context.OutputSpan)), new Expression[] { context.Stack.Pop() }));
+                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordToInt, "__toint", context.OutputSpan)), new Expression[] { Ungroup(context.Stack.Pop()) }));
                             break;
                         case BCLOpcode.ConvertToString:
-                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordToString, "__tostring", context.OutputSpan)), new Expression[] { context.Stack.Pop() }));
+                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordToString, "__tostring", context.OutputSpan)), new Expression[] { Ungroup(context.Stack.Pop()) }));
                             break;
                         case BCLOpcode.CreateArray:
                             context.Stack.Push(new ArrayExpression(context.OutputSpan, new Expression[] { }));
@@ -260,7 +272,7 @@ namespace SAGESharp.LSS
                             context.Stack.Push(new LiteralExpression(new Token(TokenType.KeywordNull, "null", context.OutputSpan)));
                             break;
                         case BCLOpcode.Return:
-                            statements.Add(new ReturnStatement(new Token(TokenType.KeywordReturn, "return", context.OutputSpan), context.Stack.Pop()));
+                            statements.Add(new ReturnStatement(new Token(TokenType.KeywordReturn, "return", context.OutputSpan), Ungroup(context.Stack.Pop())));
                             break;
                         case BCLOpcode.PushConstantString:
                             context.Stack.Push(new LiteralExpression(new Token(TokenType.StringLiteral, "\"" + Compiler.EscapeString(context.OSI.Strings[instructions[i].Arguments[0].GetValue<ushort>()]) + "\"", context.OutputSpan)));
@@ -275,7 +287,7 @@ namespace SAGESharp.LSS
                                 break;
                             }
                         case BCLOpcode.SetThisMemberValue:
-                            statements.Add(new AssignmentStatement(new BinaryExpression(new VariableExpression(new Token(TokenType.KeywordThis, "this", context.OutputSpan)), new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.Symbol, context.OSI.Symbols[instructions[i].Arguments[0].GetValue<ushort>()], context.OutputSpan))), context.Stack.Pop()));
+                            statements.Add(new AssignmentStatement(new BinaryExpression(new VariableExpression(new Token(TokenType.KeywordThis, "this", context.OutputSpan)), new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.Symbol, context.OSI.Symbols[instructions[i].Arguments[0].GetValue<ushort>()], context.OutputSpan))), Ungroup(context.Stack.Pop())));
                             break;
                         case BCLOpcode.GetThisMemberFunction:
                             context.Stack.Push(new BinaryExpression(new VariableExpression(new Token(TokenType.KeywordThis, "this", context.OutputSpan)), new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.Symbol, context.OSI.Symbols[instructions[i].Arguments[0].GetValue<ushort>()], context.OutputSpan))));
@@ -287,7 +299,7 @@ namespace SAGESharp.LSS
                                 List<Expression> arguments = new List<Expression>();
                                 for (int j = 0; j < argCount; j++)
                                 {
-                                    arguments.Insert(0, context.Stack.Pop()); // Pop arguments right to left
+                                    arguments.Insert(0, Ungroup(context.Stack.Pop())); // Pop arguments right to left
                                 }
                                 context.Stack.Pop(); // 'this' was the first argument
                                 // TODO: Assert that this was really 'this'
@@ -321,7 +333,7 @@ namespace SAGESharp.LSS
                                     // Instead, we do a more precise detection in Analyzer.AnalyzeIfElse (for both switch -> if chains, and foreach -> while chains)
                                     //if (value is CallExpression)
                                     //{
-                                        statements.Add(new ExpressionStatement(value));
+                                        statements.Add(new ExpressionStatement(Ungroup(value)));
                                     //}
                                     //else
                                     //{
@@ -335,7 +347,7 @@ namespace SAGESharp.LSS
                             {
                                 string memberName = context.OSI.Symbols[instructions[i].Arguments[0].GetValue<ushort>()];
                                 Expression target = context.Stack.Pop();
-                                Expression value = context.Stack.Pop();
+                                Expression value = Ungroup(context.Stack.Pop());
                                 statements.Add(new AssignmentStatement(new BinaryExpression(target, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.Symbol, memberName, context.OutputSpan))), value));
                                 break;
                             }
@@ -380,7 +392,7 @@ namespace SAGESharp.LSS
                                 // Arguments are popped right to left.
                                 for (int j = argCount - 1; j >= 0; j--)
                                 {
-                                    arguments[j] = context.Stack.Pop();
+                                    arguments[j] = Ungroup(context.Stack.Pop());
                                 }
                                 context.Stack.Push(new CallExpression(context.OutputSpan, new BinaryExpression(new VariableExpression(new Token(TokenType.Symbol, functionNamespace, context.OutputSpan)), new Token(TokenType.ColonColon, "::", context.OutputSpan), new VariableExpression(new Token(TokenType.Symbol, functionName, context.OutputSpan))), arguments));
                                 break;
@@ -389,7 +401,7 @@ namespace SAGESharp.LSS
                             {
                                 ushort index = instructions[i].Arguments[0].GetValue<ushort>();
                                 string variableName = (index & (1 << 15)) > 0 ? context.OSI.Globals[index & ~(1 << 15)] : context.Variables[index];
-                                statements.Add(new AssignmentStatement(new VariableExpression(new Token(TokenType.Symbol, variableName, context.OutputSpan)), context.Stack.Pop()));
+                                statements.Add(new AssignmentStatement(new VariableExpression(new Token(TokenType.Symbol, variableName, context.OutputSpan)), Ungroup(context.Stack.Pop())));
                                 break;
                             }
                         case BCLOpcode.CreateObject:
@@ -397,7 +409,7 @@ namespace SAGESharp.LSS
                             break;
                         case BCLOpcode.GetArrayValue:
                             {
-                                Expression index = context.Stack.Pop();
+                                Expression index = Ungroup(context.Stack.Pop());
                                 Expression array = context.Stack.Pop();
                                 context.Stack.Push(new ArrayAccessExpression(context.OutputSpan, array, index));
                                 break;
@@ -409,8 +421,8 @@ namespace SAGESharp.LSS
                             }
                         case BCLOpcode.SetArrayValue:
                             {
-                                Expression value = context.Stack.Pop();
-                                Expression index = context.Stack.Pop();
+                                Expression value = Ungroup(context.Stack.Pop());
+                                Expression index = Ungroup(context.Stack.Pop());
                                 Expression array = context.Stack.Pop();
                                 statements.Add(new AssignmentStatement(new ArrayAccessExpression(context.OutputSpan, array, index), value));
                                 break;
@@ -431,7 +443,7 @@ namespace SAGESharp.LSS
                             }
                         case BCLOpcode.SetRedValue:
                             {
-                                Expression value = context.Stack.Pop();
+                                Expression value = Ungroup(context.Stack.Pop());
                                 Expression target = context.Stack.Pop();
                                 if (target is CallExpression colorCtor && colorCtor.Target is VariableExpression colorCtorName && colorCtorName.Symbol.Type == TokenType.KeywordRGBA)
                                 {
@@ -446,7 +458,7 @@ namespace SAGESharp.LSS
                             }
                         case BCLOpcode.SetGreenValue:
                             {
-                                Expression value = context.Stack.Pop();
+                                Expression value = Ungroup(context.Stack.Pop());
                                 Expression target = context.Stack.Pop();
                                 if (target is CallExpression colorCtor && colorCtor.Target is VariableExpression colorCtorName && colorCtorName.Symbol.Type == TokenType.KeywordRGBA)
                                 {
@@ -461,7 +473,7 @@ namespace SAGESharp.LSS
                             }
                         case BCLOpcode.SetBlueValue:
                             {
-                                Expression value = context.Stack.Pop();
+                                Expression value = Ungroup(context.Stack.Pop());
                                 Expression target = context.Stack.Pop();
                                 if (target is CallExpression colorCtor && colorCtor.Target is VariableExpression colorCtorName && colorCtorName.Symbol.Type == TokenType.KeywordRGBA)
                                 {
@@ -476,7 +488,7 @@ namespace SAGESharp.LSS
                             }
                         case BCLOpcode.SetAlphaValue:
                             {
-                                Expression value = context.Stack.Pop();
+                                Expression value = Ungroup(context.Stack.Pop());
                                 Expression target = context.Stack.Pop();
                                 if (target is CallExpression colorCtor && colorCtor.Target is VariableExpression colorCtorName && colorCtorName.Symbol.Type == TokenType.KeywordRGBA)
                                 {
@@ -498,7 +510,7 @@ namespace SAGESharp.LSS
                             }
                         case BCLOpcode.RemoveFromArray:
                             {
-                                Expression index = context.Stack.Pop();
+                                Expression index = Ungroup(context.Stack.Pop());
                                 Expression array = context.Stack.Pop();
                                 //Expression alsoArray = context.Stack.Pop();
                                 //context.Stack.Push(new CallExpression(context.OutputSpan, new BinaryExpression(array, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordRemoveAt, "__removeat", context.OutputSpan))), new List<Expression> { index }));
@@ -517,8 +529,8 @@ namespace SAGESharp.LSS
                             }
                         case BCLOpcode.InsertIntoArray:
                             {
-                                Expression value = context.Stack.Pop();
-                                Expression index = context.Stack.Pop();
+                                Expression value = Ungroup(context.Stack.Pop());
+                                Expression index = Ungroup(context.Stack.Pop());
                                 Expression array = context.Stack.Pop();
                                 statements.Add(new ExpressionStatement(new CallExpression(context.OutputSpan, new BinaryExpression(array, new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordInsertAt, "__insertat", context.OutputSpan))), new List<Expression> { index, value })));
                                 if (i < instructions.Count - 1 && instructions[i + 1] is BCLInstruction popBCL && popBCL.Opcode == BCLOpcode.Pop && context.Stack.Peek() == array)
@@ -552,25 +564,25 @@ namespace SAGESharp.LSS
                             context.Stack.Push(new BinaryExpression(context.Stack.Pop(), new Token(TokenType.Period, ".", context.OutputSpan), new VariableExpression(new Token(TokenType.KeywordAlpha, "__alpha", context.OutputSpan))));
                             break;
                         case BCLOpcode.IsInteger:
-                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordIsInt, "__isint", context.OutputSpan)), new List<Expression> { context.Stack.Pop() }));
+                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordIsInt, "__isint", context.OutputSpan)), new List<Expression> { Ungroup(context.Stack.Pop()) }));
                             break;
                         case BCLOpcode.IsFloat:
-                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordIsFloat, "__isfloat", context.OutputSpan)), new List<Expression> { context.Stack.Pop() }));
+                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordIsFloat, "__isfloat", context.OutputSpan)), new List<Expression> { Ungroup(context.Stack.Pop()) }));
                             break;
                         case BCLOpcode.IsString:
-                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordIsString, "__isstring", context.OutputSpan)), new List<Expression> { context.Stack.Pop() }));
+                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordIsString, "__isstring", context.OutputSpan)), new List<Expression> { Ungroup(context.Stack.Pop()) }));
                             break;
                         case BCLOpcode.IsAnObject:
-                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordIsInstance, "__isinstance", context.OutputSpan)), new List<Expression> { context.Stack.Pop() }));
+                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordIsInstance, "__isinstance", context.OutputSpan)), new List<Expression> { Ungroup(context.Stack.Pop()) }));
                             break;
                         case BCLOpcode.IsGameObject:
-                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordIsObject, "__isobject", context.OutputSpan)), new List<Expression> { context.Stack.Pop() }));
+                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordIsObject, "__isobject", context.OutputSpan)), new List<Expression> { Ungroup(context.Stack.Pop()) }));
                             break;
                         case BCLOpcode.IsArray:
-                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordIsArray, "__isarray", context.OutputSpan)), new List<Expression> { context.Stack.Pop() }));
+                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordIsArray, "__isarray", context.OutputSpan)), new List<Expression> { Ungroup(context.Stack.Pop()) }));
                             break;
                         case BCLOpcode.GetObjectClassID:
-                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordClassID, "__classid", context.OutputSpan)), new List<Expression> { context.Stack.Pop() }));
+                            context.Stack.Push(new CallExpression(context.OutputSpan, new VariableExpression(new Token(TokenType.KeywordClassID, "__classid", context.OutputSpan)), new List<Expression> { Ungroup(context.Stack.Pop()) }));
                             break;
                         case BCLOpcode.MemberFunctionArgumentCheck:
                         case BCLOpcode.Nop:
@@ -600,6 +612,8 @@ namespace SAGESharp.LSS
                     throw new FormatException("Cannot decompile abstract instruction " + instructions[i].GetType().ToString());
                 }
             }
+            if (context.Stack.Count > 0)
+                context.Stack.Push(Ungroup(context.Stack.Pop())); // HACK: All control-flow conditions can be ungrouped.
 
             return statements;
         }

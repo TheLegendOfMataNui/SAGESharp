@@ -20,6 +20,7 @@ namespace SAGESharp.LSS.Statements
         T VisitAssignmentStatement(AssignmentStatement s, C context);
         T VisitVariableDeclarationStatement(VariableDeclarationStatement s, C context);
         T VisitForEachStatement(ForEachStatement s, C context);
+        T VisitDoWhileStatement(DoWhileStatement s, C context);
     }
 
     public abstract class Statement

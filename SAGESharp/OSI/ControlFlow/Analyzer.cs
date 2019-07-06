@@ -13,7 +13,7 @@ namespace SAGESharp.OSI.ControlFlow
     {
         public List<InstructionStatement> Statements { get; }
         //public Stack<Expression> StackLeftOver { get; }
-        public Expression EndConditional { get; }
+        public Expression EndConditional { get; set; }
 
         public LSSNode(List<InstructionStatement> statements/*, Stack<Expression> stackLeftOver*/, Expression endConditional)
         {
@@ -204,7 +204,7 @@ namespace SAGESharp.OSI.ControlFlow
                     && node.OutTrueJump.Destination.OutJumps.Count == 1
                     && node.OutTrueJump.Destination.OutJumps.ContainsKey(node))
                 {
-                    // Loop
+                    // While loop
                     LSSNode bodyNode = node.OutTrueJump.Destination as LSSNode;
 
                     node.Statements.Add(new WhileStatement(new SourceSpan(), node.EndConditional, new BlockStatement(new SourceSpan(), bodyNode.Statements)));
@@ -224,6 +224,19 @@ namespace SAGESharp.OSI.ControlFlow
                     node.OutJumps.Remove(oldFalseJump.Destination);
                     node.CreateJumpTo(oldFalseJump.Destination, Jump.JumpType.Always);
                 }
+                else if (node.OutFalseJump.Destination == node)
+                    //&& node.OutTrueJump.Destination.InJumps.Count == 1)
+                {
+                    // Do-while loop
+                    DoWhileStatement loop = new DoWhileStatement(new SourceSpan(), new BlockStatement(new SourceSpan(), node.Statements), new UnaryExpression(node.EndConditional, new Token(TokenType.Exclamation, "!", new SourceSpan()), true));
+                    node.Statements.Clear();
+                    node.Statements.Add(loop);
+                    Node destination = node.OutTrueJump.Destination;
+                    node.OutJumps.Clear();
+                    node.InJumps.Remove(node);
+                    destination.InJumps.Remove(node);
+                    node.CreateJumpTo(destination, Jump.JumpType.Always);
+                }
             }
 
             if (node.OutJumps.Count == 1 && node.OutAlwaysJump.Destination.InJumps.Count == 1 /*&& node != graph.StartNode*/ && node.OutAlwaysJump.Destination != graph.EndNode)
@@ -241,6 +254,7 @@ namespace SAGESharp.OSI.ControlFlow
                 node.OutJumps.Remove(follower);
 
                 node.Statements.AddRange(follower.Statements);
+                node.EndConditional = follower.EndConditional;
             }
 
             // Bypass any empty nodes

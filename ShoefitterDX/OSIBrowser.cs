@@ -378,9 +378,23 @@ namespace ShoefitterDX
                         line++;
                         offset += i.Size;
                     }
+                    if (offset == this.HilightedOffset)
+                    {
+                        e.Graphics.FillRectangle(Brushes.Yellow, r.X - CameraX, r.Y - CameraY + line * lineHeight, r.Width, lineHeight);
+                    }
                 }
                 e.Graphics.DrawRectangle(Pens.Black, r.X - CameraX, r.Y - CameraY, r.Width, r.Height);
                 TextRenderer.DrawText(e.Graphics, NodeContents[n], Font, new Rectangle(r.X - CameraX, r.Y - CameraY, r.Width, r.Height), Color.Black, TextFormatFlags.Left);
+
+                if (n is LSSNode lssNode)
+                {
+                    string condition = "(no condition)";
+                    if (lssNode.EndConditional != null)
+                    {
+                        condition = lssNode.EndConditional.ToString();
+                    }
+                    TextRenderer.DrawText(e.Graphics, condition, Font, new Point(r.X - CameraX, r.Bottom - CameraY), Color.Black);
+                }
 
                 foreach (Jump j in n.OutJumps.Values)
                 {
