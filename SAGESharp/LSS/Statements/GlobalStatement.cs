@@ -17,9 +17,9 @@ namespace SAGESharp.LSS.Statements
             this.Name = name;
         }
 
-        public override T AcceptVisitor<T>(StatementVisitor<T> visitor)
+        public override T AcceptVisitor<T, C>(StatementVisitor<T, C> visitor, C context)
         {
-            return visitor.VisitGlobalStatement(this);
+            return visitor.VisitGlobalStatement(this, context);
         }
 
         public override string ToString()

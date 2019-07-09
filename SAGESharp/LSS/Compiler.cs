@@ -9,7 +9,7 @@ using SAGESharp.OSI;
 
 namespace SAGESharp.LSS
 {
-    public class Compiler
+    public static class Compiler
     {
         public class Settings
         {
@@ -51,7 +51,7 @@ namespace SAGESharp.LSS
             }
 
             public abstract uint EmitRead(SubroutineContext context);
-            public abstract uint EmitWrite(SubroutineContext context, Expression value);
+            public abstract uint EmitWrite(SubroutineContext context, Expression value, object expressionContext);
         }
 
         private class StandardVariable : Variable
@@ -70,10 +70,10 @@ namespace SAGESharp.LSS
                 return size;
             }
 
-            public override uint EmitWrite(SubroutineContext context, Expression value)
+            public override uint EmitWrite(SubroutineContext context, Expression value, object expressionContext)
             {
                 uint size = 0;
-                size += value.AcceptVisitor(context, null);
+                size += value.AcceptVisitor(context, expressionContext);
                 size += context.EmitBCLInstruction(BCLOpcode.SetVariableValue, Index);
                 return size;
             }
@@ -99,14 +99,14 @@ namespace SAGESharp.LSS
                 return size;
             }
 
-            public override uint EmitWrite(SubroutineContext context, Expression value)
+            public override uint EmitWrite(SubroutineContext context, Expression value, object expressionContext)
             {
                 // TODO: Panic & Sync
                 throw new InvalidOperationException("Cannot set an iteration variable.");
             }
         }
 
-        private class SubroutineContext : ExpressionVisitor<uint, object>, StatementVisitor<uint>
+        private class SubroutineContext : ExpressionVisitor<uint, object>, StatementVisitor<uint, object>
         {
             private const string ITERATION_INDEX_LOCAL_NAME = "@";
             public List<Instruction> Instructions { get; } = new List<Instruction>();
@@ -292,13 +292,6 @@ namespace SAGESharp.LSS
                     throw new InvalidOperationException("Cannot leave the base subroutine scope.");
                 }
             }
-
-            private string UnescapeString(string value)
-            {
-                return value.Replace("\\\"", "\"").Replace("\\n", "\n");
-            }
-
-            // TODO: Make a corresponding EscapeString and use it in OSIFile.ToString()
 
             #region Expressions
             public uint VisitArrayAccessExpression(ArrayAccessExpression expr, object context)
@@ -816,6 +809,50 @@ namespace SAGESharp.LSS
                                     size += EmitBCLInstruction(BCLOpcode.InsertIntoArray);
 
                                 }
+                                else if (nameExp.Symbol.Type == TokenType.KeywordWithRed)
+                                {
+                                    if (expr.Arguments.Count != 1)
+                                        throw new ArgumentException("Builtin 'withred' requires 1 argument.");
+
+                                    size += binExp.Left.AcceptVisitor(this, context); // Target
+
+                                    size += expr.Arguments[0].AcceptVisitor(this, context); // Value
+
+                                    size += EmitBCLInstruction(BCLOpcode.SetRedValue);
+                                }
+                                else if (nameExp.Symbol.Type == TokenType.KeywordWithGreen)
+                                {
+                                    if (expr.Arguments.Count != 1)
+                                        throw new ArgumentException("Builtin 'withgreen' requires 1 argument.");
+
+                                    size += binExp.Left.AcceptVisitor(this, context); // Target
+
+                                    size += expr.Arguments[0].AcceptVisitor(this, context); // Value
+
+                                    size += EmitBCLInstruction(BCLOpcode.SetGreenValue);
+                                }
+                                else if (nameExp.Symbol.Type == TokenType.KeywordWithBlue)
+                                {
+                                    if (expr.Arguments.Count != 1)
+                                        throw new ArgumentException("Builtin 'withblue' requires 1 argument.");
+
+                                    size += binExp.Left.AcceptVisitor(this, context); // Target
+
+                                    size += expr.Arguments[0].AcceptVisitor(this, context); // Value
+
+                                    size += EmitBCLInstruction(BCLOpcode.SetBlueValue);
+                                }
+                                else if (nameExp.Symbol.Type == TokenType.KeywordWithAlpha)
+                                {
+                                    if (expr.Arguments.Count != 1)
+                                        throw new ArgumentException("Builtin 'withalpha' requires 1 argument.");
+
+                                    size += binExp.Left.AcceptVisitor(this, context); // Target
+
+                                    size += expr.Arguments[0].AcceptVisitor(this, context); // Value
+
+                                    size += EmitBCLInstruction(BCLOpcode.SetAlphaValue);
+                                }
                                 else
                                 {
                                     throw new ArgumentException("Member expression not invokable.");
@@ -959,7 +996,7 @@ namespace SAGESharp.LSS
                 uint size = 0;
                 if (expr.Value.Type == TokenType.StringLiteral)
                 {
-                    ushort index = AddOrGetString(expr.Value.Content.Substring(1, expr.Value.Content.Length - 2));
+                    ushort index = AddOrGetString(UnescapeString(expr.Value.Content.Substring(1, expr.Value.Content.Length - 2)));
                     size += EmitBCLInstruction(BCLOpcode.PushConstantString, index);
                 }
                 else if (expr.Value.Type == TokenType.IntegerLiteral)
@@ -1048,56 +1085,56 @@ namespace SAGESharp.LSS
             #endregion
 
             #region Statements
-            public uint VisitBlockStatement(BlockStatement s)
+            public uint VisitBlockStatement(BlockStatement s, object context)
             {
                 uint size = 0;
                 EnterScope();
                 foreach (InstructionStatement childStatement in s.Instructions)
                 {
-                    size += childStatement.AcceptVisitor(this);
+                    size += childStatement.AcceptVisitor(this, context);
                 }
                 LeaveScope();
                 return size;
             }
 
-            public uint VisitClassStatement(ClassStatement s)
+            public uint VisitClassStatement(ClassStatement s, object context)
             {
                 throw new InvalidOperationException("Class statements are not allowed in a subroutine body.");
             }
 
-            public uint VisitPropertyStatement(PropertyStatement s)
+            public uint VisitPropertyStatement(PropertyStatement s, object context)
             {
                 throw new InvalidOperationException("Property statements are not allowed in a subroutine body.");
             }
 
-            public uint VisitSubroutineStatement(SubroutineStatement s)
+            public uint VisitSubroutineStatement(SubroutineStatement s, object context)
             {
                 throw new InvalidOperationException("Subroutine statements are not allowed inside the body of another subroutine.");
             }
 
-            public uint VisitGlobalStatement(GlobalStatement s)
+            public uint VisitGlobalStatement(GlobalStatement s, object context)
             {
                 throw new InvalidOperationException("Global statements are not allowed inside a subroutine body.");
             }
 
-            public uint VisitExpressionStatement(ExpressionStatement s)
+            public uint VisitExpressionStatement(ExpressionStatement s, object context)
             {
                 uint size = 0;
                 if (s.Span.Start.Line.HasValue)
                     size += EmitLineNumberAlt1((ushort)s.Span.Start.Line.Value, s.Span.Start.Filename);
-                size += s.Expression.AcceptVisitor(this, null);
+                size += s.Expression.AcceptVisitor(this, context);
                 size += EmitBCLInstruction(BCLOpcode.Pop);
                 return size;
             }
 
-            public uint VisitReturnStatement(ReturnStatement s)
+            public uint VisitReturnStatement(ReturnStatement s, object context)
             {
                 uint size = 0;
                 if (s.Span.Start.Line.HasValue)
                     size += EmitLineNumberAlt1((ushort)s.Span.Start.Line.Value, s.Span.Start.Filename);
                 if (s.Value != null)
                 {
-                    size += s.Value.AcceptVisitor(this, null);
+                    size += s.Value.AcceptVisitor(this, context);
                 }
                 else
                 {
@@ -1107,7 +1144,7 @@ namespace SAGESharp.LSS
                 return size;
             }
 
-            public uint VisitIfStatement(IfStatement s)
+            public uint VisitIfStatement(IfStatement s, object context)
             {
                 uint size = 0;
                 if (s.Span.Start.Line.HasValue)
@@ -1118,11 +1155,11 @@ namespace SAGESharp.LSS
                 // 'else' statements have no condition
                 if (s.Condition != null)
                 {
-                    size += s.Condition.AcceptVisitor(this, null);
+                    size += s.Condition.AcceptVisitor(this, context);
                     size += EmitBCLInstruction(out mainBranchInstruction, BCLOpcode.CompareAndBranchIfFalse);
                 }
 
-                uint bodySize = s.Body.AcceptVisitor(this);
+                uint bodySize = s.Body.AcceptVisitor(this, context);
                 size += bodySize;
 
                 if (s.ElseStatement != null)
@@ -1130,7 +1167,7 @@ namespace SAGESharp.LSS
                     size += EmitBCLInstruction(out BCLInstruction branchToEndInstruction, BCLOpcode.BranchAlways);
                     bodySize += branchToEndInstruction.Size;
 
-                    uint elseSize = s.ElseStatement.AcceptVisitor(this);
+                    uint elseSize = s.ElseStatement.AcceptVisitor(this, context);
                     size += elseSize;
                     branchToEndInstruction.Arguments[0].Value = (short)elseSize;
                 }
@@ -1143,17 +1180,17 @@ namespace SAGESharp.LSS
                 return size;
             }
 
-            public uint VisitWhileStatement(WhileStatement s)
+            public uint VisitWhileStatement(WhileStatement s, object context)
             {
                 uint size = 0;
                 if (s.Span.Start.Line.HasValue)
                     size += EmitLineNumberAlt1((ushort)s.Span.Start.Line.Value, s.Span.Start.Filename);
 
-                size += s.Condition.AcceptVisitor(this, null);
+                size += s.Condition.AcceptVisitor(this, context);
                 size += EmitBCLInstruction(out BCLInstruction exitBranch, BCLOpcode.CompareAndBranchIfFalse);
 
                 uint bodySize = 0;
-                bodySize += s.Body.AcceptVisitor(this);
+                bodySize += s.Body.AcceptVisitor(this, context);
                 bodySize += EmitBCLInstruction(out BCLInstruction loopBranch, BCLOpcode.BranchAlways);
 
                 size += bodySize;
@@ -1163,7 +1200,24 @@ namespace SAGESharp.LSS
                 return size;
             }
 
-            public uint VisitAssignmentStatement(AssignmentStatement s)
+            public uint VisitDoWhileStatement(DoWhileStatement s, object context)
+            {
+                uint size = 0;
+
+                size += s.Body.AcceptVisitor(this, context);
+
+                size += s.Condition.AcceptVisitor(this, context);
+
+                // Invert the condition to produce a 'false' to branch
+                size += EmitBCLInstruction(BCLOpcode.Not);
+
+                size += EmitBCLInstruction(out BCLInstruction branch, BCLOpcode.CompareAndBranchIfFalse);
+                branch.Arguments[0].Value = (short)(-1 * (short)size);
+
+                return size;
+            }
+
+            public uint VisitAssignmentStatement(AssignmentStatement s, object context)
             {
                 uint size = 0;
                 if (s.Span.Start.Line.HasValue)
@@ -1181,7 +1235,7 @@ namespace SAGESharp.LSS
 
                     if (variable != null)
                     {
-                        size += variable.EmitWrite(this, s.Value);
+                        size += variable.EmitWrite(this, s.Value, context);
                         return size;
                     }
                     else
@@ -1194,7 +1248,7 @@ namespace SAGESharp.LSS
                     // Member assignment (.)
                     if (member.Symbol.Type == TokenType.Symbol)
                     {
-                        size += s.Value.AcceptVisitor(this, null); // Value
+                        size += s.Value.AcceptVisitor(this, context); // Value
                         ushort memberSymbol = AddOrGetSymbol(member.Symbol.Content);
                         if (memberExpr.Left is VariableExpression instance && instance.Symbol.Type == TokenType.KeywordThis)
                         {
@@ -1202,7 +1256,7 @@ namespace SAGESharp.LSS
                         }
                         else
                         {
-                            size += memberExpr.Left.AcceptVisitor(this, null); // Target
+                            size += memberExpr.Left.AcceptVisitor(this, context); // Target
 
                             size += EmitBCLInstruction(BCLOpcode.SetMemberValue, (ushort)memberSymbol);
                         }
@@ -1214,9 +1268,9 @@ namespace SAGESharp.LSS
                         {
                             throw new ArgumentException("Cannot set a builtin member of 'this'.");
                         }
-                        size += memberExpr.Left.AcceptVisitor(this, null); // Target
+                        /*size += memberExpr.Left.AcceptVisitor(this, context); // Target
 
-                        size += s.Value.AcceptVisitor(this, null); // Value
+                        size += s.Value.AcceptVisitor(this, context); // Value
 
                         if (member.Symbol.Type == TokenType.KeywordRed)
                         {
@@ -1238,7 +1292,7 @@ namespace SAGESharp.LSS
                             size += EmitBCLInstruction(BCLOpcode.SetAlphaValue);
                             size += EmitBCLInstruction(BCLOpcode.Pop); // Because SetAlphaValue pushes the resulting color
                         }
-                        else
+                        else*/
                         {
                             throw new ArgumentException("Symbol of type '" + member.Symbol.Type + "' is not a member nor a builtin and therefore cannot be assigned.");
                         }
@@ -1249,13 +1303,13 @@ namespace SAGESharp.LSS
                 {
                     // Dynamic member assignment (.$)
                     // Push value
-                    size += s.Value.AcceptVisitor(this, null);
+                    size += s.Value.AcceptVisitor(this, context);
 
                     // Push target
-                    size += lookupExpr.Left.AcceptVisitor(this, null);
+                    size += lookupExpr.Left.AcceptVisitor(this, context);
 
                     // Push member name
-                    size += lookupExpr.Right.AcceptVisitor(this, null);
+                    size += lookupExpr.Right.AcceptVisitor(this, context);
 
                     size += EmitBCLInstruction(BCLOpcode.SetMemberValueFromString);
 
@@ -1264,7 +1318,7 @@ namespace SAGESharp.LSS
                 else if (s.Target is BinaryExpression gameExpr && gameExpr.Operation.Type == TokenType.ColonColon && gameExpr.Left is VariableExpression ns && gameExpr.Right is VariableExpression name)
                 {
                     // Game variable assignment (::)
-                    size += s.Value.AcceptVisitor(this, null);
+                    size += s.Value.AcceptVisitor(this, context);
 
                     size += EmitBCLInstruction(BCLOpcode.SetGameVariable, AddOrGetString(ns.Symbol.Content), AddOrGetString(name.Symbol.Content));
 
@@ -1274,11 +1328,11 @@ namespace SAGESharp.LSS
                 {
                     // Array assignment ([ ])
 
-                    size += arrayExpr.Array.AcceptVisitor(this, null);
+                    size += arrayExpr.Array.AcceptVisitor(this, context);
 
-                    size += arrayExpr.Index.AcceptVisitor(this, null);
+                    size += arrayExpr.Index.AcceptVisitor(this, context);
 
-                    size += s.Value.AcceptVisitor(this, null);
+                    size += s.Value.AcceptVisitor(this, context);
 
                     size += EmitBCLInstruction(BCLOpcode.SetArrayValue);
 
@@ -1286,11 +1340,11 @@ namespace SAGESharp.LSS
                 }
                 else
                 {
-                    throw new ArgumentException("Cannot assign into ");
+                    throw new ArgumentException("Cannot assign into " + s.Target.ToString());
                 }
             }
 
-            public uint VisitVariableDeclarationStatement(VariableDeclarationStatement s)
+            public uint VisitVariableDeclarationStatement(VariableDeclarationStatement s, object context)
             {
                 if (s.Name.Type == TokenType.KeywordThis)
                 {
@@ -1304,12 +1358,12 @@ namespace SAGESharp.LSS
                 Variable local = AddLocal(s.Name.Content);
                 if (s.Initializer != null)
                 {
-                    size += local.EmitWrite(this, s.Initializer);
+                    size += local.EmitWrite(this, s.Initializer, context);
                 }
                 return size;
             }
 
-            public uint VisitForEachStatement(ForEachStatement s)
+            public uint VisitForEachStatement(ForEachStatement s, object context)
             {
                 uint size = 0;
                 EnterScope(); // A scope just for storing the index variable
@@ -1318,7 +1372,7 @@ namespace SAGESharp.LSS
                 StandardVariable indexVar = AddLocal(ITERATION_INDEX_LOCAL_NAME);
 
                 // Push the max index = <collection>.length - 1
-                size += s.Collection.AcceptVisitor(this, null);
+                size += s.Collection.AcceptVisitor(this, context);
                 size += EmitBCLInstruction(BCLOpcode.ElementsInArray);
                 size += EmitBCLInstruction(BCLOpcode.PushConstanti8, (sbyte)1);
                 size += EmitBCLInstruction(BCLOpcode.Subtract);
@@ -1340,7 +1394,7 @@ namespace SAGESharp.LSS
 
                 // The body of the loop
                 uint bodyStart = size;
-                size += s.Body.AcceptVisitor(this);
+                size += s.Body.AcceptVisitor(this, context);
                 size += EmitBCLInstruction(BCLOpcode.IncrementVariable, indexVar.Index);
                 size += EmitBCLInstruction(out BCLInstruction branchBack, BCLOpcode.BranchAlways, (short)0);
                 int bodySize = (int)size - (int)bodyStart;
@@ -1358,8 +1412,18 @@ namespace SAGESharp.LSS
             #endregion
         }
 
+        public static string UnescapeString(string value)
+        {
+            return value.Replace("\\\"", "\"").Replace("\\n", "\n");
+        }
+
+        public static string EscapeString(string value)
+        {
+            return value.Replace("\"", "\\\"").Replace("\n", "\\n");
+        }
+
         // Compiles a single source string into an OSI.
-        public Result Compile(string source, string filename, Settings settings = null)
+        public static Result Compile(string source, string filename, Settings settings = null)
         {
             if (settings == null)
                 settings = new Settings();
@@ -1396,7 +1460,7 @@ namespace SAGESharp.LSS
         }
 
         // Compiles the given files into an OSI.
-        public Result CompileFiles(IEnumerable<string> filenames, Settings settings = null)
+        public static Result CompileFiles(IEnumerable<string> filenames, Settings settings = null)
         {
             if (settings == null)
                 settings = new Settings();
@@ -1435,7 +1499,7 @@ namespace SAGESharp.LSS
             return result;
         }
 
-        public Result CompileParsed(Parser.Result parseResult, Settings settings = null)
+        public static Result CompileParsed(Parser.Result parseResult, Settings settings = null)
         {
             if (settings == null)
                 settings = new Settings();
@@ -1445,7 +1509,7 @@ namespace SAGESharp.LSS
             return result;
         }
 
-        private void CompileInto(Result result, Settings settings = null, params Parser.Result[] parseResults)
+        private static void CompileInto(Result result, Settings settings = null, params Parser.Result[] parseResults)
         {
             if (settings == null)
                 settings = new Settings();
@@ -1456,6 +1520,7 @@ namespace SAGESharp.LSS
 
             Dictionary<string, OSIFile.FunctionInfo> functions = new Dictionary<string, OSIFile.FunctionInfo>();
             Dictionary<string, OSIFile.ClassInfo> classes = new Dictionary<string, OSIFile.ClassInfo>();
+            Dictionary<string, ClassStatement> lssClassesByName = new Dictionary<string, ClassStatement>();
 
             // Collect existing names
             for (int i = 0; i < result.OSI.Strings.Count; i++)
@@ -1514,6 +1579,8 @@ namespace SAGESharp.LSS
                     OSIFile.ClassInfo clsInfo = new OSIFile.ClassInfo(cls.Name.Content, propertySymbols, methods);
                     classes.Add(cls.Name.Content, clsInfo);
                     result.OSI.Classes.Add(clsInfo);
+
+                    lssClassesByName.Add(cls.Name.Content, cls);
                 }
 
                 foreach (Statements.SubroutineStatement func in parseResult.Functions)
@@ -1546,13 +1613,18 @@ namespace SAGESharp.LSS
                     }
                 }
 
+            }
+
+            // Compile subroutines
+            foreach (Parser.Result parseResult in parseResults)
+            {
                 // Compile the functions
                 foreach (SubroutineStatement function in parseResult.Functions)
                 {
                     SubroutineContext context = new SubroutineContext(result.OSI, settings, false, function.Parameters.Select(token => token.Content));
                     foreach (InstructionStatement stmt in function.Body.Instructions)
                     {
-                        stmt.AcceptVisitor(context);
+                        stmt.AcceptVisitor(context, null);
                     }
                     context.FinalizeInstructions();
                     OSIFile.FunctionInfo destination = functions[function.Name.Content];
@@ -1571,7 +1643,7 @@ namespace SAGESharp.LSS
                         SubroutineContext context = new SubroutineContext(result.OSI, settings, true, parameters);
                         foreach (InstructionStatement stmt in method.Body.Instructions)
                         {
-                            stmt.AcceptVisitor(context);
+                            stmt.AcceptVisitor(context, null);
                         }
                         context.FinalizeInstructions();
                         OSIFile.MethodInfo destination = classes[cls.Name.Content].Methods.Find(m => m.NameSymbol == symbols[method.Name.Content]);
@@ -1579,24 +1651,57 @@ namespace SAGESharp.LSS
                         destination.Instructions.AddRange(context.Instructions);
                     }
                 }
+
             }
-        }
 
-        public string DecompileOSI(OSIFile osi)
-        {
-            throw new NotImplementedException();
-        }
+            // Apply inheritance
+            // Until all the classes are applied, take a class, find the root-est that has not been applied of the tree, and apply it.
+            HashSet<ClassStatement> classesToApply = new HashSet<ClassStatement>(lssClassesByName.Values.Where(c => c.SuperclassName != null));
+            Stack<ClassStatement> loopDetector = new Stack<ClassStatement>();
+            while (classesToApply.Count > 0)
+            {
+                // Pick an arbitrary element to start with
+                ClassStatement toApply = classesToApply.ElementAt(0);
+                loopDetector.Clear();
+                loopDetector.Push(toApply);
 
-        public void DecompileOSIProject(OSIFile osi, string outputDirectory)
-        {
-            throw new NotImplementedException();
-        }
+                // Find the parent-est LSS class that needs to be applied
+                while (toApply.SuperclassName != null && lssClassesByName.ContainsKey(toApply.SuperclassName.Content)
+                    && classesToApply.Contains(lssClassesByName[toApply.SuperclassName.Content]))
+                {
+                    toApply = lssClassesByName[toApply.SuperclassName.Content];
+                    if (loopDetector.Contains(toApply))
+                    {
+                        throw new Exception("Infinite loop in class inheritance. (" + String.Join(" -> ", loopDetector.Select(c => c.Name)) + ")");
+                    }
+                    else
+                    {
+                        loopDetector.Push(toApply);
+                    }
+                }
 
-        public string DecompileInstructions(OSIFile osi, List<Instruction> instructions, uint bytecodeOffset)
-        {
-            SAGESharp.OSI.ControlFlow.SubroutineGraph graph = new OSI.ControlFlow.SubroutineGraph(instructions, bytecodeOffset);
-            // TODO
-            return "(Not Implemented)";
+                // Apply the inheritance
+                OSIFile.ClassInfo compiledClass = classes[toApply.Name.Content];
+                OSIFile.ClassInfo superclass = classes[toApply.SuperclassName.Content];
+                foreach (ushort propertySymbol in superclass.PropertySymbols)
+                {
+                    if (compiledClass.PropertySymbols.Contains(propertySymbol))
+                    {
+                        throw new Exception("Class " + toApply.Name.Content + " cannot declare property " + result.OSI.Symbols[propertySymbol] + " because its superclass " + superclass.Name + " already declares it.");
+                    }
+                    compiledClass.PropertySymbols.Add(propertySymbol);
+                }
+
+                foreach (OSIFile.MethodInfo method in superclass.Methods)
+                {
+                    if (!compiledClass.Methods.Any(m => m.NameSymbol == method.NameSymbol))
+                    {
+                        compiledClass.Methods.Add(new OSIFile.MethodInfo(method.NameSymbol, method));
+                    }
+                }
+
+                classesToApply.Remove(toApply);
+            }
         }
     }
 }

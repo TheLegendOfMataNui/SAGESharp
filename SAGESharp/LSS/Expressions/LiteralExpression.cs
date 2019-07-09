@@ -21,6 +21,11 @@ namespace SAGESharp.LSS.Expressions
             return visitor.VisitLiteralExpression(this, context);
         }
 
+        public override Expression Duplicate()
+        {
+            return new LiteralExpression(Value); // Value is immutable
+        }
+
         public override string ToString()
         {
             return Value.Content;

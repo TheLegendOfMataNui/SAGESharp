@@ -19,9 +19,9 @@ namespace SAGESharp.LSS.Statements
             this.Initializer = initializer;
         }
 
-        public override T AcceptVisitor<T>(StatementVisitor<T> visitor)
+        public override T AcceptVisitor<T, C>(StatementVisitor<T, C> visitor, C context)
         {
-            return visitor.VisitVariableDeclarationStatement(this);
+            return visitor.VisitVariableDeclarationStatement(this, context);
         }
 
         public override string ToString()

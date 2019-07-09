@@ -30,10 +30,12 @@
         {
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.goToButton = new System.Windows.Forms.Button();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.InspectorPanel = new System.Windows.Forms.Panel();
             this.GeneratePseudocodeCheckBox = new System.Windows.Forms.CheckBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.instructionOffsetTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -51,7 +53,7 @@
             this.treeView1.HideSelection = false;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(211, 467);
+            this.treeView1.Size = new System.Drawing.Size(211, 424);
             this.treeView1.TabIndex = 0;
             this.treeView1.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseDoubleClick);
             // 
@@ -64,6 +66,8 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.treeView1);
+            this.splitContainer1.Panel1.Controls.Add(this.instructionOffsetTextBox);
+            this.splitContainer1.Panel1.Controls.Add(this.goToButton);
             // 
             // splitContainer1.Panel2
             // 
@@ -71,6 +75,17 @@
             this.splitContainer1.Size = new System.Drawing.Size(895, 467);
             this.splitContainer1.SplitterDistance = 211;
             this.splitContainer1.TabIndex = 1;
+            // 
+            // goToButton
+            // 
+            this.goToButton.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.goToButton.Location = new System.Drawing.Point(0, 444);
+            this.goToButton.Name = "goToButton";
+            this.goToButton.Size = new System.Drawing.Size(211, 23);
+            this.goToButton.TabIndex = 1;
+            this.goToButton.Text = "Go to Instruction (Hex)";
+            this.goToButton.UseVisualStyleBackColor = true;
+            this.goToButton.Click += new System.EventHandler(this.GoToButton_Click);
             // 
             // splitContainer2
             // 
@@ -118,9 +133,18 @@
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.textBox1.Size = new System.Drawing.Size(343, 467);
             this.textBox1.TabIndex = 0;
+            this.textBox1.WordWrap = false;
+            // 
+            // instructionOffsetTextBox
+            // 
+            this.instructionOffsetTextBox.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.instructionOffsetTextBox.Location = new System.Drawing.Point(0, 424);
+            this.instructionOffsetTextBox.Name = "instructionOffsetTextBox";
+            this.instructionOffsetTextBox.Size = new System.Drawing.Size(211, 20);
+            this.instructionOffsetTextBox.TabIndex = 2;
             // 
             // OSIBrowser
             // 
@@ -132,6 +156,7 @@
             this.Text = "OSIBrowser";
             this.Load += new System.EventHandler(this.OSIBrowser_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
@@ -153,5 +178,7 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.CheckBox GeneratePseudocodeCheckBox;
         private System.Windows.Forms.Panel InspectorPanel;
+        private System.Windows.Forms.Button goToButton;
+        private System.Windows.Forms.TextBox instructionOffsetTextBox;
     }
 }

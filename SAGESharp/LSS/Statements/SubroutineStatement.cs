@@ -21,9 +21,9 @@ namespace SAGESharp.LSS.Statements
             this.Body = body;
         }
 
-        public override T AcceptVisitor<T>(StatementVisitor<T> visitor)
+        public override T AcceptVisitor<T, C>(StatementVisitor<T, C> visitor, C context)
         {
-            return visitor.VisitSubroutineStatement(this);
+            return visitor.VisitSubroutineStatement(this, context);
         }
 
         public override string ToString()

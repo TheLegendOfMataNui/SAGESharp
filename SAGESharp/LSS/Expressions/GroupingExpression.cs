@@ -22,6 +22,11 @@ namespace SAGESharp.LSS.Expressions
             return visitor.VisitGroupingExpression(this, context);
         }
 
+        public override Expression Duplicate()
+        {
+            return new GroupingExpression(Span, Contents);
+        }
+
         public override string ToString()
         {
             return "(" + Contents.ToString() + ")";

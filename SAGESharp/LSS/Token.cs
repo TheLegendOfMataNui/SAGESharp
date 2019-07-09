@@ -16,6 +16,7 @@ namespace SAGESharp.LSS
         KeywordMethod,
         KeywordGlobal,
         KeywordVar,
+        KeywordDo,
         KeywordWhile,
         KeywordIf,
         KeywordElse,
@@ -37,6 +38,10 @@ namespace SAGESharp.LSS
         KeywordGreen,
         KeywordBlue,
         KeywordAlpha,
+        KeywordWithRed,
+        KeywordWithGreen,
+        KeywordWithBlue,
+        KeywordWithAlpha,
         KeywordToString,
         KeywordToFloat,
         KeywordToInt,
@@ -150,6 +155,13 @@ namespace SAGESharp.LSS
             this.Type = type;
             this.Content = content;
             this.Span = new SourceSpan(filename, sourceOffset, sourceLine, sourceLength);
+        }
+
+        public Token(TokenType type, string content, SourceSpan span)
+        {
+            this.Type = type;
+            this.Content = content;
+            this.Span = span;
         }
 
         public override string ToString()

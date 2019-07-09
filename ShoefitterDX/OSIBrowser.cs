@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SAGESharp.LSS;
 using SAGESharp.OSI;
 using SAGESharp.OSI.ControlFlow;
 
@@ -17,6 +18,9 @@ namespace ShoefitterDX
         public OSIFile OSI { get; private set; } = null;
 
         public OSISubroutineInspector CurrentInspector { get; private set; }
+
+        private TreeNode ClassesNode = null;
+        private TreeNode FunctionsNode = null;
 
         public OSIBrowser()
         {
@@ -30,16 +34,16 @@ namespace ShoefitterDX
             this.OSI = osi;
             treeView1.Nodes.Clear();
 
-            TreeNode functions = new TreeNode("Functions");
+            FunctionsNode = new TreeNode("Functions");
             foreach (OSIFile.FunctionInfo info in osi.Functions)
             {
                 TreeNode node = new TreeNode(info.Name);
                 node.Tag = info;
-                functions.Nodes.Add(node);
+                FunctionsNode.Nodes.Add(node);
             }
-            treeView1.Nodes.Add(functions);
+            treeView1.Nodes.Add(FunctionsNode);
 
-            TreeNode classes = new TreeNode("Classes");
+            ClassesNode = new TreeNode("Classes");
             foreach (OSIFile.ClassInfo classInfo in osi.Classes)
             {
                 TreeNode classNode = new TreeNode(classInfo.Name);
@@ -51,9 +55,9 @@ namespace ShoefitterDX
                     classNode.Nodes.Add(methodNode);
                 }
 
-                classes.Nodes.Add(classNode);
+                ClassesNode.Nodes.Add(classNode);
             }
-            treeView1.Nodes.Add(classes);
+            treeView1.Nodes.Add(ClassesNode);
         }
 
         private void OSIBrowser_Load(object sender, EventArgs e)
@@ -63,41 +67,169 @@ namespace ShoefitterDX
 
         private void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            SubroutineGraph g = null;
             if (e.Node.Tag is OSIFile.FunctionInfo func)
             {
-                g = new SubroutineGraph(func.Instructions, func.BytecodeOffset);
+                DisplayFunction(func);
             }
             else if (e.Node.Tag is OSIFile.MethodInfo meth)
             {
-                g = new SubroutineGraph(meth.Instructions, meth.BytecodeOffset);
+                DisplayMethod(meth);
             }
+        }
 
-            if (g != null)
+        private void LoadGraph(ref SubroutineGraph g, string name, bool isMemberMethod, List<Token> parameters)
+        {
+            if (CurrentInspector != null)
             {
-                if (CurrentInspector != null)
+                InspectorPanel.Controls.Remove(CurrentInspector);
+            }
+            if (GeneratePseudocodeCheckBox.Checked)
+            {
+                g = Analyzer.ReconstructControlFlow(g, new Decompiler.SubroutineContext(OSI, name, isMemberMethod, parameters, new SourceSpan()));
+            }
+            CurrentInspector = new OSISubroutineInspector(g);
+            if (!GeneratePseudocodeCheckBox.Checked)
+            {
+                g = Analyzer.ReconstructControlFlow(g, new Decompiler.SubroutineContext(OSI, name, isMemberMethod, parameters, new SourceSpan()));
+            }
+        }
+
+        public void DisplayMethod(OSIFile.MethodInfo method)
+        {
+            SubroutineGraph g = new SubroutineGraph(method.Instructions, method.BytecodeOffset);
+            List<Token> parameters = new List<Token>();
+            if (method.Instructions.Count > 0 && method.Instructions[0] is BCLInstruction argCheck && argCheck.Opcode == BCLOpcode.MemberFunctionArgumentCheck)
+            {
+                for (int i = 0; i < argCheck.Arguments[0].GetValue<sbyte>() - 1; i++)
                 {
-                    InspectorPanel.Controls.Remove(CurrentInspector);
+                    parameters.Add(new Token(TokenType.Symbol, "param" + (i + 1), new SourceSpan()));
                 }
-                if (GeneratePseudocodeCheckBox.Checked)
+            }
+            LoadGraph(ref g, OSI.Symbols[method.NameSymbol], true, parameters);
+
+            InspectorPanel.Controls.Add(CurrentInspector);
+            CurrentInspector.Dock = DockStyle.Fill;
+            if (g.Nodes.Count == 3)
+            {
+                try
                 {
-                    g = Analyzer.ReconstructControlFlow(g);
+                    textBox1.Text = "";
+                    textBox1.AppendText(PrettyPrinter.Print(Decompiler.DecompileMethod(OSI, method, new SourceSpan())));
                 }
-                CurrentInspector = new OSISubroutineInspector(g);
-                if (!GeneratePseudocodeCheckBox.Checked)
+                catch (NotImplementedException ex)
                 {
-                    g = Analyzer.ReconstructControlFlow(g);
+                    textBox1.AppendText("<Exception decompiling!>\r\n");
+                    textBox1.AppendText(ex.ToString() + "\r\n");
+                }
+            }
+            else
+            {
+                textBox1.Text = "<Not fully decompilable, contact benji>";
+            }
+        }
+
+        public void DisplayFunction(OSIFile.FunctionInfo function)
+        {
+            SubroutineGraph g = new SubroutineGraph(function.Instructions, function.BytecodeOffset);
+            List<Token> parameters = new List<Token>();
+            for (int i = 0; i < function.ParameterCount; i++)
+            {
+                parameters.Add(new Token(TokenType.Symbol, "param" + (i + 1), new SourceSpan()));
+            }
+            LoadGraph(ref g, function.Name, false, parameters);
+
+            InspectorPanel.Controls.Add(CurrentInspector);
+            CurrentInspector.Dock = DockStyle.Fill;
+            if (g.Nodes.Count == 3)
+            {
+                try
+                {
+                    textBox1.Text = "";
+                    textBox1.AppendText(PrettyPrinter.Print(Decompiler.DecompileFunction(OSI, function, new SourceSpan())));
+                }
+                catch (NotImplementedException ex)
+                {
+                    textBox1.AppendText("<Exception decompiling!>\r\n");
+                    textBox1.AppendText(ex.ToString() + "\r\n");
+                }
+            }
+            else
+            {
+                textBox1.Text = "<Not fully decompilable, contact benji>";
+            }
+        }
+
+        private void GoToButton_Click(object sender, EventArgs e)
+        {
+            if (UInt32.TryParse(instructionOffsetTextBox.Text, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out uint address))
+            {
+                OSIFile.FunctionInfo nearestFunction = null;
+                OSIFile.MethodInfo nearestMethod = null;
+                uint nearestOffset = address;
+
+                foreach (OSIFile.FunctionInfo function in OSI.Functions)
+                {
+                    if (function.BytecodeOffset <= address)
+                    {
+                        uint offset = address - function.BytecodeOffset;
+                        if (offset < nearestOffset)
+                        {
+                            nearestOffset = offset;
+                            nearestMethod = null;
+                            nearestFunction = function;
+                        }
+                    }
                 }
 
-                InspectorPanel.Controls.Add(CurrentInspector);
-                CurrentInspector.Dock = DockStyle.Fill;
-                if (g.Nodes.Count == 3)
+                foreach (OSIFile.ClassInfo cls in OSI.Classes)
                 {
-                    textBox1.Text = g.StartNode.OutAlwaysJump.Destination.ToString().Replace("\n", "\r\n");
+                    foreach (OSIFile.MethodInfo method in cls.Methods)
+                    {
+                        if (method.BytecodeOffset <= address)
+                        {
+                            uint offset = address - method.BytecodeOffset;
+                            if (offset < nearestOffset)
+                            {
+                                nearestOffset = offset;
+                                nearestFunction = null;
+                                nearestMethod = method;
+                            }
+                        }
+                    }
+                }
+
+                if (nearestFunction != null)
+                {
+                    foreach (TreeNode child in FunctionsNode.Nodes)
+                    {
+                        if (child.Tag == nearestFunction)
+                        {
+                            treeView1.SelectedNode = child;
+                            child.EnsureVisible();
+                        }
+                    }
+                    DisplayFunction(nearestFunction);
+                    CurrentInspector.HilightedOffset = address;
+                }
+                else if (nearestMethod != null)
+                {
+                    foreach (TreeNode classNode in ClassesNode.Nodes)
+                    {
+                        foreach (TreeNode child in classNode.Nodes)
+                        {
+                            if (child.Tag == nearestMethod)
+                            {
+                                treeView1.SelectedNode = child;
+                                child.EnsureVisible();
+                            }
+                        }
+                    }
+                    DisplayMethod(nearestMethod);
+                    CurrentInspector.HilightedOffset = address;
                 }
                 else
                 {
-                    textBox1.Text = "<Not fully decompilable, contact benji>";
+                    MessageBox.Show("Couldn't find closest subroutine!");
                 }
             }
         }
@@ -106,6 +238,7 @@ namespace ShoefitterDX
     public class OSISubroutineInspector : Control
     {
         public SubroutineGraph Graph { get; }
+        public uint HilightedOffset { get; set; }
 
         private Dictionary<Node, Rectangle> NodeLocations = new Dictionary<Node, Rectangle>();
         private Dictionary<Node, string> NodeContents = new Dictionary<Node, string>();
@@ -121,6 +254,18 @@ namespace ShoefitterDX
             this.Font = new Font("Consolas", 12);
 
             LayoutNode(Graph.StartNode, 0, 0);
+
+            foreach (Node n in Graph.Nodes)
+            {
+                if (!NodeLocations.ContainsKey(n))
+                {
+                    NodeLocations.Add(n, new Rectangle(0, 0, 100, 10));
+                }
+                if (!NodeContents.ContainsKey(n))
+                {
+                    NodeContents.Add(n, "<Orphaned Node>");
+                }
+            }
 
             this.Resize += OSISubroutineInspector_Resize;
 
@@ -215,11 +360,41 @@ namespace ShoefitterDX
 
             foreach (Node n in Graph.Nodes)
             {
+
                 Rectangle r = NodeLocations[n];
 
                 e.Graphics.FillRectangle(Brushes.White, r.X - CameraX, r.Y - CameraY, r.Width, r.Height);
+                if (n is OSINode osiNode)
+                {
+                    uint offset = osiNode.StartOffset;
+                    int lineHeight = r.Height / (osiNode.Instructions.Count + 1);
+                    int line = 0;
+                    foreach (Instruction i in osiNode.Instructions)
+                    {
+                        if (offset >= this.HilightedOffset && offset < this.HilightedOffset + i.Size)
+                        {
+                            e.Graphics.FillRectangle(Brushes.Yellow, r.X - CameraX, r.Y - CameraY + line * lineHeight, r.Width, lineHeight);
+                        }
+                        line++;
+                        offset += i.Size;
+                    }
+                    if (offset == this.HilightedOffset)
+                    {
+                        e.Graphics.FillRectangle(Brushes.Yellow, r.X - CameraX, r.Y - CameraY + line * lineHeight, r.Width, lineHeight);
+                    }
+                }
                 e.Graphics.DrawRectangle(Pens.Black, r.X - CameraX, r.Y - CameraY, r.Width, r.Height);
                 TextRenderer.DrawText(e.Graphics, NodeContents[n], Font, new Rectangle(r.X - CameraX, r.Y - CameraY, r.Width, r.Height), Color.Black, TextFormatFlags.Left);
+
+                if (n is LSSNode lssNode)
+                {
+                    string condition = "(no condition)";
+                    if (lssNode.EndConditional != null)
+                    {
+                        condition = lssNode.EndConditional.ToString();
+                    }
+                    TextRenderer.DrawText(e.Graphics, condition, Font, new Point(r.X - CameraX, r.Bottom - CameraY), Color.Black);
+                }
 
                 foreach (Jump j in n.OutJumps.Values)
                 {

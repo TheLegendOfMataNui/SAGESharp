@@ -24,6 +24,11 @@ namespace SAGESharp.LSS.Expressions
             return visitor.VisitArrayAccessExpression(this, context);
         }
 
+        public override Expression Duplicate()
+        {
+            return new ArrayAccessExpression(Span, Array.Duplicate(), Index.Duplicate());
+        }
+
         public override string ToString()
         {
             return Array.ToString() + "[" + Index.ToString() + "]";

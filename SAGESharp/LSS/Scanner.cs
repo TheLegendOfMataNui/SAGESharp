@@ -30,6 +30,7 @@ namespace SAGESharp.LSS
                 _keywords.Add("method", TokenType.KeywordMethod);
                 _keywords.Add("global", TokenType.KeywordGlobal);
                 _keywords.Add("var", TokenType.KeywordVar);
+                _keywords.Add("do", TokenType.KeywordDo);
                 _keywords.Add("while", TokenType.KeywordWhile);
                 _keywords.Add("if", TokenType.KeywordIf);
                 _keywords.Add("else", TokenType.KeywordElse);
@@ -51,6 +52,10 @@ namespace SAGESharp.LSS
                 _keywords.Add("__green", TokenType.KeywordGreen);
                 _keywords.Add("__blue", TokenType.KeywordBlue);
                 _keywords.Add("__alpha", TokenType.KeywordAlpha);
+                _keywords.Add("__withred", TokenType.KeywordWithRed);
+                _keywords.Add("__withgreen", TokenType.KeywordWithGreen);
+                _keywords.Add("__withblue", TokenType.KeywordWithBlue);
+                _keywords.Add("__withalpha", TokenType.KeywordWithAlpha);
                 _keywords.Add("__tostring", TokenType.KeywordToString);
                 _keywords.Add("__tofloat", TokenType.KeywordToFloat);
                 _keywords.Add("__toint", TokenType.KeywordToInt);
@@ -202,7 +207,7 @@ namespace SAGESharp.LSS
             }
             else if (start == '"')
             {
-                while (Peek() != '"' && !IsAtEnd() && Peek() != '\n')
+                while ((Peek() != '"' || Source[CurrentIndex - 1] == '\\') && !IsAtEnd() && Peek() != '\n')
                 {
                     Advance();
                 }

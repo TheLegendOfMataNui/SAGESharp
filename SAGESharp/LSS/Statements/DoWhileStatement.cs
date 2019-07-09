@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace SAGESharp.LSS.Statements
 {
-    public class WhileStatement : InstructionStatement
+    public class DoWhileStatement : InstructionStatement
     {
         public override SourceSpan Span { get; }
-        public Expressions.Expression Condition { get; }
         public InstructionStatement Body { get; }
+        public Expressions.Expression Condition { get; }
 
-        public WhileStatement(SourceSpan span, Expressions.Expression condition, InstructionStatement body)
+        public DoWhileStatement(SourceSpan span, InstructionStatement body, Expressions.Expression condition)
         {
             this.Span = span;
             this.Condition = condition;
@@ -21,12 +21,12 @@ namespace SAGESharp.LSS.Statements
 
         public override T AcceptVisitor<T, C>(StatementVisitor<T, C> visitor, C context)
         {
-            return visitor.VisitWhileStatement(this, context);
+            return visitor.VisitDoWhileStatement(this, context);
         }
 
         public override string ToString()
         {
-            return "while (" + Condition.ToString() + ")\n" + Body.ToString();
+            return "do " + Body.ToString() + " while (" + Condition.ToString() + ")";
         }
     }
 }

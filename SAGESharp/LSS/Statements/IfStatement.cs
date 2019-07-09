@@ -21,9 +21,9 @@ namespace SAGESharp.LSS.Statements
             this.ElseStatement = elseStatement;
         }
 
-        public override T AcceptVisitor<T>(StatementVisitor<T> visitor)
+        public override T AcceptVisitor<T, C>(StatementVisitor<T, C> visitor, C context)
         {
-            return visitor.VisitIfStatement(this);
+            return visitor.VisitIfStatement(this, context);
         }
 
         public override string ToString()

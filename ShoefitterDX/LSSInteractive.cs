@@ -94,10 +94,9 @@ namespace ShoefitterDX
         {
             if (TryParse(out Parser.Result parsed))
             {
-                Compiler c = new Compiler();
                 try
                 {
-                    result = c.CompileParsed(parsed);
+                    result = Compiler.CompileParsed(parsed);
                 }
                 catch (Exception ex)
                 {
@@ -151,19 +150,7 @@ namespace ShoefitterDX
             ResultTextBox.BeginUpdate();
             if (TryParse(out Parser.Result result))
             {
-                ResultTextBox.Text = "";
-                foreach (var g in result.Globals)
-                {
-                    ResultTextBox.AppendText(g.ToString() + "\n\n");
-                }
-                foreach (SAGESharp.LSS.Statements.ClassStatement cls in result.Classes)
-                {
-                    ResultTextBox.AppendText(cls.ToString() + "\n\n");
-                }
-                foreach (var f in result.Functions)
-                {
-                    ResultTextBox.AppendText("function " + f.ToString() + "\n\n");
-                }
+                ResultTextBox.Text = PrettyPrinter.Print(result);
             }
             ResultTextBox.EndUpdate();
         }
@@ -176,8 +163,9 @@ namespace ShoefitterDX
             if (TryCompile(out Compiler.Result result))
             {
                 ResultTextBox.Text = "";
-                ResultTextBox.AppendText(result.OSI.ToString());
                 LastResult = result.OSI;
+                LastResult.UpdateBytecodeLayout();
+                ResultTextBox.AppendText(LastResult.ToString());
             }
             else
             {
@@ -202,8 +190,11 @@ namespace ShoefitterDX
             {
                 SaveFileDialog dialog = new SaveFileDialog();
                 dialog.Filter = "OSI File (*.osi)|*.osi";
-                dialog.FileName = System.IO.Path.GetFileName(LastSavedFilename);
-                dialog.InitialDirectory = System.IO.Path.GetDirectoryName(LastSavedFilename);
+                if (!String.IsNullOrEmpty(LastSavedFilename))
+                {
+                    dialog.FileName = System.IO.Path.GetFileName(LastSavedFilename);
+                    dialog.InitialDirectory = System.IO.Path.GetDirectoryName(LastSavedFilename);
+                }
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     LastSavedFilename = dialog.FileName;

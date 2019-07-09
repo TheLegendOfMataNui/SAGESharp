@@ -120,6 +120,37 @@ Exits the subroutine and returns the value of the given expression to the subrou
 If `value` is not supplied, it is assumed to be `null`.
 `value`: The value to be sent back to the subroutine which called the returning subroutine.
 
+Values
+------
+While variables do not have a type, the values that they hold do have types.
+
+**Instance** (reference type)
+Instances are objects that have been created from a script `class` using the `new` keyword.
+
+**Game Object** (reference type)
+Game Objects are instances of native C++ data structures. Script cannot directly access their members, but instead passes them to native game functions to manipulate them.
+
+**Array** (reference type)
+Arrays are non-homogenous, resizable lists of values.
+
+**null** (immutable value type)
+Null values represent the idea of 'there is no value here'.
+
+**Integer** (immutable value type)
+Integer values are 32-bit signed whole numbers.
+
+**String** (immutable value type)
+String values are lists of characters that make up text.
+
+**Float** (immutable value type)
+Float values are 32-bit signed floating-point numbers. They can hold fractional parts, but their precision decreases as the magnitude of the number increases.
+
+**Color** (immutable value type)
+Color values are 32 bits each (8 bits for each of the 4 channels), and each of the Red, Green, Blue, and Alpha channels are stored as a unsigned byte (0-255).  
+  
+Note that because Color values are immutable, you cannot change an individual channel of an existing color.  
+Instead, use the `.__withred(value)` and similar builtin methods to return modified copies of existing color values.
+
 Expressions
 -----------
 Expressions are bits of code that evaluate to a value, which can be of many different types.  
@@ -171,8 +202,9 @@ So, LSS provides the dollar sign `$` to look up members and functions given an e
 This applies to member variables and methods (`.$`) and game functions (but not game variables) (`::$`).  
 The expression after the dollar sign must be a literal, a variable name, or a parenthesized expression.
 ```
-myRectangle.$("wid" + "th")
-someNamespace::$variableContainingFunctionName(arg1, 1052, "hey there")
+myRectangle.$("wid" + "th") // Variable access
+someNamespace::$variableContainingFunctionName(arg1, 1052, "hey there") // Game function call
+myRectangle.$(this.funcName)(arg1, arg2) // this.funcName is not a single variable name, and thus must be parenthesized
 ```
 
 **Instantiation**  
@@ -213,50 +245,54 @@ thing - thing // Difference
 **Bitwise Operators**  
 LSS also contains operators for bitwise integer operations, with a few deviations as well from standard C operators:  
  - Octothorpe (`#`) is the bitwise XOR operator
- ```
- ~thing // Bitwise NOT
- thing << thing // Bitwise left shift
- thing >> thing // Bitwise right shift
- thing & thing // Bitwise AND
- thing # thing // Bitwise XOR
- thing | thing // Bitwise OR
- ```
+```
+~thing // Bitwise NOT
+thing << thing // Bitwise left shift
+thing >> thing // Bitwise right shift
+thing & thing // Bitwise AND
+thing # thing // Bitwise XOR
+thing | thing // Bitwise OR
+```
 
- **Arrays**    
- LSS provides the standard array access syntax and a succinct syntax for creating array expressions, both using square brackets.
- ```
- [ ]
- [ thing1, thing2, 1003919, "Sup guys", true ]
- arrayThing[0] = 10
- arrayThing[12 + 3] = arrayThing[0]
- ```
+**Arrays**    
+LSS provides the standard array access syntax and a succinct syntax for creating array expressions, both using square brackets.
+```
+[ ]
+[ thing1, thing2, 1003919, "Sup guys", true ]
+arrayThing[0] = 10
+arrayThing[12 + 3] = arrayThing[0]
+```
 
- **Builtin Members**  
- Some names, which start with two underscores, are reserved for special use.
- These members only succeed on array or color values, and so are not permitted on `this`, which can never be an array or color value.
- ```
- thing.__length // Gets array length
- thing.__append(elementToAppend) // Appends to array, returns the input array, which has been mutated.
- thing.__removeat(index) // Removes the array element at the given index, returns the input array, which has been mutated.
- thing.__insertat(index, elementToInsert) // Inserts the given element at the given index, returns the input array, which has been mutated.
- thing.__red // Get or set Red component of color primitive
- thing.__green // Get or set Green component of color primitive
- thing.__blue // Get or set Blue component of color primitive
- thing.__alpha // Get or set Alpha component of color primitive
- ```
+**Builtin Members**  
+Some names, which start with two underscores, are reserved for special use.
+These members only succeed on array or color values, and so are not permitted on `this`, which can never be an array or color value.
+```
+thing.__length // Gets array length
+thing.__red // Get Red component of color primitive
+thing.__green // Get Green component of color primitive
+thing.__blue // Get Blue component of color primitive
+thing.__alpha // Get Alpha component of color primitive
+thing.__withred(value) // Gets a copy of the color in 'thing', with the Red channel set to the given value
+thing.__withgreen(value) // Gets a copy of the color in 'thing', with the Green channel set to the given value
+thing.__withblue(value) // Gets a copy of the color in 'thing', with the Blue channel set to the given value
+thing.__withalpha(value) // Gets a copy of the color in 'thing', with the Alpha channel set to the given value
+```
 
- **Builtin Functions**  
- LSS reserves some keywords for builtin functions, which start with two underscores, for type manipulation.
- Unlike builtin members, these may be called on `this`.
- ```
- __tostring(expression)
- __tofloat(expression)
- __toint(expression)
- __isint(expression)
- __isfloat(expression)
- __isstring(expression)
- __isobject(expression)
- __isinstance(expression)
- __isarray(expression)
- __classid(expression)
- ```
+**Builtin Functions**  
+LSS reserves some keywords for builtin functions, which start with two underscores, for type manipulation.
+Unlike builtin members, these may be called on `this`.
+```
+thing.__append(elementToAppend) // Appends to array, returns the input array, which has been mutated.
+thing.__removeat(index) // Removes the array element at the given index, returns the input array, which has been mutated.
+thing.__insertat(index, elementToInsert) // Inserts the given element at the given index, returns the input array, which has been mutated.
+__tostring(expression)
+__tofloat(expression)
+__toint(expression)
+__isint(expression)
+__isfloat(expression)
+__isstring(expression)
+__isobject(expression)
+__isinstance(expression)
+__isarray(expression)
+__classid(expression)
+```
