@@ -5,3 +5,7 @@ install:
 script:
   - msbuild /p:Configuration=Release ShoefitterDX.sln
   - mono ./packages/NUnit.ConsoleRunner.3.10.0/tools/nunit3-console.exe ./SAGESharpTests/bin/Release/SAGESharpTests.dll
+# Build only in the master branch
+branches:
+  only:
+  - master
