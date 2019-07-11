@@ -1,0 +1,7 @@
+language: csharp
+solution: ShoefitterDX.sln
+install:
+  - nuget restore ShoefitterDX.sln
+script:
+  - msbuild /p:Configuration=Release ShoefitterDX.sln
+  - mono ./packages/NUnit.ConsoleRunner.3.10.0/tools/nunit3-console.exe ./SAGESharpTests/bin/Release/SAGESharpTests.dll
