@@ -35,6 +35,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
-// Make any internal class visible only to tests
+// The following lines make internal classes visible to tests and also
+// the mocking framework. We don't want the signed assembly to expose
+// any internal classes so that's guarded behind a macro.
+#if !SIGN
 [assembly: InternalsVisibleTo("SAGESharpTests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
+#endif
