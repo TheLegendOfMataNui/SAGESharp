@@ -48,4 +48,62 @@ namespace SAGESharp.IO
         /// </summary>
         public byte Size { get; }
     }
+
+    /// <summary>
+    /// Specifies how a string is stored in binary form.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
+    public sealed class BinaryStringAttribute : Attribute
+    {
+        /// <summary>
+        /// Initializes a new attribute to mark a string is located at the given <paramref name="position"/>
+        /// and its length is stored as a single byte along with its contents.
+        /// </summary>
+        /// 
+        /// <param name="position">The position for the string.</param>
+        public BinaryStringAttribute(StringPosition position)
+        {
+            Position = position;
+            FixedLength = null;
+        }
+
+        /// <summary>
+        /// Initializes a new attribute to mark a string is located at the given <paramref name="position"/>
+        /// and has a fixed length of <paramref name="length"/>.
+        /// </summary>
+        /// 
+        /// <param name="position">The position for the string.</param>
+        /// <param name="length">The length for the string.</param>
+        public BinaryStringAttribute(StringPosition position, int length)
+        {
+            Position = position;
+            FixedLength = length;
+        }
+
+        /// <summary>
+        /// The position for the string.
+        /// </summary>
+        public StringPosition Position { get; }
+
+        /// <summary>
+        /// The fixed length for the string, if null it means its length
+        /// is stored as a single byte along with its contents.
+        /// </summary>
+        public int? FixedLength { get; }
+    }
+
+    /// <summary>
+    /// Where a string is located in a binary file.
+    /// </summary>
+    public enum StringPosition
+    {
+        /// <summary>
+        /// The string is located in the same position where the string is being read.
+        /// </summary>
+        Inline,
+        /// <summary>
+        /// The string is located at an offset that is located where the string is being read.
+        /// </summary>
+        AtOffset
+    }
 }
