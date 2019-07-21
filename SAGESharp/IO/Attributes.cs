@@ -106,4 +106,12 @@ namespace SAGESharp.IO
         /// </summary>
         AtOffset
     }
+
+    /// <summary>
+    /// Specifies a list (or a list of the given class) should read/write twice its length in a binary file.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
+    public sealed class DuplicateEntryCountAttribute : Attribute
+    {
+    }
 }
