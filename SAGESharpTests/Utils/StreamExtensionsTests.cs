@@ -8,7 +8,7 @@ using NUnit.Framework;
 using SAGESharp.Testing;
 using System.IO;
 
-namespace SAGESharp.SLB
+namespace SAGESharp.Utils
 {
     class StreamExtensionsTessts
     {

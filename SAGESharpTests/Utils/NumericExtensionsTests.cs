@@ -7,7 +7,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using System;
 
-namespace SAGESharp.SLB
+namespace SAGESharp.Utils
 {
     class NumericExtensionsTests
     {

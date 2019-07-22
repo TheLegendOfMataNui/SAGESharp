@@ -6,7 +6,7 @@
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace SAGESharp.SLB
+namespace SAGESharp.Utils
 {
     class ASCIIExtensionsTests
     {

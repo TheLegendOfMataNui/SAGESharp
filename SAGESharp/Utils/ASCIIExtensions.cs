@@ -5,7 +5,7 @@
  */
 using System.Text;
 
-namespace SAGESharp.SLB
+namespace SAGESharp.Utils
 {
     internal static class ASCIIExtensions
     {

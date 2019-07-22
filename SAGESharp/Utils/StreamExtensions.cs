@@ -7,7 +7,7 @@ using System;
 using System.IO;
 using Konvenience;
 
-namespace SAGESharp.SLB
+namespace SAGESharp.Utils
 {
     internal static class StreamExtensions
     {

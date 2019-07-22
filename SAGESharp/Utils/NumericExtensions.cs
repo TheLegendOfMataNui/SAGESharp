@@ -5,7 +5,7 @@
  */
 using System;
 
-namespace SAGESharp.SLB
+namespace SAGESharp.Utils
 {
     internal static class NumericExtensions
     {
