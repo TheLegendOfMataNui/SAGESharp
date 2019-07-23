@@ -90,9 +90,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SLB\Cinematic\Camera\CameraEqualityTests.cs" />
     <Compile Include="SLB\Cinematic\Camera\FrameEqualityTests.cs" />
-    <Compile Include="SLB\FooterEntryTests.cs" />
     <Compile Include="SLB\IdentifierEqualityTests.cs" />
     <Compile Include="SLB\IdentifierTests.cs" />
+    <Compile Include="SLB\IO\FooterEntryTests.cs" />
+    <Compile Include="SLB\IO\SLBFooterWriterTests.cs" />
+    <Compile Include="SLB\IO\StringBinaryWriterTests.cs" />
     <Compile Include="SLB\Level\Conversation\CharacterBinaryWriterTests.cs" />
     <Compile Include="SLB\Level\Conversation\CharacterEqualityTests.cs" />
     <Compile Include="SLB\Level\Conversation\ConversationBinaryAccessorTests.cs" />
@@ -106,8 +108,6 @@
     <Compile Include="SLB\Level\Conversation\SerializationTests.cs" />
     <Compile Include="SLB\Level\Conversation\TestData.cs" />
     <Compile Include="SLB\Point3DEqualityTests.cs" />
-    <Compile Include="SLB\SLBFooterWriterTests.cs" />
-    <Compile Include="SLB\StringBinaryWriterTests.cs" />
     <Compile Include="Testing\AbstractTestCaseData.cs" />
     <Compile Include="Testing\Matchers.cs" />
     <Compile Include="Testing\ParameterGroup.cs" />

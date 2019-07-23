@@ -6,6 +6,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Konvenience;
+using SAGESharp.SLB.IO;
 
 namespace SAGESharp.SLB.Level.Conversation
 {

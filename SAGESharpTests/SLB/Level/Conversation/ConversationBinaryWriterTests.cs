@@ -6,6 +6,7 @@
 using FluentAssertions;
 using NSubstitute;
 using NUnit.Framework;
+using SAGESharp.SLB.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;

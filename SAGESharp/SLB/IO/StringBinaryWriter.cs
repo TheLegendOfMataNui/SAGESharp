@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace SAGESharp.SLB
+namespace SAGESharp.SLB.IO
 {
     /// <summary>
     /// Class to write a string as a SLB binary object.

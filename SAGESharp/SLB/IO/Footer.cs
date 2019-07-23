@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using static System.BitConverter;
 
-namespace SAGESharp.SLB
+namespace SAGESharp.SLB.IO
 {
     /// <summary>
     /// Interface that writes the footer for a given SLB object.

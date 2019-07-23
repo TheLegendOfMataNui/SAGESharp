@@ -7,7 +7,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using SAGESharp.Testing;
 
-namespace SAGESharp.SLB
+namespace SAGESharp.SLB.IO
 {
     class FooterEntryTests : AbstractEqualityByValTests<FooterEntry>
     {

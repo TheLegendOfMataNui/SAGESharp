@@ -128,8 +128,9 @@
     <Compile Include="SLB\Cinematic\Camera\Camera.cs" />
     <Compile Include="SLB\Cinematic\Camera\Frame.cs" />
     <Compile Include="SLB\Common.cs" />
-    <Compile Include="SLB\Footer.cs" />
-    <Compile Include="SLB\ISLBBinaryWriter.cs" />
+    <Compile Include="SLB\IO\Footer.cs" />
+    <Compile Include="SLB\IO\ISLBBinaryWriter.cs" />
+    <Compile Include="SLB\IO\StringBinaryWriter.cs" />
     <Compile Include="SLB\Level\Conversation\Character.cs" />
     <Compile Include="SLB\Level\Conversation\CharacterBinaryWriter.cs" />
     <Compile Include="SLB\Level\Conversation\ConversationBinaryAccessor.cs" />
@@ -140,7 +141,6 @@
     <Compile Include="SLB\Level\Conversation\Info.cs" />
     <Compile Include="SLB\Level\Conversation\InfoBinaryWriter.cs" />
     <Compile Include="SLB\Level\Conversation\LineSide.cs" />
-    <Compile Include="SLB\StringBinaryWriter.cs" />
     <Compile Include="Utils\ASCIIExtensions.cs" />
     <Compile Include="Utils\NumericExtensions.cs" />
     <Compile Include="Utils\StreamExtensions.cs" />

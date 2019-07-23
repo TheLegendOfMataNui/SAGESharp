@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace SAGESharp.SLB
+namespace SAGESharp.SLB.IO
 {
     class SLBFooterWriterTests
     {
