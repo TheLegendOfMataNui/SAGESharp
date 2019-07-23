@@ -7,9 +7,9 @@ using NUnit.Framework;
 using SAGESharp.Testing;
 using System;
 
-using static SAGESharp.SLB.Level.Conversation.Defaults;
+using static SAGESharp.SLB.Level.Defaults;
 
-namespace SAGESharp.SLB.Level.Conversation
+namespace SAGESharp.SLB.Level
 {
     class FrameEqualityTests : AbstractEqualityByRefTests<Frame>
     {

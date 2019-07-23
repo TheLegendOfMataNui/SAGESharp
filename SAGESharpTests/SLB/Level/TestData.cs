@@ -5,7 +5,7 @@
  */
 using System.Collections.Generic;
 
-namespace SAGESharp.SLB.Level.Conversation
+namespace SAGESharp.SLB.Level
 {
     static class TestData
     {

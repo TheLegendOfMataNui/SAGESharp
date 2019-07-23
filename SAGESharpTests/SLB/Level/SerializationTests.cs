@@ -10,7 +10,7 @@ using SAGESharp.Testing;
 using System.Collections.Generic;
 using System.IO;
 
-namespace SAGESharp.SLB.Level.Conversation
+namespace SAGESharp.SLB.Level
 {
     class SerializationTests
     {

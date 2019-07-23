@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace SAGESharp.SLB.Level.Conversation.IO
+namespace SAGESharp.SLB.Level.IO
 {
     /// <summary>
     /// Class to write a conversation as a binary SLB file.

@@ -9,7 +9,7 @@ using SAGESharp.Testing;
 using System.Collections.Generic;
 using System.IO;
 
-namespace SAGESharp.SLB.Level.Conversation.IO
+namespace SAGESharp.SLB.Level.IO
 {
     class ConversationBinaryAccessorTests
     {

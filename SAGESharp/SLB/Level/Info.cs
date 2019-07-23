@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SAGESharp.SLB.Level.Conversation
+namespace SAGESharp.SLB.Level
 {
     public sealed class Info : IEquatable<Info>
     {

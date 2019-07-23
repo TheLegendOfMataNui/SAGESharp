@@ -5,7 +5,7 @@
  */
 using System;
 
-namespace SAGESharp.SLB.Level.Conversation
+namespace SAGESharp.SLB.Level
 {
     [Flags]
     public enum LineSide

@@ -9,7 +9,7 @@ using System.IO;
 
 using static System.BitConverter;
 
-namespace SAGESharp.SLB.Level.Conversation.IO
+namespace SAGESharp.SLB.Level.IO
 {
     /// <summary>
     /// Class to write an <see cref="Info"/> as a SLB binary object.

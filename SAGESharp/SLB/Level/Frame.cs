@@ -7,7 +7,7 @@ using SAGESharp.IO;
 using System;
 using System.Text;
 
-namespace SAGESharp.SLB.Level.Conversation
+namespace SAGESharp.SLB.Level
 {
     public sealed class Frame : IEquatable<Frame>
     {
