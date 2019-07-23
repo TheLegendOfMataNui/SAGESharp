@@ -10,7 +10,7 @@ using SAGESharp.Testing;
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharp.SLB.Level.Conversation
+namespace SAGESharp.SLB.Level.Conversation.IO
 {
     class ConversationFooterGeneratorTests
     {

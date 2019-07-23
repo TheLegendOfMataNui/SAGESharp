@@ -9,12 +9,12 @@ using System.IO;
 
 using static System.BitConverter;
 
-namespace SAGESharp.SLB.Level.Conversation
+namespace SAGESharp.SLB.Level.Conversation.IO
 {
     /// <summary>
-    /// Class to write an <see cref="Info"/> as a SLB binary object.
+    /// Class to write a Frame as a SLB binary object.
     /// </summary>
-    class InfoBinaryWriter : ISLBBinaryWriter<Info>
+    internal class FrameBinaryWriter : ISLBBinaryWriter<Frame>
     {
         private readonly Stream stream;
 
@@ -25,31 +25,30 @@ namespace SAGESharp.SLB.Level.Conversation
         /// <param name="stream">The input stream.</param>
         /// 
         /// <exception cref="ArgumentNullException">If <paramref name="stream"/> is null.</exception>
-        public InfoBinaryWriter(Stream stream)
+        public FrameBinaryWriter(Stream stream)
         {
             this.stream = stream ?? throw new ArgumentNullException("Output stream cannot be null.");
         }
-        
+
         /// <inheritdoc/>
         /// 
         /// <exception cref="ArgumentNullException">If <paramref name="slbObject"/> is null.</exception>
-        public void WriteSLBObject(Info slbObject)
+        public void WriteSLBObject(Frame slbObject)
         {
             if (slbObject == null)
             {
                 throw new ArgumentNullException();
             }
 
-            var buffer = new byte[Info.BINARY_SIZE];
+            var buffer = new byte[Frame.BINARY_SIZE];
 
-            GetBytes((int)slbObject.LineSide).CopyTo(buffer, 0);
-            GetBytes(slbObject.ConditionStart).CopyTo(buffer, 4);
-            GetBytes(slbObject.ConditionEnd).CopyTo(buffer, 8);
-            GetBytes(slbObject.StringLabel).CopyTo(buffer, 12);
+            GetBytes(slbObject.ToaAnimation).CopyTo(buffer, 0);
+            GetBytes(slbObject.CharAnimation).CopyTo(buffer, 4);
+            GetBytes(slbObject.CameraPositionTarget).CopyTo(buffer, 8);
+            GetBytes(slbObject.CameraDistance).CopyTo(buffer, 12);
             GetBytes(slbObject.StringIndex).CopyTo(buffer, 16);
-            GetBytes(slbObject.Frames.Count).CopyTo(buffer, 20);
 
-            stream.Write(buffer, 0, Info.BINARY_SIZE);
+            stream.Write(buffer, 0, Frame.BINARY_SIZE);
         }
     }
 }

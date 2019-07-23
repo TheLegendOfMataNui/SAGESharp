@@ -11,7 +11,7 @@ using SAGESharp.Testing;
 using System;
 using System.IO;
 
-namespace SAGESharp.SLB.Level.Conversation
+namespace SAGESharp.SLB.Level.Conversation.IO
 {
     class FrameBinaryWriterTests
     {

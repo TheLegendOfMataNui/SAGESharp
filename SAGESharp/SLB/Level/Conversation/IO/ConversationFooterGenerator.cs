@@ -7,7 +7,7 @@ using SAGESharp.SLB.IO;
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharp.SLB.Level.Conversation
+namespace SAGESharp.SLB.Level.Conversation.IO
 {
     /// <summary>
     /// Objects that generates the footer table for a conversation.

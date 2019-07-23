@@ -8,7 +8,7 @@ using System.IO;
 using Konvenience;
 using SAGESharp.SLB.IO;
 
-namespace SAGESharp.SLB.Level.Conversation
+namespace SAGESharp.SLB.Level.Conversation.IO
 {
     /// <summary>
     /// Class to read and write level's conversations into binary files (.SLB).
