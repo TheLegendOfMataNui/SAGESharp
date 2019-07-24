@@ -10,6 +10,51 @@ using System.Text;
 
 namespace SAGESharp.SLB.Level
 {
+    public sealed class Conversation : IEquatable<Conversation>
+    {
+        [SerializableProperty(1)]
+        public IList<ConversationCharacter> Entries { get; set; }
+
+        public bool Equals(Conversation other)
+        {
+            if (other is null)
+            {
+                return false;
+            }
+
+            return Entries.SafeSequenceEquals(other.Entries);
+        }
+
+        public override string ToString()
+        {
+            if (Entries == null)
+            {
+                return $"{nameof(Entries)}=null";
+            }
+            else if (Entries.Count != 0)
+            {
+                return $"{nameof(Entries)}=[({string.Join("),(", Entries)})]";
+            }
+            else
+            {
+                return $"{nameof(Entries)}=[]";
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Conversation);
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 79;
+            Entries.AddHashCodesByRef(ref hash, 3717, 7699);
+
+            return hash;
+        }
+    }
+
     public sealed class ConversationCharacter : IEquatable<ConversationCharacter>
     {
         /// <summary>

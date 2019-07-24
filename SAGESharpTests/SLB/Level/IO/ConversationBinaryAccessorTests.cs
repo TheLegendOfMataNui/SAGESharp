@@ -26,9 +26,9 @@ namespace SAGESharp.SLB.Level.IO
         }
 
         static object[] FileNamesAndConversations() => new ParameterGroup<string, IList<ConversationCharacter>>()
-            .Parameters(TestDataPath("EmptyConversation.slb"), TestData.EmptyConversation())
-            .Parameters(TestDataPath("SimpleConversation.slb"), TestData.SimpleConversation())
-            .Parameters(TestDataPath("ComplexConversation.slb"), TestData.ComplexConversation())
+            .Parameters(TestDataPath("EmptyConversation.slb"), TestData.EmptyConversation().Entries)
+            .Parameters(TestDataPath("SimpleConversation.slb"), TestData.SimpleConversation().Entries)
+            .Parameters(TestDataPath("ComplexConversation.slb"), TestData.ComplexConversation().Entries)
             .Build();
 
         private static string TestDataPath(string fileName)

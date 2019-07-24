@@ -15,9 +15,9 @@ namespace SAGESharp.SLB.Level
     class SerializationTests
     {
         [TestCaseSource(nameof(TEST_CASES))]
-        public void Test_Reading_A_Conversation_File_Successfully(SerializationTestCaseData<IList<ConversationCharacter>> testCaseData)
+        public void Test_Reading_A_Conversation_File_Successfully(SerializationTestCaseData<Conversation> testCaseData)
         {
-            var serializer = BinarySerializers.Factory.GetSerializerForType<IList<ConversationCharacter>>();
+            var serializer = BinarySerializers.Factory.GetSerializerForType<Conversation>();
 
             using (var stream = new FileStream(testCaseData.TestFilePath, FileMode.Open))
             {
@@ -26,23 +26,23 @@ namespace SAGESharp.SLB.Level
                 serializer
                     .Read(reader)
                     .Should()
-                    .Equal(testCaseData.Expected);
+                    .Be(testCaseData.Expected);
             }
         }
 
         static object[] TEST_CASES() => new object[]
         {
-            new SerializationTestCaseData<IList<ConversationCharacter>>(
+            new SerializationTestCaseData<Conversation>(
                 description: "Test serializing with an empty file",
                 testFilePath: PathForTestFile("EmptyConversation.slb"),
-                expectedProvider: () => new List<ConversationCharacter>()
+                expectedProvider: TestData.EmptyConversation
             ),
-            new SerializationTestCaseData<IList<ConversationCharacter>>(
+            new SerializationTestCaseData<Conversation>(
                 description: "Test serializing a file with a simple conversation",
                 testFilePath: PathForTestFile("SimpleConversation.slb"),
                 expectedProvider: TestData.SimpleConversation
             ),
-            new SerializationTestCaseData<IList<ConversationCharacter>>(
+            new SerializationTestCaseData<Conversation>(
                 description: "Test serializing a file with a complex conversation",
                 testFilePath: PathForTestFile("ComplexConversation.slb"),
                 expectedProvider: TestData.ComplexConversation

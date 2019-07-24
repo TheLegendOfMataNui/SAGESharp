@@ -25,18 +25,18 @@ namespace SAGESharp.SLB.Level.IO
             => footerGenerator.GenerateFooter(conversation).Should().Equal(footerTable);
 
         static object[] ConversationsWithFooter() => new ParameterGroup<IList<ConversationCharacter>, IList<FooterEntry>>()
-            .Parameters(TestData.EmptyConversation(), new List<FooterEntry>
+            .Parameters(TestData.EmptyConversation().Entries, new List<FooterEntry>
             {
                 new FooterEntry { OffsetPosition = 0x00000004, Offset = 0x00000008 }
             })
-            .Parameters(TestData.SimpleConversation(), new List<FooterEntry>
+            .Parameters(TestData.SimpleConversation().Entries, new List<FooterEntry>
             {
                 new FooterEntry { OffsetPosition = 0x00000004, Offset = 0x00000008 },
                 new FooterEntry { OffsetPosition = 0x00000018, Offset = 0x0000001C },
                 new FooterEntry { OffsetPosition = 0x00000034, Offset = 0x00000038 },
                 new FooterEntry { OffsetPosition = 0x0000004C, Offset = 0x00000050 }
             })
-            .Parameters(TestData.ComplexConversation(), new List<FooterEntry>
+            .Parameters(TestData.ComplexConversation().Entries, new List<FooterEntry>
             {
                 new FooterEntry { OffsetPosition = 0x00000004, Offset = 0x00000008 },
                 new FooterEntry { OffsetPosition = 0x00000018, Offset = 0x00000044 },
