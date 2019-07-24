@@ -126,6 +126,7 @@
     <Compile Include="OSI\Instruction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SLB\AIInfo.cs" />
+    <Compile Include="SLB\AnimationEvents.cs" />
     <Compile Include="SLB\Cinematic\Camera.cs" />
     <Compile Include="SLB\Cinematic\Character.cs" />
     <Compile Include="SLB\Cinematic\Common.cs" />
