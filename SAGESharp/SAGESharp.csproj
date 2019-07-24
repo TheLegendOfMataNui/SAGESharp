@@ -163,6 +163,7 @@
     <Compile Include="SLB\Position.cs" />
     <Compile Include="SLB\Sounds.cs" />
     <Compile Include="SLB\SoundTable.cs" />
+    <Compile Include="SLB\Spotlight.cs" />
     <Compile Include="Utils\ASCIIExtensions.cs" />
     <Compile Include="Utils\NumericExtensions.cs" />
     <Compile Include="Utils\StreamExtensions.cs" />
