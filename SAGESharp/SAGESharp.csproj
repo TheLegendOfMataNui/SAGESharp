@@ -168,6 +168,7 @@
     <Compile Include="SLB\Targets.cs" />
     <Compile Include="SLB\Textures.cs" />
     <Compile Include="SLB\Trigger.cs" />
+    <Compile Include="SLB\Vine.cs" />
     <Compile Include="Utils\ASCIIExtensions.cs" />
     <Compile Include="Utils\NumericExtensions.cs" />
     <Compile Include="Utils\StreamExtensions.cs" />
