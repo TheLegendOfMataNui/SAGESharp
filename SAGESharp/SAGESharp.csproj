@@ -153,6 +153,7 @@
     <Compile Include="SLB\Level\IO\ConversationFooterGenerator.cs" />
     <Compile Include="SLB\Level\IO\FrameBinaryWriter.cs" />
     <Compile Include="SLB\Level\IO\InfoBinaryWriter.cs" />
+    <Compile Include="SLB\Level\Object.cs" />
     <Compile Include="Utils\ASCIIExtensions.cs" />
     <Compile Include="Utils\NumericExtensions.cs" />
     <Compile Include="Utils\StreamExtensions.cs" />
