@@ -7,7 +7,7 @@ using NUnit.Framework;
 using SAGESharp.Testing;
 using System;
 
-namespace SAGESharp.SLB.Cinematic.Camera
+namespace SAGESharp.SLB.Cinematic
 {
     class FrameEqualityTests : AbstractEqualityByRefTests<Frame>
     {

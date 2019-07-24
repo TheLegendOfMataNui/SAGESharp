@@ -8,7 +8,7 @@ using SAGESharp.Testing;
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharp.SLB.Cinematic.Camera
+namespace SAGESharp.SLB.Cinematic
 {
     class CameraEqualityTests : AbstractEqualityByRefTests<Camera>
     {

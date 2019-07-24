@@ -88,8 +88,8 @@
     <Compile Include="IO\PrimitiveBinarySerializerTests.cs" />
     <Compile Include="IO\StringBinarySerializerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SLB\Cinematic\Camera\CameraEqualityTests.cs" />
-    <Compile Include="SLB\Cinematic\Camera\FrameEqualityTests.cs" />
+    <Compile Include="SLB\Cinematic\CameraEqualityTests.cs" />
+    <Compile Include="SLB\Cinematic\FrameEqualityTests.cs" />
     <Compile Include="SLB\IdentifierEqualityTests.cs" />
     <Compile Include="SLB\IdentifierTests.cs" />
     <Compile Include="SLB\IO\FooterEntryTests.cs" />
