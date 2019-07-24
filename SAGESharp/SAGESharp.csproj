@@ -143,6 +143,7 @@
     <Compile Include="SLB\IO\Footer.cs" />
     <Compile Include="SLB\IO\ISLBBinaryWriter.cs" />
     <Compile Include="SLB\IO\StringBinaryWriter.cs" />
+    <Compile Include="SLB\Level\Camera.cs" />
     <Compile Include="SLB\Level\Common.cs" />
     <Compile Include="SLB\Level\Conversation.cs" />
     <Compile Include="SLB\Level\IO\CharacterBinaryWriter.cs" />
