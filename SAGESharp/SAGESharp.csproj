@@ -139,6 +139,7 @@
     <Compile Include="SLB\Edge.cs" />
     <Compile Include="SLB\Emitter.cs" />
     <Compile Include="SLB\Hive.cs" />
+    <Compile Include="SLB\Instance.cs" />
     <Compile Include="SLB\IO\Footer.cs" />
     <Compile Include="SLB\IO\ISLBBinaryWriter.cs" />
     <Compile Include="SLB\IO\StringBinaryWriter.cs" />
