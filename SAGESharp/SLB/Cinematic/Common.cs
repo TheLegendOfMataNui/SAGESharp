@@ -3,20 +3,20 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-using SAGESharp.SLB.IO;
+using SAGESharp.IO;
 using System;
 
-namespace SAGESharp.SLB
+namespace SAGESharp.SLB.Cinematic
 {
     public sealed class Location : IEquatable<Location>
     {
-        [SLBElement(1)]
+        [SerializableProperty(1)]
         public float Time { get; set; }
 
-        [SLBElement(2)]
+        [SerializableProperty(2)]
         public Point3D Position { get; set; }
 
-        [SLBElement(3)]
+        [SerializableProperty(3)]
         public Point3D Orientation { get; set; }
 
         public bool Equals(Location other)

@@ -127,6 +127,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SLB\Cinematic\Camera\Camera.cs" />
     <Compile Include="SLB\Cinematic\Camera\Frame.cs" />
+    <Compile Include="SLB\Cinematic\Common.cs" />
     <Compile Include="SLB\Common.cs" />
     <Compile Include="SLB\IO\Footer.cs" />
     <Compile Include="SLB\IO\ISLBBinaryWriter.cs" />
