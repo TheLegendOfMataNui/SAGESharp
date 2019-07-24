@@ -4,24 +4,71 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using Konvenience;
-using SAGESharp.SLB.IO;
+using SAGESharp.IO;
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharp.SLB.Cinematic.Object
+namespace SAGESharp.SLB.Cinematic
 {
+    public sealed class ObjectTable : IEquatable<ObjectTable>
+    {
+        [SerializableProperty(1)]
+        public IList<Object> Entries { get; set; }
+
+        public bool Equals(ObjectTable other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            return Entries.SafeSequenceEquals(other.Entries);
+        }
+
+        public override string ToString() =>
+            $"Objects={Entries?.Let(Objects => "[(" + string.Join("), (", Objects) + ")]") ?? "null"}";
+
+        public override bool Equals(object other)
+            => Equals(other as ObjectTable);
+
+        public override int GetHashCode()
+        {
+            int hash = 2179;
+            Entries.AddHashCodesByRef(ref hash, 2161, 2791);
+
+            return hash;
+        }
+
+        public static bool operator ==(ObjectTable left, ObjectTable right)
+        {
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
+            else if (left is null)
+            {
+                return right.Equals(left);
+            }
+            else
+            {
+                return left.Equals(right);
+            }
+        }
+
+        public static bool operator !=(ObjectTable left, ObjectTable right)
+            => !(left == right);
+    }
+
     public sealed class Object : IEquatable<Object>
     {
-        [SLBElement(1)]
+        [SerializableProperty(1)]
         public Identifier Instance { get; set; }
 
-        [SLBElement(2)]
+        [SerializableProperty(2)]
         public Identifier Type { get; set; }
 
-        [SLBElement(3)]
+        [SerializableProperty(3)]
         public IList<Location> Locations { get; set; }
-
-
 
         public bool Equals(Object other)
         {
