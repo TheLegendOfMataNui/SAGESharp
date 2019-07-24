@@ -158,6 +158,7 @@
     <Compile Include="SLB\Material.cs" />
     <Compile Include="SLB\MoveList.cs" />
     <Compile Include="SLB\Names.cs" />
+    <Compile Include="SLB\Offsets.cs" />
     <Compile Include="Utils\ASCIIExtensions.cs" />
     <Compile Include="Utils\NumericExtensions.cs" />
     <Compile Include="Utils\StreamExtensions.cs" />
