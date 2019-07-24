@@ -134,6 +134,7 @@
     <Compile Include="SLB\Cinematic\SoundTable.cs" />
     <Compile Include="SLB\Cinematic\Text.cs" />
     <Compile Include="SLB\Common.cs" />
+    <Compile Include="SLB\ConversationCharacterInfo.cs" />
     <Compile Include="SLB\IO\Footer.cs" />
     <Compile Include="SLB\IO\ISLBBinaryWriter.cs" />
     <Compile Include="SLB\IO\StringBinaryWriter.cs" />
