@@ -297,6 +297,7 @@ namespace SAGESharp.SLB.Level
         public int StringIndex { get; set; }
 
         [SerializableProperty(6)]
+        [BinaryString(StringPosition.AtOffset)]
         public string ConversationSounds { get; set; }
 
         public bool Equals(Frame other)
