@@ -155,6 +155,7 @@
     <Compile Include="SLB\Level\IO\InfoBinaryWriter.cs" />
     <Compile Include="SLB\Level\Object.cs" />
     <Compile Include="SLB\Light.cs" />
+    <Compile Include="SLB\Material.cs" />
     <Compile Include="Utils\ASCIIExtensions.cs" />
     <Compile Include="Utils\NumericExtensions.cs" />
     <Compile Include="Utils\StreamExtensions.cs" />
