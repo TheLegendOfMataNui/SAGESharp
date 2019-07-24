@@ -4,7 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using Konvenience;
-using SAGESharp.SLB.IO;
+using SAGESharp.IO;
 using System;
 using System.Collections.Generic;
 
@@ -12,15 +12,14 @@ namespace SAGESharp.SLB.Cinematic.Text
 {
     public sealed class Text : IEquatable<Text>
     {
-        [SLBElement(1)]
+        [SerializableProperty(1)]
         public Identifier StrLabel { get; set; }
 
-        [SLBElement(2)]
+        [SerializableProperty(2)]
         public long StrIdx { get; set; }
 
-        [SLBElement(3)]
+        [SerializableProperty(3)]
         public IList<Data> Entries { get; set; }
-
 
         public bool Equals(Text other)
         {
@@ -29,7 +28,7 @@ namespace SAGESharp.SLB.Cinematic.Text
                 return false;
             }
 
-            return Instance == other.Instance &&
+            return StrLabel == other.StrLabel &&
                 StrIdx == other.StrIdx &&
                 Entries.SafeSequenceEquals(other.Entries);
         }
@@ -44,7 +43,7 @@ namespace SAGESharp.SLB.Cinematic.Text
         public override int GetHashCode()
         {
             int hash = 3299;
-            Instance.AddHashCodeByVal(ref hash, 2957);
+            StrLabel.AddHashCodeByVal(ref hash, 2957);
             StrIdx.AddHashCodeByVal(ref hash, 2957);
             Entries.AddHashCodesByRef(ref hash, 2957, 4093);
 
@@ -68,6 +67,60 @@ namespace SAGESharp.SLB.Cinematic.Text
         }
 
         public static bool operator !=(Text left, Text right)
+            => !(left == right);
+    }
+
+    public sealed class Data : IEquatable<Data>
+    {
+        [SerializableProperty(1)]
+        public float Time { get; set; }
+
+        [SerializableProperty(2)]
+        public long StrOffset { get; set; }
+
+        public bool Equals(Data other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            return Time == other.Time &&
+                StrOffset == other.StrOffset;
+        }
+
+        public override string ToString() => $"Time={Time}," +
+            $"StrOffset={StrOffset},";
+
+        public override bool Equals(object other)
+            => Equals(other as Data);
+
+        public override int GetHashCode()
+        {
+            int hash = 9857;
+            Time.AddHashCodeByVal(ref hash, 4523);
+            StrOffset.AddHashCodeByVal(ref hash, 4523);
+
+            return hash;
+        }
+
+        public static bool operator ==(Data left, Data right)
+        {
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
+            else if (left is null)
+            {
+                return right.Equals(left);
+            }
+            else
+            {
+                return left.Equals(right);
+            }
+        }
+
+        public static bool operator !=(Data left, Data right)
             => !(left == right);
     }
 }
