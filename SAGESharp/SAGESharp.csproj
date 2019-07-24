@@ -165,6 +165,7 @@
     <Compile Include="SLB\SoundTable.cs" />
     <Compile Include="SLB\Spotlight.cs" />
     <Compile Include="SLB\StringTable.cs" />
+    <Compile Include="SLB\Targets.cs" />
     <Compile Include="Utils\ASCIIExtensions.cs" />
     <Compile Include="Utils\NumericExtensions.cs" />
     <Compile Include="Utils\StreamExtensions.cs" />
