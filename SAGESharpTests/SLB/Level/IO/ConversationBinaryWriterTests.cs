@@ -17,7 +17,7 @@ namespace SAGESharp.SLB.Level.IO
     {
         private readonly Stream stream = Substitute.For<Stream>();
 
-        private readonly ISLBBinaryWriter<Character> characterWriter = Substitute.For<ISLBBinaryWriter<Character>>();
+        private readonly ISLBBinaryWriter<ConversationCharacter> characterWriter = Substitute.For<ISLBBinaryWriter<ConversationCharacter>>();
 
         private readonly ISLBBinaryWriter<Info> infoWriter = Substitute.For<ISLBBinaryWriter<Info>>();
 
@@ -25,9 +25,9 @@ namespace SAGESharp.SLB.Level.IO
 
         private readonly ISLBBinaryWriter<string> stringWriter = Substitute.For<ISLBBinaryWriter<string>>();
 
-        private readonly ISLBFooterWriter<IList<Character>> footerWriter = Substitute.For<ISLBFooterWriter<IList<Character>>>();
+        private readonly ISLBFooterWriter<IList<ConversationCharacter>> footerWriter = Substitute.For<ISLBFooterWriter<IList<ConversationCharacter>>>();
 
-        private readonly ISLBBinaryWriter<IList<Character>> conversationWriter;
+        private readonly ISLBBinaryWriter<IList<ConversationCharacter>> conversationWriter;
 
         public ConversationBinaryWriterTests()
         {
@@ -69,9 +69,9 @@ namespace SAGESharp.SLB.Level.IO
         [Test]
         public void Test_Writing_Conversation()
         {
-            var input = new List<Character>
+            var input = new List<ConversationCharacter>
             {
-                new Character
+                new ConversationCharacter
                 {
                     Entries = new List<Info>
                     {

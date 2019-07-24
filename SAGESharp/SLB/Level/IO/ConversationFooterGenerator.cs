@@ -12,7 +12,7 @@ namespace SAGESharp.SLB.Level.IO
     /// <summary>
     /// Objects that generates the footer table for a conversation.
     /// </summary>
-    class ConversationFooterGenerator : ISLBFooterGenerator<IList<Character>>
+    class ConversationFooterGenerator : ISLBFooterGenerator<IList<ConversationCharacter>>
     {
         private const int INFO_LENGTH = 28;
 
@@ -21,7 +21,7 @@ namespace SAGESharp.SLB.Level.IO
         /// <inheritdoc/>
         /// 
         /// <exception cref="ArgumentNullException">If <paramref name="slbObject"/> is null.</exception>
-        public IReadOnlyList<FooterEntry> GenerateFooter(IList<Character> slbObject)
+        public IReadOnlyList<FooterEntry> GenerateFooter(IList<ConversationCharacter> slbObject)
         {
             if (slbObject == null)
             {
@@ -38,12 +38,12 @@ namespace SAGESharp.SLB.Level.IO
             var cursor1 = (uint)0x00000018;
             // Cursor2 is the position afte the list of all "Character" objects plus
             // the header of the list (size + offset at the beginning of the file)
-            var cursor2 = (uint)(Character.BINARY_SIZE * slbObject.Count) + 8;
+            var cursor2 = (uint)(ConversationCharacter.BINARY_SIZE * slbObject.Count) + 8;
             foreach (var character in slbObject)
             {
                 result.Add(new FooterEntry { OffsetPosition = cursor1, Offset = cursor2 });
 
-                cursor1 += Character.BINARY_SIZE;
+                cursor1 += ConversationCharacter.BINARY_SIZE;
                 cursor2 += (uint)(INFO_LENGTH * character.Entries.Count);
             }
 

@@ -15,9 +15,9 @@ namespace SAGESharp.SLB.Level
     class SerializationTests
     {
         [TestCaseSource(nameof(TEST_CASES))]
-        public void Test_Reading_A_Conversation_File_Successfully(SerializationTestCaseData<IList<Character>> testCaseData)
+        public void Test_Reading_A_Conversation_File_Successfully(SerializationTestCaseData<IList<ConversationCharacter>> testCaseData)
         {
-            var serializer = BinarySerializers.Factory.GetSerializerForType<IList<Character>>();
+            var serializer = BinarySerializers.Factory.GetSerializerForType<IList<ConversationCharacter>>();
 
             using (var stream = new FileStream(testCaseData.TestFilePath, FileMode.Open))
             {
@@ -32,17 +32,17 @@ namespace SAGESharp.SLB.Level
 
         static object[] TEST_CASES() => new object[]
         {
-            new SerializationTestCaseData<IList<Character>>(
+            new SerializationTestCaseData<IList<ConversationCharacter>>(
                 description: "Test serializing with an empty file",
                 testFilePath: PathForTestFile("EmptyConversation.slb"),
-                expectedProvider: () => new List<Character>()
+                expectedProvider: () => new List<ConversationCharacter>()
             ),
-            new SerializationTestCaseData<IList<Character>>(
+            new SerializationTestCaseData<IList<ConversationCharacter>>(
                 description: "Test serializing a file with a simple conversation",
                 testFilePath: PathForTestFile("SimpleConversation.slb"),
                 expectedProvider: TestData.SimpleConversation
             ),
-            new SerializationTestCaseData<IList<Character>>(
+            new SerializationTestCaseData<IList<ConversationCharacter>>(
                 description: "Test serializing a file with a complex conversation",
                 testFilePath: PathForTestFile("ComplexConversation.slb"),
                 expectedProvider: TestData.ComplexConversation

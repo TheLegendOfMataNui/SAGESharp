@@ -9,11 +9,11 @@ namespace SAGESharp.SLB.Level
 {
     static class TestData
     {
-        public static IList<Character> EmptyConversation() => new List<Character>();
+        public static IList<ConversationCharacter> EmptyConversation() => new List<ConversationCharacter>();
 
-        public static IList<Character> SimpleConversation() => new List<Character>()
+        public static IList<ConversationCharacter> SimpleConversation() => new List<ConversationCharacter>()
         {
-            new Character()
+            new ConversationCharacter()
             {
                 ToaName = Identifier.From("TOA1"),
                 CharName = Identifier.From("NAME"),
@@ -44,9 +44,9 @@ namespace SAGESharp.SLB.Level
             }
         };
 
-        public static IList<Character> ComplexConversation() => new List<Character>()
+        public static IList<ConversationCharacter> ComplexConversation() => new List<ConversationCharacter>()
         {
-            new Character()
+            new ConversationCharacter()
             {
                 ToaName = Identifier.From("TOA1"),
                 CharName = Identifier.From("NAM1"),
@@ -142,7 +142,7 @@ namespace SAGESharp.SLB.Level
                     }
                 }
             },
-            new Character()
+            new ConversationCharacter()
             {
 
                 ToaName = Identifier.From("TOA2"),
@@ -192,7 +192,7 @@ namespace SAGESharp.SLB.Level
                     }
                 }
             },
-            new Character()
+            new ConversationCharacter()
             {
 
                 ToaName = Identifier.From("TOA3"),

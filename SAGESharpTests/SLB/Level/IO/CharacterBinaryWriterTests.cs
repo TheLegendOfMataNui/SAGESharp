@@ -18,7 +18,7 @@ namespace SAGESharp.SLB.Level.IO
     {
         private readonly Stream stream;
 
-        private readonly ISLBBinaryWriter<Character> writer;
+        private readonly ISLBBinaryWriter<ConversationCharacter> writer;
 
         public CharacterBinaryWriterTests()
         {
@@ -41,7 +41,7 @@ namespace SAGESharp.SLB.Level.IO
         [Test]
         public void Test_Writing_A_Character()
         {
-            var input = new Character()
+            var input = new ConversationCharacter()
             {
                 ToaName = 1,
                 CharName = 2,

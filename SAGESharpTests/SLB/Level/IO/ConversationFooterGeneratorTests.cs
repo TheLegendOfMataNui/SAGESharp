@@ -14,17 +14,17 @@ namespace SAGESharp.SLB.Level.IO
 {
     class ConversationFooterGeneratorTests
     {
-        private readonly ISLBFooterGenerator<IList<Character>> footerGenerator = new ConversationFooterGenerator();
+        private readonly ISLBFooterGenerator<IList<ConversationCharacter>> footerGenerator = new ConversationFooterGenerator();
 
         [Test]
         public void Test_Generating_The_Footer_For_A_Null_Conversation()
             => footerGenerator.Invoking(fg => fg.GenerateFooter(null)).Should().Throw<ArgumentNullException>();
 
         [TestCaseSource(nameof(ConversationsWithFooter))]
-        public void Test_Generating_The_Footer_For_A_Conversation(IList<Character> conversation, IList<FooterEntry> footerTable)
+        public void Test_Generating_The_Footer_For_A_Conversation(IList<ConversationCharacter> conversation, IList<FooterEntry> footerTable)
             => footerGenerator.GenerateFooter(conversation).Should().Equal(footerTable);
 
-        static object[] ConversationsWithFooter() => new ParameterGroup<IList<Character>, IList<FooterEntry>>()
+        static object[] ConversationsWithFooter() => new ParameterGroup<IList<ConversationCharacter>, IList<FooterEntry>>()
             .Parameters(TestData.EmptyConversation(), new List<FooterEntry>
             {
                 new FooterEntry { OffsetPosition = 0x00000004, Offset = 0x00000008 }

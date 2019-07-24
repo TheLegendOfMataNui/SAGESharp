@@ -11,19 +11,19 @@ using static SAGESharp.SLB.Level.Defaults;
 
 namespace SAGESharp.SLB.Level
 {
-    class CharacterEqualityTests : AbstractEqualityByRefTests<Character>
+    class ConversationCharacterEqualityTests : AbstractEqualityByRefTests<ConversationCharacter>
     {
-        protected override Character GetDefault() => DefaultCharacter();
+        protected override ConversationCharacter GetDefault() => DefaultConversationCharacter();
 
-        protected override bool EqualsOperator(Character left, Character right) => left == right;
+        protected override bool EqualsOperator(ConversationCharacter left, ConversationCharacter right) => left == right;
 
-        protected override bool NotEqualsOperator(Character left, Character right) => left != right;
+        protected override bool NotEqualsOperator(ConversationCharacter left, ConversationCharacter right) => left != right;
 
         [TestCaseSource(nameof(Modifiers))]
-        public void Test_Compare_Default_Object_With_Modified_Object(Action<Character> modifier) =>
+        public void Test_Compare_Default_Object_With_Modified_Object(Action<ConversationCharacter> modifier) =>
             TestCompareDefaultObjectWithModifiedObject(modifier);
 
-        static object[] Modifiers() => new ParameterGroup<Action<Character>>()
+        static object[] Modifiers() => new ParameterGroup<Action<ConversationCharacter>>()
             .Parameters(character => character.ToaName = Identifier.From("TOAX"))
             .Parameters(character => character.CharName = Identifier.From("CHAX"))
             .Parameters(character => character.CharCont = Identifier.From("CONX"))
@@ -35,10 +35,10 @@ namespace SAGESharp.SLB.Level
             .Build();
 
         [TestCaseSource(nameof(DualModifiers))]
-        public void Test_Compare_Modified_Objects(Action<Character> modifierA, Action<Character> modifierB) =>
+        public void Test_Compare_Modified_Objects(Action<ConversationCharacter> modifierA, Action<ConversationCharacter> modifierB) =>
             TestCompareModifiedObjects(modifierA, modifierB);
 
-        static object[] DualModifiers() => new ParameterGroup<Action<Character>, Action<Character>>()
+        static object[] DualModifiers() => new ParameterGroup<Action<ConversationCharacter>, Action<ConversationCharacter>>()
             .Parameters(character => character.Entries = null, character => character.Entries.Clear())
             .Build();
     }

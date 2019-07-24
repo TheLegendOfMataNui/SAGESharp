@@ -14,7 +14,7 @@ namespace SAGESharp.SLB.Level.IO
     class ConversationBinaryAccessorTests
     {
         [TestCaseSource(nameof(FileNamesAndConversations))]
-        public void Test_Writing_A_File_Successfully(string testFilePath, IList<Character> conversation)
+        public void Test_Writing_A_File_Successfully(string testFilePath, IList<ConversationCharacter> conversation)
         {
             var outputFilePath = $"{testFilePath}.tst";
             ConversationBinaryAccessor.WriteConversation(outputFilePath, conversation);
@@ -25,7 +25,7 @@ namespace SAGESharp.SLB.Level.IO
             actual.Should().Equal(expected);
         }
 
-        static object[] FileNamesAndConversations() => new ParameterGroup<string, IList<Character>>()
+        static object[] FileNamesAndConversations() => new ParameterGroup<string, IList<ConversationCharacter>>()
             .Parameters(TestDataPath("EmptyConversation.slb"), TestData.EmptyConversation())
             .Parameters(TestDataPath("SimpleConversation.slb"), TestData.SimpleConversation())
             .Parameters(TestDataPath("ComplexConversation.slb"), TestData.ComplexConversation())

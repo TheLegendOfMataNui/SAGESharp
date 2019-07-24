@@ -12,9 +12,9 @@ using static System.BitConverter;
 namespace SAGESharp.SLB.Level.IO
 {
     /// <summary>
-    /// Class to write a <see cref="Character"/> as a SLB binary object.
+    /// Class to write a <see cref="ConversationCharacter"/> as a SLB binary object.
     /// </summary>
-    class CharacterBinaryWriter : ISLBBinaryWriter<Character>
+    class CharacterBinaryWriter : ISLBBinaryWriter<ConversationCharacter>
     {
         private readonly Stream stream;
 
@@ -33,21 +33,21 @@ namespace SAGESharp.SLB.Level.IO
         /// <inheritdoc/>
         /// 
         /// <exception cref="ArgumentNullException">If <paramref name="slbObject"/> is null.</exception>
-        public void WriteSLBObject(Character slbObject)
+        public void WriteSLBObject(ConversationCharacter slbObject)
         {
             if (slbObject == null)
             {
                 throw new ArgumentNullException();
             }
 
-            var buffer = new byte[Character.BINARY_SIZE];
+            var buffer = new byte[ConversationCharacter.BINARY_SIZE];
 
             GetBytes(slbObject.ToaName).CopyTo(buffer, 0);
             GetBytes(slbObject.CharName).CopyTo(buffer, 4);
             GetBytes(slbObject.CharCont).CopyTo(buffer, 8);
             GetBytes(slbObject.Entries.Count).CopyTo(buffer, 12);
 
-            stream.Write(buffer, 0, Character.BINARY_SIZE);
+            stream.Write(buffer, 0, ConversationCharacter.BINARY_SIZE);
         }
     }
 }

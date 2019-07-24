@@ -29,7 +29,7 @@ namespace SAGESharp.SLB.Level
             Frames =  new List<Frame>() { DefaultFrame() }
         };
 
-        public static Character DefaultCharacter() => new Character()
+        public static ConversationCharacter DefaultConversationCharacter() => new ConversationCharacter()
         {
             ToaName = Identifier.From("TOA1"),
             CharName = Identifier.From("CHA1"),

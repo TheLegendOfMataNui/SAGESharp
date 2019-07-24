@@ -21,7 +21,7 @@ namespace SAGESharp.SLB.Level.IO
         /// 
         /// <param name="filename">The output file name.</param>
         /// <param name="characters">The conversation to be writen.</param>
-        public static void WriteConversation(string filename, IList<Character> characters)
+        public static void WriteConversation(string filename, IList<ConversationCharacter> characters)
         {
             using (var stream = new FileStream(filename, FileMode.Create))
             {
@@ -35,14 +35,14 @@ namespace SAGESharp.SLB.Level.IO
         /// 
         /// <param name="stream">The output stream.</param>
         /// <param name="characters">The conversation to be writen.</param>
-        public static void WriteConversation(Stream stream, IList<Character> characters)
+        public static void WriteConversation(Stream stream, IList<ConversationCharacter> characters)
             => new ConversationBinaryWriter(
                 stream,
                 new CharacterBinaryWriter(stream),
                 new InfoBinaryWriter(stream),
                 new FrameBinaryWriter(stream),
                 new StringBinaryWriter(stream),
-                new SLBFooterWriter<IList<Character>>(stream, new ConversationFooterGenerator())
+                new SLBFooterWriter<IList<ConversationCharacter>>(stream, new ConversationFooterGenerator())
             ).WriteSLBObject(characters);
     }
 }

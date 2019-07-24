@@ -15,11 +15,11 @@ namespace SAGESharp.SLB.Level.IO
     /// <summary>
     /// Class to write a conversation as a binary SLB file.
     /// </summary>
-    internal sealed class ConversationBinaryWriter : ISLBBinaryWriter<IList<Character>>
+    internal sealed class ConversationBinaryWriter : ISLBBinaryWriter<IList<ConversationCharacter>>
     {
         private readonly Stream stream;
 
-        private readonly ISLBBinaryWriter<Character> characterWriter;
+        private readonly ISLBBinaryWriter<ConversationCharacter> characterWriter;
 
         private readonly ISLBBinaryWriter<Info> infoWriter;
 
@@ -27,14 +27,14 @@ namespace SAGESharp.SLB.Level.IO
 
         private readonly ISLBBinaryWriter<string> stringWriter;
 
-        private readonly ISLBFooterWriter<IList<Character>> footerWriter;
+        private readonly ISLBFooterWriter<IList<ConversationCharacter>> footerWriter;
 
         /// <summary>
         /// Creates a new conversation writer aggregating the input writers.
         /// </summary>
         /// 
         /// <param name="stream">The output stream.</param>
-        /// <param name="characterWriter">The writer for individual <see cref="Character"/> entries.</param>
+        /// <param name="characterWriter">The writer for individual <see cref="ConversationCharacter"/> entries.</param>
         /// <param name="infoWriter">The writer for individual <see cref="Info"/> entries.</param>
         /// <param name="frameWriter">The writer for individual <see cref="Frame"/> entries.</param>
         /// <param name="stringWriter">The writer for strings.</param>
@@ -43,11 +43,11 @@ namespace SAGESharp.SLB.Level.IO
         /// <exception cref="ArgumentNullException">If any argument is null.</exception>
         public ConversationBinaryWriter(
             Stream stream,
-            ISLBBinaryWriter<Character> characterWriter,
+            ISLBBinaryWriter<ConversationCharacter> characterWriter,
             ISLBBinaryWriter<Info> infoWriter,
             ISLBBinaryWriter<Frame> frameWriter,
             ISLBBinaryWriter<string> stringWriter,
-            ISLBFooterWriter<IList<Character>> footerWriter
+            ISLBFooterWriter<IList<ConversationCharacter>> footerWriter
         ) {
             this.stream = stream ?? throw new ArgumentNullException("The input stream cannot be null.");
             this.characterWriter = characterWriter ?? throw new ArgumentNullException("The character writer cannot be null.");
@@ -60,7 +60,7 @@ namespace SAGESharp.SLB.Level.IO
         /// <inheritdoc/>
         /// 
         /// <exception cref="ArgumentNullException">If <paramref name="slbObject"/> is null.</exception>
-        public void WriteSLBObject(IList<Character> slbObject)
+        public void WriteSLBObject(IList<ConversationCharacter> slbObject)
         {
             if (slbObject == null)
             {

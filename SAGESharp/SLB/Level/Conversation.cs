@@ -10,15 +10,15 @@ using System.Text;
 
 namespace SAGESharp.SLB.Level
 {
-    public sealed class Character : IEquatable<Character>
+    public sealed class ConversationCharacter : IEquatable<ConversationCharacter>
     {
         /// <summary>
-        /// The size of a <see cref="Character"/> entry in a binary SLB file.
+        /// The size of a <see cref="ConversationCharacter"/> entry in a binary SLB file.
         /// </summary>
         /// 
         /// This includes only <see cref="ToaName"/>, <see cref="CharName"/>,
         /// <see cref="CharCont"/>, the size of <see cref="Entries"/> and the
-        /// position (offset) for all the entries (not represented in <see cref="Character"/>)
+        /// position (offset) for all the entries (not represented in <see cref="ConversationCharacter"/>)
         /// in that order.
         internal const int BINARY_SIZE = 20;
 
@@ -34,7 +34,7 @@ namespace SAGESharp.SLB.Level
         [SerializableProperty(4)]
         public IList<Info> Entries { get; set; }
 
-        public bool Equals(Character other)
+        public bool Equals(ConversationCharacter other)
         {
             if (other is null)
             {
@@ -72,7 +72,7 @@ namespace SAGESharp.SLB.Level
 
         public override bool Equals(object other)
         {
-            return Equals(other as Character);
+            return Equals(other as ConversationCharacter);
         }
 
         public override int GetHashCode()
@@ -86,7 +86,7 @@ namespace SAGESharp.SLB.Level
             return hash;
         }
 
-        public static bool operator ==(Character left, Character right)
+        public static bool operator ==(ConversationCharacter left, ConversationCharacter right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -102,7 +102,7 @@ namespace SAGESharp.SLB.Level
             }
         }
 
-        public static bool operator !=(Character left, Character right)
+        public static bool operator !=(ConversationCharacter left, ConversationCharacter right)
         {
             return !(left == right);
         }
