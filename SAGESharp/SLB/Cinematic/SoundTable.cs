@@ -4,7 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using Konvenience;
-using SAGESharp.SLB.IO;
+using SAGESharp.IO;
 using System;
 using System.Collections.Generic;
 
@@ -12,9 +12,9 @@ namespace SAGESharp.SLB.Cinematic.Sound
 {
     public sealed class SoundTable : IEquatable<SoundTable>
     {
-        [SLBElement(1)]
+        [SerializableProperty(1)]
+        [BinaryString(StringPosition.AtOffset)]
         public IList<string> Sounds { get; set; }
-
 
         public bool Equals(SoundTable other)
         {

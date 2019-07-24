@@ -129,6 +129,7 @@
     <Compile Include="SLB\Cinematic\Character.cs" />
     <Compile Include="SLB\Cinematic\Common.cs" />
     <Compile Include="SLB\Cinematic\Object.cs" />
+    <Compile Include="SLB\Cinematic\SoundTable.cs" />
     <Compile Include="SLB\Common.cs" />
     <Compile Include="SLB\IO\Footer.cs" />
     <Compile Include="SLB\IO\ISLBBinaryWriter.cs" />
