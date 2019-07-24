@@ -4,33 +4,80 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using Konvenience;
-using SAGESharp.SLB.IO;
+using SAGESharp.IO;
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharp.SLB.Cinematic.Character
+namespace SAGESharp.SLB.Cinematic
 {
+    public sealed class CharacterTable : IEquatable<CharacterTable>
+    {
+        [SerializableProperty(1)]
+        public IList<Character> Entries { get; set; }
+
+        public bool Equals(CharacterTable other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            return Entries.SafeSequenceEquals(other.Entries);
+        }
+
+        public override string ToString() =>
+            $"Characters={Entries?.Let(Characters => "[(" + string.Join("), (", Characters) + ")]") ?? "null"}";
+
+        public override bool Equals(object other)
+            => Equals(other as CharacterTable);
+
+        public override int GetHashCode()
+        {
+            int hash = 739;
+            Entries.AddHashCodesByRef(ref hash, 3217, 5563);
+
+            return hash;
+        }
+
+        public static bool operator ==(CharacterTable left, CharacterTable right)
+        {
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
+            else if (left is null)
+            {
+                return right.Equals(left);
+            }
+            else
+            {
+                return left.Equals(right);
+            }
+        }
+
+        public static bool operator !=(CharacterTable left, CharacterTable right)
+            => !(left == right);
+    }
+
     public sealed class Character : IEquatable<Character>
     {
-        [SLBElement(1)]
+        [SerializableProperty(1)]
         public Identifier AnimHierarchy { get; set; }
 
-        [SLBElement(2)]
-        public Identifier Character { get; set; }
+        [SerializableProperty(2)]
+        public Identifier CharacterId { get; set; }
 
-        [SLBElement(3)]
+        [SerializableProperty(3)]
         public Identifier AnimBaked { get; set; }
 
-        [SLBElement(4)]
+        [SerializableProperty(4)]
         public float SwitchMaskTimes1 { get; set; }
 
-        [SLBElement(5)]
+        [SerializableProperty(5)]
         public float SwitchMaskTimes2 { get; set; }
 
-        [SLBElement(6)]
+        [SerializableProperty(6)]
         public IList<Location> Locations { get; set; }
-
-
 
         public bool Equals(Character other)
         {
@@ -40,7 +87,7 @@ namespace SAGESharp.SLB.Cinematic.Character
             }
 
             return AnimHierarchy == other.AnimHierarchy &&
-                Character == other.Character &&
+                CharacterId == other.CharacterId &&
                 AnimBaked == other.AnimBaked &&
                 SwitchMaskTimes1 == other.SwitchMaskTimes1 &&
                 SwitchMaskTimes2 == other.SwitchMaskTimes2 &&
@@ -48,7 +95,7 @@ namespace SAGESharp.SLB.Cinematic.Character
         }
 
         public override string ToString() => $"AnimHierarchy={AnimHierarchy}," +
-            $"Character={Character}," +
+            $"Character={CharacterId}," +
             $"AnimBaked={AnimBaked}," +
             $"SwitchMaskTimes1={SwitchMaskTimes1}," +
             $"SwitchMaskTimes2={SwitchMaskTimes2}," +
@@ -61,7 +108,7 @@ namespace SAGESharp.SLB.Cinematic.Character
         {
             int hash = 7639;
             AnimHierarchy.AddHashCodeByVal(ref hash, 4539);
-            Character.AddHashCodeByVal(ref hash, 4539);
+            CharacterId.AddHashCodeByVal(ref hash, 4539);
             AnimBaked.AddHashCodeByVal(ref hash, 4539);
             SwitchMaskTimes1.AddHashCodeByVal(ref hash, 4539);
             SwitchMaskTimes2.AddHashCodeByVal(ref hash, 4539);
