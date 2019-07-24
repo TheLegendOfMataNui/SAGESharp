@@ -137,6 +137,7 @@
     <Compile Include="SLB\ConversationCharacterInfo.cs" />
     <Compile Include="SLB\Cylinder.cs" />
     <Compile Include="SLB\Edge.cs" />
+    <Compile Include="SLB\Emitter.cs" />
     <Compile Include="SLB\IO\Footer.cs" />
     <Compile Include="SLB\IO\ISLBBinaryWriter.cs" />
     <Compile Include="SLB\IO\StringBinaryWriter.cs" />
