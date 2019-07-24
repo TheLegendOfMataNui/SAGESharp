@@ -131,16 +131,13 @@
     <Compile Include="SLB\IO\Footer.cs" />
     <Compile Include="SLB\IO\ISLBBinaryWriter.cs" />
     <Compile Include="SLB\IO\StringBinaryWriter.cs" />
-    <Compile Include="SLB\Level\Character.cs" />
-    <Compile Include="SLB\Level\Frame.cs" />
-    <Compile Include="SLB\Level\Info.cs" />
+    <Compile Include="SLB\Level\Conversation.cs" />
     <Compile Include="SLB\Level\IO\CharacterBinaryWriter.cs" />
     <Compile Include="SLB\Level\IO\ConversationBinaryAccessor.cs" />
     <Compile Include="SLB\Level\IO\ConversationBinaryWriter.cs" />
     <Compile Include="SLB\Level\IO\ConversationFooterGenerator.cs" />
     <Compile Include="SLB\Level\IO\FrameBinaryWriter.cs" />
     <Compile Include="SLB\Level\IO\InfoBinaryWriter.cs" />
-    <Compile Include="SLB\Level\LineSide.cs" />
     <Compile Include="Utils\ASCIIExtensions.cs" />
     <Compile Include="Utils\NumericExtensions.cs" />
     <Compile Include="Utils\StreamExtensions.cs" />
