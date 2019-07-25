@@ -8,7 +8,7 @@ using SAGESharp.IO;
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharp.SLB.Cinematic.Text
+namespace SAGESharp.SLB.Cinematic
 {
     public sealed class Text : IEquatable<Text>
     {
