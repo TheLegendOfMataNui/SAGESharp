@@ -50,46 +50,31 @@ namespace SAGESharp.IO
     }
 
     /// <summary>
-    /// Specifies how a string is stored in binary form.
+    /// Specifies the value for a string property is stored as an offset and with a
+    /// single byte for the string length in the binary file.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
-    public sealed class BinaryStringAttribute : Attribute
+    public sealed class OffsetString : Attribute
+    {
+    }
+
+    /// <summary>
+    /// Specifies the value for a string property is stored inline (no offset) with a fixed length.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
+    public sealed class InlineString : Attribute
     {
         /// <summary>
-        /// Initializes a new attribute to mark a string is located at the given <paramref name="position"/>
-        /// and its length is stored as a single byte along with its contents.
+        /// Initializes a new attribute to mark a string property inline (with no offset) and a fixed length.
         /// </summary>
         /// 
-        /// <param name="position">The position for the string.</param>
-        public BinaryStringAttribute(StringPosition position)
-        {
-            Position = position;
-            FixedLength = null;
-        }
+        /// <param name="length">The fixed length of the string.</param>
+        public InlineString(int length) => Length = length;
 
         /// <summary>
-        /// Initializes a new attribute to mark a string is located at the given <paramref name="position"/>
-        /// and has a fixed length of <paramref name="length"/>.
+        /// The fixed length for the string.
         /// </summary>
-        /// 
-        /// <param name="position">The position for the string.</param>
-        /// <param name="length">The length for the string.</param>
-        public BinaryStringAttribute(StringPosition position, int length)
-        {
-            Position = position;
-            FixedLength = length;
-        }
-
-        /// <summary>
-        /// The position for the string.
-        /// </summary>
-        public StringPosition Position { get; }
-
-        /// <summary>
-        /// The fixed length for the string, if null it means its length
-        /// is stored as a single byte along with its contents.
-        /// </summary>
-        public int? FixedLength { get; }
+        public int Length { get; }
     }
 
     /// <summary>

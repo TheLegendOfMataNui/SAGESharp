@@ -29,7 +29,7 @@ namespace SAGESharp.SLB
     public sealed class StringGroupEntry
     {
         [SerializableProperty(1)]
-        [BinaryString(StringPosition.AtOffset)]
+        [OffsetString]
         public string Value { get; set; }
     }
 }

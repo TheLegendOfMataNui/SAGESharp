@@ -24,7 +24,7 @@ namespace SAGESharp.SLB
         // string: offset
         // at offset: length + string + null char
         [SerializableProperty(1)]
-        [BinaryString(StringPosition.AtOffset)]
+        [OffsetString]
         public string Name { get; set; }
 
         [SerializableProperty(2)]
@@ -43,7 +43,7 @@ namespace SAGESharp.SLB
     public sealed class Texture2
     {
         [SerializableProperty(1)]
-        [BinaryString(StringPosition.AtOffset)]
+        [OffsetString]
         public string Name { get; set; }
 
         [SerializableProperty(2)]

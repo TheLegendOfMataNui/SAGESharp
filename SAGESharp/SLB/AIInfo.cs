@@ -35,7 +35,7 @@ namespace SAGESharp.SLB
         public bool Benign { get; set; }
 
         [SerializableProperty(9)]
-        [BinaryString(StringPosition.Inline, 32)]
+        [InlineString(32)]
         public string ProjectileSprite { get; set; }
     }
 

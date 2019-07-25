@@ -17,7 +17,7 @@ namespace SAGESharp.SLB
     public sealed class Name
     {
         [SerializableProperty(1)]
-        [BinaryString(StringPosition.Inline, 128)]
+        [InlineString(128)]
         public string Value { get; set; }
 
         [SerializableProperty(2)]

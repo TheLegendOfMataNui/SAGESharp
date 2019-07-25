@@ -17,7 +17,7 @@ namespace SAGESharp.SLB
     public sealed class SoundTableEntry
     {
         [SerializableProperty(1)]
-        [BinaryString(StringPosition.AtOffset)]
+        [OffsetString]
         public string String { get; set; }
 
         [SerializableProperty(2)]

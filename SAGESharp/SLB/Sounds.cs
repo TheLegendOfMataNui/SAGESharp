@@ -17,7 +17,7 @@ namespace SAGESharp.SLB
     public sealed class Sound
     {
         [SerializableProperty(1)]
-        [BinaryString(StringPosition.AtOffset)]
+        [OffsetString]
         public string Filename { get; set; }
 
         [SerializableProperty(2)]

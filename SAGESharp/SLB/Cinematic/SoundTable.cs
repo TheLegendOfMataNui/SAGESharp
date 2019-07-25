@@ -13,7 +13,7 @@ namespace SAGESharp.SLB.Cinematic.Sound
     public sealed class SoundTable : IEquatable<SoundTable>
     {
         [SerializableProperty(1)]
-        [BinaryString(StringPosition.AtOffset)]
+        [OffsetString]
         public IList<string> Sounds { get; set; }
 
         public bool Equals(SoundTable other)
