@@ -11,6 +11,6 @@ namespace SAGESharp.SLB.Level
     public sealed class SPLinePathsTable
     {
         [SerializableProperty(1)]
-        public IList<SPLinePath> Entries { get; set; }
+        public IList<SplinePath> Entries { get; set; }
     }
 }

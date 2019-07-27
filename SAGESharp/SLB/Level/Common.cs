@@ -8,16 +8,16 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB.Level
 {
-    public sealed class SPLinePath
+    public sealed class SplinePath
     {
         [SerializableProperty(1)]
-        public IList<SPLinePoint> Points { get; set; }
+        public IList<SplinePoint> Points { get; set; }
 
         [SerializableProperty(2)]
         public uint SPLine { get; set; }
     }
 
-    public sealed class SPLinePoint
+    public sealed class SplinePoint
     {
         [SerializableProperty(1)]
         public float Time { get; set; }

@@ -34,6 +34,6 @@ namespace SAGESharp.SLB.Level
         public IList<Identifier> TriggerBoxes { get; set; }
 
         [SerializableProperty(6)]
-        public IList<SPLinePath> SPLinePaths { get; set; }
+        public IList<SplinePath> SPLinePaths { get; set; }
     }
 }
