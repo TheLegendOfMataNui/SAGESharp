@@ -49,7 +49,7 @@ namespace SAGESharp.SLB
         public Point3D Point4 { get; set; }
 
         [SerializableProperty(6)]
-        public Vector3D Vector { get; set; }
+        public Point3D Vector { get; set; }
 
         [SerializableProperty(7)]
         public Identifier IdOther1 { get; set; }

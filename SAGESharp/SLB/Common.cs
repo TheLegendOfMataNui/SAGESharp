@@ -457,16 +457,4 @@ namespace SAGESharp.SLB
         public static bool operator !=(Point3D left, Point3D right)
             => !(left == right);
     }
-
-    public sealed class Vector3D
-    {
-        [SerializableProperty(1)]
-        public float X { get; set; }
-
-        [SerializableProperty(2)]
-        public float Y { get; set; }
-
-        [SerializableProperty(3)]
-        public float Z { get; set; }
-    }
 }

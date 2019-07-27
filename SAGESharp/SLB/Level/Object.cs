@@ -27,7 +27,7 @@ namespace SAGESharp.SLB.Level
         public Point3D Location { get; set; }
 
         [SerializableProperty(3)]
-        public Vector3D Orientation { get; set; }
+        public Point3D Orientation { get; set; }
 
         [SerializableProperty(4)]
         public float Unkown { get; set; }

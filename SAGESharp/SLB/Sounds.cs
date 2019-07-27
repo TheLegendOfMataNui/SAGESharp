@@ -39,7 +39,7 @@ namespace SAGESharp.SLB
         public Point3D Position { get; set; }
 
         [SerializableProperty(8)]
-        public Vector3D Front { get; set; }
+        public Point3D Front { get; set; }
 
         [SerializableProperty(9)]
         public int InsideAngle { get; set; }

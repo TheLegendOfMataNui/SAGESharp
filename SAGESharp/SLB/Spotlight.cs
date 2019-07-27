@@ -24,7 +24,7 @@ namespace SAGESharp.SLB
         public Point3D Position { get; set; }
 
         [SerializableProperty(3)]
-        public Vector3D Vector { get; set; }
+        public Point3D Vector { get; set; }
 
         [SerializableProperty(4)]
         public float Intensity { get; set; }
