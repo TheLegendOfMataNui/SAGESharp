@@ -109,6 +109,7 @@
     <Compile Include="SLB\Level\TestData.cs" />
     <Compile Include="SLB\Point3DEqualityTests.cs" />
     <Compile Include="Testing\AbstractTestCaseData.cs" />
+    <Compile Include="Testing\Assertions.cs" />
     <Compile Include="Testing\Matchers.cs" />
     <Compile Include="Testing\ParameterGroup.cs" />
     <Compile Include="Testing\AbstractEqualityByRefTests.cs" />
