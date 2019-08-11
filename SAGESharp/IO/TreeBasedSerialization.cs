@@ -133,7 +133,32 @@ namespace SAGESharp.IO
             Validate.ArgumentNotNull(nameof(value), value);
             Validate.ArgumentNotNull(nameof(rootNode), rootNode);
 
-            throw new NotImplementedException();
+            ProcessNode(binaryWriter, rootNode, value);
+
+            return new List<uint>();
+        }
+
+        private void ProcessNode(IBinaryWriter binaryWriter, INode node, object value)
+        {
+            node.Write(binaryWriter, value);
+
+            if (node is IDataNode dataNode)
+            {
+                ProcessDataNode(binaryWriter, dataNode, value);
+            }
+            else
+            {
+                throw new NotImplementedException($"Type {node.GetType().Name} is an unknown node type");
+            }
+        }
+
+        private void ProcessDataNode(IBinaryWriter binaryWriter, IDataNode node, object value)
+        {
+            foreach (IEdge edge in node.Edges)
+            {
+                object childValue = edge.ExtractChildValue(value);
+                ProcessNode(binaryWriter, edge.ChildNode, childValue);
+            }
         }
     }
     #endregion
