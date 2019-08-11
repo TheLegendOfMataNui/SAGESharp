@@ -129,6 +129,10 @@ namespace SAGESharp.IO
     {
         public IReadOnlyList<uint> Write(IBinaryWriter binaryWriter, object value, IDataNode rootNode)
         {
+            Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
+            Validate.ArgumentNotNull(nameof(value), value);
+            Validate.ArgumentNotNull(nameof(rootNode), rootNode);
+
             throw new NotImplementedException();
         }
     }
