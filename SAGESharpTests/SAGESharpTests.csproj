@@ -116,6 +116,7 @@
     <Compile Include="Testing\AbstractEqualityByRefTests.cs" />
     <Compile Include="Testing\AbstractEqualityByValTests.cs" />
     <Compile Include="Testing\SerializationTestCaseData.cs" />
+    <Compile Include="Testing\SerializationTreeSubstituteBuilder.cs" />
     <Compile Include="Utils\ASCIIExtensionsTests.cs" />
     <Compile Include="Utils\NumericExtensionsTests.cs" />
     <Compile Include="Utils\StreamExtensionsTests.cs" />
