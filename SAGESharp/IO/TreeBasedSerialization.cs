@@ -123,4 +123,14 @@ namespace SAGESharp.IO
         IReadOnlyList<uint> Write(IBinaryWriter binaryWriter, object value, IDataNode rootNode);
     }
     #endregion
+
+    #region Implementations
+    internal class TreeWriter : ITreeWriter
+    {
+        public IReadOnlyList<uint> Write(IBinaryWriter binaryWriter, object value, IDataNode rootNode)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    #endregion
 }
