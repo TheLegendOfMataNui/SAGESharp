@@ -3,6 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+using Konvenience;
 using System;
 using System.Collections.Generic;
 
@@ -127,24 +128,78 @@ namespace SAGESharp.IO
     #region Implementations
     internal class TreeWriter : ITreeWriter
     {
+        private class QueueEntry
+        {
+            public QueueEntry(IDataNode node, object value)
+            {
+                Node = node;
+                Value = value;
+            }
+
+            public QueueEntry(IDataNode node, object value, uint offsetPosition) : this(node, value)
+            {
+                OffsetPosition = offsetPosition;
+            }
+
+            public IDataNode Node { get; }
+
+            public object Value { get; }
+
+            public uint? OffsetPosition { get; }
+        }
+
+        private readonly Action<IBinaryWriter, uint> offsetWriter;
+
+        private readonly Queue<QueueEntry> queue = new Queue<QueueEntry>();
+
+        private readonly List<uint> offsets = new List<uint>();
+
+        public TreeWriter(Action<IBinaryWriter, uint> offsetWriter)
+        {
+            this.offsetWriter = offsetWriter;
+        }
+
         public IReadOnlyList<uint> Write(IBinaryWriter binaryWriter, object value, IDataNode rootNode)
         {
             Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
             Validate.ArgumentNotNull(nameof(value), value);
             Validate.ArgumentNotNull(nameof(rootNode), rootNode);
 
-            ProcessNode(binaryWriter, rootNode, value);
+            Enqueue(rootNode, value);
 
-            return new List<uint>();
+            while (queue.IsNotEmpty())
+            {
+                QueueEntry entry = queue.Dequeue();
+
+                ProcessOffset(binaryWriter, entry.OffsetPosition);
+                ProcessNode(binaryWriter, entry.Node, entry.Value);
+            }
+
+            return offsets;
+        }
+
+        private void ProcessOffset(IBinaryWriter binaryWriter, uint? offsetPosition)
+        {
+            if (!offsetPosition.HasValue)
+            {
+                return;
+            }
+
+            offsetWriter(binaryWriter, offsetPosition.Value);
+            offsets.Add(offsetPosition.Value);
         }
 
         private void ProcessNode(IBinaryWriter binaryWriter, INode node, object value)
         {
-            node.Write(binaryWriter, value);
+            uint? offsetPosition = node.Write(binaryWriter, value);
 
             if (node is IDataNode dataNode)
             {
                 ProcessDataNode(binaryWriter, dataNode, value);
+            }
+            else if (node is IListNode listNode)
+            {
+                ProcessListNode(listNode, value, offsetPosition.Value);
             }
             else
             {
@@ -159,6 +214,32 @@ namespace SAGESharp.IO
                 object childValue = edge.ExtractChildValue(value);
                 ProcessNode(binaryWriter, edge.ChildNode, childValue);
             }
+        }
+
+        private void ProcessListNode(IListNode node, object list, uint offsetPosition)
+        {
+            int count = node.GetListCount(list);
+            if (count == 0)
+            {
+                return;
+            }
+
+            Enqueue(node.ChildNode, node.GetListEntry(list, 0), offsetPosition);
+
+            for (int n = 1; n < count; ++n)
+            {
+                Enqueue(node.ChildNode, node.GetListEntry(list, n));
+            }
+        }
+
+        private void Enqueue(IDataNode node, object value)
+        {
+            queue.Enqueue(new QueueEntry(node, value));
+        }
+
+        private void Enqueue(IDataNode node, object value, uint offsetPosition)
+        {
+            queue.Enqueue(new QueueEntry(node, value, offsetPosition));
         }
     }
     #endregion

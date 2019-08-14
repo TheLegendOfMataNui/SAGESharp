@@ -19,16 +19,24 @@ namespace SAGESharp.IO
 
         private readonly ITreeWriter treeWriter;
 
+        // Ideally here we should call directly IBinaryWriter.DoAtPosition(...)
+        // but I don't know how to test it, so in the meantime I'm abstracting
+        // this behaviour to an Action<>
+        // See: https://github.com/nsubstitute/NSubstitute/issues/584
+        private readonly Action<IBinaryWriter, uint> offsetWriter;
+
         public TreeWriterTests()
         {
             binaryWriter = Substitute.For<IBinaryWriter>();
-            treeWriter = new TreeWriter();
+            offsetWriter = Substitute.For<Action<IBinaryWriter, uint>>();
+            treeWriter = new TreeWriter(offsetWriter);
         }
 
         [SetUp]
         public void Setup()
         {
             binaryWriter.ClearSubstitute();
+            offsetWriter.ClearSubstitute();
         }
 
         #region Null checks
@@ -214,8 +222,122 @@ namespace SAGESharp.IO
         }
         #endregion
 
+        #region Tree with nested lists
+        [Test]
+        public void Test_Writing_An_Instance_Of_A_Tree_With_Nested_Lists()
+        {
+            uint offsetPosition1 = 20, offsetPosition2 = 30;
+            IDataNode rootNode = TreeWithNestedLists(offsetPosition1, offsetPosition2);
+            ClassForTreeWithNestedLists value = new ClassForTreeWithNestedLists
+            {
+                List1 = new List<ClassForTreeWithHeight1>
+                {
+                    new ClassForTreeWithHeight1
+                    {
+                        Int = 1,
+                        Float = 2.4f,
+                        Byte = 3
+                    },
+                    new ClassForTreeWithHeight1
+                    {
+                        Int = 4,
+                        Float = 5.5f,
+                        Byte = 6
+                    }
+                },
+                List2 = new List<ClassForTreeWithHeight2>
+                {
+                    new ClassForTreeWithHeight2
+                    {
+                        Long = 7,
+                        Child = new ClassForTreeWithHeight1
+                        {
+                            Int = 8,
+                            Float = 9.6f,
+                            Byte = 10
+                        }
+                    },
+                    new ClassForTreeWithHeight2
+                    {
+                        Long = 11,
+                        Child = new ClassForTreeWithHeight1
+                        {
+                            Int = 12,
+                            Float = 13.7f,
+                            Byte = 14
+                        }
+                    }
+                }
+            };
+
+            treeWriter.Write(binaryWriter, value, rootNode)
+                .Should()
+                .Equal(offsetPosition1, offsetPosition2);
+
+            Received.InOrder(() => VerifyWriteTreeWithNestedLists(rootNode, value, offsetPosition1, offsetPosition2));
+        }
+
+        private class ClassForTreeWithNestedLists
+        {
+            public IList<ClassForTreeWithHeight1> List1 { get; set; }
+
+            public IList<ClassForTreeWithHeight2> List2 { get; set; }
+        }
+
+        private IDataNode TreeWithNestedLists(uint offsetPosition1, uint offsetPosition2) => new BuilderFor.DataNodeSubstitute<ClassForTreeWithNestedLists>
+        {
+            Edges = new List<IEdge>
+            {
+                new BuilderFor.EdgeSubstitute
+                {
+                    ChildNode = new BuilderFor.ListNodeSubstitute<ClassForTreeWithHeight1>
+                    {
+                        ChildNode = TreeWithHeight1()
+                    }.Build(setup: n => SetupNodeWriteReturnsOffsetPosition(n, offsetPosition1))
+                }.Build(setup: e => SetupEdgeExtractChildValue<ClassForTreeWithNestedLists>(e, o => o.List1)),
+                new BuilderFor.EdgeSubstitute
+                {
+                    ChildNode = new BuilderFor.ListNodeSubstitute<ClassForTreeWithHeight2>
+                    {
+                        ChildNode = TreeWithHeight2()
+                    }.Build(setup: n => SetupNodeWriteReturnsOffsetPosition(n, offsetPosition2))
+                }.Build(setup: e => SetupEdgeExtractChildValue<ClassForTreeWithNestedLists>(e, o => o.List2))
+            }
+        }.Build(setup: SetupNodeWriteReturnsNull);
+
+        private void VerifyWriteTreeWithNestedLists(
+            IDataNode node,
+            ClassForTreeWithNestedLists value,
+            uint offsetPosition1,
+            uint offsetPosition2
+        ) {
+            node.Write(binaryWriter, value);
+
+            IListNode listNode1 = node.Edges[0].ChildNode as IListNode;
+            listNode1.Write(binaryWriter, value.List1);
+
+            IListNode listNode2 = node.Edges[1].ChildNode as IListNode;
+            listNode2.Write(binaryWriter, value.List2);
+
+            offsetWriter(binaryWriter, offsetPosition1);
+            foreach (var entry in value.List1)
+            {
+                VerifyWriteTreeWithHeight1(listNode1.ChildNode, entry);
+            }
+
+            offsetWriter(binaryWriter, offsetPosition2);
+            foreach (var entry in value.List2)
+            {
+                VerifyWriteTreeWithHeight2(listNode2.ChildNode, entry);
+            }
+        }
+        #endregion
+
         private void SetupNodeWriteReturnsNull(IDataNode dataNode)
             => dataNode.Write(binaryWriter, Arg.Any<object>()).Returns((uint?)null);
+
+        private void SetupNodeWriteReturnsOffsetPosition(INode node, uint offsetPosition)
+            => node.Write(binaryWriter, Arg.Any<object>()).Returns(offsetPosition);
 
         private static void SetupEdgeExtractChildValue<T>(IEdge edge, Func<T, object> function)
             => edge.ExtractChildValue(Arg.Any<T>()).Returns(args => function((T)args[0]));
