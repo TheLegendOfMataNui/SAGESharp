@@ -333,6 +333,62 @@ namespace SAGESharp.IO
         }
         #endregion
 
+        #region Tree with node at offset
+        [Test]
+        public void Test_Writing_An_Instance_Of_A_Tree_With_A_Node_At_Offset()
+        {
+            uint offset = 0;
+            IDataNode rootNode = TreeWithNodeAtOffset(offset);
+            ClassForTreeWithNodeAtOffset value = new ClassForTreeWithNodeAtOffset
+            {
+                ValueAtOffset = "value",
+                ValueInline = 54
+            };
+
+            treeWriter.Write(binaryWriter, value, rootNode)
+                .Should()
+                .Equal(offset);
+
+            Received.InOrder(() => VerifyWriteTreeWithNodeAtOffset(rootNode, value, offset));
+        }
+
+        private class ClassForTreeWithNodeAtOffset
+        {
+            public string ValueAtOffset { get; set; }
+
+            public int ValueInline { get; set; }
+        }
+
+        private IDataNode TreeWithNodeAtOffset(uint offsetPosition) => new BuilderFor.DataNodeSubstitute<ClassForTreeWithNodeAtOffset>
+        {
+            Edges = new List<IEdge>
+            {
+                new BuilderFor.EdgeSubstitute
+                {
+                    ChildNode = new BuilderFor.OffsetNodeSubstitute<string>
+                    {
+                        ChildNode = new BuilderFor.DataNodeSubstitute<string>().Build(setup: SetupNodeWriteReturnsNull)
+                    }.Build(setup: e => SetupNodeWriteReturnsOffsetPosition(e, offsetPosition))
+                }.Build(setup: e => SetupEdgeExtractChildValue<ClassForTreeWithNodeAtOffset>(e, o => o.ValueAtOffset)),
+                new BuilderFor.EdgeSubstitute
+                {
+                    ChildNode = new BuilderFor.DataNodeSubstitute<int>().Build(setup: SetupNodeWriteReturnsNull)
+                }.Build(setup: e => SetupEdgeExtractChildValue<ClassForTreeWithNodeAtOffset>(e, o => o.ValueInline))
+            }
+        }.Build(setup: SetupNodeWriteReturnsNull);
+
+        private void VerifyWriteTreeWithNodeAtOffset(IDataNode node, ClassForTreeWithNodeAtOffset value, uint offsetPosition)
+        {
+            node.Write(binaryWriter, value);
+
+            node.Edges[0].ChildNode.Write(binaryWriter, value.ValueAtOffset);
+            node.Edges[1].ChildNode.Write(binaryWriter, value.ValueInline);
+
+            offsetWriter(binaryWriter, offsetPosition);
+            (node.Edges[0].ChildNode as IOffsetNode).ChildNode.Write(binaryWriter, value.ValueAtOffset);
+        }
+        #endregion
+
         private void SetupNodeWriteReturnsNull(IDataNode dataNode)
             => dataNode.Write(binaryWriter, Arg.Any<object>()).Returns((uint?)null);
 

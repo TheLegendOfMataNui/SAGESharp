@@ -29,6 +29,23 @@ namespace SAGESharp.Testing
             }
         }
 
+        public sealed class OffsetNodeSubstitute<T>
+        {
+            public IDataNode ChildNode { get; set; }
+
+            public IOffsetNode Build(Action<IOffsetNode> setup)
+            {
+                IOffsetNode node = Substitute.For<IOffsetNode>();
+
+                node.Type.Returns(typeof(T));
+                node.ChildNode.Returns(ChildNode);
+
+                setup?.Invoke(node);
+
+                return node;
+            }
+        }
+
         public sealed class ListNodeSubstitute<T>
         {
             public IDataNode ChildNode { get; set; }

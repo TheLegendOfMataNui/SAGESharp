@@ -48,15 +48,21 @@ namespace SAGESharp.IO
     }
 
     /// <summary>
-    /// Represents a node with a single child but several entries of the same child node.
+    /// Represents a node that will write its contents at a later time.
     /// </summary>
-    internal interface IListNode : INode
+    internal interface IOffsetNode : INode
     {
         /// <summary>
-        /// The child data node.
+        /// The actual node that will write the contents of the object.
         /// </summary>
         IDataNode ChildNode { get; }
+    }
 
+    /// <summary>
+    /// Represents a node with a single child but several entries of the same child node.
+    /// </summary>
+    internal interface IListNode : IOffsetNode
+    {
         /// <summary>
         /// Retrieves the amount of entries in the given <paramref name="list"/>.
         /// </summary>
@@ -165,6 +171,9 @@ namespace SAGESharp.IO
             Validate.ArgumentNotNull(nameof(value), value);
             Validate.ArgumentNotNull(nameof(rootNode), rootNode);
 
+            queue.Clear();
+            offsets.Clear();
+
             Enqueue(rootNode, value);
 
             while (queue.IsNotEmpty())
@@ -200,6 +209,10 @@ namespace SAGESharp.IO
             else if (node is IListNode listNode)
             {
                 ProcessListNode(listNode, value, offsetPosition.Value);
+            }
+            else if (node is IOffsetNode offsetNode)
+            {
+                Enqueue(offsetNode.ChildNode, value, offsetPosition.Value);
             }
             else
             {
