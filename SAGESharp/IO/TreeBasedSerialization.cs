@@ -11,36 +11,25 @@ namespace SAGESharp.IO
 {
     #region Interfaces
     /// <summary>
-    /// Represents a node in the tree.
+    /// Represents a node with data (with children nodes) in the tree.
     /// </summary>
-    internal interface INode
+    internal interface IDataNode
     {
-        /// <summary>
-        /// The type for the values corresponding to this node.
-        /// </summary>
-        Type Type { get; }
-
         /// <summary>
         /// Writes <paramref name="value"/> to the given <paramref name="binaryWriter"/>.
         /// </summary>
         /// 
         /// <param name="binaryWriter">The output binary writer were the object will be written.</param>
-        /// <param name="value">The value to be written, it must be of type <see cref="Type"/>.</param>
-        /// 
-        /// <returns>The position the offset if any was recorded, null otherwise.</returns>
+        /// <param name="value">The value to be written.</param>
         /// 
         /// <exception cref="ArgumentNullException">
         /// If either <paramref name="binaryWriter"/> or <paramref name="value"/> are null.
         /// </exception>
-        /// <exception cref="ArgumentException">If <paramref name="value"/> is not of type <see cref="Type"/>.</exception>
-        uint? Write(IBinaryWriter binaryWriter, object value);
-    }
+        /// <exception cref="ArgumentException">
+        /// If <paramref name="value"/> is not of the expected type.
+        /// </exception>
+        void Write(IBinaryWriter binaryWriter, object value);
 
-    /// <summary>
-    /// Represents a node with data (with children nodes) in the tree.
-    /// </summary>
-    internal interface IDataNode : INode
-    {
         /// <summary>
         /// Returns the list of edges connecting to child nodes.
         /// </summary>
@@ -50,8 +39,26 @@ namespace SAGESharp.IO
     /// <summary>
     /// Represents a node that will write its contents at a later time.
     /// </summary>
-    internal interface IOffsetNode : INode
+    internal interface IOffsetNode
     {
+
+        /// <summary>
+        /// Writes <paramref name="value"/> to the given <paramref name="binaryWriter"/>.
+        /// </summary>
+        /// 
+        /// <param name="binaryWriter">The output binary writer were the object will be written.</param>
+        /// <param name="value">The value to be written.</param>
+        /// 
+        /// <returns>The position where the offset was written.</returns>
+        /// 
+        /// <exception cref="ArgumentNullException">
+        /// If either <paramref name="binaryWriter"/> or <paramref name="value"/> are null.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// If <paramref name="value"/> is not of the expected type.
+        /// </exception>
+        uint Write(IBinaryWriter binaryWriter, object value);
+
         /// <summary>
         /// The actual node that will write the contents of the object.
         /// </summary>
@@ -91,14 +98,15 @@ namespace SAGESharp.IO
     }
 
     /// <summary>
-    /// Represents an edge connecting a <see cref="IDataNode"/> to an <see cref="INode"/>.
+    /// Represents an edge connecting a <see cref="IDataNode"/> to
+    /// a node (ex: <see cref="IDataNode"/>, <see cref="IOffsetNode"/>).
     /// </summary>
     internal interface IEdge
     {
         /// <summary>
         /// The child node that the edge is connecting.
         /// </summary>
-        INode ChildNode { get; }
+        object ChildNode { get; }
 
         /// <summary>
         /// Extracts from the given <paramref name="value"/> a child value that is represented by the child node.
@@ -181,7 +189,7 @@ namespace SAGESharp.IO
                 QueueEntry entry = queue.Dequeue();
 
                 ProcessOffset(binaryWriter, entry.OffsetPosition);
-                ProcessNode(binaryWriter, entry.Node, entry.Value);
+                ProcessDataNode(binaryWriter, entry.Node, entry.Value);
             }
 
             return offsets;
@@ -198,21 +206,15 @@ namespace SAGESharp.IO
             offsets.Add(offsetPosition.Value);
         }
 
-        private void ProcessNode(IBinaryWriter binaryWriter, INode node, object value)
+        private void ProcessNode(IBinaryWriter binaryWriter, object node, object value)
         {
-            uint? offsetPosition = node.Write(binaryWriter, value);
-
             if (node is IDataNode dataNode)
             {
                 ProcessDataNode(binaryWriter, dataNode, value);
             }
-            else if (node is IListNode listNode)
-            {
-                ProcessListNode(listNode, value, offsetPosition.Value);
-            }
             else if (node is IOffsetNode offsetNode)
             {
-                Enqueue(offsetNode.ChildNode, value, offsetPosition.Value);
+                ProcessOffsetNode(binaryWriter, offsetNode, value);
             }
             else
             {
@@ -222,10 +224,26 @@ namespace SAGESharp.IO
 
         private void ProcessDataNode(IBinaryWriter binaryWriter, IDataNode node, object value)
         {
+            node.Write(binaryWriter, value);
+
             foreach (IEdge edge in node.Edges)
             {
                 object childValue = edge.ExtractChildValue(value);
                 ProcessNode(binaryWriter, edge.ChildNode, childValue);
+            }
+        }
+
+        private void ProcessOffsetNode(IBinaryWriter binaryWriter, IOffsetNode node, object value)
+        {
+            uint offsetPosition = node.Write(binaryWriter, value);
+
+            if (node is IListNode listNode)
+            {
+                ProcessListNode(listNode, value, offsetPosition);
+            }
+            else
+            {
+                Enqueue(node.ChildNode, value, offsetPosition);
             }
         }
 

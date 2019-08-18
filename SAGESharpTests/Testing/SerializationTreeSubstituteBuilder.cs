@@ -12,15 +12,14 @@ namespace SAGESharp.Testing
 {
     static class BuilderFor
     {
-        public sealed class DataNodeSubstitute<T>
+        public sealed class DataNodeSubstitute
         {
             public List<IEdge> Edges { get; set; } = new List<IEdge>();
 
-            public IDataNode Build(Action<IDataNode> setup)
+            public IDataNode Build(Action<IDataNode> setup = null)
             {
                 IDataNode node = Substitute.For<IDataNode>();
 
-                node.Type.Returns(typeof(T));
                 node.Edges.Returns(Edges);
 
                 setup?.Invoke(node);
@@ -29,7 +28,7 @@ namespace SAGESharp.Testing
             }
         }
 
-        public sealed class OffsetNodeSubstitute<T>
+        public sealed class OffsetNodeSubstitute
         {
             public IDataNode ChildNode { get; set; }
 
@@ -37,7 +36,6 @@ namespace SAGESharp.Testing
             {
                 IOffsetNode node = Substitute.For<IOffsetNode>();
 
-                node.Type.Returns(typeof(T));
                 node.ChildNode.Returns(ChildNode);
 
                 setup?.Invoke(node);
@@ -54,7 +52,6 @@ namespace SAGESharp.Testing
             {
                 IListNode node = Substitute.For<IListNode>();
 
-                node.Type.Returns(typeof(IList<T>));
                 node.ChildNode.Returns(ChildNode);
 
                 node.GetListCount(Arg.Any<IList<T>>()).Returns(args =>
@@ -79,7 +76,7 @@ namespace SAGESharp.Testing
 
         public sealed class EdgeSubstitute
         {
-            public INode ChildNode { get; set; }
+            public object ChildNode { get; set; }
 
             public IEdge Build(Action<IEdge> setup)
             {

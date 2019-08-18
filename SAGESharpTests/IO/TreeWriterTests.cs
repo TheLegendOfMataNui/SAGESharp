@@ -99,31 +99,31 @@ namespace SAGESharp.IO
             public byte Byte { get; set; }
         }
 
-        private IDataNode TreeWithHeight1() => new BuilderFor.DataNodeSubstitute<ClassForTreeWithHeight1>()
+        private IDataNode TreeWithHeight1() => new BuilderFor.DataNodeSubstitute
         {
             Edges = new List<IEdge>()
             {
                 new BuilderFor.EdgeSubstitute
                 {
-                    ChildNode = new BuilderFor.DataNodeSubstitute<int>().Build(setup: SetupNodeWriteReturnsNull)
+                    ChildNode = new BuilderFor.DataNodeSubstitute().Build()
                 }.Build(setup: e => SetupEdgeExtractChildValue<ClassForTreeWithHeight1>(e, o => o.Int)),
                 new BuilderFor.EdgeSubstitute
                 {
-                    ChildNode = new BuilderFor.DataNodeSubstitute<float>().Build(setup: SetupNodeWriteReturnsNull)
+                    ChildNode = new BuilderFor.DataNodeSubstitute().Build()
                 }.Build(setup: e => SetupEdgeExtractChildValue<ClassForTreeWithHeight1>(e, o => o.Float)),
                 new BuilderFor.EdgeSubstitute
                 {
-                    ChildNode = new BuilderFor.DataNodeSubstitute<byte>().Build(setup: SetupNodeWriteReturnsNull)
+                    ChildNode = new BuilderFor.DataNodeSubstitute().Build()
                 }.Build(setup: e => SetupEdgeExtractChildValue<ClassForTreeWithHeight1>(e, o => o.Byte))
             }
-        }.Build(setup: SetupNodeWriteReturnsNull);
+        }.Build();
 
         private void VerifyWriteTreeWithHeight1(IDataNode node, ClassForTreeWithHeight1 value)
         {
             node.Write(binaryWriter, value);
-            node.Edges[0].ChildNode.Write(binaryWriter, value.Int);
-            node.Edges[1].ChildNode.Write(binaryWriter, value.Float);
-            node.Edges[2].ChildNode.Write(binaryWriter, value.Byte);
+            (node.Edges[0].ChildNode as IDataNode).Write(binaryWriter, value.Int);
+            (node.Edges[1].ChildNode as IDataNode).Write(binaryWriter, value.Float);
+            (node.Edges[2].ChildNode as IDataNode).Write(binaryWriter, value.Byte);
         }
         #endregion
 
@@ -177,22 +177,22 @@ namespace SAGESharp.IO
             public ClassForTreeWithHeight2 Child2 { get; set; }
         }
 
-        private IDataNode TreeWithHeight2() => new BuilderFor.DataNodeSubstitute<ClassForTreeWithHeight2>
+        private IDataNode TreeWithHeight2() => new BuilderFor.DataNodeSubstitute
         {
             Edges = new List<IEdge>
             {
                 new BuilderFor.EdgeSubstitute
                 {
-                    ChildNode = new BuilderFor.DataNodeSubstitute<long>().Build(setup: SetupNodeWriteReturnsNull)
+                    ChildNode = new BuilderFor.DataNodeSubstitute().Build()
                 }.Build(setup: e => SetupEdgeExtractChildValue<ClassForTreeWithHeight2>(e, o => o.Long)),
                 new BuilderFor.EdgeSubstitute
                 {
                     ChildNode = TreeWithHeight1()
                 }.Build(setup: e => SetupEdgeExtractChildValue<ClassForTreeWithHeight2>(e, o => o.Child))
             }
-        }.Build(setup: SetupNodeWriteReturnsNull);
+        }.Build();
 
-        private IDataNode TreeWithHeight3() => new BuilderFor.DataNodeSubstitute<ClassForTreeWithHeight3>
+        private IDataNode TreeWithHeight3() => new BuilderFor.DataNodeSubstitute
         {
             Edges = new List<IEdge>
             {
@@ -205,12 +205,12 @@ namespace SAGESharp.IO
                     ChildNode = TreeWithHeight2()
                 }.Build(setup: e => SetupEdgeExtractChildValue<ClassForTreeWithHeight3>(e, o => o.Child2))
             }
-        }.Build(setup: SetupNodeWriteReturnsNull);
+        }.Build();
 
         private void VerifyWriteTreeWithHeight2(IDataNode node, ClassForTreeWithHeight2 value)
         {
             node.Write(binaryWriter, value);
-            node.Edges[0].ChildNode.Write(binaryWriter, value.Long);
+            (node.Edges[0].ChildNode as IDataNode).Write(binaryWriter, value.Long);
             VerifyWriteTreeWithHeight1(node.Edges[1].ChildNode as IDataNode, value.Child);
         }
 
@@ -284,7 +284,7 @@ namespace SAGESharp.IO
             public IList<ClassForTreeWithHeight2> List2 { get; set; }
         }
 
-        private IDataNode TreeWithNestedLists(uint offsetPosition1, uint offsetPosition2) => new BuilderFor.DataNodeSubstitute<ClassForTreeWithNestedLists>
+        private IDataNode TreeWithNestedLists(uint offsetPosition1, uint offsetPosition2) => new BuilderFor.DataNodeSubstitute
         {
             Edges = new List<IEdge>
             {
@@ -303,7 +303,7 @@ namespace SAGESharp.IO
                     }.Build(setup: n => SetupNodeWriteReturnsOffsetPosition(n, offsetPosition2))
                 }.Build(setup: e => SetupEdgeExtractChildValue<ClassForTreeWithNestedLists>(e, o => o.List2))
             }
-        }.Build(setup: SetupNodeWriteReturnsNull);
+        }.Build();
 
         private void VerifyWriteTreeWithNestedLists(
             IDataNode node,
@@ -359,40 +359,37 @@ namespace SAGESharp.IO
             public int ValueInline { get; set; }
         }
 
-        private IDataNode TreeWithNodeAtOffset(uint offsetPosition) => new BuilderFor.DataNodeSubstitute<ClassForTreeWithNodeAtOffset>
+        private IDataNode TreeWithNodeAtOffset(uint offsetPosition) => new BuilderFor.DataNodeSubstitute
         {
             Edges = new List<IEdge>
             {
                 new BuilderFor.EdgeSubstitute
                 {
-                    ChildNode = new BuilderFor.OffsetNodeSubstitute<string>
+                    ChildNode = new BuilderFor.OffsetNodeSubstitute
                     {
-                        ChildNode = new BuilderFor.DataNodeSubstitute<string>().Build(setup: SetupNodeWriteReturnsNull)
+                        ChildNode = new BuilderFor.DataNodeSubstitute().Build()
                     }.Build(setup: e => SetupNodeWriteReturnsOffsetPosition(e, offsetPosition))
                 }.Build(setup: e => SetupEdgeExtractChildValue<ClassForTreeWithNodeAtOffset>(e, o => o.ValueAtOffset)),
                 new BuilderFor.EdgeSubstitute
                 {
-                    ChildNode = new BuilderFor.DataNodeSubstitute<int>().Build(setup: SetupNodeWriteReturnsNull)
+                    ChildNode = new BuilderFor.DataNodeSubstitute().Build()
                 }.Build(setup: e => SetupEdgeExtractChildValue<ClassForTreeWithNodeAtOffset>(e, o => o.ValueInline))
             }
-        }.Build(setup: SetupNodeWriteReturnsNull);
+        }.Build();
 
         private void VerifyWriteTreeWithNodeAtOffset(IDataNode node, ClassForTreeWithNodeAtOffset value, uint offsetPosition)
         {
             node.Write(binaryWriter, value);
 
-            node.Edges[0].ChildNode.Write(binaryWriter, value.ValueAtOffset);
-            node.Edges[1].ChildNode.Write(binaryWriter, value.ValueInline);
+            (node.Edges[0].ChildNode as IOffsetNode).Write(binaryWriter, value.ValueAtOffset);
+            (node.Edges[1].ChildNode as IDataNode).Write(binaryWriter, value.ValueInline);
 
             offsetWriter(binaryWriter, offsetPosition);
             (node.Edges[0].ChildNode as IOffsetNode).ChildNode.Write(binaryWriter, value.ValueAtOffset);
         }
         #endregion
 
-        private void SetupNodeWriteReturnsNull(IDataNode dataNode)
-            => dataNode.Write(binaryWriter, Arg.Any<object>()).Returns((uint?)null);
-
-        private void SetupNodeWriteReturnsOffsetPosition(INode node, uint offsetPosition)
+        private void SetupNodeWriteReturnsOffsetPosition(IOffsetNode node, uint offsetPosition)
             => node.Write(binaryWriter, Arg.Any<object>()).Returns(offsetPosition);
 
         private static void SetupEdgeExtractChildValue<T>(IEdge edge, Func<T, object> function)
