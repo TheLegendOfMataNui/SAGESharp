@@ -86,6 +86,7 @@
     <Compile Include="IO\IdentifierPropertyBinarySerializerTests.cs" />
     <Compile Include="IO\ListBinarySerializerTests.cs" />
     <Compile Include="IO\PrimitiveBinarySerializerTests.cs" />
+    <Compile Include="IO\PrimitiveTypeDataNodeTests.cs" />
     <Compile Include="IO\StringBinarySerializerTests.cs" />
     <Compile Include="IO\TreeWriterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
