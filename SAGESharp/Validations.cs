@@ -25,5 +25,22 @@ namespace SAGESharp
                 throw new ArgumentNullException($"\"{argumentName}\" cannot be null.");
             }
         }
+
+        /// <summary>
+        /// Validates an argument based on <paramref name="condition"/>, if it's false then
+        /// throws <see cref="ArgumentException"/> with the given <paramref name="message"/>.
+        /// </summary>
+        /// 
+        /// <param name="condition">The condition to check.</param>
+        /// <param name="message">The message for the <see cref="ArgumentException"/>.</param>
+        /// 
+        /// <exception cref="ArgumentException">If <paramref name="condition"/> is false.</exception>
+        public static void Argument(bool condition, string message)
+        {
+            if (!condition)
+            {
+                throw new ArgumentException(message);
+            }
+        }
     }
 }

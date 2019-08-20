@@ -28,5 +28,27 @@ namespace SAGESharp
                 .Throw<ArgumentNullException>()
                 .WithMessage($"*{argumentName}*");
         }
+
+        [Test]
+        public void Test_Validate_ArgumentCondition_With_A_True_Condition()
+        {
+            Action action = () => Validate.Argument(true, "some message");
+
+            action
+                .Should()
+                .NotThrow();
+        }
+
+        [Test]
+        public void Test_Validate_ArgumentCondition_With_A_False_Condition()
+        {
+            string message = "some message";
+            Action action = () => Validate.Argument(false, message);
+
+            action
+                .Should()
+                .ThrowExactly<ArgumentException>()
+                .WithMessage(message);
+        }
     }
 }
