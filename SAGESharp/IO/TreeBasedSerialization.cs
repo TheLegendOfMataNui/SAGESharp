@@ -210,6 +210,28 @@ namespace SAGESharp.IO
         private static bool IsOfType(object value) => typeof(T) == value.GetType();
     }
 
+    internal sealed class UserTypeDataNode<T> : IDataNode
+    {
+        public UserTypeDataNode(IReadOnlyList<IEdge> edges)
+        {
+            Validate.ArgumentNotNull(nameof(edges), edges);
+            Validate.Argument(edges != null, $"{nameof(edges)} should not be empty");
+
+            Edges = edges;
+        }
+
+        public IReadOnlyList<IEdge> Edges { get; }
+
+        public void Write(IBinaryWriter binaryWriter, object value)
+        {
+            Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
+            Validate.ArgumentNotNull(nameof(value), value);
+            Validate.Argument(IsType(value), $"Cannot write value of type {value.GetType().Name} as type {typeof(T).Name}.");
+        }
+
+        private static bool IsType(object value) => typeof(T) == value.GetType();
+    }
+
     internal sealed class TreeWriter : ITreeWriter
     {
         private class QueueEntry
