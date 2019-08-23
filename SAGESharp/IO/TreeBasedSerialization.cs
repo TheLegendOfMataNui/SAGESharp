@@ -232,6 +232,32 @@ namespace SAGESharp.IO
         private static bool IsType(object value) => typeof(T) == value.GetType();
     }
 
+    internal sealed class Edge<T> : IEdge
+    {
+        private readonly Func<T, object> extractor;
+
+        public Edge(Func<T, object> extractor, object childNode)
+        {
+            Validate.ArgumentNotNull(nameof(extractor), extractor);
+            Validate.ArgumentNotNull(nameof(childNode), childNode);
+
+            this.extractor = extractor;
+            ChildNode = childNode;
+        }
+
+        public object ChildNode { get; }
+
+        public object ExtractChildValue(object value)
+        {
+            Validate.ArgumentNotNull(nameof(value), value);
+            Validate.Argument(IsType(value), $"Expected {nameof(value)} to be of type {typeof(T).Name} but was of type {value.GetType().Name} instead");
+
+            return extractor((T)value);
+        }
+
+        private static bool IsType(object value) => typeof(T) == value.GetType();
+    }
+
     internal sealed class TreeWriter : ITreeWriter
     {
         private class QueueEntry

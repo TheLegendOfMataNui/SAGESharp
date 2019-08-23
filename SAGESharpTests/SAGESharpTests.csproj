@@ -83,6 +83,7 @@
     <Compile Include="IO\DefaultBinarySerializerTests.cs" />
     <Compile Include="IO\DefaultPropertyBinarySerializerFactoryTests.cs" />
     <Compile Include="IO\DefaultPropertyBinarySerializerTests.cs" />
+    <Compile Include="IO\EdgeTests.cs" />
     <Compile Include="IO\IdentifierPropertyBinarySerializerTests.cs" />
     <Compile Include="IO\ListBinarySerializerTests.cs" />
     <Compile Include="IO\PrimitiveBinarySerializerTests.cs" />
