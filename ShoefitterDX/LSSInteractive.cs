@@ -44,10 +44,15 @@ namespace ShoefitterDX
             }
             else
             {
-                ResultTextBox.Text = "Scan Error! Tokens: \r\n";
+                ResultTextBox.Text = errors.Count + " errors:\r\n";
+                foreach (SyntaxError err in errors)
+                {
+                    ResultTextBox.Text += "   " + err.ToString() + "\r\n";
+                }
+                ResultTextBox.Text += "Tokens: \r\n";
                 foreach (Token t in tokens)
                 {
-                    ResultTextBox.Text += t.ToString().Replace("\r\n", "\\n").Replace("\n", "\\n").Replace("\t", "\\t") + "\r\n";
+                    ResultTextBox.Text += "   " + t.ToString().Replace("\r\n", "\\n").Replace("\n", "\\n").Replace("\t", "\\t") + "\r\n";
                 }
                 tokens = null;
                 return false;

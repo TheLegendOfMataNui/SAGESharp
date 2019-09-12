@@ -193,7 +193,7 @@ namespace SAGESharp.LSS
                     while ((Peek() != '*' || PeekNext() != '/') && !IsAtEnd())
                         Advance();
                     if (IsAtEnd())
-                        return FinishError("Unterminated multiline comment by the end of the source.");
+                        return FinishError("Unterminated multiline comment by the end of the source.", TokenType.MultilineComment);
                     else
                     {
                         CurrentIndex += 2; // Include the closing '*/' we peeked above
@@ -214,11 +214,11 @@ namespace SAGESharp.LSS
 
                 if (IsAtEnd())
                 {
-                    return FinishError("Unterminated string literal by the end of the source.");
+                    return FinishError("Unterminated string literal by the end of the source.", TokenType.StringLiteral);
                 }
                 else if (Peek() == '\n')
                 {
-                    return FinishError("Unterminated string literal by the end of the line.");
+                    return FinishError("Unterminated string literal by the end of the line.", TokenType.StringLiteral);
                 }
                 else
                 {
@@ -263,7 +263,7 @@ namespace SAGESharp.LSS
                 return FinishToken(GetKeywordType(Source.Substring(StartIndex, CurrentIndex - StartIndex)));
             }
             else
-                return FinishError("Unknown token.");
+                return FinishError("Unknown token.", TokenType.Invalid);
         }
 
         private static Token FinishToken(TokenType type)
@@ -271,10 +271,10 @@ namespace SAGESharp.LSS
             return new Token(type, Source.Substring(StartIndex, CurrentIndex - StartIndex), Filename, StartIndex, (uint)Line, CurrentIndex - StartIndex);
         }
 
-        private static Token FinishError(string message)
+        private static Token FinishError(string message, TokenType type)
         {
             Errors.Add(new SyntaxError(message, Filename, StartIndex, Line, CurrentIndex - StartIndex));
-            return FinishToken(TokenType.Invalid);
+            return FinishToken(type);
         }
 
         private static bool AdvanceIfMatches(char character)
