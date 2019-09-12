@@ -18,6 +18,33 @@ namespace SAGESharp.LSS
             public List<SyntaxError> Errors = new List<SyntaxError>();
         }
 
+        private enum PanicType
+        {
+            None, // Continue parsing
+            Statement, // Parse through the next statement terminator or through the end of the current block
+        }
+
+        private static readonly HashSet<TokenType> StatementBeginningKeywords = new HashSet<TokenType>
+        {
+            TokenType.KeywordClass,
+            TokenType.KeywordGlobal,
+            TokenType.KeywordFunction,
+            TokenType.KeywordMethod,
+            TokenType.KeywordProperty,
+            TokenType.KeywordVar,
+            TokenType.KeywordDo,
+            TokenType.KeywordWhile,
+            TokenType.KeywordIf,
+            TokenType.KeywordElse,
+            TokenType.KeywordForEach,
+            TokenType.KeywordReturn,
+        };
+
+        private class StatementPanicException : Exception
+        {
+
+        }
+
         private List<Token> Tokens;
         private List<SyntaxError> Errors;
         private int CurrentIndex;
@@ -38,32 +65,40 @@ namespace SAGESharp.LSS
             while (!IsAtEnd())
             {
                 SkipWhitespace();
-                if (ConsumeIfType(out Token classToken, TokenType.KeywordClass))
+                try
                 {
-                    SkipWhitespace();
-                    
-                    result.Classes.Add(ParseClassStatement(classToken));
-                }
-                else if (ConsumeIfType(out Token functionKeyword, TokenType.KeywordFunction))
-                {
-                    SkipWhitespace();
-                    result.Functions.Add(ParseSubroutineStatement(functionKeyword));
-                }
-                else if (ConsumeIfType(out Token globalKeyword, TokenType.KeywordGlobal))
-                {
-                    SkipWhitespace();
-                    Token globalName = ConsumeType(TokenType.Symbol, "Expected a name for the global.");
-                    result.Globals.Add(new GlobalStatement(globalKeyword.Span + globalName.Span, globalName));
-                    ConsumeType(TokenType.Semicolon, "Expected a semicolon after global name.");
-                }
-                else
-                {
-                    Token extra = Consume();
-                    if (extra.Type != TokenType.Whitespace && extra.Type != TokenType.Comment && extra.Type != TokenType.MultilineComment && extra.Type != TokenType.EndOfStream)
+                    if (ConsumeIfType(out Token classToken, TokenType.KeywordClass))
                     {
-                        result.Errors.Add(new SyntaxError("Expected global, class, or function", extra.Span));
+                        SkipWhitespace();
+                    
+                        result.Classes.Add(ParseClassStatement(classToken));
+                    }
+                    else if (ConsumeIfType(out Token functionKeyword, TokenType.KeywordFunction))
+                    {
+                        SkipWhitespace();
+                        result.Functions.Add(ParseSubroutineStatement(functionKeyword));
+                    }
+                    else if (ConsumeIfType(out Token globalKeyword, TokenType.KeywordGlobal))
+                    {
+                        SkipWhitespace();
+                        Token globalName = ConsumeType(TokenType.Symbol, "Expected a name for the global.");
+                        result.Globals.Add(new GlobalStatement(globalKeyword.Span + globalName.Span, globalName));
+                        ConsumeType(TokenType.Semicolon, "Expected a semicolon after global name.");
+                    }
+                    else
+                    {
+                        Token extra = Consume();
+                        if (extra.Type != TokenType.Whitespace && extra.Type != TokenType.Comment && extra.Type != TokenType.MultilineComment && extra.Type != TokenType.EndOfStream)
+                        {
+                            Panic("Expected global, class, or function", extra.Span);
+                        }
                     }
                 }
+                catch (StatementPanicException)
+                {
+                    SynchronizeToStatement();
+                }
+                SkipWhitespace();
             }
 
             return result;
@@ -91,19 +126,27 @@ namespace SAGESharp.LSS
             {
                 Token t = Consume();
                 SkipWhitespace();
-                if (t.Type == TokenType.KeywordProperty)
+                try
                 {
-                    Token propertyName = ConsumeType(TokenType.Symbol, "Expected a property name.");
-                    properties.Add(new PropertyStatement(t.Span + propertyName.Span, propertyName));
-                    ConsumeType(TokenType.Semicolon, "Expected semicolon after property name.");
+                    if (t.Type == TokenType.KeywordProperty)
+                    {
+                        Token propertyName = ConsumeType(TokenType.Symbol, "Expected a property name.");
+                        properties.Add(new PropertyStatement(t.Span + propertyName.Span, propertyName));
+                        SkipWhitespace();
+                        ConsumeType(TokenType.Semicolon, "Expected semicolon after property name.");
+                    }
+                    else if (t.Type == TokenType.KeywordMethod)
+                    {
+                        methods.Add(ParseSubroutineStatement(t));
+                    }
+                    else
+                    {
+                        Errors.Add(new SyntaxError("Expected property or method.", t.Span));
+                    }
                 }
-                else if (t.Type == TokenType.KeywordMethod)
+                catch (StatementPanicException)
                 {
-                    methods.Add(ParseSubroutineStatement(t));
-                }
-                else
-                {
-                    Errors.Add(new SyntaxError("Expected property or method.", t.Span));
+                    SynchronizeToStatement();
                 }
                 SkipWhitespace();
             }
@@ -152,7 +195,14 @@ namespace SAGESharp.LSS
 
             while (!IsAtEnd() && Peek().Type != TokenType.CloseBrace)
             {
-                instructions.Add(ParseInstructionStatement());
+                try
+                {
+                    instructions.Add(ParseInstructionStatement());
+                }
+                catch (StatementPanicException)
+                {
+                    SynchronizeToStatement();
+                }
                 SkipWhitespace();
             }
             Token closeBrace = ConsumeType(TokenType.CloseBrace, "Unterminated subroutine body by the end of the source.");
@@ -340,15 +390,13 @@ namespace SAGESharp.LSS
             {
                 Expression child = ParseExpression();
                 SkipWhitespace();
-                Token closeParen = Consume();
-                // TODO: Assert that closeParen is, in fact, a close parenthesis
-                // once we have a proper panic & sync mechanism
+                Token closeParen = ConsumeType(TokenType.CloseParenthesis, "Expected a closing parenthesis.");
                 return new GroupingExpression(t.Span + closeParen.Span, child);
             }
-            else // TODO: Add proper panic & sync
+            else
             {
-                Errors.Add(new SyntaxError("Expected an expression.", t.Span));
-                throw new Exception("Expected an expression, found a " + t.Type.ToString());
+                Panic("Expected an expression, found a " + t.Type.ToString(), t.Span, PanicType.Statement);
+                return null; // Never happens - Panic(..., ..., Stataement) always throws
             }
         }
 
@@ -664,6 +712,33 @@ namespace SAGESharp.LSS
             return result;
         }
 
+        private void SynchronizeToStatement()
+        {
+            Token t = Peek();
+            int braceLevel = 0;
+            while (t.Type != TokenType.EndOfStream
+                && (braceLevel > 0 || t.Type != TokenType.Semicolon) // A semicolon in the current scope (braceLevel == 0) completes the sync.
+                && (braceLevel > 1 || t.Type != TokenType.CloseBrace) // A closing brace ends either attached code (braceLevel == 1) or the end of the containing scope (braceLevel == 0) and both complete the sync.
+                && (braceLevel > 0 || !StatementBeginningKeywords.Contains(t.Type))) // The keywords that can begin statements will complete the sync if they are not in an attached block.
+            {
+                if (t.Type == TokenType.OpenBrace)
+                {
+                    braceLevel++;
+                }
+                else if (t.Type == TokenType.CloseBrace)
+                {
+                    braceLevel--;
+                }
+                Consume();
+                t = Peek();
+            }
+            if (t.Type == TokenType.Semicolon
+                || (braceLevel == 1 && t.Type == TokenType.CloseBrace))
+            {
+                Consume();
+            }
+        }
+
         private Token Peek()
         {
             if (CurrentIndex >= Tokens.Count)
@@ -701,14 +776,24 @@ namespace SAGESharp.LSS
             return false;
         }
 
-        private Token ConsumeType(TokenType type, string failureMessage)
+        private Token ConsumeType(TokenType type, string failureMessage, PanicType panicType = PanicType.Statement)
         {
-            Token result = Consume();
+            Token result = Peek();
             if (result.Type != type)
             {
-                this.Errors.Add(new SyntaxError(failureMessage, result.Span));
+                this.Panic(failureMessage + " (Found '" + Compiler.EscapeString(result.Content) + "')", result.Span, panicType);
             }
+            Consume();
             return result;
+        }
+
+        private void Panic(string message, SourceSpan span, PanicType panicType = PanicType.Statement)
+        {
+            this.Errors.Add(new SyntaxError(message, span));
+            if (panicType == PanicType.Statement)
+            {
+                throw new StatementPanicException();
+            }
         }
 
         private Token Consume()

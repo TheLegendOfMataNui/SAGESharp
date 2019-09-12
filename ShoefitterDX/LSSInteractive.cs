@@ -44,15 +44,15 @@ namespace ShoefitterDX
             }
             else
             {
-                ResultTextBox.Text = errors.Count + " errors:\r\n";
+                ResultTextBox.Text = errors.Count + " Scan Errors:\r\n";
                 foreach (SyntaxError err in errors)
                 {
-                    ResultTextBox.Text += "   " + err.ToString() + "\r\n";
+                    ResultTextBox.Text += "    " + err.ToString() + "\r\n";
                 }
                 ResultTextBox.Text += "Tokens: \r\n";
                 foreach (Token t in tokens)
                 {
-                    ResultTextBox.Text += "   " + t.ToString().Replace("\r\n", "\\n").Replace("\n", "\\n").Replace("\t", "\\t") + "\r\n";
+                    ResultTextBox.Text += "    " + t.ToString().Replace("\r\n", "\\n").Replace("\n", "\\n").Replace("\t", "\\t") + "\r\n";
                 }
                 tokens = null;
                 return false;
@@ -79,7 +79,7 @@ namespace ShoefitterDX
                 }
                 else
                 {
-                    ResultTextBox.Text = result.Errors.Count + " Errors: \n";
+                    ResultTextBox.Text = result.Errors.Count + " Parse Errors: \n";
                     foreach (SyntaxError error in result.Errors)
                     {
                         ResultTextBox.Text += "    " + error.ToString() + "\n";
