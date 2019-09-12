@@ -15,7 +15,7 @@ namespace SAGESharp.LSS
         private static int CurrentIndex = 0;
         private static uint Line = 0;
         private static List<Token> Result = new List<Token>();
-        private static List<SyntaxError> Errors;
+        private static List<CompileMessage> Errors;
 
         private static Dictionary<string, TokenType> _keywords = null;
 
@@ -73,7 +73,7 @@ namespace SAGESharp.LSS
                 return TokenType.Symbol;
         }
 
-        public static List<Token> Scan(string source, string filename, List<SyntaxError> errors, bool ignoreWhitespace = false, bool ignoreComments = false)
+        public static List<Token> Scan(string source, string filename, List<CompileMessage> errors, bool ignoreWhitespace = false, bool ignoreComments = false)
         {
             Source = source;
             Filename = filename;
@@ -193,7 +193,7 @@ namespace SAGESharp.LSS
                     while ((Peek() != '*' || PeekNext() != '/') && !IsAtEnd())
                         Advance();
                     if (IsAtEnd())
-                        return FinishError("Unterminated multiline comment by the end of the source.", TokenType.MultilineComment);
+                        return FinishError("Unterminated multiline comment by the end of the source.", "LSS004", TokenType.MultilineComment);
                     else
                     {
                         CurrentIndex += 2; // Include the closing '*/' we peeked above
@@ -214,11 +214,11 @@ namespace SAGESharp.LSS
 
                 if (IsAtEnd())
                 {
-                    return FinishError("Unterminated string literal by the end of the source.", TokenType.StringLiteral);
+                    return FinishError("Unterminated string literal by the end of the source.", "LSS003", TokenType.StringLiteral);
                 }
                 else if (Peek() == '\n')
                 {
-                    return FinishError("Unterminated string literal by the end of the line.", TokenType.StringLiteral);
+                    return FinishError("Unterminated string literal by the end of the line.", "LSS002", TokenType.StringLiteral);
                 }
                 else
                 {
@@ -263,7 +263,7 @@ namespace SAGESharp.LSS
                 return FinishToken(GetKeywordType(Source.Substring(StartIndex, CurrentIndex - StartIndex)));
             }
             else
-                return FinishError("Unknown token.", TokenType.Invalid);
+                return FinishError("Unknown token.", "LSS001", TokenType.Invalid);
         }
 
         private static Token FinishToken(TokenType type)
@@ -271,9 +271,9 @@ namespace SAGESharp.LSS
             return new Token(type, Source.Substring(StartIndex, CurrentIndex - StartIndex), Filename, StartIndex, (uint)Line, CurrentIndex - StartIndex);
         }
 
-        private static Token FinishError(string message, TokenType type)
+        private static Token FinishError(string message, string errorCode, TokenType type)
         {
-            Errors.Add(new SyntaxError(message, Filename, StartIndex, Line, CurrentIndex - StartIndex));
+            Errors.Add(new CompileMessage(message, errorCode, CompileMessage.MessageSeverity.Error, Filename, StartIndex, Line, CurrentIndex - StartIndex));
             return FinishToken(type);
         }
 

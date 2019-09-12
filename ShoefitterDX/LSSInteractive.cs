@@ -36,7 +36,7 @@ namespace ShoefitterDX
 
         private bool TryScan(out List<Token> tokens)
         {
-            List<SyntaxError> errors = new List<SyntaxError>();
+            List<CompileMessage> errors = new List<CompileMessage>();
             tokens = Scanner.Scan(SourceTextBox.Text.Replace("\r\n", "\n"), "<LSSInteractive>", errors, false, false);
             if (errors.Count == 0)
             {
@@ -45,7 +45,7 @@ namespace ShoefitterDX
             else
             {
                 ResultTextBox.Text = errors.Count + " Scan Errors:\r\n";
-                foreach (SyntaxError err in errors)
+                foreach (CompileMessage err in errors)
                 {
                     ResultTextBox.Text += "    " + err.ToString() + "\r\n";
                 }
@@ -71,7 +71,7 @@ namespace ShoefitterDX
                 catch (Exception ex)
                 {
                     result = new Parser.Result();
-                    result.Errors.Add(new SyntaxError("Parser exception: \n\n" + ex.ToString(),"<LSSInteractive>", 0, 0, 0));
+                    result.Errors.Add(new CompileMessage("Parser exception: \n\n" + ex.ToString(), "LSS991", CompileMessage.MessageSeverity.Fatal, "<LSSInteractive>", 0, 0, 0));
                 }
                 if (result.Errors.Count == 0)
                 {
@@ -80,7 +80,7 @@ namespace ShoefitterDX
                 else
                 {
                     ResultTextBox.Text = result.Errors.Count + " Parse Errors: \n";
-                    foreach (SyntaxError error in result.Errors)
+                    foreach (CompileMessage error in result.Errors)
                     {
                         ResultTextBox.Text += "    " + error.ToString() + "\n";
                     }
@@ -106,16 +106,16 @@ namespace ShoefitterDX
                 catch (Exception ex)
                 {
                     result = new Compiler.Result(new SAGESharp.OSI.OSIFile());
-                    result.Errors.Add(new SyntaxError("Compiler exception: \n\n" + ex.ToString(), "<LSSInteractive>", 0, 0, 0));
+                    result.Messages.Add(new CompileMessage("Compiler exception: \n\n" + ex.ToString(), "LSS992", CompileMessage.MessageSeverity.Fatal, "<LSSInteractive>", 0, 0, 0));
                 }
-                if (result.Errors.Count == 0)
+                if (result.Messages.Count == 0)
                 {
                     return true;
                 }
                 else
                 {
-                    ResultTextBox.Text = result.Errors.Count + " Compile Errors: \n";
-                    foreach (SyntaxError error in result.Errors)
+                    ResultTextBox.Text = result.Messages.Count + " Compile Errors: \n";
+                    foreach (CompileMessage error in result.Messages)
                     {
                         ResultTextBox.AppendText("    " + error.ToString() + "\n");
                     }

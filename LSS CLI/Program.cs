@@ -67,6 +67,7 @@ namespace LSS_CLI
 
         private static int DoCompile(CLIOptions options)
         {
+            List<CompileMessage> messages = new List<CompileMessage>();
             // Translate CLIOptions into compiler options
             Compiler.Settings settings = new Compiler.Settings();
             settings.EmitLineNumbers = options.EmitLineNumbers;
@@ -78,7 +79,7 @@ namespace LSS_CLI
             }
             else
             {
-                Console.WriteLine("[WARNING][LSSC01][:|] Invalid OSI version. Version number should be specified like '4.1'.");
+                messages.Add(new CompileMessage("Invalid OSI version. Version number should be specified like '4.1'.", "LSSC001", CompileMessage.MessageSeverity.Warning, new SourceSpan("", 0, null, 0)));
             }
 
             // Check options.Inputs for directory names, and replace them with the files they contain, considering the option to be recursive
@@ -96,16 +97,20 @@ namespace LSS_CLI
             }
 
             Compiler.Result result = Compiler.CompileFiles(inputs);
+            messages.AddRange(result.Messages);
 
-            // TODO: Count the number of messages that are actually errors
-            if (result.Errors.Count > 0)
+            int errorCount = 0;
+            foreach (CompileMessage message in messages)
             {
-                foreach (SyntaxError error in result.Errors)
+                Console.WriteLine(message.ToString());
+                if (message.Severity >= CompileMessage.MessageSeverity.Error)
                 {
-                    // TODO: Use message code, filename, and column
-                    Console.WriteLine("[ERROR][LSS---][" + error.Span.ToString() + "|?] " + error.Message);
+                    errorCount++;
                 }
-                Console.WriteLine("Finished with " + result.Errors.Count + " errors.");
+            }
+            if (errorCount > 0)
+            {
+                Console.WriteLine("Finished with " + errorCount + " errors.");
                 return EXIT_SYNTAX_ERROR;
             }
             else

@@ -21,12 +21,12 @@ namespace SAGESharp.LSS
         public class Result
         {
             public OSIFile OSI;
-            public List<SyntaxError> Errors;
+            public List<CompileMessage> Messages;
 
             public Result(OSIFile osi)
             {
                 this.OSI = osi;
-                this.Errors = new List<SyntaxError>();
+                this.Messages = new List<CompileMessage>();
             }
         }
 
@@ -1436,7 +1436,7 @@ namespace SAGESharp.LSS
             using (System.IO.MemoryStream ms = new System.IO.MemoryStream(Encoding.ASCII.GetBytes(source)))
             using (System.IO.StreamReader reader = new System.IO.StreamReader(ms))
             {
-                List<SyntaxError> scanErrors = new List<SyntaxError>();
+                List<CompileMessage> scanErrors = new List<CompileMessage>();
                 List<Token> tokens = Scanner.Scan(source, filename, scanErrors, true, true);
                 if (scanErrors.Count == 0)
                 {
@@ -1447,12 +1447,12 @@ namespace SAGESharp.LSS
                     }
                     else
                     {
-                        result.Errors = parseResults.Errors;
+                        result.Messages = parseResults.Errors;
                     }
                 }
                 else
                 {
-                    result.Errors = scanErrors;
+                    result.Messages = scanErrors;
                 }
             }
 
@@ -1474,7 +1474,7 @@ namespace SAGESharp.LSS
             {
                 using (System.IO.StreamReader reader = new System.IO.StreamReader(filename))
                 {
-                    List<SyntaxError> scanErrors = new List<SyntaxError>();
+                    List<CompileMessage> scanErrors = new List<CompileMessage>();
                     List<Token> tokens = Scanner.Scan(reader.ReadToEnd(), filename, scanErrors, true, true);
                     if (scanErrors.Count == 0)
                     {
@@ -1486,12 +1486,12 @@ namespace SAGESharp.LSS
                         }
                         else
                         {
-                            result.Errors.AddRange(parseResult.Errors);
+                            result.Messages.AddRange(parseResult.Errors);
                         }
                     }
                     else
                     {
-                        result.Errors.AddRange(scanErrors);
+                        result.Messages.AddRange(scanErrors);
                     }
                 }
             }
@@ -1543,7 +1543,7 @@ namespace SAGESharp.LSS
                     List<OSIFile.MethodInfo> methods = new List<OSIFile.MethodInfo>();
                     if (classes.ContainsKey(cls.Name.Content))
                     {
-                        result.Errors.Add(new SyntaxError("Class already exists with same name.", cls.Name.Span));
+                        result.Messages.Add(new CompileMessage("Class already exists with same name.", "LSS005", CompileMessage.MessageSeverity.Error, cls.Name.Span));
                     }
                     else
                     {
@@ -1587,7 +1587,7 @@ namespace SAGESharp.LSS
                 {
                     if (functions.ContainsKey(func.Name.Content))
                     {
-                        result.Errors.Add(new SyntaxError("Function already exists with same name.", func.Name.Span));
+                        result.Messages.Add(new CompileMessage("Function already exists with same name.", "LSS006", CompileMessage.MessageSeverity.Error, func.Name.Span));
                     }
                     else
                     {
