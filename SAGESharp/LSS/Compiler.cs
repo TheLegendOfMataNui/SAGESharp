@@ -30,6 +30,11 @@ namespace SAGESharp.LSS
             }
         }
 
+        private class PanicException : Exception
+        {
+
+        }
+
         private class SubroutineScope
         {
             public Dictionary<string, Variable> Variables = new Dictionary<string, Variable>();
@@ -101,8 +106,8 @@ namespace SAGESharp.LSS
 
             public override uint EmitWrite(SubroutineContext context, Expression value, object expressionContext)
             {
-                // TODO: Panic & Sync
-                throw new InvalidOperationException("Cannot set an iteration variable.");
+                Error(context.Messages, "Cannot modify the contents of an iteration variable.", "LSS057", value.Span, true);
+                return 0; // Never reached
             }
         }
 
@@ -118,9 +123,11 @@ namespace SAGESharp.LSS
             private SubroutineScope BaseScope { get; }
             private SubroutineScope CurrentScope { get; set; }
             private Settings CompileSettings { get; }
+            public List<CompileMessage> Messages { get; }
 
-            public SubroutineContext(OSIFile osi, Settings compileSettings, bool isInstanceMethod, IEnumerable<string> parameterNames)
+            public SubroutineContext(List<CompileMessage> messages, OSIFile osi, Settings compileSettings, bool isInstanceMethod, IEnumerable<string> parameterNames)
             {
+                this.Messages = messages;
                 this.OSI = osi;
                 this.CompileSettings = compileSettings;
                 BaseScope = new SubroutineScope(null);
@@ -172,13 +179,10 @@ namespace SAGESharp.LSS
             {
                 if (IsFinalized)
                     throw new InvalidOperationException("Cannot modify a SubroutineContext after it has been finalized.");
-                SubroutineScope scope = CurrentScope;
-                while (scope != null)
-                {
-                    if (scope.Variables.ContainsKey(localName))
-                        throw new ArgumentException("Variable is already declared, and would conflict.");
-                    scope = scope.ParentScope;
-                }
+
+                if (CurrentScope.Variables.ContainsKey(localName))
+                    throw new ArgumentException("Variable is already declared, and would conflict.");
+
                 StandardVariable result = new StandardVariable(localName, VariableCount);
                 CurrentScope.Variables.Add(localName, result);
                 VariableCount++;
@@ -344,7 +348,7 @@ namespace SAGESharp.LSS
                             if (expr.Left is VariableExpression thisExpr && thisExpr.Symbol.Type == TokenType.KeywordThis)
                             {
                                 if (!this.IsInstanceMethod)
-                                    throw new ArgumentException("'this' keyword is only valid in an instance method.");
+                                    Error(Messages, "'this' keyword is only valid in an instance method.", "LSS059", expr.Left.Span, true);
                                 size += EmitBCLInstruction(BCLOpcode.GetThisMemberValue, memberSymbol);
                             }
                             else
@@ -358,7 +362,7 @@ namespace SAGESharp.LSS
                             // Getting a builtin
                             if (expr.Left is VariableExpression thisExpr && thisExpr.Symbol.Type == TokenType.KeywordThis)
                             {
-                                throw new ArgumentException("Cannot get value of type '" + symbol.Symbol.Type.ToString() + "' on 'this'.");
+                                Error(Messages, "No builtin members are useable on 'this'.", "LSS060", expr.Right.Span, true);
                             }
                             else
                             {
@@ -385,14 +389,14 @@ namespace SAGESharp.LSS
                                 }
                                 else
                                 {
-                                    throw new ArgumentException("'" + symbol.Symbol.Content + "' of type '" + symbol.Symbol.Type.ToString() + "' is not a valid builtin property.");
+                                    Error(Messages, "'" + symbol.Symbol.Content + "' of type '" + symbol.Symbol.Type.ToString() + "' is not a valid builtin property.", "LSS061", symbol.Span, true);
                                 }
                             }
                         }
                     }
                     else
                     {
-                        throw new ArgumentException("Member access must use a member name.");
+                        Error(Messages, "Right side of period must be a member name", "LSS062", expr.Right.Span, true);
                     }
                 }
                 else if (expr.Operation.Type == TokenType.PeriodDollarSign)
@@ -414,12 +418,12 @@ namespace SAGESharp.LSS
                     }
                     else
                     {
-                        throw new ArgumentException("Game variable access must use a namespace and name symbol.");
+                        Error(Messages, "Native game access must use a name on both sides of the double-colon", "LSS063", expr.Span, true);
                     }
                 }
                 else if (expr.Operation.Type == TokenType.ColonColonDollarSign)
                 {
-                    throw new NotImplementedException("Dynamic-lookup game variable are not implemented in SAGE.");
+                    Error(Messages, "Dynamic-lookup game variable are not implemented in SAGE.", "LSS064", expr.Span, true);
                 }
                 else
                 {
@@ -504,7 +508,7 @@ namespace SAGESharp.LSS
                     }
                     else
                     {
-                        throw new InvalidOperationException("Invalid binary operator: " + expr.Operation.Type);
+                        Error(Messages, "Invalid binary operator: " + expr.Operation.Type, "LSS065", expr.Operation.Span, true);
                     }
                 }
                 return size;
@@ -542,7 +546,7 @@ namespace SAGESharp.LSS
                         }
                         if (!found)
                         {
-                            throw new ArgumentException("Static function '" + varExp.Symbol.Content + "' not found.");
+                            Error(Messages, "Static function '" + varExp.Symbol.Content + "' not found.", "LSS066", varExp.Span, true);
                         }
 
                         size += PushCallArguments(expr);
@@ -555,7 +559,7 @@ namespace SAGESharp.LSS
                         {
                             if (expr.Arguments.Count != 4)
                             {
-                                throw new ArgumentException("Builtin function '" + varExp.Symbol.Content + "' requires exactly 4 arguments.");
+                                Error(Messages, "Builtin function '" + varExp.Symbol.Content + "' requires exactly 4 arguments.", "LSS067", varExp.Span, true);
                             }
                             else
                             {
@@ -569,7 +573,7 @@ namespace SAGESharp.LSS
                                     int value = Int32.Parse(rLiteral.Value.Content);
                                     if (value > Byte.MaxValue || value < Byte.MinValue)
                                     {
-                                        throw new ArgumentException("Value is out of the acceptable range (0 - 255) for R component.");
+                                        Error(Messages, "Literal value is out of the acceptable range (0 - 255) for R component.", "LSS068", expr.Arguments[0].Span, true);
                                     }
                                     else
                                     {
@@ -586,7 +590,7 @@ namespace SAGESharp.LSS
                                     int value = Int32.Parse(gLiteral.Value.Content);
                                     if (value > Byte.MaxValue || value < Byte.MinValue)
                                     {
-                                        throw new ArgumentException("Value is out of the acceptable range (0 - 255) for G component.");
+                                        Error(Messages, "Literal value is out of the acceptable range (0 - 255) for G component.", "LSS068", expr.Arguments[1].Span, true);
                                     }
                                     else
                                     {
@@ -603,7 +607,7 @@ namespace SAGESharp.LSS
                                     int value = Int32.Parse(bLiteral.Value.Content);
                                     if (value > Byte.MaxValue || value < Byte.MinValue)
                                     {
-                                        throw new ArgumentException("Value is out of the acceptable range (0 - 255) for B component.");
+                                        Error(Messages, "Literal value is out of the acceptable range (0 - 255) for B component.", "LSS068", expr.Arguments[2].Span, true);
                                     }
                                     else
                                     {
@@ -620,7 +624,7 @@ namespace SAGESharp.LSS
                                     int value = Int32.Parse(aLiteral.Value.Content);
                                     if (value > Byte.MaxValue || value < Byte.MinValue)
                                     {
-                                        throw new ArgumentException("Value is out of the acceptable range (0 - 255) for A component.");
+                                        Error(Messages, "Literal value is out of the acceptable range (0 - 255) for A component.", "LSS068", expr.Arguments[3].Span, true);
                                     }
                                     else
                                     {
@@ -658,54 +662,70 @@ namespace SAGESharp.LSS
                         }
                         else
                         {
-                            if (expr.Arguments.Count != 1)
+                            if (varExp.Symbol.Type == TokenType.KeywordToString
+                                || varExp.Symbol.Type == TokenType.KeywordToFloat
+                                || varExp.Symbol.Type == TokenType.KeywordToInt
+                                || varExp.Symbol.Type == TokenType.KeywordIsInt
+                                || varExp.Symbol.Type == TokenType.KeywordIsFloat
+                                || varExp.Symbol.Type == TokenType.KeywordIsString
+                                || varExp.Symbol.Type == TokenType.KeywordIsInstance
+                                || varExp.Symbol.Type == TokenType.KeywordIsObject
+                                || varExp.Symbol.Type == TokenType.KeywordIsArray
+                                || varExp.Symbol.Type == TokenType.KeywordClassID)
                             {
-                                throw new ArgumentException("Builtin function '" + varExp.Symbol.Content + "' requires exactly 1 argument.");
-                            }
-                            size += expr.Arguments[0].AcceptVisitor(this, context);
-                            if (varExp.Symbol.Type == TokenType.KeywordToString)
-                            {
-                                size += EmitBCLInstruction(BCLOpcode.ConvertToString);
-                            }
-                            else if (varExp.Symbol.Type == TokenType.KeywordToFloat)
-                            {
-                                size += EmitBCLInstruction(BCLOpcode.ConvertToFloat);
-                            }
-                            else if (varExp.Symbol.Type == TokenType.KeywordToInt)
-                            {
-                                size += EmitBCLInstruction(BCLOpcode.ConvertToInteger);
-                            }
-                            else if (varExp.Symbol.Type == TokenType.KeywordIsInt)
-                            {
-                                size += EmitBCLInstruction(BCLOpcode.IsInteger);
-                            }
-                            else if (varExp.Symbol.Type == TokenType.KeywordIsFloat)
-                            {
-                                size += EmitBCLInstruction(BCLOpcode.IsFloat);
-                            }
-                            else if (varExp.Symbol.Type == TokenType.KeywordIsString)
-                            {
-                                size += EmitBCLInstruction(BCLOpcode.IsString);
-                            }
-                            else if (varExp.Symbol.Type == TokenType.KeywordIsInstance)
-                            {
-                                size += EmitBCLInstruction(BCLOpcode.IsAnObject);
-                            }
-                            else if (varExp.Symbol.Type == TokenType.KeywordIsObject)
-                            {
-                                size += EmitBCLInstruction(BCLOpcode.IsGameObject);
-                            }
-                            else if (varExp.Symbol.Type == TokenType.KeywordIsArray)
-                            {
-                                size += EmitBCLInstruction(BCLOpcode.IsArray);
-                            }
-                            else if (varExp.Symbol.Type == TokenType.KeywordClassID)
-                            {
-                                size += EmitBCLInstruction(BCLOpcode.GetObjectClassID);
+                                if (expr.Arguments.Count != 1)
+                                {
+                                    Error(Messages, "Builtin function '" + varExp.Symbol.Content + "' requires exactly 1 argument.", "LSS069", expr.Span, true);
+                                }
+                                size += expr.Arguments[0].AcceptVisitor(this, context);
+                                if (varExp.Symbol.Type == TokenType.KeywordToString)
+                                {
+                                    size += EmitBCLInstruction(BCLOpcode.ConvertToString);
+                                }
+                                else if (varExp.Symbol.Type == TokenType.KeywordToFloat)
+                                {
+                                    size += EmitBCLInstruction(BCLOpcode.ConvertToFloat);
+                                }
+                                else if (varExp.Symbol.Type == TokenType.KeywordToInt)
+                                {
+                                    size += EmitBCLInstruction(BCLOpcode.ConvertToInteger);
+                                }
+                                else if (varExp.Symbol.Type == TokenType.KeywordIsInt)
+                                {
+                                    size += EmitBCLInstruction(BCLOpcode.IsInteger);
+                                }
+                                else if (varExp.Symbol.Type == TokenType.KeywordIsFloat)
+                                {
+                                    size += EmitBCLInstruction(BCLOpcode.IsFloat);
+                                }
+                                else if (varExp.Symbol.Type == TokenType.KeywordIsString)
+                                {
+                                    size += EmitBCLInstruction(BCLOpcode.IsString);
+                                }
+                                else if (varExp.Symbol.Type == TokenType.KeywordIsInstance)
+                                {
+                                    size += EmitBCLInstruction(BCLOpcode.IsAnObject);
+                                }
+                                else if (varExp.Symbol.Type == TokenType.KeywordIsObject)
+                                {
+                                    size += EmitBCLInstruction(BCLOpcode.IsGameObject);
+                                }
+                                else if (varExp.Symbol.Type == TokenType.KeywordIsArray)
+                                {
+                                    size += EmitBCLInstruction(BCLOpcode.IsArray);
+                                }
+                                else if (varExp.Symbol.Type == TokenType.KeywordClassID)
+                                {
+                                    size += EmitBCLInstruction(BCLOpcode.GetObjectClassID);
+                                }
+                                else
+                                {
+                                    throw new ArgumentException("What the hecc???");
+                                }
                             }
                             else
                             {
-                                throw new ArgumentException("Not invokable.");
+                                Error(Messages, "'" + varExp.Symbol.Content + "' is not callable.", "LSS070", varExp.Span, true);
                             }
                         }
                     }
@@ -726,7 +746,7 @@ namespace SAGESharp.LSS
 
                                     if (!IsInstanceMethod)
                                     {
-                                        throw new InvalidOperationException("'this' not allowed in static function.");
+                                        Error(Messages, "'this' not allowed in static function.", "LSS071", binExp.Span, true);
                                     }
 
                                     size += EmitBCLInstruction(BCLOpcode.GetVariableValue, (ushort)0);
@@ -765,7 +785,7 @@ namespace SAGESharp.LSS
                                 if (nameExp.Symbol.Type == TokenType.KeywordAppend)
                                 {
                                     if (expr.Arguments.Count != 1)
-                                        throw new ArgumentException("Builtin 'append' requires 1 argument.");
+                                        Error(Messages, "Builtin method 'append' requires 1 argument.", "LSS072", expr.Span, true);
 
                                     size += binExp.Left.AcceptVisitor(this, context); // Push array
 
@@ -780,7 +800,7 @@ namespace SAGESharp.LSS
                                 else if (nameExp.Symbol.Type == TokenType.KeywordRemoveAt)
                                 {
                                     if (expr.Arguments.Count != 1)
-                                        throw new ArgumentException("Builtin 'removeat' requires 1 argument.");
+                                        Error(Messages, "Builtin method 'removeat' requires 1 argument.", "LSS072", expr.Span, true);
 
                                     size += binExp.Left.AcceptVisitor(this, context); // Push array
 
@@ -795,7 +815,7 @@ namespace SAGESharp.LSS
                                 else if (nameExp.Symbol.Type == TokenType.KeywordInsertAt)
                                 {
                                     if (expr.Arguments.Count != 2)
-                                        throw new ArgumentException("Builtin 'insertat' requires 2 arguments.");
+                                        Error(Messages, "Builtin method 'insertat' requires 2 arguments.", "LSS072", expr.Span, true);
 
                                     size += binExp.Left.AcceptVisitor(this, context); // Push array
 
@@ -812,7 +832,7 @@ namespace SAGESharp.LSS
                                 else if (nameExp.Symbol.Type == TokenType.KeywordWithRed)
                                 {
                                     if (expr.Arguments.Count != 1)
-                                        throw new ArgumentException("Builtin 'withred' requires 1 argument.");
+                                        Error(Messages, "Builtin method 'withred' requires 1 argument.", "LSS072", expr.Span, true);
 
                                     size += binExp.Left.AcceptVisitor(this, context); // Target
 
@@ -823,7 +843,7 @@ namespace SAGESharp.LSS
                                 else if (nameExp.Symbol.Type == TokenType.KeywordWithGreen)
                                 {
                                     if (expr.Arguments.Count != 1)
-                                        throw new ArgumentException("Builtin 'withgreen' requires 1 argument.");
+                                        Error(Messages, "Builtin method 'withgreen' requires 1 argument.", "LSS072", expr.Span, true);
 
                                     size += binExp.Left.AcceptVisitor(this, context); // Target
 
@@ -834,7 +854,7 @@ namespace SAGESharp.LSS
                                 else if (nameExp.Symbol.Type == TokenType.KeywordWithBlue)
                                 {
                                     if (expr.Arguments.Count != 1)
-                                        throw new ArgumentException("Builtin 'withblue' requires 1 argument.");
+                                        Error(Messages, "Builtin method 'withblue' requires 1 argument.", "LSS072", expr.Span, true);
 
                                     size += binExp.Left.AcceptVisitor(this, context); // Target
 
@@ -845,7 +865,7 @@ namespace SAGESharp.LSS
                                 else if (nameExp.Symbol.Type == TokenType.KeywordWithAlpha)
                                 {
                                     if (expr.Arguments.Count != 1)
-                                        throw new ArgumentException("Builtin 'withalpha' requires 1 argument.");
+                                        Error(Messages, "Builtin 'withalpha' requires 1 argument.", "LSS072", expr.Span, true);
 
                                     size += binExp.Left.AcceptVisitor(this, context); // Target
 
@@ -855,7 +875,7 @@ namespace SAGESharp.LSS
                                 }
                                 else
                                 {
-                                    throw new ArgumentException("Member expression not invokable.");
+                                    Error(Messages, "Expected name of method, found " + nameExp.Symbol.Type + ".", "LSS073", nameExp.Span, true);
                                 }
                             }
                         }
@@ -871,12 +891,12 @@ namespace SAGESharp.LSS
                             }
                             else
                             {
-                                throw new ArgumentException("Game function namespace must be a symbol.");
+                                Error(Messages, "Game function namespace must be a symbol.", "LSS074", binExp.Left.Span, true);
                             }
                         }
                         else
                         {
-                            throw new ArgumentException("Expression is not standard-invokable.");
+                            Error(Messages, "Expression is not callable.", "LSS075", binExp.Span, true);
                         }
                     }
                     else
@@ -920,18 +940,18 @@ namespace SAGESharp.LSS
                             }
                             else
                             {
-                                throw new ArgumentException("Game function namespace must be a symbol.");
+                                Error(Messages, "Game function namespace must be a symbol.", "LSS076", binExp.Left.Span, true);
                             }
                         }
                         else
                         {
-                            throw new ArgumentException("Expression is not dynamic-invokable.");
+                            Error(Messages, "Expression is not dynamically-callable.", "LSS077", binExp.Span, true);
                         }
                     }
                 }
                 else
                 {
-                    throw new ArgumentException("Expression is not invokable.");
+                    Error(Messages, "Expression is not callable.", "LSS078", expr.Span, true);
                 }
                 return size;
             }
@@ -951,7 +971,7 @@ namespace SAGESharp.LSS
                 }
 
                 if (!classIndex.HasValue)
-                    throw new ArgumentException("Type name '" + expr.TypeName.Content + "' is not a valid class!");
+                    Error(Messages, "Type name '" + expr.TypeName.Content + "' is not a valid class!", "LSS079", expr.TypeName.Span, true);
 
                 // Create the new instance
                 size += EmitBCLInstruction(BCLOpcode.CreateObject, classIndex.Value);
@@ -1037,7 +1057,7 @@ namespace SAGESharp.LSS
                 }
                 else
                 {
-                    throw new InvalidOperationException("Invalid literal type: " + expr.Value.Type);
+                    Error(Messages, "Invalid literal type: " + expr.Value.Type, "LSS080", expr.Value.Span, true);
                 }
                 return size;
             }
@@ -1061,7 +1081,7 @@ namespace SAGESharp.LSS
                 }
                 else
                 {
-                    throw new InvalidOperationException("Invalid unary operator " + expr.Operation.Type);
+                    Error(Messages, "Invalid unary operator " + expr.Operation.Type, "LSS081", expr.Operation.Span, true);
                 }
                 return size;
             }
@@ -1077,7 +1097,7 @@ namespace SAGESharp.LSS
                 }
                 else
                 {
-                    throw new ArgumentException("Variable '" + expr.Symbol.Content + "' is not a valid local or global.");
+                    Error(Messages, "Variable '" + expr.Symbol.Content + "' is not a valid local or global.", "LSS082", expr.Span, true);
                 }
 
                 return size;
@@ -1091,7 +1111,14 @@ namespace SAGESharp.LSS
                 EnterScope();
                 foreach (InstructionStatement childStatement in s.Instructions)
                 {
-                    size += childStatement.AcceptVisitor(this, context);
+                    try
+                    {
+                        size += childStatement.AcceptVisitor(this, context);
+                    }
+                    catch (PanicException)
+                    {
+
+                    }
                 }
                 LeaveScope();
                 return size;
@@ -1228,7 +1255,7 @@ namespace SAGESharp.LSS
                     // Local variable or global variable assignment
                     if (varExpr.Symbol.Type == TokenType.KeywordThis)
                     {
-                        throw new ArgumentException("'this' is not allowed to be modified.");
+                        Error(Messages, "'this' is not allowed to be modified.", "LSS083", s.Span, true);
                     }
 
                     Variable variable = FindVariable(varExpr.Symbol.Content);
@@ -1240,7 +1267,8 @@ namespace SAGESharp.LSS
                     }
                     else
                     {
-                        throw new ArgumentException("Variable '" + varExpr.Symbol.Content + "' is not a valid local or global.");
+                        Error(Messages, "Variable '" + varExpr.Symbol.Content + "' is not a valid local or global.", "LSS084", varExpr.Span, true);
+                        return 0; // Unreachable
                     }
                 }
                 else if (s.Target is BinaryExpression memberExpr && memberExpr.Operation.Type == TokenType.Period && memberExpr.Right is VariableExpression member)
@@ -1266,35 +1294,11 @@ namespace SAGESharp.LSS
                         // Setting a builtin
                         if (memberExpr.Left is VariableExpression instance && instance.Symbol.Type == TokenType.KeywordThis)
                         {
-                            throw new ArgumentException("Cannot set a builtin member of 'this'.");
+                            Error(Messages, "No builtin members are allowed to be set on 'this'.", "LSS085", s.Span, true);
                         }
-                        /*size += memberExpr.Left.AcceptVisitor(this, context); // Target
-
-                        size += s.Value.AcceptVisitor(this, context); // Value
-
-                        if (member.Symbol.Type == TokenType.KeywordRed)
+                        else
                         {
-                            size += EmitBCLInstruction(BCLOpcode.SetRedValue);
-                            size += EmitBCLInstruction(BCLOpcode.Pop); // Because SetRedValue pushes the resulting color
-                        }
-                        else if (member.Symbol.Type == TokenType.KeywordGreen)
-                        {
-                            size += EmitBCLInstruction(BCLOpcode.SetGreenValue);
-                            size += EmitBCLInstruction(BCLOpcode.Pop); // Because SetGreenValue pushes the resulting color
-                        }
-                        else if (member.Symbol.Type == TokenType.KeywordBlue)
-                        {
-                            size += EmitBCLInstruction(BCLOpcode.SetBlueValue);
-                            size += EmitBCLInstruction(BCLOpcode.Pop); // Because SetBlueValue pushes the resulting color
-                        }
-                        else if (member.Symbol.Type == TokenType.KeywordAlpha)
-                        {
-                            size += EmitBCLInstruction(BCLOpcode.SetAlphaValue);
-                            size += EmitBCLInstruction(BCLOpcode.Pop); // Because SetAlphaValue pushes the resulting color
-                        }
-                        else*/
-                        {
-                            throw new ArgumentException("Symbol of type '" + member.Symbol.Type + "' is not a member nor a builtin and therefore cannot be assigned.");
+                            Error(Messages, "Symbol of type '" + member.Symbol.Type + "' is not a member nor a builtin and therefore cannot be assigned.", "LSS086", member.Span, true);
                         }
                     }
                     return size;
@@ -1340,7 +1344,8 @@ namespace SAGESharp.LSS
                 }
                 else
                 {
-                    throw new ArgumentException("Cannot assign into " + s.Target.ToString());
+                    Error(Messages, "Cannot assign into " + s.Target.ToString(), "LSS087", s.Span, true);
+                    return 0; // Unreachable
                 }
             }
 
@@ -1348,12 +1353,20 @@ namespace SAGESharp.LSS
             {
                 if (s.Name.Type == TokenType.KeywordThis)
                 {
-                    throw new ArgumentException("Cannot create local variables with reserved name 'this'.");
+                    Error(Messages, "The name 'this' is reserved and cannot be used for locals.", "LSS088", s.Name.Span, true);
                 }
 
                 uint size = 0;
                 if (s.Span.Start.Line.HasValue)
                     size += EmitLineNumberAlt1((ushort)s.Span.Start.Line.Value, s.Span.Start.Filename);
+
+                SubroutineScope scope = CurrentScope;
+                while (scope != null)
+                {
+                    if (scope.Variables.ContainsKey(s.Name.Content))
+                        Error(Messages, "Local variable '" + s.Name.Content + "' is already declared.", "LSS058", s.Span, true);
+                    scope = scope.ParentScope;
+                }
 
                 Variable local = AddLocal(s.Name.Content);
                 if (s.Initializer != null)
@@ -1389,6 +1402,14 @@ namespace SAGESharp.LSS
                 size += EmitBCLInstruction(out BCLInstruction branchToEnd, BCLOpcode.CompareAndBranchIfFalse, (short)0); // Set this after we know the size of the loop body
                 int conditionSize = (int)size - (int)conditionStart; // len1
 
+                SubroutineScope scope = CurrentScope;
+                while (scope != null)
+                {
+                    if (scope.Variables.ContainsKey(s.Variable.Content))
+                        Error(Messages, "Local variable '" + s.Variable.Content + "' is already declared.", "LSS058", s.Span, true);
+                    scope = scope.ParentScope;
+                }
+
                 // Set up the iteration variable
                 IterationVariable iterationVar = AddIterationVariable(s.Variable.Content, indexVar, s.Collection);
 
@@ -1422,6 +1443,20 @@ namespace SAGESharp.LSS
             return value.Replace("\"", "\\\"").Replace("\n", "\\n");
         }
 
+        private static void Error(Result result, string message, string errorCode, SourceSpan span, bool panic)
+        {
+            Error(result.Messages, message, errorCode, span, panic);
+        }
+
+        private static void Error(List<CompileMessage> messages, string message, string errorCode, SourceSpan span, bool panic)
+        {
+            messages.Add(new CompileMessage(message, errorCode, CompileMessage.MessageSeverity.Error, span));
+            if (panic)
+            {
+                throw new PanicException();
+            }
+        }
+
         // Compiles a single source string into an OSI.
         public static Result Compile(string source, string filename, Settings settings = null)
         {
@@ -1436,23 +1471,23 @@ namespace SAGESharp.LSS
             using (System.IO.MemoryStream ms = new System.IO.MemoryStream(Encoding.ASCII.GetBytes(source)))
             using (System.IO.StreamReader reader = new System.IO.StreamReader(ms))
             {
-                List<CompileMessage> scanErrors = new List<CompileMessage>();
-                List<Token> tokens = Scanner.Scan(source, filename, scanErrors, true, true);
-                if (scanErrors.Count == 0)
+                List<CompileMessage> scanMessages = new List<CompileMessage>();
+                List<Token> tokens = Scanner.Scan(source, filename, scanMessages, true, true);
+                if (scanMessages.Count == 0)
                 {
                     parseResults = p.Parse(tokens);
-                    if (parseResults.Errors.Count == 0)
+                    if (parseResults.Messages.Count == 0)
                     {
                         CompileInto(result, settings, parseResults);
                     }
                     else
                     {
-                        result.Messages = parseResults.Errors;
+                        result.Messages = parseResults.Messages;
                     }
                 }
                 else
                 {
-                    result.Messages = scanErrors;
+                    result.Messages = scanMessages;
                 }
             }
 
@@ -1480,13 +1515,13 @@ namespace SAGESharp.LSS
                     {
                         Parser.Result parseResult = p.Parse(tokens);
                         parseResults.Add(parseResult);
-                        if (parseResult.Errors.Count == 0)
+                        if (parseResult.Messages.Count == 0)
                         {
                             
                         }
                         else
                         {
-                            result.Messages.AddRange(parseResult.Errors);
+                            result.Messages.AddRange(parseResult.Messages);
                         }
                     }
                     else
@@ -1543,7 +1578,8 @@ namespace SAGESharp.LSS
                     List<OSIFile.MethodInfo> methods = new List<OSIFile.MethodInfo>();
                     if (classes.ContainsKey(cls.Name.Content))
                     {
-                        result.Messages.Add(new CompileMessage("Class already exists with same name.", "LSS005", CompileMessage.MessageSeverity.Error, cls.Name.Span));
+                        Error(result, "Class already exists with same name.", "LSS005", cls.Name.Span, false);
+                        continue;
                     }
                     else
                     {
@@ -1587,7 +1623,8 @@ namespace SAGESharp.LSS
                 {
                     if (functions.ContainsKey(func.Name.Content))
                     {
-                        result.Messages.Add(new CompileMessage("Function already exists with same name.", "LSS006", CompileMessage.MessageSeverity.Error, func.Name.Span));
+                        Error(result, "Function already exists with same name.", "LSS006", func.Name.Span, false);
+                        continue;
                     }
                     else
                     {
@@ -1602,8 +1639,7 @@ namespace SAGESharp.LSS
                     if (globals.ContainsKey(global.Name.Content))
                     {
                         // Duplicate globals are technically allowed
-                        // TODO: Warn about duplicate globals
-                        //result.Errors.Add(new SyntaxError("Global already exists with same name.", global.Name.SourceLocation.Offset, global.Name.SourceLength, 0));
+                        result.Messages.Add(new CompileMessage("Global already exists with same name.", "LSS054", CompileMessage.MessageSeverity.Warning, global.Name.Span));
                     }
                     else
                     {
@@ -1621,10 +1657,17 @@ namespace SAGESharp.LSS
                 // Compile the functions
                 foreach (SubroutineStatement function in parseResult.Functions)
                 {
-                    SubroutineContext context = new SubroutineContext(result.OSI, settings, false, function.Parameters.Select(token => token.Content));
+                    SubroutineContext context = new SubroutineContext(result.Messages, result.OSI, settings, false, function.Parameters.Select(token => token.Content));
                     foreach (InstructionStatement stmt in function.Body.Instructions)
                     {
-                        stmt.AcceptVisitor(context, null);
+                        try
+                        {
+                            stmt.AcceptVisitor(context, null);
+                        }
+                        catch (PanicException)
+                        {
+
+                        }
                     }
                     context.FinalizeInstructions();
                     OSIFile.FunctionInfo destination = functions[function.Name.Content];
@@ -1640,10 +1683,17 @@ namespace SAGESharp.LSS
                         List<string> parameters = new List<string>();
                         parameters.Add("this");
                         parameters.AddRange(method.Parameters.Select(token => token.Content));
-                        SubroutineContext context = new SubroutineContext(result.OSI, settings, true, parameters);
+                        SubroutineContext context = new SubroutineContext(result.Messages, result.OSI, settings, true, parameters);
                         foreach (InstructionStatement stmt in method.Body.Instructions)
                         {
-                            stmt.AcceptVisitor(context, null);
+                            try
+                            {
+                                stmt.AcceptVisitor(context, null);
+                            }
+                            catch (PanicException)
+                            {
+
+                            }
                         }
                         context.FinalizeInstructions();
                         OSIFile.MethodInfo destination = classes[cls.Name.Content].Methods.Find(m => m.NameSymbol == symbols[method.Name.Content]);
@@ -1666,19 +1716,29 @@ namespace SAGESharp.LSS
                 loopDetector.Push(toApply);
 
                 // Find the parent-est LSS class that needs to be applied
+                bool failed = false;
                 while (toApply.SuperclassName != null && lssClassesByName.ContainsKey(toApply.SuperclassName.Content)
                     && classesToApply.Contains(lssClassesByName[toApply.SuperclassName.Content]))
                 {
                     toApply = lssClassesByName[toApply.SuperclassName.Content];
                     if (loopDetector.Contains(toApply))
                     {
-                        throw new Exception("Infinite loop in class inheritance. (" + String.Join(" -> ", loopDetector.Select(c => c.Name)) + ")");
+                        Error(result, "Infinite loop in class inheritance. (" + String.Join(" -> ", loopDetector.Select(c => c.Name)) + ")", "LSS056", toApply.SuperclassName.Span, false);
+                        // The whole inheritance chain can't be processed properly, so skip them
+                        foreach (ClassStatement chainMember in loopDetector)
+                        {
+                            if (classesToApply.Contains(chainMember))
+                                classesToApply.Remove(chainMember);
+                        }
+                        failed = true;
                     }
                     else
                     {
                         loopDetector.Push(toApply);
                     }
                 }
+                if (failed)
+                    continue;
 
                 // Apply the inheritance
                 OSIFile.ClassInfo compiledClass = classes[toApply.Name.Content];
@@ -1687,7 +1747,8 @@ namespace SAGESharp.LSS
                 {
                     if (compiledClass.PropertySymbols.Contains(propertySymbol))
                     {
-                        throw new Exception("Class " + toApply.Name.Content + " cannot declare property " + result.OSI.Symbols[propertySymbol] + " because its superclass " + superclass.Name + " already declares it.");
+                        Error(result, "Class " + toApply.Name.Content + " cannot declare property " + result.OSI.Symbols[propertySymbol] + " because its superclass " + superclass.Name + " already declares it.", "LSS055", toApply.Properties.First(prop => prop.Name.Content == result.OSI.Symbols[propertySymbol]).Name.Span, false);
+                        continue;
                     }
                     compiledClass.PropertySymbols.Add(propertySymbol);
                 }

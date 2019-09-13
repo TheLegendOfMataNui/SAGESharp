@@ -71,16 +71,16 @@ namespace ShoefitterDX
                 catch (Exception ex)
                 {
                     result = new Parser.Result();
-                    result.Errors.Add(new CompileMessage("Parser exception: \n\n" + ex.ToString(), "LSS991", CompileMessage.MessageSeverity.Fatal, "<LSSInteractive>", 0, 0, 0));
+                    result.Messages.Add(new CompileMessage("Parser exception: \n\n" + ex.ToString(), "LSS991", CompileMessage.MessageSeverity.Fatal, "<LSSInteractive>", 0, 0, 0));
                 }
-                if (result.Errors.Count == 0)
+                if (result.Messages.Count == 0)
                 {
                     return true;
                 }
                 else
                 {
-                    ResultTextBox.Text = result.Errors.Count + " Parse Errors: \n";
-                    foreach (CompileMessage error in result.Errors)
+                    ResultTextBox.Text = result.Messages.Count + " Parse Errors: \n";
+                    foreach (CompileMessage error in result.Messages)
                     {
                         ResultTextBox.Text += "    " + error.ToString() + "\n";
                     }

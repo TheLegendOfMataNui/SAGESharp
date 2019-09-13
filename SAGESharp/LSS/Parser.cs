@@ -15,7 +15,7 @@ namespace SAGESharp.LSS
             public List<ClassStatement> Classes = new List<ClassStatement>();
             public List<SubroutineStatement> Functions = new List<SubroutineStatement>();
             public List<GlobalStatement> Globals = new List<GlobalStatement>();
-            public List<CompileMessage> Errors = new List<CompileMessage>();
+            public List<CompileMessage> Messages = new List<CompileMessage>();
         }
 
         private enum PanicType
@@ -60,7 +60,7 @@ namespace SAGESharp.LSS
             this.CurrentIndex = 0;
             this.CurrentLine = 0;
             Result result = new Result();
-            this.Errors = result.Errors;
+            this.Errors = result.Messages;
 
             while (!IsAtEnd())
             {
@@ -363,7 +363,7 @@ namespace SAGESharp.LSS
             this.CurrentIndex = 0;
             this.CurrentLine = 0;
             Result result = new Result();
-            this.Errors = result.Errors;
+            this.Errors = result.Messages;
 
             return ParseExpression();
         }

@@ -18,7 +18,7 @@ namespace SAGESharp.LSS
         }
 
         public string Message { get; }
-        public string ErrorCode { get; }
+        public string ErrorCode { get; } // Used: LSS000 - LSS088, LSS991 - LSS992
         public MessageSeverity Severity { get; }
         public SourceSpan Span { get; }
 
