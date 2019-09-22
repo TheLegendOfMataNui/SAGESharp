@@ -78,21 +78,6 @@ namespace SAGESharp.IO
     }
 
     /// <summary>
-    /// Where a string is located in a binary file.
-    /// </summary>
-    public enum StringPosition
-    {
-        /// <summary>
-        /// The string is located in the same position where the string is being read.
-        /// </summary>
-        Inline,
-        /// <summary>
-        /// The string is located at an offset that is located where the string is being read.
-        /// </summary>
-        AtOffset
-    }
-
-    /// <summary>
     /// Specifies a list (or a list of the given class) should read/write twice its length in a binary file.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
