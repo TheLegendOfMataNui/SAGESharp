@@ -86,6 +86,7 @@
     <Compile Include="IO\EdgeTests.cs" />
     <Compile Include="IO\IdentifierPropertyBinarySerializerTests.cs" />
     <Compile Include="IO\ListBinarySerializerTests.cs" />
+    <Compile Include="IO\ListNodeTests.cs" />
     <Compile Include="IO\PrimitiveBinarySerializerTests.cs" />
     <Compile Include="IO\PrimitiveTypeDataNodeTests.cs" />
     <Compile Include="IO\StringBinarySerializerTests.cs" />
@@ -114,7 +115,7 @@
     <Compile Include="SLB\Point3DEqualityTests.cs" />
     <Compile Include="Testing\AbstractTestCaseData.cs" />
     <Compile Include="Testing\Assertions.cs" />
-    <Compile Include="Testing\Matchers.cs" />
+    <Compile Include="Testing\NSubstitute.cs" />
     <Compile Include="Testing\ParameterGroup.cs" />
     <Compile Include="Testing\AbstractEqualityByRefTests.cs" />
     <Compile Include="Testing\AbstractEqualityByValTests.cs" />

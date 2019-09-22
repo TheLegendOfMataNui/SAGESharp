@@ -258,6 +258,61 @@ namespace SAGESharp.IO
         private static bool IsType(object value) => typeof(T) == value.GetType();
     }
 
+    internal sealed class ListNode<T> : IListNode
+    {
+        private readonly bool duplicateEntryCount;
+
+        public ListNode(IDataNode childNode, bool duplicateEntryCount = false)
+        {
+            Validate.ArgumentNotNull(nameof(childNode), childNode);
+
+            this.duplicateEntryCount = duplicateEntryCount;
+            ChildNode = childNode;
+        }
+
+        public IDataNode ChildNode { get; }
+
+        public int GetListCount(object list)
+        {
+            Validate.ArgumentNotNull(nameof(list), list);
+            ValidateIsList(list);
+
+            return list.As<IList<T>>().Count;
+        }
+
+        public object GetListEntry(object list, int index)
+        {
+            Validate.ArgumentNotNull(nameof(list), list);
+            ValidateIsList(list);
+
+            return list.As<IList<T>>()[index];
+        }
+
+        public uint Write(IBinaryWriter binaryWriter, object value)
+        {
+            Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
+            Validate.ArgumentNotNull(nameof(value), value);
+            ValidateIsList(value);
+
+            binaryWriter.WriteInt32(value.As<IList<T>>().Count);
+            if (duplicateEntryCount)
+            {
+                binaryWriter.WriteInt32(value.As<IList<T>>().Count);
+            }
+
+            uint offsetPosition = (uint)binaryWriter.Position;
+
+            binaryWriter.WriteUInt32(0);
+
+            return offsetPosition;
+        }
+
+        private static void ValidateIsList(object list) => Validate.Argument(
+            typeof(IList<T>).IsAssignableFrom(list.GetType()),
+            $"List argument is of type {list.GetType().Name} which should implement {typeof(IList<T>).Name} but doesn't."
+        );
+    }
+
     internal sealed class TreeWriter : ITreeWriter
     {
         private class QueueEntry
