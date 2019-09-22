@@ -6,6 +6,7 @@
 using Konvenience;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace SAGESharp.IO
 {
@@ -208,6 +209,61 @@ namespace SAGESharp.IO
         }
 
         private static bool IsOfType(object value) => typeof(T) == value.GetType();
+    }
+
+    internal sealed class StringDataNode : IDataNode
+    {
+
+        private static readonly IReadOnlyList<IEdge> edges = new List<IEdge>();
+
+        private readonly bool inlineString;
+
+        private readonly byte length;
+
+        public StringDataNode()
+        {
+            length = byte.MaxValue - 1;
+            inlineString = false;
+        }
+
+        public StringDataNode(byte length)
+        {
+            this.length = length;
+            inlineString = true;
+        }
+
+        public IReadOnlyList<IEdge> Edges => edges;
+
+        public void Write(IBinaryWriter binaryWriter, object value)
+        {
+            Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
+            Validate.ArgumentNotNull(nameof(value), value);
+            Validate.Argument(IsString(value), $"Cannot write value of type {value.GetType().Name} as a string.");
+            Validate.Argument(IsCorrectLength(value), $"String length is longer than {length}.");
+
+            string valueAsString = value as string;
+
+            if (inlineString)
+            {
+                binaryWriter.WriteBytes(Encoding.ASCII.GetBytes(valueAsString));
+
+                int diff = length - valueAsString.Length;
+                if (diff != 0)
+                {
+                    binaryWriter.WriteBytes(new byte[diff]);
+                }
+            }
+            else
+            {
+                binaryWriter.WriteByte((byte)valueAsString.Length);
+                binaryWriter.WriteBytes(Encoding.ASCII.GetBytes(valueAsString));
+                binaryWriter.WriteByte(0);
+            }
+        }
+
+        private bool IsCorrectLength(object value) => value.As<string>().Length <= length;
+
+        private static bool IsString(object value) => typeof(string).Equals(value.GetType());
     }
 
     internal sealed class UserTypeDataNode<T> : IDataNode

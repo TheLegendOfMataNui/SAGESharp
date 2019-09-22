@@ -91,6 +91,7 @@
     <Compile Include="IO\PrimitiveBinarySerializerTests.cs" />
     <Compile Include="IO\PrimitiveTypeDataNodeTests.cs" />
     <Compile Include="IO\StringBinarySerializerTests.cs" />
+    <Compile Include="IO\StringDataNodeTests.cs" />
     <Compile Include="IO\TreeWriterTests.cs" />
     <Compile Include="IO\UserTypeDataNodeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
