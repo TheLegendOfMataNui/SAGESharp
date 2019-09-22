@@ -258,6 +258,35 @@ namespace SAGESharp.IO
         private static bool IsType(object value) => typeof(T) == value.GetType();
     }
 
+    internal sealed class OffsetNode : IOffsetNode
+    {
+        public OffsetNode(IDataNode childNode)
+        {
+            Validate.ArgumentNotNull(nameof(childNode), childNode);
+
+            ChildNode = childNode;
+        }
+
+        public IDataNode ChildNode { get; }
+
+        public uint Write(IBinaryWriter binaryWriter, object value)
+        {
+            Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
+            Validate.ArgumentNotNull(nameof(value), value);
+
+            if (binaryWriter.Position > uint.MaxValue)
+            {
+                throw new InvalidOperationException("Offset is bigger than 4 bytes.");
+            }
+
+            uint offsetPosition = (uint) binaryWriter.Position;
+
+            binaryWriter.WriteUInt32(0);
+
+            return offsetPosition;
+        }
+    }
+
     internal sealed class ListNode<T> : IListNode
     {
         private readonly bool duplicateEntryCount;
