@@ -143,6 +143,60 @@ namespace SAGESharp.IO
             => new BadTypeException(typeof(T), message, innerException);
     }
 
+    internal sealed class TreeBinarySerializer<T> : IBinarySerializer<T>
+    {
+        internal const uint FOOTER_MAGIC_NUMBER = 0x00C0FFEE;
+
+        // This is temporary while the appropiate ITreeWriter
+        // class that used IDataNode is implemented
+        private readonly IBinarySerializer<T> reader;
+
+        private readonly ITreeWriter treeWriter;
+
+        private readonly IDataNode rootNode;
+
+        private readonly Action<IBinaryWriter> alignFooter;
+
+        public TreeBinarySerializer(
+            IBinarySerializer<T> reader,
+            ITreeWriter treeWriter,
+            IDataNode rootNode,
+            Action<IBinaryWriter> footerAligner
+        ) {
+            Validate.ArgumentNotNull(nameof(reader), reader);
+            Validate.ArgumentNotNull(nameof(treeWriter), treeWriter);
+            Validate.ArgumentNotNull(nameof(rootNode), rootNode);
+            Validate.ArgumentNotNull(nameof(footerAligner), footerAligner);
+
+            this.reader = reader;
+            this.treeWriter = treeWriter;
+            this.rootNode = rootNode;
+            alignFooter = footerAligner;
+        }
+
+        public T Read(IBinaryReader binaryReader)
+        {
+            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+
+            return reader.Read(binaryReader);
+        }
+
+        public void Write(IBinaryWriter binaryWriter, T value)
+        {
+            Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
+            Validate.ArgumentNotNull<object>(nameof(value), value);
+
+            IReadOnlyList<uint> offsets = treeWriter.Write(binaryWriter, value, rootNode);
+
+            alignFooter(binaryWriter);
+
+            // Write footer
+            offsets.ForEach(binaryWriter.WriteUInt32);
+            binaryWriter.WriteInt32(offsets.Count);
+            binaryWriter.WriteUInt32(FOOTER_MAGIC_NUMBER);
+        }
+    }
+
     internal sealed class PrimitiveBinarySerializer<T> : IBinarySerializer<T>
     {
         public T Read(IBinaryReader binaryReader)
