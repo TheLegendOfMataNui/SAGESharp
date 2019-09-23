@@ -465,12 +465,16 @@ namespace SAGESharp.IO
     {
         private readonly Func<T, object> extractor;
 
-        public Edge(Func<T, object> extractor, object childNode)
+        private readonly Action<T, object> setter;
+
+        public Edge(Func<T, object> extractor, Action<T, object> setter, object childNode)
         {
             Validate.ArgumentNotNull(nameof(extractor), extractor);
+            Validate.ArgumentNotNull(nameof(setter), setter);
             Validate.ArgumentNotNull(nameof(childNode), childNode);
 
             this.extractor = extractor;
+            this.setter = setter;
             ChildNode = childNode;
         }
 
@@ -485,7 +489,13 @@ namespace SAGESharp.IO
         }
 
         public void SetChildValue(object value, object childValue)
-            => throw new NotImplementedException();
+        {
+            Validate.ArgumentNotNull(nameof(value), value);
+            Validate.ArgumentNotNull(nameof(childValue), childValue);
+            Validate.Argument(IsType(value), $"Expected {nameof(value)} to be of type {typeof(T).Name} but was of type {value.GetType().Name} instead");
+
+            setter((T)value, childValue);
+        }
 
         private static bool IsType(object value) => typeof(T) == value.GetType();
     }
