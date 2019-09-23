@@ -14,11 +14,14 @@ namespace SAGESharp.IO
 {
     class PrimitiveTypeDataNodeTest
     {
+        private readonly IBinaryReader binaryReader = Substitute.For<IBinaryReader>();
+
         private readonly IBinaryWriter binaryWriter = Substitute.For<IBinaryWriter>();
 
         [SetUp]
         public void Setup()
         {
+            binaryReader.ClearSubstitute();
             binaryWriter.ClearSubstitute();
         }
 
@@ -45,6 +48,35 @@ namespace SAGESharp.IO
 
             node.Edges.Should().BeEmpty();
         }
+
+        #region Reading
+        [TestCaseSource(nameof(SUPPORTED_PRIMITIVES_TEST_CASES))]
+        public void Test_Reading_A_Primitive<T>(PrimitiveTypeTestCaseData<T> testCaseData)
+            where T : struct
+        {
+            IDataNode node = new PrimitiveTypeDataNode<T>();
+
+            testCaseData.SetupRead(binaryReader);
+
+            object result = node.Read(binaryReader);
+
+            result.Should()
+                .BeOfType(typeof(T))
+                .And
+                .Be(testCaseData.Value);
+        }
+
+        [TestCaseSource(nameof(SUPPORTED_PRIMITIVES_TEST_CASES))]
+        public void Test_Reading_A_Primitive_From_A_Null_Reader<T>(PrimitiveTypeTestCaseData<T> testCaseData)
+            where T : struct
+        {
+            IDataNode node = new PrimitiveTypeDataNode<T>();
+            Action action = () => node.Read(null);
+
+            action.Should()
+                .ThrowArgumentNullException("binaryReader");
+        }
+        #endregion
 
         #region Writing
         [TestCaseSource(nameof(SUPPORTED_PRIMITIVES_TEST_CASES))]
@@ -98,62 +130,88 @@ namespace SAGESharp.IO
         {
             new PrimitiveTypeTestCaseData<byte>(
                 value: 0xFE,
+                setupRead: (binaryReader, value) => binaryReader.ReadByte().Returns(value),
                 verifyWrite: (binaryWriter, value) => binaryWriter.Received().WriteByte(value)
             ),
             new PrimitiveTypeTestCaseData<short>(
                 value: 0x1234,
+                setupRead: (binaryReader, value) => binaryReader.ReadInt16().Returns(value),
                 verifyWrite: (binaryWriter, value) => binaryWriter.Received().WriteInt16(value)
             ),
             new PrimitiveTypeTestCaseData<ushort>(
                 value: 0xFEDC,
+                setupRead: (binaryReader, value) => binaryReader.ReadUInt16().Returns(value),
                 verifyWrite: (binaryWriter, value) => binaryWriter.Received().WriteUInt16(value)
             ),
             new PrimitiveTypeTestCaseData<int>(
                 value: 0x12345678,
+                setupRead: (binaryReader, value) => binaryReader.ReadInt32().Returns(value),
                 verifyWrite: (binaryWrite, value) => binaryWrite.Received().WriteInt32(value)
             ),
             new PrimitiveTypeTestCaseData<uint>(
                 value: 0xFEDCBA98,
+                setupRead: (binaryReader, value) => binaryReader.ReadUInt32().Returns(value),
                 verifyWrite: (binaryWriter, value) => binaryWriter.Received().WriteUInt32(value)
             ),
             new PrimitiveTypeTestCaseData<float>(
                 value: 2.5f,
+                setupRead: (binaryReader, value) => binaryReader.ReadFloat().Returns(value),
                 verifyWrite: (binaryWriter, value) => binaryWriter.Received().WriteFloat(value)
             ),
             new PrimitiveTypeTestCaseData<double>(
                 value: 3.2,
+                setupRead: (binaryReader, value) => binaryReader.ReadDouble().Returns(value),
                 verifyWrite: (binaryWriter, value) => binaryWriter.Received().WriteDouble(value)
             ),
             new PrimitiveTypeTestCaseData<SLB.Identifier>(
                 value: SLB.Identifier.From("IDEN"),
+                setupRead: (binaryReader, value) => binaryReader.ReadUInt32().Returns((uint)value),
                 verifyWrite: (binaryWriter, value) => binaryWriter.Received().WriteUInt32(value)
             ),
             new PrimitiveTypeTestCaseData<ByteEnum>(
                 value: ByteEnum.Value,
+                setupRead: (binaryReader, value) => binaryReader.ReadByte().Returns((byte)ByteEnum.Value),
                 verifyWrite: (binaryWriter, value) => binaryWriter.Received().WriteByte((byte)ByteEnum.Value)
             ),
             new PrimitiveTypeTestCaseData<ShortEnum>(
                 value: ShortEnum.Value,
+                setupRead: (binaryReader, value) => binaryReader.ReadInt16().Returns((short)ShortEnum.Value),
                 verifyWrite: (binaryWriter, value) => binaryWriter.Received().WriteInt16((short)ShortEnum.Value)
+            ),
+            new PrimitiveTypeTestCaseData<UShortEnum>(
+                value: UShortEnum.Value,
+                setupRead: (binaryReader, value) => binaryReader.ReadUInt16().Returns((ushort)UShortEnum.Value),
+                verifyWrite: (binaryWriter, value) => binaryWriter.Received().WriteUInt16((ushort)UShortEnum.Value)
+            ),
+            new PrimitiveTypeTestCaseData<IntEnum>(
+                value: IntEnum.Value,
+                setupRead: (binaryReader, value) => binaryReader.ReadInt32().Returns((int)IntEnum.Value),
+                verifyWrite: (binaryWriter, value) => binaryWriter.Received().WriteInt32((int)IntEnum.Value)
             ),
             new PrimitiveTypeTestCaseData<UIntEnum>(
                 value: UIntEnum.Value,
+                setupRead: (binaryReader, value) => binaryReader.ReadUInt32().Returns((uint)UIntEnum.Value),
                 verifyWrite: (binaryWriter, value) => binaryWriter.Received().WriteUInt32((uint)UIntEnum.Value)
             )
         };
 
         public class PrimitiveTypeTestCaseData<T> : AbstractTestCaseData
         {
+            private readonly Action<IBinaryReader, T> setupRead;
+
             private readonly Action<IBinaryWriter, T> verifyWrite;
 
-            public PrimitiveTypeTestCaseData(T value, Action<IBinaryWriter, T> verifyWrite)
+            public PrimitiveTypeTestCaseData(T value, Action<IBinaryReader, T> setupRead, Action<IBinaryWriter, T> verifyWrite)
                 : base($"Test case for a primitive of type {typeof(T).Name}")
             {
                 Value = value;
+                this.setupRead = setupRead;
                 this.verifyWrite = verifyWrite;
             }
 
             public T Value { get; }
+
+            public void SetupRead(IBinaryReader binaryReader) => setupRead(binaryReader, Value);
 
             public void VerifyWrite(IBinaryWriter binaryWriter) => verifyWrite(binaryWriter, Value);
         }
@@ -169,9 +227,19 @@ namespace SAGESharp.IO
             Value = 82
         }
 
-        enum UIntEnum : uint
+        enum UShortEnum : ushort
         {
             Value = 83
+        }
+
+        enum IntEnum : int
+        {
+            Value = 84
+        }
+
+        enum UIntEnum : uint
+        {
+            Value = 85
         }
         #endregion
     }

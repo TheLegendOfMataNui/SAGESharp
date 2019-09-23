@@ -210,40 +210,90 @@ namespace SAGESharp.IO
     #region Implementations
     internal sealed class PrimitiveTypeDataNode<T> : IDataNode where T : struct
     {
+        private readonly Func<IBinaryReader, object> read;
+
         private readonly Action<IBinaryWriter, object> write;
 
         public PrimitiveTypeDataNode()
         {
             if (TypeIs<byte>())
             {
+                if (!typeof(T).IsEnum)
+                {
+                    read = (binaryReader) => binaryReader.ReadByte();
+                }
+                else
+                {
+                    read = (binaryReader) => Enum.ToObject(typeof(T), binaryReader.ReadByte());
+                }
+
                 write = (binaryWriter, value) => binaryWriter.WriteByte((byte)value);
             }
             else if (TypeIs<short>())
             {
+                if (!typeof(T).IsEnum)
+                {
+                    read = (binaryReader) => binaryReader.ReadInt16();
+                }
+                else
+                {
+                    read = (binaryReader) => Enum.ToObject(typeof(T), binaryReader.ReadInt16());
+                }
+
                 write = (binaryWriter, value) => binaryWriter.WriteInt16((short)value);
             }
             else if (TypeIs<ushort>())
             {
+                if (!typeof(T).IsEnum)
+                {
+                    read = (binaryReader) => binaryReader.ReadUInt16();
+                }
+                else
+                {
+                    read = (binaryReader) => Enum.ToObject(typeof(T), binaryReader.ReadUInt16());
+                }
+
                 write = (binaryWriter, value) => binaryWriter.WriteUInt16((ushort)value);
             }
             else if (TypeIs<int>())
             {
+                if (!typeof(T).IsEnum)
+                {
+                    read = (binaryReader) => binaryReader.ReadInt32();
+                }
+                else
+                {
+                    read = (binaryReader) => Enum.ToObject(typeof(T), binaryReader.ReadInt32());
+                }
+
                 write = (binaryWriter, value) => binaryWriter.WriteInt32((int)value);
             }
             else if (TypeIs<uint>())
             {
+                if (!typeof(T).IsEnum)
+                {
+                    read = (binaryReader) => binaryReader.ReadUInt32();
+                }
+                else
+                {
+                    read = (binaryReader) => Enum.ToObject(typeof(T), binaryReader.ReadUInt32());
+                }
+
                 write = (binaryWriter, value) => binaryWriter.WriteUInt32((uint)value);
             }
             else if (TypeIs<float>())
             {
+                read = (binaryReader) => binaryReader.ReadFloat();
                 write = (binaryWriter, value) => binaryWriter.WriteFloat((float)value);
             }
             else if (TypeIs<double>())
             {
+                read = (binaryReader) => binaryReader.ReadDouble();
                 write = (binaryWriter, value) => binaryWriter.WriteDouble((double)value);
             }
             else if (TypeIs<SLB.Identifier>())
             {
+                read = (binaryReader) => (SLB.Identifier)binaryReader.ReadUInt32();
                 write = (binaryWriter, value) => binaryWriter.WriteUInt32((SLB.Identifier)value);
             }
             else
@@ -255,7 +305,11 @@ namespace SAGESharp.IO
         public IReadOnlyList<IEdge> Edges => new List<IEdge>();
 
         public object Read(IBinaryReader binaryReader)
-            => throw new NotImplementedException();
+        {
+            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+
+            return read(binaryReader);
+        }
 
         public void Write(IBinaryWriter binaryWriter, object value)
         {
