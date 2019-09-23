@@ -432,7 +432,7 @@ namespace SAGESharp.IO
         private static bool IsString(object value) => typeof(string).Equals(value.GetType());
     }
 
-    internal sealed class UserTypeDataNode<T> : IDataNode
+    internal sealed class UserTypeDataNode<T> : IDataNode where T : new()
     {
         public UserTypeDataNode(IReadOnlyList<IEdge> edges)
         {
@@ -445,7 +445,11 @@ namespace SAGESharp.IO
         public IReadOnlyList<IEdge> Edges { get; }
 
         public object Read(IBinaryReader binaryReader)
-            => throw new NotImplementedException();
+        {
+            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+
+            return new T();
+        }
 
         public void Write(IBinaryWriter binaryWriter, object value)
         {

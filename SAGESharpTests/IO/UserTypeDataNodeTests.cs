@@ -67,6 +67,26 @@ namespace SAGESharp.IO
                 .Equal(edges);
         }
 
+        #region Reading
+        [Test]
+        public void Test_Reading_An_Object()
+        {
+            object result = node.Read(Substitute.For<IBinaryReader>());
+
+            result.Should()
+                .BeOfType<UserType>();
+        }
+
+        [Test]
+        public void Test_Reading_An_Object_From_A_Null_Reader()
+        {
+            Action action = () => node.Read(null);
+
+            action.Should()
+                .ThrowArgumentNullException("binaryReader");
+        }
+        #endregion
+
         #region Writing
         [Test]
         public void Test_Writing_An_Objet()
