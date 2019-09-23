@@ -6,6 +6,7 @@
 using Konvenience;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace SAGESharp.IO
@@ -358,7 +359,46 @@ namespace SAGESharp.IO
         public IReadOnlyList<IEdge> Edges => edges;
 
         public object Read(IBinaryReader binaryReader)
-            => throw new NotImplementedException();
+        {
+            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+
+            if (inlineString)
+            {
+                return ReadInlineString(binaryReader);
+            }
+            else
+            {
+                return ReadOfflineString(binaryReader);
+            }
+        }
+
+        private string ReadInlineString(IBinaryReader binaryReader)
+        {
+            byte[] bytes = binaryReader.ReadBytes(length);
+            int posOfNullCharacter = 0;
+
+            // Get the position of the first null character
+            while (posOfNullCharacter < bytes.Length && bytes[posOfNullCharacter] != 0)
+            {
+                posOfNullCharacter++;
+            }
+
+            return bytes.Take(posOfNullCharacter)
+                .ToArray()
+                .Let(Encoding.ASCII.GetString);
+        }
+
+        private string ReadOfflineString(IBinaryReader binaryReader)
+        {
+            byte length = binaryReader.ReadByte();
+            string result = binaryReader.ReadBytes(length)
+                .Let(Encoding.ASCII.GetString);
+
+            // Read string termination character
+            binaryReader.ReadByte();
+
+            return result;
+        }
 
         public void Write(IBinaryWriter binaryWriter, object value)
         {

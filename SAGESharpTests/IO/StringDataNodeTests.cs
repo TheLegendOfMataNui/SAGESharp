@@ -16,16 +16,20 @@ namespace SAGESharp.IO
 {
     class StringDataNodeTests
     {
+        private readonly IBinaryReader binaryReader;
+
         private readonly IBinaryWriter binaryWriter;
 
         public StringDataNodeTests()
         {
+            binaryReader = Substitute.For<IBinaryReader>();
             binaryWriter = Substitute.For<IBinaryWriter>();
         }
 
         [SetUp]
         public void Setup()
         {
+            binaryReader.ClearSubstitute();
             binaryWriter.ClearSubstitute();
         }
 
@@ -37,6 +41,71 @@ namespace SAGESharp.IO
             dataNode.Edges
                 .Should()
                 .BeEmpty();
+        }
+
+        [Test]
+        public void Test_Reading_An_Offline_String()
+        {
+            IDataNode dataNode = new StringDataNode();
+            string value = "value";
+
+            binaryReader.ReadByte().Returns((byte)value.Length, (byte)0);
+            binaryReader.ReadBytes(value.Length).Returns(Encoding.ASCII.GetBytes(value));
+
+            object result = dataNode.Read(binaryReader);
+
+            result.Should().Be(value);
+
+            Received.InOrder(() =>
+            {
+                binaryReader.ReadByte();
+                binaryReader.ReadBytes(value.Length);
+                binaryReader.ReadByte();
+            });
+        }
+
+        [Test]
+        public void Test_Reading_An_Inline_String_Of_Exactly_The_Fixed_Size()
+        {
+            byte length = 20;
+            IDataNode dataNode = new StringDataNode(length);
+            string value = new string('d', length);
+
+            binaryReader.ReadBytes(length).Returns(Encoding.ASCII.GetBytes(value));
+
+            object result = dataNode.Read(binaryReader);
+
+            result.Should().Be(value);
+
+            binaryReader.Received().ReadBytes(length);
+        }
+
+        [Test]
+        public void Test_Reading_An_Inline_String_Of_Not_Exactly_The_Fixed_Size()
+        {
+            byte length = 20;
+            IDataNode dataNode = new StringDataNode(length);
+            string value = new string('c', length / 2);
+            byte[] bytes = new byte[length];
+
+            Array.Copy(Encoding.ASCII.GetBytes(value), bytes, value.Length);
+            binaryReader.ReadBytes(length).Returns(bytes);
+
+            object result = dataNode.Read(binaryReader);
+
+            result.Should().Be(value);
+
+            binaryReader.Received().ReadBytes(length);
+        }
+
+        [Test]
+        public void Test_Reading_A_String_From_A_Null_Reader()
+        {
+            IDataNode dataNode = new StringDataNode();
+
+            Action action = () => dataNode.Read(null);
+            action.Should()
+                .ThrowArgumentNullException("binaryReader");
         }
 
         [Test]
