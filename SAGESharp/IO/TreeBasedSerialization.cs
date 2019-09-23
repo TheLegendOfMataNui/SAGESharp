@@ -17,6 +17,17 @@ namespace SAGESharp.IO
     internal interface IDataNode
     {
         /// <summary>
+        /// Reads a value from the <paramref name="binaryReader"/>.
+        /// </summary>
+        /// 
+        /// <param name="binaryReader">The reader that will be used to read the value.</param>
+        /// 
+        /// <returns>The value read from <paramref name="binaryReader"/>.</returns>
+        /// 
+        /// <exception cref="ArgumentNullException">If <paramref name="binaryReader"/> is null.</exception>
+        object Read(IBinaryReader binaryReader);
+
+        /// <summary>
         /// Writes <paramref name="value"/> to the given <paramref name="binaryWriter"/>.
         /// </summary>
         /// 
@@ -42,7 +53,6 @@ namespace SAGESharp.IO
     /// </summary>
     internal interface IOffsetNode
     {
-
         /// <summary>
         /// Writes <paramref name="value"/> to the given <paramref name="binaryWriter"/>.
         /// </summary>
@@ -72,6 +82,24 @@ namespace SAGESharp.IO
     internal interface IListNode : IOffsetNode
     {
         /// <summary>
+        /// Creates an instance of the corresponding list type.
+        /// </summary>
+        /// 
+        /// <returns>A new instance of the corresponding list type.</returns>
+        object CreateList();
+
+        /// <summary>
+        /// Reads the amount of entries for the list from <paramref name="binaryReader"/>.
+        /// </summary>
+        /// 
+        /// <param name="binaryReader">The input binary reader to read the count from.</param>
+        /// 
+        /// <returns>The amount of entries for a list.</returns>
+        /// 
+        /// <exception cref="ArgumentNullException">If <paramref name="binaryReader"/> is null.</exception>
+        int ReadEntryCount(IBinaryReader binaryReader);
+
+        /// <summary>
         /// Retrieves the amount of entries in the given <paramref name="list"/>.
         /// </summary>
         /// 
@@ -96,6 +124,16 @@ namespace SAGESharp.IO
         /// <exception cref="ArgumentNullException">If <paramref name="list"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">If <paramref name="index"/> is not valid for the input list.</exception>
         object GetListEntry(object list, int index);
+
+        /// <summary>
+        /// Adds <paramref name="value"/> as a new entry to <paramref name="list"/>.
+        /// </summary>
+        /// 
+        /// <param name="list">The list to add the entry to.</param>
+        /// <param name="value">The entry that will be added to the list.</param>
+        /// 
+        /// <exception cref="ArgumentNullException">If either argument is null.</exception>
+        void AddListEntry(object list, object value);
     }
 
     /// <summary>
@@ -117,6 +155,35 @@ namespace SAGESharp.IO
         /// 
         /// <returns>The child value represented by the child node.</returns>
         object ExtractChildValue(object value);
+
+        /// <summary>
+        /// Sets this edge's corresponding child of <paramref name="value"/> to <paramref name="childValue"/>.
+        /// </summary>
+        /// 
+        /// <param name="value">The value to set the child.</param>
+        /// <param name="childValue">The child value that will be set.</param>
+        /// 
+        /// <exception cref="ArgumentNullException">If either argument is null.</exception>
+        void SetChildValue(object value, object childValue);
+    }
+
+    /// <summary>
+    /// Represents an object that can read a value using an SLB graph.
+    /// </summary>
+    internal interface ITreeReader
+    {
+        /// <summary>
+        /// Reads a value from <paramref name="binaryReader"/>
+        /// using the SLB that starts in the given <paramref name="rootNode"/>.
+        /// </summary>
+        /// 
+        /// <param name="binaryReader">The reader that will be used to read the value.</param>
+        /// <param name="rootNode">The root node of the SLB graph that will be used to read the value.</param>
+        /// 
+        /// <returns>The value read from <paramref name="binaryReader"/>.</returns>
+        /// 
+        /// <exception cref="ArgumentNullException">If any argument is null.</exception>
+        object Read(IBinaryReader binaryReader, IDataNode rootNode);
     }
 
     /// <summary>
@@ -187,6 +254,9 @@ namespace SAGESharp.IO
 
         public IReadOnlyList<IEdge> Edges => new List<IEdge>();
 
+        public object Read(IBinaryReader binaryReader)
+            => throw new NotImplementedException();
+
         public void Write(IBinaryWriter binaryWriter, object value)
         {
             Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
@@ -213,7 +283,6 @@ namespace SAGESharp.IO
 
     internal sealed class StringDataNode : IDataNode
     {
-
         private static readonly IReadOnlyList<IEdge> edges = new List<IEdge>();
 
         private readonly bool inlineString;
@@ -233,6 +302,9 @@ namespace SAGESharp.IO
         }
 
         public IReadOnlyList<IEdge> Edges => edges;
+
+        public object Read(IBinaryReader binaryReader)
+            => throw new NotImplementedException();
 
         public void Write(IBinaryWriter binaryWriter, object value)
         {
@@ -278,6 +350,9 @@ namespace SAGESharp.IO
 
         public IReadOnlyList<IEdge> Edges { get; }
 
+        public object Read(IBinaryReader binaryReader)
+            => throw new NotImplementedException();
+
         public void Write(IBinaryWriter binaryWriter, object value)
         {
             Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
@@ -310,6 +385,9 @@ namespace SAGESharp.IO
 
             return extractor((T)value);
         }
+
+        public void SetChildValue(object value, object childValue)
+            => throw new NotImplementedException();
 
         private static bool IsType(object value) => typeof(T) == value.GetType();
     }
@@ -372,6 +450,15 @@ namespace SAGESharp.IO
 
             return list.As<IList<T>>()[index];
         }
+
+        public void AddListEntry(object list, object value)
+            => throw new NotImplementedException();
+
+        public object CreateList()
+            => throw new NotImplementedException();
+
+        public int ReadEntryCount(IBinaryReader binaryReader)
+            => throw new NotImplementedException();
 
         public uint Write(IBinaryWriter binaryWriter, object value)
         {
