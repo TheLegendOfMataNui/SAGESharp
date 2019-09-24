@@ -15,6 +15,8 @@ namespace SAGESharp.IO
 {
     class ListNodeTests
     {
+        private readonly IBinaryReader binaryReader;
+
         private readonly IBinaryWriter binaryWriter;
 
         private readonly IDataNode childNode;
@@ -22,6 +24,7 @@ namespace SAGESharp.IO
         public ListNodeTests()
         {
             childNode = Substitute.For<IDataNode>();
+            binaryReader = Substitute.For<IBinaryReader>();
             binaryWriter = Substitute.For<IBinaryWriter>();
         }
 
@@ -29,6 +32,7 @@ namespace SAGESharp.IO
         public void Setup()
         {
             childNode.ClearSubstitute();
+            binaryReader.ClearSubstitute();
             binaryWriter.ClearSubstitute();
         }
 
@@ -196,6 +200,110 @@ namespace SAGESharp.IO
                 .ThrowExactly<ArgumentException>()
                 .WithMessage($"List argument is of type {list.GetType().Name} which should " +
                     $"implement {typeof(IList<string>).Name} but doesn't.");
+        }
+
+        [Test]
+        public void Test_Adding_An_Entry_To_A_List()
+        {
+            IList<string> list = new List<string>();
+            IListNode listNode = BuildStringListNode();
+            string value = "value";
+
+            listNode.AddListEntry(list, value);
+
+            list.Should().HaveCount(1);
+            list[0].Should().BeSameAs(value);
+        }
+
+        [Test]
+        public void Test_Adding_An_Entry_To_A_Null_List()
+        {
+            IListNode listNode = BuildStringListNode();
+            Action action = () => listNode.AddListEntry(null, string.Empty);
+
+            action.Should()
+                .ThrowArgumentNullException("list");
+        }
+
+        [Test]
+        public void Test_Adding_A_Null_Entry_To_A_List()
+        {
+            IListNode listNode = BuildStringListNode();
+            Action action = () => listNode.AddListEntry(new List<string>(), null);
+
+            action.Should()
+                .ThrowArgumentNullException("value");
+        }
+
+        [Test]
+        public void Test_Adding_An_Element_To_A_List_Of_Incorrect_Type()
+        {
+            IList<int> list = new List<int>();
+            IListNode listNode = BuildStringListNode();
+            Action action = () => listNode.AddListEntry(list, string.Empty);
+
+            action.Should()
+                .ThrowExactly<ArgumentException>()
+                .WithMessage($"List argument is of type {list.GetType().Name} which should " +
+                    $"implement {typeof(IList<string>).Name} but doesn't.");
+        }
+
+        [Test]
+        public void Test_Adding_An_Element_Of_Invalid_Type_To_A_List()
+        {
+            IList<string> list = BuildStringList();
+            IListNode listNode = BuildStringListNode();
+            int value = 1;
+            Action action = () => listNode.AddListEntry(list, value);
+
+            action.Should()
+                .ThrowExactly<ArgumentException>()
+                .WithMessage($"Value should be of type {typeof(string).Name}, " +
+                    $"but is of type {value.GetType().Name} instead.");
+        }
+
+        [Test]
+        public void Test_Creating_A_List_Instance()
+        {
+            IListNode listNode = BuildStringListNode();
+
+            object result = listNode.CreateList();
+
+            result.Should()
+                .BeOfType<List<string>>()
+                .Which
+                .Should()
+                .HaveCount(0);
+        }
+
+        [Test]
+        public void Test_Reading_Entry_Count()
+        {
+            IListNode listNode = BuildStringListNode(duplicateEntryCount: false);
+            int offset = 20;
+
+            binaryReader.ReadInt32().Returns(offset);
+
+            int result = listNode.ReadEntryCount(binaryReader);
+
+            result.Should().Be(offset);
+
+            binaryReader.Received().ReadInt32();
+        }
+
+        [Test]
+        public void Test_Reading_Duplicate_Entry_Count()
+        {
+            IListNode listNode = BuildStringListNode(duplicateEntryCount: true);
+            int offset = 20;
+
+            binaryReader.ReadInt32().Returns(offset, offset);
+
+            int result = listNode.ReadEntryCount(binaryReader);
+
+            result.Should().Be(offset);
+
+            binaryReader.Received(2).ReadInt32();
         }
         #endregion
 

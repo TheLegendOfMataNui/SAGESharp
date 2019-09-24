@@ -560,13 +560,36 @@ namespace SAGESharp.IO
         }
 
         public void AddListEntry(object list, object value)
-            => throw new NotImplementedException();
+        {
+            Validate.ArgumentNotNull(nameof(list), list);
+            Validate.ArgumentNotNull(nameof(value), value);
+            ValidateIsList(list);
+            Validate.Argument(
+                typeof(T).Equals(value.GetType()),
+                $"Value should be of type {typeof(string).Name}, but is of type {value.GetType().Name} instead."
+            );
+
+            list.As<IList<T>>().Add((T)value);
+        }
 
         public object CreateList()
-            => throw new NotImplementedException();
+        {
+            return new List<T>();
+        }
 
         public int ReadEntryCount(IBinaryReader binaryReader)
-            => throw new NotImplementedException();
+        {
+            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+
+            int result = binaryReader.ReadInt32();
+
+            if (duplicateEntryCount)
+            {
+                binaryReader.ReadInt32();
+            }
+
+            return result;
+        }
 
         public uint Write(IBinaryWriter binaryWriter, object value)
         {
