@@ -49,6 +49,8 @@ namespace SAGESharp.IO.Trees
 
                 node.ChildNode.Returns(ChildNode);
 
+                node.CreateList().Returns(new List<T>());
+
                 node.GetListCount(Arg.Any<IList<T>>()).Returns(args =>
                 {
                     IList<T> list = (IList<T>)args[0];
@@ -64,7 +66,26 @@ namespace SAGESharp.IO.Trees
                     return list[index];
                 });
 
+                SetupAddEntry(node);
+
                 return node;
+            }
+
+            private void SetupAddEntry(IListNode node)
+            {
+                // Setup in this convoluted way so the "list" variable
+                // is different everytime "AddListEntry" is called
+                // otherwise "list" will be the same for different calls
+                void setup()
+                {
+                    IList<T> list = default;
+                    node.AddListEntry(
+                        Arg.Do<IList<T>>(val => list = val),
+                        Arg.Do<T>(entry => list.Add(entry))
+                    );
+                }
+
+                setup();
             }
         }
 
@@ -73,6 +94,8 @@ namespace SAGESharp.IO.Trees
             public object ChildNode { get; set; }
 
             public Func<T, object> ChildExtractor { get; set; }
+
+            public Action<T, object> ChildSetter { get; set; }
 
             public IEdge Build()
             {
@@ -86,7 +109,26 @@ namespace SAGESharp.IO.Trees
                         .Returns(args => ChildExtractor((T)args[0]));
                 }
 
+                SetupSetChildValue(edge);
+
                 return edge;
+            }
+
+            private void SetupSetChildValue(IEdge edge)
+            {
+                // Setup in this convoluted way so the "value" variable
+                // is different everytime "SetChildValue" is called
+                // otherwise "value" will be the same for different calls
+                void setup()
+                {
+                    T value = default;
+                    edge.SetChildValue(
+                        Arg.Do<T>(val => value = val),
+                        Arg.Do<object>(childVal => ChildSetter(value, childVal))
+                    );
+                }
+
+                setup();
             }
         }
     }

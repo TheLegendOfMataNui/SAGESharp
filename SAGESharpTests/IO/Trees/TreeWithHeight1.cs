@@ -16,17 +16,20 @@ namespace SAGESharp.IO.Trees
                 new BuilderFor.EdgeSubstitute<Class>
                 {
                     ChildNode = new BuilderFor.DataNodeSubstitute().Build(),
-                    ChildExtractor = value => value.Int
+                    ChildExtractor = value => value.Int,
+                    ChildSetter = (value, childValue) => value.Int = (int)childValue
                 }.Build(),
                 new BuilderFor.EdgeSubstitute<Class>
                 {
                     ChildNode = new BuilderFor.DataNodeSubstitute().Build(),
                     ChildExtractor = value => value.Float,
+                    ChildSetter = (value, childValue) => value.Float = (float)childValue
                 }.Build(),
                 new BuilderFor.EdgeSubstitute<Class>
                 {
                     ChildNode = new BuilderFor.DataNodeSubstitute().Build(),
-                    ChildExtractor = value => value.Byte
+                    ChildExtractor = value => value.Byte,
+                    ChildSetter = (value, childValue) => value.Byte = (byte)childValue
                 }.Build()
             }
         }.Build();

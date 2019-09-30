@@ -19,7 +19,8 @@ namespace SAGESharp.IO.Trees
                     {
                         ChildNode = TreeWithHeight1.Build(),
                     }.Build(),
-                    ChildExtractor = value => value.List1
+                    ChildExtractor = value => value.List1,
+                    ChildSetter = (value, childValue) => value.List1 = (IList<TreeWithHeight1.Class>)childValue
                 }.Build(),
                 new BuilderFor.EdgeSubstitute<Class>
                 {
@@ -27,7 +28,8 @@ namespace SAGESharp.IO.Trees
                     {
                         ChildNode = TreeWithHeight2.Build()
                     }.Build(),
-                    ChildExtractor = value => value.List2
+                    ChildExtractor = value => value.List2,
+                    ChildSetter = (value, childValue) => value.List2 = (IList<TreeWithHeight2.Class>)childValue
                 }.Build()
             }
         }.Build();

@@ -16,12 +16,14 @@ namespace SAGESharp.IO.Trees
                 new BuilderFor.EdgeSubstitute<Class>
                 {
                     ChildNode = new BuilderFor.DataNodeSubstitute().Build(),
-                    ChildExtractor = value => value.Long
+                    ChildExtractor = value => value.Long,
+                    ChildSetter = (value, childValue) => value.Long = (long)childValue
                 }.Build(),
                 new BuilderFor.EdgeSubstitute<Class>
                 {
                     ChildNode = TreeWithHeight1.Build(),
-                    ChildExtractor = value => value.Child
+                    ChildExtractor = value => value.Child,
+                    ChildSetter = (value, childValue) => value.Child = (TreeWithHeight1.Class)childValue
                 }.Build()
             }
         }.Build();

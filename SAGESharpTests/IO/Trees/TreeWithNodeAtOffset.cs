@@ -19,12 +19,14 @@ namespace SAGESharp.IO.Trees
                     {
                         ChildNode = new BuilderFor.DataNodeSubstitute().Build()
                     }.Build(),
-                    ChildExtractor = value => value.ValueAtOffset
+                    ChildExtractor = value => value.ValueAtOffset,
+                    ChildSetter = (value, childValue) => value.ValueAtOffset = (string)childValue
                 }.Build(),
                 new BuilderFor.EdgeSubstitute<Class>
                 {
                     ChildNode = new BuilderFor.DataNodeSubstitute().Build(),
-                    ChildExtractor = value => value.ValueInline
+                    ChildExtractor = value => value.ValueInline,
+                    ChildSetter = (value, childValue) => value.ValueInline = (int)childValue
                 }.Build()
             }
         }.Build();
