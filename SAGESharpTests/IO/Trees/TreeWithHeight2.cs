@@ -1,0 +1,36 @@
+﻿/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+using System.Collections.Generic;
+
+namespace SAGESharp.IO.Trees
+{
+    static class TreeWithHeight2
+    {
+        public static IDataNode Build() => new BuilderFor.DataNodeSubstitute
+        {
+            Edges = new List<IEdge>
+            {
+                new BuilderFor.EdgeSubstitute<Class>
+                {
+                    ChildNode = new BuilderFor.DataNodeSubstitute().Build(),
+                    ChildExtractor = value => value.Long
+                }.Build(),
+                new BuilderFor.EdgeSubstitute<Class>
+                {
+                    ChildNode = TreeWithHeight1.Build(),
+                    ChildExtractor = value => value.Child
+                }.Build()
+            }
+        }.Build();
+
+        public class Class
+        {
+            public long Long { get; set; }
+
+            public TreeWithHeight1.Class Child { get; set; }
+        }
+    }
+}

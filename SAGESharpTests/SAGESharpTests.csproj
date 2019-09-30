@@ -93,6 +93,12 @@
     <Compile Include="IO\StringBinarySerializerTests.cs" />
     <Compile Include="IO\StringDataNodeTests.cs" />
     <Compile Include="IO\TreeBinarySerializerTests.cs" />
+    <Compile Include="IO\Trees\Builders.cs" />
+    <Compile Include="IO\Trees\TreeWithHeight1.cs" />
+    <Compile Include="IO\Trees\TreeWithHeight2.cs" />
+    <Compile Include="IO\Trees\TreeWithHeight3.cs" />
+    <Compile Include="IO\Trees\TreeWithNestedLists.cs" />
+    <Compile Include="IO\Trees\TreeWithNodeAtOffset.cs" />
     <Compile Include="IO\TreeWriterTests.cs" />
     <Compile Include="IO\UserTypeDataNodeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -123,7 +129,6 @@
     <Compile Include="Testing\AbstractEqualityByRefTests.cs" />
     <Compile Include="Testing\AbstractEqualityByValTests.cs" />
     <Compile Include="Testing\SerializationTestCaseData.cs" />
-    <Compile Include="Testing\SerializationTreeSubstituteBuilder.cs" />
     <Compile Include="Utils\ASCIIExtensionsTests.cs" />
     <Compile Include="Utils\NumericExtensionsTests.cs" />
     <Compile Include="Utils\StreamExtensionsTests.cs" />

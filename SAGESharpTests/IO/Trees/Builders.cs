@@ -4,25 +4,22 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using NSubstitute;
-using SAGESharp.IO;
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharp.Testing
+namespace SAGESharp.IO.Trees
 {
     static class BuilderFor
     {
         public sealed class DataNodeSubstitute
         {
-            public List<IEdge> Edges { get; set; } = new List<IEdge>();
+            public IReadOnlyList<IEdge> Edges { get; set; } = new List<IEdge>();
 
-            public IDataNode Build(Action<IDataNode> setup = null)
+            public IDataNode Build()
             {
                 IDataNode node = Substitute.For<IDataNode>();
 
                 node.Edges.Returns(Edges);
-
-                setup?.Invoke(node);
 
                 return node;
             }
@@ -32,13 +29,11 @@ namespace SAGESharp.Testing
         {
             public IDataNode ChildNode { get; set; }
 
-            public IOffsetNode Build(Action<IOffsetNode> setup)
+            public IOffsetNode Build()
             {
                 IOffsetNode node = Substitute.For<IOffsetNode>();
 
                 node.ChildNode.Returns(ChildNode);
-
-                setup?.Invoke(node);
 
                 return node;
             }
@@ -48,7 +43,7 @@ namespace SAGESharp.Testing
         {
             public IDataNode ChildNode { get; set; }
 
-            public IListNode Build(Action<IListNode> setup)
+            public IListNode Build()
             {
                 IListNode node = Substitute.For<IListNode>();
 
@@ -60,6 +55,7 @@ namespace SAGESharp.Testing
 
                     return list.Count;
                 });
+                
                 node.GetListEntry(Arg.Any<IList<T>>(), Arg.Any<int>()).Returns(args =>
                 {
                     IList<T> list = (IList<T>)args[0];
@@ -68,23 +64,27 @@ namespace SAGESharp.Testing
                     return list[index];
                 });
 
-                setup?.Invoke(node);
-
                 return node;
             }
         }
 
-        public sealed class EdgeSubstitute
+        public sealed class EdgeSubstitute<T>
         {
             public object ChildNode { get; set; }
 
-            public IEdge Build(Action<IEdge> setup)
+            public Func<T, object> ChildExtractor { get; set; }
+
+            public IEdge Build()
             {
                 IEdge edge = Substitute.For<IEdge>();
 
                 edge.ChildNode.Returns(ChildNode);
 
-                setup?.Invoke(edge);
+                if (ChildExtractor != null)
+                {
+                    edge.ExtractChildValue(Arg.Any<T>())
+                        .Returns(args => ChildExtractor((T)args[0]));
+                }
 
                 return edge;
             }
