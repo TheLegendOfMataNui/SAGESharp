@@ -639,6 +639,8 @@ namespace SAGESharp.IO
 
     internal sealed class TreeWriter : ITreeWriter
     {
+        public delegate void OffsetWriter(IBinaryWriter binaryWriter, uint offset);
+
         private class QueueEntry
         {
             public QueueEntry(IDataNode node, object value)
@@ -659,13 +661,13 @@ namespace SAGESharp.IO
             public uint? OffsetPosition { get; }
         }
 
-        private readonly Action<IBinaryWriter, uint> offsetWriter;
+        private readonly OffsetWriter offsetWriter;
 
         private readonly Queue<QueueEntry> queue = new Queue<QueueEntry>();
 
         private readonly List<uint> offsets = new List<uint>();
 
-        public TreeWriter(Action<IBinaryWriter, uint> offsetWriter)
+        public TreeWriter(OffsetWriter offsetWriter)
         {
             this.offsetWriter = offsetWriter;
         }

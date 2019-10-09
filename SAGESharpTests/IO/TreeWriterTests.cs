@@ -20,16 +20,12 @@ namespace SAGESharp.IO
 
         private readonly ITreeWriter treeWriter;
 
-        // Ideally here we should call directly IBinaryWriter.DoAtPosition(...)
-        // but I don't know how to test it, so in the meantime I'm abstracting
-        // this behaviour to an Action<>
-        // See: https://github.com/nsubstitute/NSubstitute/issues/584
-        private readonly Action<IBinaryWriter, uint> offsetWriter;
+        private readonly TreeWriter.OffsetWriter offsetWriter;
 
         public TreeWriterTests()
         {
             binaryWriter = Substitute.For<IBinaryWriter>();
-            offsetWriter = Substitute.For<Action<IBinaryWriter, uint>>();
+            offsetWriter = Substitute.For<TreeWriter.OffsetWriter>();
             treeWriter = new TreeWriter(offsetWriter);
         }
 
