@@ -45,6 +45,15 @@ namespace SAGESharp.IO
 
         #region Null checks
         [Test]
+        public void Test_Creating_A_TreeReader_With_A_Null_Delegate()
+        {
+            Action action = () => new TreeReader(null);
+
+            action.Should()
+                .ThrowArgumentNullException("atOffsetDo");
+        }
+
+        [Test]
         public void Test_Reading_A_Tree_With_A_Null_BinaryReader()
         {
             Action action = () => treeReader.Read(null, Substitute.For<IDataNode>());

@@ -38,6 +38,15 @@ namespace SAGESharp.IO
 
         #region Null checks
         [Test]
+        public void Test_Creating_A_TreeWriter_With_A_Null_Delegate()
+        {
+            Action action = () => new TreeWriter(null);
+
+            action.Should()
+                .ThrowArgumentNullException("offsetWriter");
+        }
+
+        [Test]
         public void Test_Writing_A_Tree_With_A_Null_BinaryWriter()
         {
             Action action = () => treeWriter.Write(null, new object(), Substitute.For<IDataNode>());

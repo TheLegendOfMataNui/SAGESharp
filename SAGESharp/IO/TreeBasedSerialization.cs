@@ -645,6 +645,8 @@ namespace SAGESharp.IO
 
         public TreeReader(AtOffsetDo atOffsetDo)
         {
+            Validate.ArgumentNotNull(nameof(atOffsetDo), atOffsetDo);
+
             this.atOffsetDo = atOffsetDo;
         }
 
@@ -751,6 +753,8 @@ namespace SAGESharp.IO
 
         public TreeWriter(OffsetWriter offsetWriter)
         {
+            Validate.ArgumentNotNull(nameof(offsetWriter), offsetWriter);
+
             this.offsetWriter = offsetWriter;
         }
 
