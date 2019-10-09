@@ -47,6 +47,29 @@ namespace SAGESharp.IO
 
         #region IOffsetNode methods
         [Test]
+        public void Test_Reading_An_Offset()
+        {
+            uint offset = 0xFFEEDDCC;
+
+            binaryReader.ReadUInt32().Returns(offset);
+
+            uint result = BuildStringListNode().ReadOffset(binaryReader);
+
+            binaryReader.Received().ReadUInt32();
+
+            result.Should().Be(offset);
+        }
+
+        [Test]
+        public void Test_Reading_An_Offset_From_A_Null_BinaryReader()
+        {
+            Action action = () => BuildStringListNode().ReadOffset(null);
+
+            action.Should()
+                .ThrowArgumentNullException("binaryReader");
+        }
+
+        [Test]
         public void Test_Writing_A_List()
         {
             IList<string> list = BuildStringList();

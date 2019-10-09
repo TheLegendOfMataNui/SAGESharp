@@ -55,6 +55,15 @@ namespace SAGESharp.IO
     internal interface IOffsetNode
     {
         /// <summary>
+        /// Reads the offset location at which the value of <see cref="ChildNode"/> is located.
+        /// </summary>
+        /// 
+        /// <param name="binaryReader">The input binary reader to read the offset from.</param>
+        /// 
+        /// <returns>The offset of value of <see cref="ChildNode"/>.</returns>
+        uint ReadOffset(IBinaryReader binaryReader);
+
+        /// <summary>
         /// Writes <paramref name="value"/> to the given <paramref name="binaryWriter"/>.
         /// </summary>
         /// 
@@ -511,6 +520,13 @@ namespace SAGESharp.IO
 
         public IDataNode ChildNode { get; }
 
+        public uint ReadOffset(IBinaryReader binaryReader)
+        {
+            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+
+            return binaryReader.ReadUInt32();
+        }
+
         public uint Write(IBinaryWriter binaryWriter, object value)
         {
             Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
@@ -589,6 +605,13 @@ namespace SAGESharp.IO
             }
 
             return result;
+        }
+
+        public uint ReadOffset(IBinaryReader binaryReader)
+        {
+            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+
+            return binaryReader.ReadUInt32();
         }
 
         public uint Write(IBinaryWriter binaryWriter, object value)

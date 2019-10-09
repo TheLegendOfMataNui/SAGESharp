@@ -14,6 +14,8 @@ namespace SAGESharp.IO
 {
     class OffsetNodeTests
     {
+        private readonly IBinaryReader binaryReader;
+
         private readonly IBinaryWriter binaryWriter;
 
         private readonly IDataNode childNode;
@@ -23,6 +25,7 @@ namespace SAGESharp.IO
         public OffsetNodeTests()
         {
             childNode = Substitute.For<IDataNode>();
+            binaryReader = Substitute.For<IBinaryReader>();
             binaryWriter = Substitute.For<IBinaryWriter>();
             offsetNode = new OffsetNode(childNode);
         }
@@ -31,6 +34,7 @@ namespace SAGESharp.IO
         public void Setup()
         {
             childNode.ClearSubstitute();
+            binaryReader.ClearSubstitute();
             binaryWriter.ClearSubstitute();
         }
 
@@ -50,6 +54,30 @@ namespace SAGESharp.IO
                 .Should()
                 .BeSameAs(childNode);
         }
+
+        [Test]
+        public void Test_Reading_An_Offset()
+        {
+            uint offset = 0xFFEEDDCC;
+
+            binaryReader.ReadUInt32().Returns(offset);
+
+            uint result = offsetNode.ReadOffset(binaryReader);
+
+            binaryReader.Received().ReadUInt32();
+
+            result.Should().Be(offset);
+        }
+
+        [Test]
+        public void Test_Reading_An_Offset_From_A_Null_BinaryReader()
+        {
+            Action action = () => offsetNode.ReadOffset(null);
+
+            action.Should()
+                .ThrowArgumentNullException("binaryReader");
+        }
+
         [Test]
         public void Test_Writing_An_Object()
         {
