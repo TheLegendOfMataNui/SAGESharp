@@ -637,6 +637,88 @@ namespace SAGESharp.IO
         );
     }
 
+    internal sealed class TreeReader : ITreeReader
+    {
+        public delegate void AtOffsetDo(IBinaryReader binaryReader, uint offset, Action action);
+
+        private readonly AtOffsetDo atOffsetDo;
+
+        public TreeReader(AtOffsetDo atOffsetDo)
+        {
+            this.atOffsetDo = atOffsetDo;
+        }
+
+        public object Read(IBinaryReader binaryReader, IDataNode rootNode)
+        {
+            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+            Validate.ArgumentNotNull(nameof(rootNode), rootNode);
+
+            return ProcessDataNode(binaryReader, rootNode);
+        }
+
+        private object ProcessNode(IBinaryReader binaryReader, object node)
+        {
+            if (node is IDataNode dataNode)
+            {
+                return ProcessDataNode(binaryReader, dataNode);
+            }
+            else if (node is IListNode listNode)
+            {
+                return ProcessListNode(binaryReader, listNode);
+            }
+            else if (node is IOffsetNode offsetNode)
+            {
+                return ProcessOffsetNode(binaryReader, offsetNode);
+            }
+            else
+            {
+                throw new NotImplementedException($"Type {node.GetType().Name} is an unknown node type");
+            }
+        }
+
+        private object ProcessDataNode(IBinaryReader binaryReader, IDataNode node)
+        {
+            object value = node.Read(binaryReader);
+
+            foreach (IEdge edge in node.Edges)
+            {
+                object childValue = ProcessNode(binaryReader, edge.ChildNode);
+
+                edge.SetChildValue(value, childValue);
+            }
+
+            return value;
+        }
+
+        private object ProcessOffsetNode(IBinaryReader binaryReader, IOffsetNode node)
+        {
+            uint offset = node.ReadOffset(binaryReader);
+
+            object result = null;
+            atOffsetDo(binaryReader, offset, () => result = ProcessDataNode(binaryReader, node.ChildNode));
+
+            return result;
+        }
+
+        private object ProcessListNode(IBinaryReader binaryReader, IListNode listNode)
+        {
+            int count = listNode.ReadEntryCount(binaryReader);
+            uint offset = listNode.ReadOffset(binaryReader);
+            object list = listNode.CreateList();
+
+            atOffsetDo(binaryReader, offset, () =>
+            {
+                for (int n = 0; n < count; ++n)
+                {
+                    object entry = ProcessDataNode(binaryReader, listNode.ChildNode);
+                    listNode.AddListEntry(list, entry);
+                }
+            });
+
+            return list;
+        }
+    }
+
     internal sealed class TreeWriter : ITreeWriter
     {
         public delegate void OffsetWriter(IBinaryWriter binaryWriter, uint offset);
