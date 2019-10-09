@@ -100,6 +100,7 @@
     <Compile Include="IO\Trees\TreeWithHeight3.cs" />
     <Compile Include="IO\Trees\TreeWithNestedLists.cs" />
     <Compile Include="IO\Trees\TreeWithNodeAtOffset.cs" />
+    <Compile Include="IO\Trees\TreeWithUnknownNodeType.cs" />
     <Compile Include="IO\TreeWriterTests.cs" />
     <Compile Include="IO\UserTypeDataNodeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

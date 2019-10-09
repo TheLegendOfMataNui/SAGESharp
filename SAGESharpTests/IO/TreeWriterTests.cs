@@ -105,6 +105,17 @@ namespace SAGESharp.IO
         }
         #endregion
 
+        [Test]
+        public void Test_Reading_A_Tree_With_Unkown_Node_Type()
+        {
+            IDataNode rootNode = TreeWithUnknownNodeType.Build();
+            Action action = () => treeWriter.Write(binaryWriter, new object(), rootNode);
+
+            action.Should()
+                .ThrowExactly<NotImplementedException>()
+                .WithMessage($"Type {typeof(TreeWithUnknownNodeType.UnknownNodeType).Name} is an unknown node type");
+        }
+
         #region Tree with height 3
         [Test]
         public void Test_Writing_An_Instance_Of_A_Tree_With_Height_3()
