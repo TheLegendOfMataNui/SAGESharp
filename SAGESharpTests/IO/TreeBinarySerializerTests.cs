@@ -16,7 +16,7 @@ namespace SAGESharp.IO
 {
     class TreeBinarySerializerTests
     {
-        private readonly IBinarySerializer<string> reader;
+        private readonly ITreeReader treeReader;
 
         private readonly ITreeWriter treeWriter;
 
@@ -32,19 +32,19 @@ namespace SAGESharp.IO
 
         public TreeBinarySerializerTests()
         {
-            reader = Substitute.For<IBinarySerializer<string>>();
+            treeReader = Substitute.For<ITreeReader>();
             treeWriter = Substitute.For<ITreeWriter>();
             rootNode = Substitute.For<IDataNode>();
             footerAligner = Substitute.For<Action<IBinaryWriter>>();
             binaryReader = Substitute.For<IBinaryReader>();
             binaryWriter = Substitute.For<IBinaryWriter>();
-            serializer = new TreeBinarySerializer<string>(reader, treeWriter, rootNode, footerAligner);
+            serializer = new TreeBinarySerializer<string>(treeReader, treeWriter, rootNode, footerAligner);
         }
 
         [SetUp]
         public void Setup()
         {
-            reader.ClearSubstitute();
+            treeReader.ClearSubstitute();
             treeWriter.ClearSubstitute();
             rootNode.ClearSubstitute();
             footerAligner.ClearSubstitute();
@@ -58,13 +58,13 @@ namespace SAGESharp.IO
             Action action = () => new TreeBinarySerializer<string>(null, treeWriter, rootNode, footerAligner);
 
             action.Should()
-                .ThrowArgumentNullException("reader");
+                .ThrowArgumentNullException("treeReader");
         }
 
         [Test]
         public void Test_Creating_A_Serializer_With_Null_Writer()
         {
-            Action action = () => new TreeBinarySerializer<string>(reader, null, rootNode, footerAligner);
+            Action action = () => new TreeBinarySerializer<string>(treeReader, null, rootNode, footerAligner);
 
             action.Should()
                 .ThrowArgumentNullException("treeWriter");
@@ -73,7 +73,7 @@ namespace SAGESharp.IO
         [Test]
         public void Test_Creating_A_Serializer_With_Null_RootNode()
         {
-            Action action = () => new TreeBinarySerializer<string>(reader, treeWriter, null, footerAligner);
+            Action action = () => new TreeBinarySerializer<string>(treeReader, treeWriter, null, footerAligner);
 
             action.Should()
                 .ThrowArgumentNullException("rootNode");
@@ -82,7 +82,7 @@ namespace SAGESharp.IO
         [Test]
         public void Test_Creating_A_Serializer_With_Null_FooterAligner()
         {
-            Action action = () => new TreeBinarySerializer<string>(reader, treeWriter, rootNode, null);
+            Action action = () => new TreeBinarySerializer<string>(treeReader, treeWriter, rootNode, null);
 
             action.Should()
                 .ThrowArgumentNullException("footerAligner");
@@ -93,7 +93,7 @@ namespace SAGESharp.IO
         {
             string value = "value";
 
-            reader.Read(binaryReader).Returns(value);
+            treeReader.Read(binaryReader, rootNode).Returns(value);
 
             string result = serializer.Read(binaryReader);
 

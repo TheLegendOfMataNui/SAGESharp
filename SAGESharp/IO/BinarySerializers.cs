@@ -147,9 +147,7 @@ namespace SAGESharp.IO
     {
         internal const uint FOOTER_MAGIC_NUMBER = 0x00C0FFEE;
 
-        // This is temporary while the appropiate ITreeWriter
-        // class that used IDataNode is implemented
-        private readonly IBinarySerializer<T> reader;
+        private readonly ITreeReader treeReader;
 
         private readonly ITreeWriter treeWriter;
 
@@ -158,17 +156,17 @@ namespace SAGESharp.IO
         private readonly Action<IBinaryWriter> alignFooter;
 
         public TreeBinarySerializer(
-            IBinarySerializer<T> reader,
+            ITreeReader treeReader,
             ITreeWriter treeWriter,
             IDataNode rootNode,
             Action<IBinaryWriter> footerAligner
         ) {
-            Validate.ArgumentNotNull(nameof(reader), reader);
+            Validate.ArgumentNotNull(nameof(treeReader), treeReader);
             Validate.ArgumentNotNull(nameof(treeWriter), treeWriter);
             Validate.ArgumentNotNull(nameof(rootNode), rootNode);
             Validate.ArgumentNotNull(nameof(footerAligner), footerAligner);
 
-            this.reader = reader;
+            this.treeReader = treeReader;
             this.treeWriter = treeWriter;
             this.rootNode = rootNode;
             alignFooter = footerAligner;
@@ -178,7 +176,7 @@ namespace SAGESharp.IO
         {
             Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
 
-            return reader.Read(binaryReader);
+            return (T)treeReader.Read(binaryReader, rootNode);
         }
 
         public void Write(IBinaryWriter binaryWriter, T value)
