@@ -509,9 +509,9 @@ namespace SAGESharp.IO
         private static bool IsType(object value) => typeof(T) == value.GetType();
     }
 
-    internal sealed class OffsetNode : IOffsetNode
+    internal abstract class AbstractOffsetNode : IOffsetNode
     {
-        public OffsetNode(IDataNode childNode)
+        protected AbstractOffsetNode(IDataNode childNode)
         {
             Validate.ArgumentNotNull(nameof(childNode), childNode);
 
@@ -527,11 +527,10 @@ namespace SAGESharp.IO
             return binaryReader.ReadUInt32();
         }
 
-        public uint Write(IBinaryWriter binaryWriter, object value)
-        {
-            Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
-            Validate.ArgumentNotNull(nameof(value), value);
+        public abstract uint Write(IBinaryWriter binaryWriter, object value);
 
+        protected uint WriteOffset(IBinaryWriter binaryWriter)
+        {
             if (binaryWriter.Position > uint.MaxValue)
             {
                 throw new InvalidOperationException("Offset is bigger than 4 bytes.");
@@ -545,19 +544,29 @@ namespace SAGESharp.IO
         }
     }
 
-    internal sealed class ListNode<T> : IListNode
+    internal sealed class OffsetNode : AbstractOffsetNode
+    {
+        public OffsetNode(IDataNode childNode) : base(childNode)
+        {
+        }
+
+        public override uint Write(IBinaryWriter binaryWriter, object value)
+        {
+            Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
+            Validate.ArgumentNotNull(nameof(value), value);
+
+            return WriteOffset(binaryWriter);
+        }
+    }
+
+    internal sealed class ListNode<T> : AbstractOffsetNode, IListNode
     {
         private readonly bool duplicateEntryCount;
 
-        public ListNode(IDataNode childNode, bool duplicateEntryCount = false)
+        public ListNode(IDataNode childNode, bool duplicateEntryCount = false) : base(childNode)
         {
-            Validate.ArgumentNotNull(nameof(childNode), childNode);
-
             this.duplicateEntryCount = duplicateEntryCount;
-            ChildNode = childNode;
         }
-
-        public IDataNode ChildNode { get; }
 
         public int GetListCount(object list)
         {
@@ -607,14 +616,7 @@ namespace SAGESharp.IO
             return result;
         }
 
-        public uint ReadOffset(IBinaryReader binaryReader)
-        {
-            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
-
-            return binaryReader.ReadUInt32();
-        }
-
-        public uint Write(IBinaryWriter binaryWriter, object value)
+        public override uint Write(IBinaryWriter binaryWriter, object value)
         {
             Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
             Validate.ArgumentNotNull(nameof(value), value);
@@ -626,11 +628,7 @@ namespace SAGESharp.IO
                 binaryWriter.WriteInt32(value.As<IList<T>>().Count);
             }
 
-            uint offsetPosition = (uint)binaryWriter.Position;
-
-            binaryWriter.WriteUInt32(0);
-
-            return offsetPosition;
+            return WriteOffset(binaryWriter);
         }
 
         private static void ValidateIsList(object list) => Validate.Argument(

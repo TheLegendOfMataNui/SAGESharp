@@ -118,6 +118,18 @@ namespace SAGESharp.IO
         }
 
         [Test]
+        public void Test_Writing_A_List_With_An_Offset_Greater_Than_4_bytes()
+        {
+            Action action = () => BuildStringListNode().Write(binaryWriter, new List<string>());
+
+            binaryWriter.Position.Returns(0xAABBCCDDEE);
+
+            action.Should()
+                .ThrowExactly<InvalidOperationException>()
+                .WithMessage("Offset is bigger than 4 bytes.");
+        }
+
+        [Test]
         public void Test_Writing_A_List_With_A_Null_BinaryWriter()
         {
             IList<string> list = BuildStringList();
