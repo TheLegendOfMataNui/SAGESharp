@@ -347,6 +347,8 @@ namespace SAGESharp.IO
 
     internal sealed class StringDataNode : IDataNode
     {
+        internal const byte OFFSET_STRING_MAX_LENGTH = byte.MaxValue - 1;
+
         private static readonly IReadOnlyList<IEdge> edges = new List<IEdge>();
 
         private readonly bool inlineString;
@@ -355,7 +357,7 @@ namespace SAGESharp.IO
 
         public StringDataNode()
         {
-            length = byte.MaxValue - 1;
+            length = OFFSET_STRING_MAX_LENGTH;
             inlineString = false;
         }
 
