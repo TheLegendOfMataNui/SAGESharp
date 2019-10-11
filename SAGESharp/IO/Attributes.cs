@@ -54,7 +54,7 @@ namespace SAGESharp.IO
     /// single byte for the string length in the binary file.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
-    public sealed class OffsetString : Attribute
+    public sealed class OffsetStringAttribute : Attribute
     {
     }
 
@@ -62,14 +62,14 @@ namespace SAGESharp.IO
     /// Specifies the value for a string property is stored inline (no offset) with a fixed length.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
-    public sealed class InlineString : Attribute
+    public sealed class InlineStringAttribute : Attribute
     {
         /// <summary>
         /// Initializes a new attribute to mark a string property inline (with no offset) and a fixed length.
         /// </summary>
         /// 
         /// <param name="length">The fixed length of the string.</param>
-        public InlineString(int length) => Length = length;
+        public InlineStringAttribute(int length) => Length = length;
 
         /// <summary>
         /// The fixed length for the string.
