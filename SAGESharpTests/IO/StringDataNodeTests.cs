@@ -128,12 +128,12 @@ namespace SAGESharp.IO
         public void Test_Writing_An_Offline_String_With_Invalid_Length()
         {
             IDataNode dataNode = new StringDataNode();
-            string value = new string('a', byte.MaxValue);
+            string value = new string('a', StringDataNode.OFFSET_STRING_MAX_LENGTH + 1);
 
             Action action = () => dataNode.Write(binaryWriter, value);
             action.Should()
                 .ThrowExactly<ArgumentException>()
-                .WithMessage($"String length is longer than {byte.MaxValue - 1}.");
+                .WithMessage($"String length is longer than {StringDataNode.OFFSET_STRING_MAX_LENGTH}.");
         }
 
         [Test]
