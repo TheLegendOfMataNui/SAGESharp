@@ -34,7 +34,7 @@ namespace SAGESharp.IO
     {
         private static readonly Lazy<IBinarySerializerFactory> instance
             = new Lazy<IBinarySerializerFactory>(
-                () => new DefaultBinarySerializerFactory(new DefaultPropertyBinarySerializerFactory())
+                () => new TreeBasedBinarySerializerFactory()
             );
 
         /// <summary>
