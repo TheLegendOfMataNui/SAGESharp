@@ -93,6 +93,7 @@
     <Compile Include="IO\StringBinarySerializerTests.cs" />
     <Compile Include="IO\StringDataNodeTests.cs" />
     <Compile Include="IO\TreeBinarySerializerTests.cs" />
+    <Compile Include="IO\TreeBuilderTests.cs" />
     <Compile Include="IO\TreeReaderTests.cs" />
     <Compile Include="IO\Trees\Builders.cs" />
     <Compile Include="IO\Trees\TreeWithHeight1.cs" />
