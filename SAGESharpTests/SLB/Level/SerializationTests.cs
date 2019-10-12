@@ -7,7 +7,6 @@ using FluentAssertions;
 using NUnit.Framework;
 using SAGESharp.IO;
 using SAGESharp.Testing;
-using System.Collections.Generic;
 using System.IO;
 
 namespace SAGESharp.SLB.Level
@@ -28,6 +27,25 @@ namespace SAGESharp.SLB.Level
                     .Should()
                     .Be(testCaseData.Expected);
             }
+        }
+
+        [TestCaseSource(nameof(TEST_CASES))]
+        public void Test_Writing_A_Conversation_To_A_File_Successfully(SerializationTestCaseData<Conversation> testCaseData)
+        {
+            var serializer = BinarySerializers.Factory.GetSerializerForType<Conversation>();
+            var outputFilePath = $"{testCaseData.TestFilePath}.tst";
+
+            using (var stream = new FileStream(outputFilePath, FileMode.Create))
+            {
+                var writer = Writer.ForStream(stream);
+
+                serializer.Write(writer, testCaseData.Expected);
+            }
+
+            var actual = File.ReadAllBytes(outputFilePath);
+            var expected = File.ReadAllBytes(testCaseData.TestFilePath);
+            
+            actual.Should().Equal(expected);
         }
 
         static object[] TEST_CASES() => new object[]
