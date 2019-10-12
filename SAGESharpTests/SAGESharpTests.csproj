@@ -117,7 +117,6 @@
     <Compile Include="Testing\SerializationTestCaseData.cs" />
     <Compile Include="Utils\ASCIIExtensionsTests.cs" />
     <Compile Include="Utils\NumericExtensionsTests.cs" />
-    <Compile Include="Utils\StreamExtensionsTests.cs" />
     <Compile Include="ValidationsTests.cs" />
   </ItemGroup>
   <ItemGroup>
