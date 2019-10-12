@@ -911,14 +911,17 @@ namespace SAGESharp.IO
             uint offset = listNode.ReadOffset(binaryReader);
             object list = listNode.CreateList();
 
-            atOffsetDo(binaryReader, offset, () =>
+            if (count != 0)
             {
-                for (int n = 0; n < count; ++n)
+                atOffsetDo(binaryReader, offset, () =>
                 {
-                    object entry = ProcessDataNode(binaryReader, listNode.ChildNode);
-                    listNode.AddListEntry(list, entry);
-                }
-            });
+                    for (int n = 0; n < count; ++n)
+                    {
+                        object entry = ProcessDataNode(binaryReader, listNode.ChildNode);
+                        listNode.AddListEntry(list, entry);
+                    }
+                });
+            }
 
             return list;
         }
@@ -977,7 +980,10 @@ namespace SAGESharp.IO
                 QueueEntry entry = queue.Dequeue();
 
                 ProcessOffset(binaryWriter, entry.OffsetPosition);
-                ProcessDataNode(binaryWriter, entry.Node, entry.Value);
+                if (entry.Value != null)
+                {
+                    ProcessDataNode(binaryWriter, entry.Node, entry.Value);
+                }
             }
 
             return offsets;
@@ -1040,6 +1046,7 @@ namespace SAGESharp.IO
             int count = node.GetListCount(list);
             if (count == 0)
             {
+                Enqueue(node.ChildNode, null, offsetPosition);
                 return;
             }
 

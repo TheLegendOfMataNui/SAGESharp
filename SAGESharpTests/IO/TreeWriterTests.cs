@@ -229,6 +229,40 @@ namespace SAGESharp.IO
 
             Received.InOrder(() => VerifyWriteTreeWithNestedLists(rootNode, value, offsetPosition1, offsetPosition2));
         }
+        [Test]
+        public void Test_Writing_An_Instance_Of_A_Tree_With_Nested_Empty_Lists()
+        {
+            uint offsetPosition1 = 20, offsetPosition2 = 30;
+            IDataNode rootNode = TreeWithNestedLists.Build();
+            TreeWithNestedLists.Class value = new TreeWithNestedLists.Class
+            {
+                List1 = new List<TreeWithHeight1.Class>
+                {
+                },
+                List2 = new List<TreeWithHeight2.Class>
+                {
+                }
+            };
+
+            IOffsetNode list1ChildNode = rootNode.Edges[0].ChildNode as IOffsetNode;
+            list1ChildNode
+                .Write(binaryWriter, Arg.Any<object>())
+                .Returns(offsetPosition1);
+
+            IOffsetNode list2ChildNode = rootNode.Edges[1].ChildNode as IOffsetNode;
+            list2ChildNode
+                .Write(binaryWriter, Arg.Any<object>())
+                .Returns(offsetPosition2);
+
+            treeWriter.Write(binaryWriter, value, rootNode)
+                .Should()
+                .Equal(offsetPosition1, offsetPosition2);
+
+            list1ChildNode.ChildNode.DidNotReceive().Write(binaryWriter, Arg.Any<object>());
+            list2ChildNode.ChildNode.DidNotReceive().Write(binaryWriter, Arg.Any<object>());
+
+            Received.InOrder(() => VerifyWriteTreeWithNestedLists(rootNode, value, offsetPosition1, offsetPosition2));
+        }
 
         private void VerifyWriteTreeWithNestedLists(
             IDataNode node,

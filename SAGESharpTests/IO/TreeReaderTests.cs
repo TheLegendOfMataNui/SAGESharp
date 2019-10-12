@@ -253,6 +253,33 @@ namespace SAGESharp.IO
             result.Should().BeEquivalentTo(expected);
         }
 
+        [Test]
+        public void Test_Reading_An_Instance_Of_A_Tree_With_Nested_Empty_Lists()
+        {
+            uint offsetPosition1 = 20, offsetPosition2 = 30;
+            IDataNode rootNode = TreeWithNestedLists.Build();
+            TreeWithNestedLists.Class expected = new TreeWithNestedLists.Class
+            {
+                List1 = new List<TreeWithHeight1.Class>
+                {
+                },
+                List2 = new List<TreeWithHeight2.Class>
+                {
+                }
+            };
+
+            SetupTreeWithNestedLists(rootNode, expected, offsetPosition1, offsetPosition2);
+
+            object result = treeReader.Read(binaryReader, rootNode);
+
+            atOffsetDo.DidNotReceive().Invoke(binaryReader, offsetPosition1, Arg.Any<Action>());
+            atOffsetDo.DidNotReceive().Invoke(binaryReader, offsetPosition2, Arg.Any<Action>());
+
+            Received.InOrder(() => VerifyReadTreeWithNestedLists(rootNode, expected, offsetPosition1, offsetPosition2));
+
+            result.Should().BeEquivalentTo(expected);
+        }
+
         private void SetupTreeWithNestedLists(IDataNode node, TreeWithNestedLists.Class expected, uint offset1, uint offset2)
         {
             node.Read(binaryReader).Returns(_ => new TreeWithNestedLists.Class());
@@ -281,11 +308,14 @@ namespace SAGESharp.IO
                 listNode.ReadEntryCount(binaryReader);
                 listNode.ReadOffset(binaryReader);
 
-                atOffsetDo(Arg.Is(binaryReader), Arg.Is(offset), Arg.Any<Action>());
-
-                foreach (var entry in list)
+                if (list.IsNotEmpty())
                 {
-                    verifyReadValue(listNode.ChildNode);
+                    atOffsetDo(Arg.Is(binaryReader), Arg.Is(offset), Arg.Any<Action>());
+
+                    foreach (var entry in list)
+                    {
+                        verifyReadValue(listNode.ChildNode);
+                    }
                 }
             }
 
