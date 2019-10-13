@@ -51,7 +51,7 @@ namespace SAGESharp.IO
         public IBinarySerializer<T> GetSerializerForType<T>()
         {
             return new TreeBinarySerializer<T>(
-                treeReader: new TreeReader(IBinaryReaderExtensions.DoAtPosition),
+                treeReader: new TreeReader(Reader.DoAtPosition),
                 treeWriter: new TreeWriter(OffsetWriter),
                 rootNode: TreeBuilder.BuildTreeForType(typeof(T)),
                 footerAligner: FooterAligner

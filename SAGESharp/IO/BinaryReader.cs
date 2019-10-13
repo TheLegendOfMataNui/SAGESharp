@@ -9,6 +9,7 @@ using System.IO;
 
 namespace SAGESharp.IO
 {
+    #region Interface
     /// <summary>
     /// Interface to read chunks of binary data as numbers.
     /// </summary>
@@ -92,48 +93,7 @@ namespace SAGESharp.IO
         /// <returns>A <see cref="IBinaryReader"/> to read the input <paramref name="stream"/>.</returns>
         public static IBinaryReader ForStream(Stream stream)
             => new BinaryReaderWrapper(stream);
-    }
 
-    internal sealed class BinaryReaderWrapper : IBinaryReader
-    {
-        private readonly BinaryReader realReader;
-
-        public BinaryReaderWrapper(Stream stream)
-            => realReader = stream?.Let(s => new BinaryReader(s)) ?? throw new ArgumentNullException();
-
-        public long Position
-        {
-            get => realReader.BaseStream.Position;
-            set => realReader.BaseStream.Position = value;
-        }
-
-        public byte ReadByte()
-            => realReader.ReadByte();
-
-        public byte[] ReadBytes(int count)
-            => realReader.ReadBytes(count);
-
-        public short ReadInt16()
-            => realReader.ReadInt16();
-
-        public ushort ReadUInt16()
-            => realReader.ReadUInt16();
-
-        public int ReadInt32()
-            => realReader.ReadInt32();
-
-        public uint ReadUInt32()
-            => realReader.ReadUInt32();
-
-        public float ReadFloat()
-            => realReader.ReadSingle();
-
-        public double ReadDouble()
-            => realReader.ReadDouble();
-    }
-
-    internal static class IBinaryReaderExtensions
-    {
         /// <summary>
         /// Executes <paramref name="action"/> while temporarily moving the reader to <paramref name= "position" />.
         /// </summary>
@@ -172,4 +132,45 @@ namespace SAGESharp.IO
             return result;
         }
     }
+    #endregion
+
+    #region Implementation
+    internal sealed class BinaryReaderWrapper : IBinaryReader
+    {
+        private readonly BinaryReader realReader;
+
+        public BinaryReaderWrapper(Stream stream)
+            => realReader = stream?.Let(s => new BinaryReader(s)) ?? throw new ArgumentNullException();
+
+        public long Position
+        {
+            get => realReader.BaseStream.Position;
+            set => realReader.BaseStream.Position = value;
+        }
+
+        public byte ReadByte()
+            => realReader.ReadByte();
+
+        public byte[] ReadBytes(int count)
+            => realReader.ReadBytes(count);
+
+        public short ReadInt16()
+            => realReader.ReadInt16();
+
+        public ushort ReadUInt16()
+            => realReader.ReadUInt16();
+
+        public int ReadInt32()
+            => realReader.ReadInt32();
+
+        public uint ReadUInt32()
+            => realReader.ReadUInt32();
+
+        public float ReadFloat()
+            => realReader.ReadSingle();
+
+        public double ReadDouble()
+            => realReader.ReadDouble();
+    }
+    #endregion
 }

@@ -9,6 +9,7 @@ using System.IO;
 
 namespace SAGESharp.IO
 {
+    #region Interface
     /// <summary>
     /// Interface to write chunks of binary data from numbers.
     /// </summary>
@@ -92,8 +93,26 @@ namespace SAGESharp.IO
         /// <returns>A <see cref="IBinaryWriter"/> that writes into the input <paramref name="stream"/>.</returns>
         public static IBinaryWriter ForStream(Stream stream)
             => new BinaryWriterWrapper(stream);
-    }
 
+        /// <summary>
+        /// Executes <paramref name="action"/> while temporarily moving the writer to <paramref name="position"/>.
+        /// </summary>
+        /// 
+        /// <param name="writer">The writer that whose position will change temporarily.</param>
+        /// <param name="position">The new temporal position for the writer.</param>
+        /// <param name="action">The action to execute, it receives the original .</param>
+        public static void DoAtPosition(this IBinaryWriter writer, long position, Action<long> action)
+        {
+            var originalPosition = writer.Position;
+            writer.Position = position;
+
+            action(originalPosition);
+            writer.Position = originalPosition;
+        }
+    }
+    #endregion
+
+    #region Implementation
     internal sealed class BinaryWriterWrapper : IBinaryWriter
     {
         private readonly BinaryWriter realWriter;
@@ -138,23 +157,5 @@ namespace SAGESharp.IO
         public void WriteUInt32(uint value)
             => realWriter.Write(value);
     }
-
-    internal static class IBinaryWriterExtensions
-    {
-        /// <summary>
-        /// Executes <paramref name="action"/> while temporarily moving the writer to <paramref name="position"/>.
-        /// </summary>
-        /// 
-        /// <param name="writer">The writer that whose position will change temporarily.</param>
-        /// <param name="position">The new temporal position for the writer.</param>
-        /// <param name="action">The action to execute, it receives the original .</param>
-        public static void DoAtPosition(this IBinaryWriter writer, long position, Action<long> action)
-        {
-            var originalPosition = writer.Position;
-            writer.Position = position;
-
-            action(originalPosition);
-            writer.Position = originalPosition;
-        }
-    }
+    #endregion
 }
