@@ -14,7 +14,7 @@ namespace SAGESharp
 {
     class BKDSerializationTests
     {
-        private readonly IBinarySerializer<BKD> serializer = BinarySerializers.ForBKDFiles;
+        private readonly IBinarySerializer<BKD> serializer = BinarySerializer.ForBKDFiles;
 
         [TestCaseSource(nameof(TEST_CASES))]
         public void Test_Reading_BKD_File_Successfully(SerializationTestCaseData<BKD> testCaseData)

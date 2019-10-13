@@ -28,7 +28,7 @@ namespace ShoefitterDX.Editors
             using (System.IO.FileStream stream = new System.IO.FileStream(Program.Project.MakePathAbsolute(fileName), System.IO.FileMode.Open))
             {
                 SAGESharp.IO.IBinaryReader reader = SAGESharp.IO.Reader.ForStream(stream);
-                bkd = SAGESharp.IO.BinarySerializers.ForBKDFiles.Read(reader);
+                bkd = SAGESharp.IO.BinarySerializer.ForBKDFiles.Read(reader);
             }
             InitializeComponent();
         }

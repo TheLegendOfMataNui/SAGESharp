@@ -79,7 +79,6 @@
     <Compile Include="INIConfig.cs" />
     <Compile Include="IO\Attributes.cs" />
     <Compile Include="IO\BinaryReader.cs" />
-    <Compile Include="IO\BinarySerializerFactory.cs" />
     <Compile Include="IO\BinarySerializers.cs" />
     <Compile Include="IO\BinaryWriter.cs" />
     <Compile Include="IO\TreeBasedSerialization.cs" />

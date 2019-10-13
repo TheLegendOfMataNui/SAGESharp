@@ -16,7 +16,7 @@ namespace SAGESharp.SLB.Level
         [TestCaseSource(nameof(TEST_CASES))]
         public void Test_Reading_A_Conversation_File_Successfully(SerializationTestCaseData<Conversation> testCaseData)
         {
-            var serializer = BinarySerializers.Factory.GetSerializerForType<Conversation>();
+            var serializer = BinarySerializer.ForType<Conversation>();
 
             using (var stream = new FileStream(testCaseData.TestFilePath, FileMode.Open))
             {
@@ -32,7 +32,7 @@ namespace SAGESharp.SLB.Level
         [TestCaseSource(nameof(TEST_CASES))]
         public void Test_Writing_A_Conversation_To_A_File_Successfully(SerializationTestCaseData<Conversation> testCaseData)
         {
-            var serializer = BinarySerializers.Factory.GetSerializerForType<Conversation>();
+            var serializer = BinarySerializer.ForType<Conversation>();
             var outputFilePath = $"{testCaseData.TestFilePath}.tst";
 
             using (var stream = new FileStream(outputFilePath, FileMode.Create))

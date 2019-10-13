@@ -14,7 +14,7 @@ using System.IO;
 
 namespace SAGESharp.IO
 {
-    class TreeBasedBinarySerializerFactoryTests
+    class BinarySerializerTests
     {
         private readonly IBinaryWriter binaryWriter = Substitute.For<IBinaryWriter>();
 
@@ -43,7 +43,7 @@ namespace SAGESharp.IO
 
             long endPosition = binaryWriter.Position;
 
-            TreeBasedBinarySerializerFactory.OffsetWriter(binaryWriter, (uint)offset);
+            BinarySerializer.OffsetWriter(binaryWriter, (uint)offset);
 
             binaryWriter.Position.Should().Be(endPosition);
 
@@ -59,7 +59,7 @@ namespace SAGESharp.IO
         public void Test_OffsetWriter_With_A_Very_Large_Offset()
         {
             long badOffset = (long)uint.MaxValue + 1;
-            Action action = () => TreeBasedBinarySerializerFactory.OffsetWriter(binaryWriter, 0);
+            Action action = () => BinarySerializer.OffsetWriter(binaryWriter, 0);
 
             binaryWriter.Position.Returns(badOffset);
 
@@ -75,7 +75,7 @@ namespace SAGESharp.IO
         {
             binaryWriter.Position.Returns(0x01);
 
-            TreeBasedBinarySerializerFactory.FooterAligner(binaryWriter);
+            BinarySerializer.FooterAligner(binaryWriter);
 
             binaryWriter.WriteBytes(Matcher.ForEquivalentArray(new byte[3]));
         }
@@ -85,7 +85,7 @@ namespace SAGESharp.IO
         {
             binaryWriter.Position.Returns(0x04);
 
-            TreeBasedBinarySerializerFactory.FooterAligner(binaryWriter);
+            BinarySerializer.FooterAligner(binaryWriter);
 
             binaryWriter.DidNotReceive().WriteBytes(Arg.Any<byte[]>());
         }

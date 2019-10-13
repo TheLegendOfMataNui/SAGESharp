@@ -9,6 +9,7 @@ using System.Collections.Generic;
 
 namespace SAGESharp.IO
 {
+    #region Interface
     /// <summary>
     /// Represents an object that serializes objects of type <typeparamref name="T"/>.
     /// </summary>
@@ -139,6 +140,60 @@ namespace SAGESharp.IO
             => new BadTypeException(typeof(T), message, innerException);
     }
 
+    public static class BinarySerializer
+    {
+        private static readonly Lazy<IBinarySerializer<BKD>> bkdBinarySerializer
+            = new Lazy<IBinarySerializer<BKD>>(() => new BinarySerializableSerializer<BKD>());
+
+        /// <summary>
+        /// Builds a binary serializer for type <typeparamref name="T"/>.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">The type for the binary serializer.</typeparam>
+        /// 
+        /// <returns>A binary serializer for type <typeparamref name="T"/>.</returns>
+        public static IBinarySerializer<T> ForType<T>()
+        {
+            return new TreeBinarySerializer<T>(
+                treeReader: new TreeReader(Reader.DoAtPosition),
+                treeWriter: new TreeWriter(OffsetWriter),
+                rootNode: TreeBuilder.BuildTreeForType(typeof(T)),
+                footerAligner: FooterAligner
+            );
+        }
+
+        /// <summary>
+        /// The singleton instance to serialize <see cref="BKD"/> files.
+        /// </summary>
+        public static IBinarySerializer<BKD> ForBKDFiles { get => bkdBinarySerializer.Value; }
+
+        internal static void OffsetWriter(IBinaryWriter binaryWriter, uint offset)
+        {
+            binaryWriter.DoAtPosition(offset, originalPosition =>
+            {
+                Validate.Argument(originalPosition <= uint.MaxValue,
+                    $"Offset 0x{originalPosition:X} is larger than {sizeof(uint)} bytes.");
+
+                binaryWriter.WriteUInt32((uint)originalPosition);
+            });
+        }
+
+        internal static void FooterAligner(IBinaryWriter binaryWriter)
+        {
+            // We get the amount of bytes that are unaligned
+            // by getting bytes after the last aligned integer (end % 4)
+            // and counting the amount of additional bytes needed
+            // to be aligned (4 - bytes after last aligned integer)
+            var bytesToFill = 4 - (binaryWriter.Position % 4);
+            if (bytesToFill != 4)
+            {
+                binaryWriter.WriteBytes(new byte[bytesToFill]);
+            }
+        }
+    }
+    #endregion
+
+    #region Implementation
     internal sealed class TreeBinarySerializer<T> : IBinarySerializer<T>
     {
         internal const uint FOOTER_MAGIC_NUMBER = 0x00C0FFEE;
@@ -219,4 +274,5 @@ namespace SAGESharp.IO
             value.Write(binaryWriter);
         }
     }
+    #endregion
 }
