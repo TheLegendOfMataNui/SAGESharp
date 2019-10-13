@@ -101,7 +101,7 @@ namespace SAGESharp.IO
         /// <param name="reader">The reader that w</param>
         /// <param name="position">The position where the reader will be moved temporarily.</param>
         /// <param name="action">The action to execute.</param>
-        public static void DoAtPosition(this IBinaryReader reader, uint position, Action action)
+        public static void DoAtPosition(this IBinaryReader reader, long position, Action action)
         {
             var originalPosition = reader.Position;
             reader.Position = position;
@@ -121,7 +121,7 @@ namespace SAGESharp.IO
         /// <param name="function">The action to execute.</param>
         /// 
         /// <returns>The result of <paramref name="function"/>.</returns>
-        public static TResult DoAtPosition<TResult>(this IBinaryReader reader, uint position, Func<TResult> function)
+        public static TResult DoAtPosition<TResult>(this IBinaryReader reader, long position, Func<TResult> function)
         {
             var originalPosition = reader.Position;
             reader.Position = position;

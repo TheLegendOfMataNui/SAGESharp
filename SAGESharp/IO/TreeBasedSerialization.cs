@@ -842,7 +842,7 @@ namespace SAGESharp.IO
 
     internal sealed class TreeReader : ITreeReader
     {
-        public delegate void AtOffsetDo(IBinaryReader binaryReader, uint offset, Action action);
+        public delegate void AtOffsetDo(IBinaryReader binaryReader, long offset, Action action);
 
         private readonly AtOffsetDo atOffsetDo;
 

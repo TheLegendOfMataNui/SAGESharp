@@ -310,7 +310,7 @@ namespace SAGESharp.IO
 
                 if (list.IsNotEmpty())
                 {
-                    atOffsetDo(Arg.Is(binaryReader), Arg.Is(offset), Arg.Any<Action>());
+                    atOffsetDo(Arg.Is(binaryReader), Arg.Is<long>(offset), Arg.Any<Action>());
 
                     foreach (var entry in list)
                     {
@@ -362,7 +362,7 @@ namespace SAGESharp.IO
 
             IOffsetNode offsetNode = node.Edges[0].ChildNode as IOffsetNode;
             offsetNode.ReadOffset(binaryReader);
-            atOffsetDo(Arg.Is(binaryReader), Arg.Is(offsetPosition), Arg.Any<Action>());
+            atOffsetDo(Arg.Is(binaryReader), Arg.Is<long>(offsetPosition), Arg.Any<Action>());
             offsetNode.ChildNode.Read(binaryReader);
 
             (node.Edges[1].ChildNode as IDataNode).Read(binaryReader);
