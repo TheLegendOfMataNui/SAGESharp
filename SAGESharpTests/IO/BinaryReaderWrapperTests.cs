@@ -103,57 +103,6 @@ namespace SAGESharp.IO
             stream.Position.Should().Be(subArray.Length);
         }
 
-        [Test]
-        public void Test_OnPositionDo_With_Result()
-        {
-            SetupStreamWithArray(array: new byte[] { 100 }, position: 40);
-            stream.Position = 20;
-            long? positionInLambda = null;
-
-            reader
-                .DoAtPosition(40, () =>
-                {
-                    positionInLambda = stream.Position;
-                    return stream.ReadByte();
-                })
-                .Should()
-                .Be(100);
-
-            positionInLambda
-                .Should()
-                .HaveValue()
-                .And
-                .Be(40);
-            stream
-                .Position
-                .Should()
-                .Be(20);
-        }
-
-        [Test]
-        public void Test_OnPositionDo_Without_Result()
-        {
-            SetupStreamWithArray(array: new byte[] { 100 }, position: 40);
-            stream.Position = 20;
-            long? positionInLambda = null;
-
-            reader
-                .DoAtPosition(40, () => {
-                    positionInLambda = stream.Position;
-                    stream.ReadByte().Should().Be(100);
-                });
-
-            positionInLambda
-                .Should()
-                .HaveValue()
-                .And
-                .Be(40);
-            stream
-                .Position
-                .Should()
-                .Be(20);
-        }
-
         static object[] TEST_CASES_DATA() => new object[]
         {
             new TestCaseData<byte>(
