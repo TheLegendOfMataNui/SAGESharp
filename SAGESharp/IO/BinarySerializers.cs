@@ -156,7 +156,7 @@ namespace SAGESharp.IO
         {
             return new TreeBinarySerializer<T>(
                 treeReader: new TreeReader(),
-                treeWriter: new TreeWriter(OffsetWriter),
+                treeWriter: new TreeWriter(),
                 rootNode: TreeBuilder.BuildTreeForType(typeof(T)),
                 footerAligner: FooterAligner
             );
@@ -166,17 +166,6 @@ namespace SAGESharp.IO
         /// The singleton instance to serialize <see cref="BKD"/> files.
         /// </summary>
         public static IBinarySerializer<BKD> ForBKDFiles { get => bkdBinarySerializer.Value; }
-
-        internal static void OffsetWriter(IBinaryWriter binaryWriter, uint offset)
-        {
-            binaryWriter.DoAtPosition(offset, originalPosition =>
-            {
-                Validate.Argument(originalPosition <= uint.MaxValue,
-                    $"Offset 0x{originalPosition:X} is larger than {sizeof(uint)} bytes.");
-
-                binaryWriter.WriteUInt32((uint)originalPosition);
-            });
-        }
 
         internal static void FooterAligner(IBinaryWriter binaryWriter)
         {

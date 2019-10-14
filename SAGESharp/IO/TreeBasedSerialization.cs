@@ -918,8 +918,6 @@ namespace SAGESharp.IO
 
     internal sealed class TreeWriter : ITreeWriter
     {
-        public delegate void OffsetWriter(IBinaryWriter binaryWriter, uint offset);
-
         private class QueueEntry
         {
             public QueueEntry(IDataNode node, object value)
@@ -940,18 +938,9 @@ namespace SAGESharp.IO
             public uint? OffsetPosition { get; }
         }
 
-        private readonly OffsetWriter offsetWriter;
-
         private readonly Queue<QueueEntry> queue = new Queue<QueueEntry>();
 
         private readonly List<uint> offsets = new List<uint>();
-
-        public TreeWriter(OffsetWriter offsetWriter)
-        {
-            Validate.ArgumentNotNull(nameof(offsetWriter), offsetWriter);
-
-            this.offsetWriter = offsetWriter;
-        }
 
         public IReadOnlyList<uint> Write(IBinaryWriter binaryWriter, object value, IDataNode rootNode)
         {
@@ -985,7 +974,13 @@ namespace SAGESharp.IO
                 return;
             }
 
-            offsetWriter(binaryWriter, offsetPosition.Value);
+            binaryWriter.DoAtPosition(offsetPosition.Value, originalPosition =>
+            {
+                Validate.Argument(originalPosition <= uint.MaxValue,
+                    $"Offset 0x{originalPosition:X} is larger than {sizeof(uint)} bytes.");
+
+                binaryWriter.WriteUInt32((uint)originalPosition);
+            });
             offsets.Add(offsetPosition.Value);
         }
 

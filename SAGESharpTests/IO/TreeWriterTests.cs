@@ -16,36 +16,23 @@ namespace SAGESharp.IO
 {
     class TreeWriterTests
     {
-        private readonly IBinaryWriter binaryWriter;
+        private readonly BinaryWriterSubstitute binaryWriter;
 
         private readonly ITreeWriter treeWriter;
 
-        private readonly TreeWriter.OffsetWriter offsetWriter;
-
         public TreeWriterTests()
         {
-            binaryWriter = Substitute.For<IBinaryWriter>();
-            offsetWriter = Substitute.For<TreeWriter.OffsetWriter>();
-            treeWriter = new TreeWriter(offsetWriter);
+            binaryWriter = BinaryWriterSubstitute.New();
+            treeWriter = new TreeWriter();
         }
 
         [SetUp]
         public void Setup()
         {
             binaryWriter.ClearSubstitute();
-            offsetWriter.ClearSubstitute();
         }
 
         #region Null checks
-        [Test]
-        public void Test_Creating_A_TreeWriter_With_A_Null_Delegate()
-        {
-            Action action = () => new TreeWriter(null);
-
-            action.Should()
-                .ThrowArgumentNullException("offsetWriter");
-        }
-
         [Test]
         public void Test_Writing_A_Tree_With_A_Null_BinaryWriter()
         {
@@ -171,6 +158,7 @@ namespace SAGESharp.IO
         [Test]
         public void Test_Writing_An_Instance_Of_A_Tree_With_Nested_Lists()
         {
+            uint originalPosition1 = 28, originalPosition2 = 39;
             uint offsetPosition1 = 20, offsetPosition2 = 30;
             IDataNode rootNode = TreeWithNestedLists.Build();
             TreeWithNestedLists.Class value = new TreeWithNestedLists.Class
@@ -223,15 +211,19 @@ namespace SAGESharp.IO
                 .Write(binaryWriter, Arg.Any<object>())
                 .Returns(offsetPosition2);
 
+            binaryWriter.GetPosition().Returns(originalPosition1, originalPosition2);
+
             treeWriter.Write(binaryWriter, value, rootNode)
                 .Should()
                 .Equal(offsetPosition1, offsetPosition2);
 
-            Received.InOrder(() => VerifyWriteTreeWithNestedLists(rootNode, value, offsetPosition1, offsetPosition2));
+            Received.InOrder(() => VerifyWriteTreeWithNestedLists(rootNode, value, originalPosition1, originalPosition2, offsetPosition1, offsetPosition2));
         }
+
         [Test]
         public void Test_Writing_An_Instance_Of_A_Tree_With_Nested_Empty_Lists()
         {
+            uint originalPosition1 = 28, originalPosition2 = 39;
             uint offsetPosition1 = 20, offsetPosition2 = 30;
             IDataNode rootNode = TreeWithNestedLists.Build();
             TreeWithNestedLists.Class value = new TreeWithNestedLists.Class
@@ -254,6 +246,8 @@ namespace SAGESharp.IO
                 .Write(binaryWriter, Arg.Any<object>())
                 .Returns(offsetPosition2);
 
+            binaryWriter.GetPosition().Returns(originalPosition1, originalPosition2);
+
             treeWriter.Write(binaryWriter, value, rootNode)
                 .Should()
                 .Equal(offsetPosition1, offsetPosition2);
@@ -261,12 +255,14 @@ namespace SAGESharp.IO
             list1ChildNode.ChildNode.DidNotReceive().Write(binaryWriter, Arg.Any<object>());
             list2ChildNode.ChildNode.DidNotReceive().Write(binaryWriter, Arg.Any<object>());
 
-            Received.InOrder(() => VerifyWriteTreeWithNestedLists(rootNode, value, offsetPosition1, offsetPosition2));
+            Received.InOrder(() => VerifyWriteTreeWithNestedLists(rootNode, value, originalPosition1, originalPosition2, offsetPosition1, offsetPosition2));
         }
 
         private void VerifyWriteTreeWithNestedLists(
             IDataNode node,
             TreeWithNestedLists.Class value,
+            uint originalPosition1,
+            uint originalPosition2,
             uint offsetPosition1,
             uint offsetPosition2
         ) {
@@ -278,13 +274,13 @@ namespace SAGESharp.IO
             IListNode listNode2 = node.Edges[1].ChildNode as IListNode;
             listNode2.Write(binaryWriter, value.List2);
 
-            offsetWriter(binaryWriter, offsetPosition1);
+            VerifyBinaryWriterWritesOffset(originalPosition1, offsetPosition1);
             foreach (var entry in value.List1)
             {
                 VerifyWriteTreeWithHeight1(listNode1.ChildNode, entry);
             }
 
-            offsetWriter(binaryWriter, offsetPosition2);
+            VerifyBinaryWriterWritesOffset(originalPosition2, offsetPosition2);
             foreach (var entry in value.List2)
             {
                 VerifyWriteTreeWithHeight2(listNode2.ChildNode, entry);
@@ -296,13 +292,15 @@ namespace SAGESharp.IO
         [Test]
         public void Test_Writing_An_Instance_Of_A_Tree_With_A_Node_At_Offset()
         {
-            uint offset = 15;
+            uint originalPosition = 43, offset = 15;
             IDataNode rootNode = TreeWithNodeAtOffset.Build();
             TreeWithNodeAtOffset.Class value = new TreeWithNodeAtOffset.Class
             {
                 ValueAtOffset = "value",
                 ValueInline = 54
             };
+
+            binaryWriter.GetPosition().Returns(originalPosition);
 
             (rootNode.Edges[0].ChildNode as IOffsetNode)
                 .Write(binaryWriter, Arg.Any<object>())
@@ -312,19 +310,45 @@ namespace SAGESharp.IO
                 .Should()
                 .Equal(offset);
 
-            Received.InOrder(() => VerifyWriteTreeWithNodeAtOffset(rootNode, value, offset));
+            Received.InOrder(() => VerifyWriteTreeWithNodeAtOffset(rootNode, value, originalPosition, offset));
         }
 
-        private void VerifyWriteTreeWithNodeAtOffset(IDataNode node, TreeWithNodeAtOffset.Class value, uint offsetPosition)
+        private void VerifyWriteTreeWithNodeAtOffset(IDataNode node, TreeWithNodeAtOffset.Class value, uint originalPosition, uint offsetPosition)
         {
             node.Write(binaryWriter, value);
 
             (node.Edges[0].ChildNode as IOffsetNode).Write(binaryWriter, value.ValueAtOffset);
             (node.Edges[1].ChildNode as IDataNode).Write(binaryWriter, value.ValueInline);
 
-            offsetWriter(binaryWriter, offsetPosition);
+            VerifyBinaryWriterWritesOffset(originalPosition, offsetPosition);
             (node.Edges[0].ChildNode as IOffsetNode).ChildNode.Write(binaryWriter, value.ValueAtOffset);
         }
+
+        [Test]
+        public void Test_Writing_An_Instance_Of_A_Tree_With_A_Node_At_A_Large_Offset()
+        {
+            long originalPosition = (long)uint.MaxValue + 1;
+            IDataNode rootNode = TreeWithNodeAtOffset.Build();
+            TreeWithNodeAtOffset.Class value = new TreeWithNodeAtOffset.Class
+            {
+                ValueAtOffset = "offset too large",
+                ValueInline = 7
+            };
+            Action action = () => treeWriter.Write(binaryWriter, value, rootNode);
+
+            binaryWriter.GetPosition().Returns(originalPosition);
+
+            action.Should()
+                .ThrowExactly<ArgumentException>()
+                .WithMessage($"Offset 0x{originalPosition:X} is larger than {sizeof(uint)} bytes.");
+
+            binaryWriter.DidNotReceive().WriteUInt32(Arg.Any<uint>());
+        }
         #endregion
+
+        private void VerifyBinaryWriterWritesOffset(uint originalPosition, uint offset)
+        {
+            binaryWriter.VerifyDoAtPosition(originalPosition, offset, () => binaryWriter.WriteUInt32(originalPosition));
+        }
     }
 }
