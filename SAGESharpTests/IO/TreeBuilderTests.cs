@@ -212,7 +212,7 @@ namespace SAGESharp.IO
 
         private sealed class ClassWithStringInline
         {
-            private const int LENGTH = 27;
+            private const byte LENGTH = 27;
 
             [SerializableProperty(0)]
             [InlineString(LENGTH)]

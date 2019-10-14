@@ -669,7 +669,7 @@ namespace SAGESharp.IO
             }
             else if (inlineStringAttribute != null)
             {
-                return new StringDataNode((byte)inlineStringAttribute.Length);
+                return new StringDataNode(inlineStringAttribute.Length);
             }
             else
             {

@@ -69,12 +69,12 @@ namespace SAGESharp.IO
         /// </summary>
         /// 
         /// <param name="length">The fixed length of the string.</param>
-        public InlineStringAttribute(int length) => Length = length;
+        public InlineStringAttribute(byte length) => Length = length;
 
         /// <summary>
         /// The fixed length for the string.
         /// </summary>
-        public int Length { get; }
+        public byte Length { get; }
     }
 
     /// <summary>
