@@ -18,41 +18,23 @@ namespace SAGESharp.IO
 {
     class TreeReaderTests
     {
-        private readonly IBinaryReader binaryReader;
-
-        private readonly TreeReader.AtOffsetDo atOffsetDo;
+        private readonly BinaryReaderSubstitute binaryReader;
 
         private readonly ITreeReader treeReader;
 
         public TreeReaderTests()
         {
-            binaryReader = Substitute.For<IBinaryReader>();
-            atOffsetDo = Substitute.For<TreeReader.AtOffsetDo>();
-            treeReader = new TreeReader((binaryReader, offset, action) =>
-            {
-                atOffsetDo(binaryReader, offset, action);
-
-                action();
-            });
+            binaryReader = BinaryReaderSubstitute.New();
+            treeReader = new TreeReader();
         }
 
         [SetUp]
         public void Setup()
         {
             binaryReader.ClearSubstitute();
-            atOffsetDo.ClearSubstitute();
         }
 
         #region Null checks
-        [Test]
-        public void Test_Creating_A_TreeReader_With_A_Null_Delegate()
-        {
-            Action action = () => new TreeReader(null);
-
-            action.Should()
-                .ThrowArgumentNullException("atOffsetDo");
-        }
-
         [Test]
         public void Test_Reading_A_Tree_With_A_Null_BinaryReader()
         {
@@ -200,6 +182,7 @@ namespace SAGESharp.IO
         [Test]
         public void Test_Reading_An_Instance_Of_A_Tree_With_Nested_Lists()
         {
+            uint originalPosition1 = 26, originalPosition2 = 38;
             uint offsetPosition1 = 20, offsetPosition2 = 30;
             IDataNode rootNode = TreeWithNestedLists.Build();
             TreeWithNestedLists.Class expected = new TreeWithNestedLists.Class
@@ -244,13 +227,43 @@ namespace SAGESharp.IO
                 }
             };
 
+            binaryReader.GetPosition().Returns(originalPosition1, originalPosition2);
+
             SetupTreeWithNestedLists(rootNode, expected, offsetPosition1, offsetPosition2);
 
             object result = treeReader.Read(binaryReader, rootNode);
 
-            Received.InOrder(() => VerifyReadTreeWithNestedLists(rootNode, expected, offsetPosition1, offsetPosition2));
+            Received.InOrder(() => VerifyReadTreeWithNestedLists(rootNode, expected, originalPosition1, originalPosition2, offsetPosition1, offsetPosition2));
 
             result.Should().BeEquivalentTo(expected);
+        }
+
+        private void VerifyReadTreeWithNestedLists(
+            IDataNode node,
+            TreeWithNestedLists.Class value,
+            uint originalPosition1,
+            uint originalPosition2,
+            uint offsetPosition1,
+            uint offsetPosition2
+        ) {
+            node.Read(binaryReader);
+
+            void verifyReadList<T>(IListNode listNode, IList<T> list, uint originalPosition, uint offset, Action<IDataNode> verifyReadValue)
+            {
+                listNode.ReadEntryCount(binaryReader);
+                listNode.ReadOffset(binaryReader);
+
+                binaryReader.VerifyDoAtPosition(originalPosition, offset, () =>
+                {
+                    foreach (var entry in list)
+                    {
+                        verifyReadValue(listNode.ChildNode);
+                    }
+                });
+            }
+
+            verifyReadList(node.Edges[0].ChildNode as IListNode, value.List1, originalPosition1, offsetPosition1, VerifyReadTreeWithHeight1);
+            verifyReadList(node.Edges[1].ChildNode as IListNode, value.List2, originalPosition2, offsetPosition2, VerifyReadTreeWithHeight2);
         }
 
         [Test]
@@ -272,10 +285,9 @@ namespace SAGESharp.IO
 
             object result = treeReader.Read(binaryReader, rootNode);
 
-            atOffsetDo.DidNotReceive().Invoke(binaryReader, offsetPosition1, Arg.Any<Action>());
-            atOffsetDo.DidNotReceive().Invoke(binaryReader, offsetPosition2, Arg.Any<Action>());
+            binaryReader.DidNotReceive().GetPosition();
 
-            Received.InOrder(() => VerifyReadTreeWithNestedLists(rootNode, expected, offsetPosition1, offsetPosition2));
+            Received.InOrder(() => VerifyReadTreeWithNestedLists(rootNode));
 
             result.Should().BeEquivalentTo(expected);
         }
@@ -299,28 +311,18 @@ namespace SAGESharp.IO
             setupListNode(node.Edges[1].ChildNode as IListNode, expected.List2, offset2, SetupTreeWithHeight2);
         }
 
-        private void VerifyReadTreeWithNestedLists(IDataNode node, TreeWithNestedLists.Class value, uint offsetPosition1, uint offsetPosition2)
+        private void VerifyReadTreeWithNestedLists(IDataNode node)
         {
             node.Read(binaryReader);
 
-            void verifyReadList<T>(IListNode listNode, IList<T> list, uint offset, Action<IDataNode> verifyReadValue)
+            void verifyReadList(IListNode listNode)
             {
                 listNode.ReadEntryCount(binaryReader);
                 listNode.ReadOffset(binaryReader);
-
-                if (list.IsNotEmpty())
-                {
-                    atOffsetDo(Arg.Is(binaryReader), Arg.Is<long>(offset), Arg.Any<Action>());
-
-                    foreach (var entry in list)
-                    {
-                        verifyReadValue(listNode.ChildNode);
-                    }
-                }
             }
 
-            verifyReadList(node.Edges[0].ChildNode as IListNode, value.List1, offsetPosition1, VerifyReadTreeWithHeight1);
-            verifyReadList(node.Edges[1].ChildNode as IListNode, value.List2, offsetPosition2, VerifyReadTreeWithHeight2);
+            verifyReadList(node.Edges[0].ChildNode as IListNode);
+            verifyReadList(node.Edges[1].ChildNode as IListNode);
         }
         #endregion
 
@@ -328,7 +330,7 @@ namespace SAGESharp.IO
         [Test]
         public void Test_Reading_An_Instance_Of_A_Tree_With_A_Node_At_Offset()
         {
-            uint offset = 15;
+            uint originalPosition = 27, offset = 15;
             IDataNode rootNode = TreeWithNodeAtOffset.Build();
             TreeWithNodeAtOffset.Class expected = new TreeWithNodeAtOffset.Class
             {
@@ -336,11 +338,13 @@ namespace SAGESharp.IO
                 ValueInline = 54
             };
 
+            binaryReader.GetPosition().Returns(originalPosition);
+
             SetupTreeWithNodeAtOffset(rootNode, expected, offset);
 
             object result = treeReader.Read(binaryReader, rootNode);
             
-            Received.InOrder(() => VerifyReadTreeWithNodeAtOffset(rootNode, offset));
+            Received.InOrder(() => VerifyReadTreeWithNodeAtOffset(rootNode, originalPosition, offset));
 
             result.Should().BeEquivalentTo(expected);
         }
@@ -356,14 +360,13 @@ namespace SAGESharp.IO
             (node.Edges[1].ChildNode as IDataNode).Read(binaryReader).Returns(expected.ValueInline);
         }
 
-        private void VerifyReadTreeWithNodeAtOffset(IDataNode node, uint offsetPosition)
+        private void VerifyReadTreeWithNodeAtOffset(IDataNode node, uint originalPosition, uint offsetPosition)
         {
             node.Read(binaryReader);
 
             IOffsetNode offsetNode = node.Edges[0].ChildNode as IOffsetNode;
             offsetNode.ReadOffset(binaryReader);
-            atOffsetDo(Arg.Is(binaryReader), Arg.Is<long>(offsetPosition), Arg.Any<Action>());
-            offsetNode.ChildNode.Read(binaryReader);
+            binaryReader.VerifyDoAtPosition(originalPosition, offsetPosition, () => offsetNode.ChildNode.Read(binaryReader));
 
             (node.Edges[1].ChildNode as IDataNode).Read(binaryReader);
         }

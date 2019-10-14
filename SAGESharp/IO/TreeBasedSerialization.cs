@@ -842,17 +842,6 @@ namespace SAGESharp.IO
 
     internal sealed class TreeReader : ITreeReader
     {
-        public delegate void AtOffsetDo(IBinaryReader binaryReader, long offset, Action action);
-
-        private readonly AtOffsetDo atOffsetDo;
-
-        public TreeReader(AtOffsetDo atOffsetDo)
-        {
-            Validate.ArgumentNotNull(nameof(atOffsetDo), atOffsetDo);
-
-            this.atOffsetDo = atOffsetDo;
-        }
-
         public object Read(IBinaryReader binaryReader, IDataNode rootNode)
         {
             Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
@@ -900,7 +889,7 @@ namespace SAGESharp.IO
             uint offset = node.ReadOffset(binaryReader);
 
             object result = null;
-            atOffsetDo(binaryReader, offset, () => result = ProcessDataNode(binaryReader, node.ChildNode));
+            binaryReader.DoAtPosition(offset, () => result = ProcessDataNode(binaryReader, node.ChildNode));
 
             return result;
         }
@@ -913,7 +902,7 @@ namespace SAGESharp.IO
 
             if (count != 0)
             {
-                atOffsetDo(binaryReader, offset, () =>
+                binaryReader.DoAtPosition(offset, () =>
                 {
                     for (int n = 0; n < count; ++n)
                     {
