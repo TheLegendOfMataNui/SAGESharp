@@ -951,6 +951,10 @@ namespace SAGESharp.IO
             {
                 ProcessDataNode(binaryWriter, dataNode, value);
             }
+            else if (node is IListNode listNode)
+            {
+                ProcessListNode(binaryWriter, listNode, value);
+            }
             else if (node is IOffsetNode offsetNode)
             {
                 ProcessOffsetNode(binaryWriter, offsetNode, value);
@@ -976,18 +980,12 @@ namespace SAGESharp.IO
         {
             uint offsetPosition = node.Write(binaryWriter, value);
 
-            if (node is IListNode listNode)
-            {
-                ProcessListNode(listNode, value, offsetPosition);
-            }
-            else
-            {
-                Enqueue(node.ChildNode, value, offsetPosition);
-            }
+            Enqueue(node.ChildNode, value, offsetPosition);
         }
 
-        private void ProcessListNode(IListNode node, object list, uint offsetPosition)
+        private void ProcessListNode(IBinaryWriter binaryWriter, IListNode node, object list)
         {
+            uint offsetPosition = node.Write(binaryWriter, list);
             int count = node.GetListCount(list);
             if (count == 0)
             {
