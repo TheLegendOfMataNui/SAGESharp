@@ -145,6 +145,8 @@ namespace SAGESharp.IO
         private static readonly Lazy<IBinarySerializer<BKD>> bkdBinarySerializer
             = new Lazy<IBinarySerializer<BKD>>(() => new BinarySerializableSerializer<BKD>());
 
+        private static readonly TreeReader treeReader = new TreeReader();
+
         /// <summary>
         /// Builds a binary serializer for type <typeparamref name="T"/>.
         /// </summary>
@@ -155,8 +157,8 @@ namespace SAGESharp.IO
         public static IBinarySerializer<T> ForType<T>()
         {
             return new TreeBinarySerializer<T>(
-                treeReader: new TreeReader(),
-                treeWriter: new TreeWriter(),
+                treeReader: treeReader.Read,
+                treeWriter: WriteTree,
                 rootNode: TreeBuilder.BuildTreeForType(typeof(T)),
                 footerAligner: FooterAligner
             );
@@ -179,25 +181,33 @@ namespace SAGESharp.IO
                 binaryWriter.WriteBytes(new byte[bytesToFill]);
             }
         }
+
+        // TreeWriter class is not stateless so every write needs a new instance of the class
+        private static IReadOnlyList<uint> WriteTree(IBinaryWriter binaryWriter, object value, IDataNode root)
+            => new TreeWriter().Write(binaryWriter, value, root);
     }
     #endregion
 
     #region Implementation
     internal sealed class TreeBinarySerializer<T> : IBinarySerializer<T>
     {
+        public delegate object TreeReader(IBinaryReader binaryReader, IDataNode rootNode);
+
+        public delegate IReadOnlyList<uint> TreeWriter(IBinaryWriter binaryWriter, object value, IDataNode rootNode);
+
         internal const uint FOOTER_MAGIC_NUMBER = 0x00C0FFEE;
 
-        private readonly ITreeReader treeReader;
+        private readonly TreeReader treeReader;
 
-        private readonly ITreeWriter treeWriter;
+        private readonly TreeWriter treeWriter;
 
         private readonly IDataNode rootNode;
 
         private readonly Action<IBinaryWriter> alignFooter;
 
         public TreeBinarySerializer(
-            ITreeReader treeReader,
-            ITreeWriter treeWriter,
+            TreeReader treeReader,
+            TreeWriter treeWriter,
             IDataNode rootNode,
             Action<IBinaryWriter> footerAligner
         ) {
@@ -216,7 +226,7 @@ namespace SAGESharp.IO
         {
             Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
 
-            return (T)treeReader.Read(binaryReader, rootNode);
+            return (T)treeReader(binaryReader, rootNode);
         }
 
         public void Write(IBinaryWriter binaryWriter, T value)
@@ -224,7 +234,7 @@ namespace SAGESharp.IO
             Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
             Validate.ArgumentNotNull<object>(nameof(value), value);
 
-            IReadOnlyList<uint> offsets = treeWriter.Write(binaryWriter, value, rootNode);
+            IReadOnlyList<uint> offsets = treeWriter(binaryWriter, value, rootNode);
 
             alignFooter(binaryWriter);
 

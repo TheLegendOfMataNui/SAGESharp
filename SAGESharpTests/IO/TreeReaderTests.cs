@@ -20,7 +20,7 @@ namespace SAGESharp.IO
     {
         private readonly BinaryReaderSubstitute binaryReader;
 
-        private readonly ITreeReader treeReader;
+        private readonly TreeReader treeReader;
 
         public TreeReaderTests()
         {

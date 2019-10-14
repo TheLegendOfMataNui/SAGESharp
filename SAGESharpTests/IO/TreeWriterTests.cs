@@ -18,7 +18,7 @@ namespace SAGESharp.IO
     {
         private readonly BinaryWriterSubstitute binaryWriter;
 
-        private readonly ITreeWriter treeWriter;
+        private readonly TreeWriter treeWriter;
 
         public TreeWriterTests()
         {

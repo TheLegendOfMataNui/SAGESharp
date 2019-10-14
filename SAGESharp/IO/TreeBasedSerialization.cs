@@ -178,45 +178,6 @@ namespace SAGESharp.IO
         /// <exception cref="ArgumentNullException">If either argument is null.</exception>
         void SetChildValue(object value, object childValue);
     }
-
-    /// <summary>
-    /// Represents an object that can read a value using an SLB graph.
-    /// </summary>
-    internal interface ITreeReader
-    {
-        /// <summary>
-        /// Reads a value from <paramref name="binaryReader"/>
-        /// using the SLB that starts in the given <paramref name="rootNode"/>.
-        /// </summary>
-        /// 
-        /// <param name="binaryReader">The reader that will be used to read the value.</param>
-        /// <param name="rootNode">The root node of the SLB graph that will be used to read the value.</param>
-        /// 
-        /// <returns>The value read from <paramref name="binaryReader"/>.</returns>
-        /// 
-        /// <exception cref="ArgumentNullException">If any argument is null.</exception>
-        object Read(IBinaryReader binaryReader, IDataNode rootNode);
-    }
-
-    /// <summary>
-    /// Represents an object that can write a value using an SLB graph.
-    /// </summary>
-    internal interface ITreeWriter
-    {
-        /// <summary>
-        /// Writes <paramref name="value"/> to <paramref name="binaryWriter"/>
-        /// using the SLB graph that starts in the given <paramref name="rootNode"/>.
-        /// </summary>
-        /// 
-        /// <param name="binaryWriter">The binary writer that will be used to write the value.</param>
-        /// <param name="value">The value to be written.</param>
-        /// <param name="rootNode">The root node of the SLB graph that will be used to write the value.</param>
-        /// 
-        /// <returns>A list containing the position of the offsets written to <paramref name="binaryWriter"/>.</returns>
-        /// 
-        /// <exception cref="ArgumentNullException">If any argument is null.</exception>
-        IReadOnlyList<uint> Write(IBinaryWriter binaryWriter, object value, IDataNode rootNode);
-    }
     #endregion
 
     #region Implementations
@@ -840,7 +801,7 @@ namespace SAGESharp.IO
         #endregion
     }
 
-    internal sealed class TreeReader : ITreeReader
+    internal sealed class TreeReader
     {
         public object Read(IBinaryReader binaryReader, IDataNode rootNode)
         {
@@ -916,7 +877,7 @@ namespace SAGESharp.IO
         }
     }
 
-    internal sealed class TreeWriter : ITreeWriter
+    internal sealed class TreeWriter
     {
         private class QueueEntry
         {

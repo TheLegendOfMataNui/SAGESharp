@@ -16,9 +16,9 @@ namespace SAGESharp.IO
 {
     class TreeBinarySerializerTests
     {
-        private readonly ITreeReader treeReader;
+        private readonly TreeBinarySerializer<string>.TreeReader treeReader;
 
-        private readonly ITreeWriter treeWriter;
+        private readonly TreeBinarySerializer<string>.TreeWriter treeWriter;
 
         private readonly IDataNode rootNode;
 
@@ -32,8 +32,8 @@ namespace SAGESharp.IO
 
         public TreeBinarySerializerTests()
         {
-            treeReader = Substitute.For<ITreeReader>();
-            treeWriter = Substitute.For<ITreeWriter>();
+            treeReader = Substitute.For<TreeBinarySerializer<string>.TreeReader>();
+            treeWriter = Substitute.For<TreeBinarySerializer<string>.TreeWriter>();
             rootNode = Substitute.For<IDataNode>();
             footerAligner = Substitute.For<Action<IBinaryWriter>>();
             binaryReader = Substitute.For<IBinaryReader>();
@@ -93,7 +93,7 @@ namespace SAGESharp.IO
         {
             string value = "value";
 
-            treeReader.Read(binaryReader, rootNode).Returns(value);
+            treeReader(binaryReader, rootNode).Returns(value);
 
             string result = serializer.Read(binaryReader);
 
@@ -116,13 +116,13 @@ namespace SAGESharp.IO
             string value = "value";
             IReadOnlyList<uint> offsets = new List<uint> { 1, 2, 3 };
 
-            treeWriter.Write(binaryWriter, value, rootNode).Returns(offsets);
+            treeWriter(binaryWriter, value, rootNode).Returns(offsets);
 
             serializer.Write(binaryWriter, value);
 
             Received.InOrder(() =>
             {
-                treeWriter.Write(binaryWriter, value, rootNode);
+                treeWriter(binaryWriter, value, rootNode);
                 footerAligner(binaryWriter);
                 offsets.ForEach(binaryWriter.WriteUInt32);
                 binaryWriter.WriteInt32(offsets.Count);
