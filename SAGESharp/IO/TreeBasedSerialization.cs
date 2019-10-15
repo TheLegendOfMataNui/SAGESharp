@@ -435,6 +435,45 @@ namespace SAGESharp.IO
         private static bool IsType(object value) => typeof(T) == value.GetType();
     }
 
+    internal sealed class PaddingNode : IDataNode
+    {
+        private readonly byte[] padding;
+
+        private readonly IDataNode childNode;
+
+        public PaddingNode(byte size, IDataNode childNode)
+        {
+            Validate.Argument(size > 0, "Padding size cannot be 0.");
+            Validate.ArgumentNotNull(nameof(childNode), childNode);
+
+            padding = new byte[size];
+            this.childNode = childNode;
+        }
+
+        public IReadOnlyList<IEdge> Edges { get => childNode.Edges; }
+
+        public object Read(IBinaryReader binaryReader)
+        {
+            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+
+            object result = childNode.Read(binaryReader);
+
+            binaryReader.ReadBytes(padding.Length);
+
+            return result;
+        }
+
+        public void Write(IBinaryWriter binaryWriter, object value)
+        {
+            Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
+            Validate.ArgumentNotNull(nameof(value), value);
+
+            childNode.Write(binaryWriter, value);
+
+            binaryWriter.WriteBytes(padding);
+        }
+    }
+
     internal sealed class Edge<T> : IEdge
     {
         private readonly Func<T, object> extractor;
