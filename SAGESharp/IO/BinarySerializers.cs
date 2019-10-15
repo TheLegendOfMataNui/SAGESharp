@@ -6,6 +6,7 @@
 using Konvenience;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace SAGESharp.IO
 {
@@ -185,6 +186,44 @@ namespace SAGESharp.IO
         // TreeWriter class is not stateless so every write needs a new instance of the class
         private static IReadOnlyList<uint> WriteTree(IBinaryWriter binaryWriter, object value, IDataNode root)
             => new TreeWriter().Write(binaryWriter, value, root);
+
+        /// <summary>
+        /// Reads an object of type <typeparamref name="T"/> from the input <paramref name="stream"/>
+        /// using the given <paramref name="binarySerializer"/>.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">Type of the objects to read.</typeparam>
+        /// 
+        /// <param name="binarySerializer">The binary serializer to use for reading an object.</param>
+        /// <param name="stream">The input stream that will be used to read the object.</param>
+        /// 
+        /// <returns>The object read from <paramref name="stream"/> with <paramref name="binarySerializer"/>.</returns>
+        public static T Read<T>(this IBinarySerializer<T> binarySerializer, Stream stream)
+        {
+            Validate.ArgumentNotNull(nameof(binarySerializer), binarySerializer);
+            Validate.ArgumentNotNull(nameof(stream), stream);
+
+            return binarySerializer.Read(Reader.ForStream(stream));
+        }
+
+        /// <summary>
+        /// Writes <paramref name="value"/> to the output <paramref name="stream"/>
+        /// using the given <paramref name="binarySerializer"/>.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">Type of the objects to write.</typeparam>
+        /// 
+        /// <param name="binarySerializer">THe binary serializer to use for writing the object.</param>
+        /// <param name="stream">The output stream that will be used to write the object.</param>
+        /// <param name="value">The object to write.</param>
+        public static void Write<T>(this IBinarySerializer<T> binarySerializer, Stream stream, T value)
+        {
+            Validate.ArgumentNotNull(nameof(binarySerializer), binarySerializer);
+            Validate.ArgumentNotNull(nameof(stream), stream);
+            Validate.ArgumentNotNull<object>(nameof(value), value);
+
+            binarySerializer.Write(Writer.ForStream(stream), value);
+        }
     }
     #endregion
 
