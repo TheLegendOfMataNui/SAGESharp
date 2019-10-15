@@ -650,7 +650,29 @@ namespace SAGESharp.IO
             return BuildUserTypeDataNode(type);
         }
 
-        private static object BuildNodeForType(PropertyInfo propertyInfo)
+        private static object BuildPaddedNodeForProperty(PropertyInfo propertyInfo)
+        {
+            object node = BuildNodeForProperty(propertyInfo);
+
+            RightPaddingAttribute rightPaddingAttribute = propertyInfo
+                .GetCustomAttribute<RightPaddingAttribute>();
+
+            if (rightPaddingAttribute is null)
+            {
+                return node;
+            }
+            else if (node is IDataNode dataNode)
+            {
+                return new PaddingNode(rightPaddingAttribute.Size, dataNode);
+            }
+            else
+            {
+                throw new BadTypeException(propertyInfo.DeclaringType,
+                    $"Property {propertyInfo.Name} cannot be padded.");
+            }
+        }
+
+        private static object BuildNodeForProperty(PropertyInfo propertyInfo)
         {
             if (IsPrimitiveType(propertyInfo.PropertyType))
             {
@@ -784,7 +806,7 @@ namespace SAGESharp.IO
 
             object extractor = GetExtractorForEdge(propertyInfo);
             object setter = GetSetterForEdge(propertyInfo);
-            object childNode = BuildNodeForType(propertyInfo);
+            object childNode = BuildPaddedNodeForProperty(propertyInfo);
 
             return (IEdge)edgeType.GetConstructor(new Type[] { extractorType, setterType, typeof(object) })
                 .Invoke(new object[] { extractor, setter, childNode });

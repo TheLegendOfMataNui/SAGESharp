@@ -247,6 +247,64 @@ namespace SAGESharp.IO
         }
         #endregion
 
+        #region Building a with PaddingNode
+        [Test]
+        public void Test_Building_A_Tree_For_A_Class_With_Padded_Properties()
+        {
+            IDataNode rootNode = TreeBuilder.BuildTreeForType(typeof(ClassWithPaddedProperties));
+
+            ClassWithPaddedProperties.BuildSample().VerifyTree(rootNode);
+        }
+
+        private sealed class ClassWithPaddedProperties
+        {
+            [SerializableProperty(0)]
+            [RightPadding(3)]
+            public byte Byte { get; set; }
+
+            [SerializableProperty(1)]
+            [RightPadding(10)]
+            public ClassWithPrimitiveProperties Child { get; set; }
+
+            public void VerifyTree(IDataNode dataNode)
+            {
+                dataNode.Should().BeOfType<UserTypeDataNode<ClassWithPaddedProperties>>();
+
+                dataNode.Edges.Should().HaveCount(2);
+
+                VerifyEdge(dataNode.Edges[0], this, v => v.Byte);
+
+                dataNode.Edges[0].ChildNode.Should().BeOfType<PaddingNode>();
+
+                ExtractChildNode(dataNode.Edges[0].ChildNode).Should().BeOfType<PrimitiveTypeDataNode<byte>>();
+
+                VerifyEdge(dataNode.Edges[1], this, v => v.Child);
+
+                dataNode.Edges[1].ChildNode.Should().BeOfType<PaddingNode>();
+
+                object paddedNode = ExtractChildNode(dataNode.Edges[1].ChildNode);
+
+                paddedNode.Should().Match(n => n is IDataNode);
+
+                Child.VerifyTree(paddedNode as IDataNode);
+            }
+
+            public static ClassWithPaddedProperties BuildSample() => new ClassWithPaddedProperties
+            {
+                Byte = 0xAB,
+                Child = ClassWithPrimitiveProperties.BuildSample()
+            };
+
+            private static object ExtractChildNode(object paddingNode)
+            {
+                FieldInfo field = typeof(PaddingNode)
+                    .GetField("childNode", BindingFlags.NonPublic | BindingFlags.Instance);
+
+                return field.GetValue(paddingNode);
+            }
+        }
+        #endregion
+
         #region Error checking
         [Test]
         public void Test_Building_A_Tree_For_A_Null_Type()
@@ -355,6 +413,30 @@ namespace SAGESharp.IO
             [OffsetString]
             [InlineString(39)]
             public string Value { get; set; }
+        }
+
+        [Test]
+        public void Test_Building_A_Tree_For_A_Class_With_Padding_In_A_Invalid_Property()
+        {
+            string propertyName = nameof(ClassWithPaddingInAInvalidProperty.Entries);
+
+            BadTypeExceptionShouldBeThrownForType<ClassWithPaddingInAInvalidProperty>
+            (
+                message: $"Property {propertyName} cannot be padded."
+            );
+        }
+
+        private class ClassWithPaddingInAInvalidProperty
+        {
+            [SerializableProperty(0)]
+            [RightPadding(1)]
+            public IList<Entry> Entries { get; set; }
+
+            public class Entry
+            {
+                [SerializableProperty(1)]
+                public int Int { get; set; }
+            }
         }
         #endregion
 
