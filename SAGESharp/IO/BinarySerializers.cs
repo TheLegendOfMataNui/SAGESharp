@@ -161,7 +161,7 @@ namespace SAGESharp.IO
                 treeReader: treeReader.Read,
                 treeWriter: WriteTree,
                 rootNode: TreeBuilder.BuildTreeForType(typeof(T)),
-                footerAligner: FooterAligner
+                footerAligner: AlignFooter
             );
         }
 
@@ -170,7 +170,7 @@ namespace SAGESharp.IO
         /// </summary>
         public static IBinarySerializer<BKD> ForBKDFiles { get => bkdBinarySerializer.Value; }
 
-        internal static void FooterAligner(IBinaryWriter binaryWriter)
+        internal static void AlignFooter(IBinaryWriter binaryWriter)
         {
             // We get the amount of bytes that are unaligned
             // by getting bytes after the last aligned integer (end % 4)

@@ -31,7 +31,7 @@ namespace SAGESharp.IO
         {
             binaryWriter.Position.Returns(0x01);
 
-            BinarySerializer.FooterAligner(binaryWriter);
+            BinarySerializer.AlignFooter(binaryWriter);
 
             binaryWriter.WriteBytes(Matcher.ForEquivalentArray(new byte[3]));
         }
@@ -41,7 +41,7 @@ namespace SAGESharp.IO
         {
             binaryWriter.Position.Returns(0x04);
 
-            BinarySerializer.FooterAligner(binaryWriter);
+            BinarySerializer.AlignFooter(binaryWriter);
 
             binaryWriter.DidNotReceive().WriteBytes(Arg.Any<byte[]>());
         }
