@@ -85,6 +85,7 @@
     <Compile Include="IO\BinaryWriterTests.cs" />
     <Compile Include="IO\BinaryWriterWrapperTests.cs" />
     <Compile Include="IO\EdgeTests.cs" />
+    <Compile Include="IO\IdentifierYamlTypeConverterTests.cs" />
     <Compile Include="IO\ListNodeTests.cs" />
     <Compile Include="IO\OffsetNodeTests.cs" />
     <Compile Include="IO\PaddingNodeTests.cs" />

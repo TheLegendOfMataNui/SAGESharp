@@ -85,6 +85,7 @@
     <Compile Include="IO\BinarySerializers.cs" />
     <Compile Include="IO\BinaryWriter.cs" />
     <Compile Include="IO\TreeBasedSerialization.cs" />
+    <Compile Include="IO\Yaml.cs" />
     <Compile Include="LSS\Compiler.cs" />
     <Compile Include="LSS\Decompiler.cs" />
     <Compile Include="LSS\Expressions\ArrayAccessExpression.cs" />
