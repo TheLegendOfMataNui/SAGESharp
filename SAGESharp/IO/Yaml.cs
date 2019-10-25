@@ -4,14 +4,55 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.TypeInspectors;
 
 using Identifier = SAGESharp.SLB.Identifier;
 
 namespace SAGESharp.IO
 {
+    internal sealed class SLBTypeInspector : TypeInspectorSkeleton
+    {
+        private readonly ITypeInspector typeInspector;
+
+        public SLBTypeInspector(ITypeInspector typeInspector)
+        {
+            this.typeInspector = typeInspector;
+        }
+
+        public override IEnumerable<IPropertyDescriptor> GetProperties(Type type, object container)
+        {
+            return typeInspector.GetProperties(type, container)
+                .Select(ConvertPropertyDescriptor)
+                .Where(p => !(p is null));
+        }
+
+        private static IPropertyDescriptor ConvertPropertyDescriptor(IPropertyDescriptor propertyDescriptor)
+        {
+            SerializablePropertyAttribute attribute = propertyDescriptor.GetCustomAttribute<SerializablePropertyAttribute>();
+
+            if (attribute is null)
+            {
+                return null;
+            }
+
+            PropertyDescriptor result = new PropertyDescriptor(propertyDescriptor);
+
+            if (attribute.Name != null)
+            {
+                result.Name = attribute.Name;
+            }
+
+            result.Order = attribute.BinaryOrder;
+
+            return result;
+        }
+    }
+
     internal sealed class IdentifierYamlTypeConverter : IYamlTypeConverter
     {
         public bool Accepts(Type type)

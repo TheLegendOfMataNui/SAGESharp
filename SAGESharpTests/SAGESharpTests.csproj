@@ -90,6 +90,7 @@
     <Compile Include="IO\OffsetNodeTests.cs" />
     <Compile Include="IO\PaddingNodeTests.cs" />
     <Compile Include="IO\PrimitiveTypeDataNodeTests.cs" />
+    <Compile Include="IO\SLBTypeInspectorTests.cs" />
     <Compile Include="IO\StringDataNodeTests.cs" />
     <Compile Include="IO\Substitutes.cs" />
     <Compile Include="IO\TreeBinarySerializerTests.cs" />
