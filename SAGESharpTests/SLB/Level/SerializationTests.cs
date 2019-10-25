@@ -18,7 +18,7 @@ namespace SAGESharp.SLB.Level
         {
             var serializer = BinarySerializer.ForType<Conversation>();
 
-            using (var stream = new FileStream(testCaseData.TestFilePath, FileMode.Open))
+            using (var stream = new FileStream(testCaseData.SLBFilePath, FileMode.Open))
             {
                 var reader = Reader.ForStream(stream);
 
@@ -33,7 +33,7 @@ namespace SAGESharp.SLB.Level
         public void Test_Writing_A_Conversation_To_A_File_Successfully(SerializationTestCaseData<Conversation> testCaseData)
         {
             var serializer = BinarySerializer.ForType<Conversation>();
-            var outputFilePath = $"{testCaseData.TestFilePath}.tst";
+            var outputFilePath = $"{testCaseData.SLBFilePath}.tst";
 
             using (var stream = new FileStream(outputFilePath, FileMode.Create))
             {
@@ -43,7 +43,7 @@ namespace SAGESharp.SLB.Level
             }
 
             var actual = File.ReadAllBytes(outputFilePath);
-            var expected = File.ReadAllBytes(testCaseData.TestFilePath);
+            var expected = File.ReadAllBytes(testCaseData.SLBFilePath);
             
             actual.Should().Equal(expected);
         }
@@ -52,17 +52,17 @@ namespace SAGESharp.SLB.Level
         {
             new SerializationTestCaseData<Conversation>(
                 description: "Test serializing with an empty file",
-                testFilePath: PathForTestFile("EmptyConversation.slb"),
+                testFilePath: PathForTestFile("EmptyConversation"),
                 expectedProvider: TestData.EmptyConversation
             ),
             new SerializationTestCaseData<Conversation>(
                 description: "Test serializing a file with a simple conversation",
-                testFilePath: PathForTestFile("SimpleConversation.slb"),
+                testFilePath: PathForTestFile("SimpleConversation"),
                 expectedProvider: TestData.SimpleConversation
             ),
             new SerializationTestCaseData<Conversation>(
                 description: "Test serializing a file with a complex conversation",
-                testFilePath: PathForTestFile("ComplexConversation.slb"),
+                testFilePath: PathForTestFile("ComplexConversation"),
                 expectedProvider: TestData.ComplexConversation
             )
         };

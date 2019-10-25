@@ -37,6 +37,11 @@ namespace SAGESharp.Testing
         public string TestFilePath { get; }
 
         /// <summary>
+        /// The <see cref="TestFilePath"/> with the SLB extension appended at the end.
+        /// </summary>
+        public string SLBFilePath { get => $"{TestFilePath}.slb"; }
+
+        /// <summary>
         /// The object that is expected to be read or write in the test.
         /// </summary>
         public T Expected { get => expectedProvider(); }
