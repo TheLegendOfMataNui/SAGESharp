@@ -8,13 +8,15 @@ using NUnit.Framework;
 using SAGESharp.IO;
 using SAGESharp.Testing;
 using System.IO;
+using YamlDotNet.Serialization;
 
 namespace SAGESharp.SLB.Level
 {
     class SerializationTests
     {
+        #region Binary SLB
         [TestCaseSource(nameof(TEST_CASES))]
-        public void Test_Reading_A_Conversation_File_Successfully(SerializationTestCaseData<Conversation> testCaseData)
+        public void Test_Reading_A_Binary_Conversation_File_Successfully(SerializationTestCaseData<Conversation> testCaseData)
         {
             var serializer = BinarySerializer.ForType<Conversation>();
 
@@ -30,7 +32,7 @@ namespace SAGESharp.SLB.Level
         }
 
         [TestCaseSource(nameof(TEST_CASES))]
-        public void Test_Writing_A_Conversation_To_A_File_Successfully(SerializationTestCaseData<Conversation> testCaseData)
+        public void Test_Writing_A_Conversation_To_A_Binary_File_Successfully(SerializationTestCaseData<Conversation> testCaseData)
         {
             var serializer = BinarySerializer.ForType<Conversation>();
             var outputFilePath = $"{testCaseData.SLBFilePath}.tst";
@@ -47,6 +49,31 @@ namespace SAGESharp.SLB.Level
             
             actual.Should().Equal(expected);
         }
+        #endregion
+
+        #region Yaml
+        [TestCaseSource(nameof(TEST_CASES))]
+        public void Test_Reading_A_Yaml_Conversation_File_Successfully(SerializationTestCaseData<Conversation> testCaseData)
+        {
+            IDeserializer deserializer = YamlDeserializer.BuildSLBDeserializer();
+            string fileContent = File.ReadAllText(testCaseData.YamlFilePath);
+
+            Conversation result = deserializer.Deserialize<Conversation>(fileContent);
+
+            result.Should().Be(testCaseData.Expected);
+        }
+
+        [TestCaseSource(nameof(TEST_CASES))]
+        public void Test_Writing_A_Yaml_Conversation_File_Successfully(SerializationTestCaseData<Conversation> testCaseData)
+        {
+            ISerializer serializer = YamlSerializer.BuildSLBSerializer();
+
+            string result = serializer.Serialize(testCaseData.Expected);
+            string expectedFile = File.ReadAllText(testCaseData.YamlFilePath);
+
+            result.Should().Be(expectedFile);
+        }
+        #endregion
 
         static object[] TEST_CASES() => new object[]
         {

@@ -12,7 +12,7 @@ namespace SAGESharp.SLB.Level
 {
     public sealed class Conversation : IEquatable<Conversation>
     {
-        [SerializableProperty(1)]
+        [SerializableProperty(1, name: nameof(Conversation))]
         public IList<ConversationCharacter> Entries { get; set; }
 
         public bool Equals(Conversation other)

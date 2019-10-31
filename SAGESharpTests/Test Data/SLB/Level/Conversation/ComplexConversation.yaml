@@ -1,0 +1,115 @@
+Conversation:
+- ToaName: TOA1
+  CharName: NAM1
+  CharCont: CON1
+  Entries:
+  - LineSide: Right
+    ConditionStart: 16843009
+    ConditionEnd: 33686018
+    StringLabel: LAB1
+    StringIndex: 336794129
+    Frames:
+    - ToaAnimation: 257
+      CharAnimation: 258
+      CameraPositionTarget: 259
+      CameraDistance: 260
+      StringIndex: 261
+      ConversationSounds: SOUNDS1
+  - LineSide: Left
+    ConditionStart: 67372036
+    ConditionEnd: 134744072
+    StringLabel: LAB2
+    StringIndex: 606282273
+    Frames:
+    - ToaAnimation: 513
+      CharAnimation: 514
+      CameraPositionTarget: 515
+      CameraDistance: 516
+      StringIndex: 517
+      ConversationSounds: SOUNDS2
+    - ToaAnimation: 769
+      CharAnimation: 770
+      CameraPositionTarget: 771
+      CameraDistance: 772
+      StringIndex: 773
+      ConversationSounds: SOUNDS3
+  - LineSide: Right
+    ConditionStart: 269488144
+    ConditionEnd: 538976288
+    StringLabel: LAB3
+    StringIndex: 875770417
+    Frames:
+    - ToaAnimation: 1025
+      CharAnimation: 1026
+      CameraPositionTarget: 1027
+      CameraDistance: 1028
+      StringIndex: 1029
+      ConversationSounds: SOUNDS4
+    - ToaAnimation: 1281
+      CharAnimation: 1282
+      CameraPositionTarget: 1283
+      CameraDistance: 1284
+      StringIndex: 1285
+      ConversationSounds: SOUNDS5
+    - ToaAnimation: 1537
+      CharAnimation: 1538
+      CameraPositionTarget: 1539
+      CameraDistance: 1540
+      StringIndex: 1541
+      ConversationSounds: SOUNDS6
+- ToaName: TOA2
+  CharName: NAM2
+  CharCont: CON2
+  Entries:
+  - LineSide: Left
+    ConditionStart: 1077952576
+    ConditionEnd: 2155905152
+    StringLabel: LAB4
+    StringIndex: 1145258561
+    Frames:
+    - ToaAnimation: 1793
+      CharAnimation: 1794
+      CameraPositionTarget: 1795
+      CameraDistance: 1796
+      StringIndex: 1797
+      ConversationSounds: SOUNDS7
+  - LineSide: Right
+    ConditionStart: 286331153
+    ConditionEnd: 572662306
+    StringLabel: LAB5
+    StringIndex: 1414746705
+    Frames:
+    - ToaAnimation: 2049
+      CharAnimation: 2050
+      CameraPositionTarget: 2051
+      CameraDistance: 2052
+      StringIndex: 2053
+      ConversationSounds: SOUNDS8
+- ToaName: TOA3
+  CharName: NAM3
+  CharCont: CON3
+  Entries:
+  - LineSide: Left
+    ConditionStart: 1145324612
+    ConditionEnd: 2290649224
+    StringLabel: LAB6
+    StringIndex: 1684234849
+    Frames:
+    - ToaAnimation: 2305
+      CharAnimation: 2306
+      CameraPositionTarget: 2307
+      CameraDistance: 2308
+      StringIndex: 2309
+      ConversationSounds: SOUNDS9
+    - ToaAnimation: 2561
+      CharAnimation: 2562
+      CameraPositionTarget: 2563
+      CameraDistance: 2564
+      StringIndex: 2565
+      ConversationSounds: SOUNDSA
+    - ToaAnimation: 2817
+      CharAnimation: 2818
+      CameraPositionTarget: 2819
+      CameraDistance: 2820
+      StringIndex: 2821
+      ConversationSounds: SOUNDSB

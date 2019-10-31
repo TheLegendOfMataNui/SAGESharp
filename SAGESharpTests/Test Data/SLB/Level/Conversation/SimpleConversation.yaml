@@ -1,0 +1,17 @@
+﻿Conversation:
+- ToaName: TOA1
+  CharName: NAME
+  CharCont: CONT
+  Entries:
+  - LineSide: Right
+    ConditionStart: 2172748161
+    ConditionEnd: 2122219134
+    StringLabel: STRX
+    StringIndex: 1122334455
+    Frames:
+    - ToaAnimation: 1
+      CharAnimation: 2
+      CameraPositionTarget: 1431655765
+      CameraDistance: 4
+      StringIndex: 5
+      ConversationSounds: SOUND

@@ -143,10 +143,19 @@
     <None Include="Test Data\SLB\Level\Conversation\ComplexConversation.slb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Test Data\SLB\Level\Conversation\ComplexConversation.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Test Data\SLB\Level\Conversation\EmptyConversation.slb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Test Data\SLB\Level\Conversation\EmptyConversation.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Test Data\SLB\Level\Conversation\SimpleConversation.slb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Test Data\SLB\Level\Conversation\SimpleConversation.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

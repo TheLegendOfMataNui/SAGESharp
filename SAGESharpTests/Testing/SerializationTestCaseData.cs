@@ -42,6 +42,11 @@ namespace SAGESharp.Testing
         public string SLBFilePath { get => $"{TestFilePath}.slb"; }
 
         /// <summary>
+        /// The <see cref="TestFilePath"/> with the Yaml extension appended at the end.
+        /// </summary>
+        public string YamlFilePath { get => $"{TestFilePath}.yaml"; }
+
+        /// <summary>
         /// The object that is expected to be read or write in the test.
         /// </summary>
         public T Expected { get => expectedProvider(); }
