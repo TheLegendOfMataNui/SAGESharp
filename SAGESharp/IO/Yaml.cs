@@ -15,6 +15,36 @@ using Identifier = SAGESharp.SLB.Identifier;
 
 namespace SAGESharp.IO
 {
+    /// <summary>
+    /// Provides serializers to convert to Yaml.
+    /// </summary>
+    public static class YamlSerializer
+    {
+        public static ISerializer BuildSLBSerializer() => new SerializerBuilder()
+                .WithSLBOverrides()
+                .Build();
+    }
+
+    /// <summary>
+    /// Provides serializers to convert from Yaml.
+    /// </summary>
+    public static class YamlDeserializer
+    {
+        public static IDeserializer BuildSLBDeserializer() => new DeserializerBuilder()
+                .WithSLBOverrides()
+                .Build();
+    }
+
+    internal static class BuilderSkeletonExtensions
+    {
+        public static TBuilder WithSLBOverrides<TBuilder>(this TBuilder builderSkeleton) where TBuilder : BuilderSkeleton<TBuilder>
+        {
+            return builderSkeleton
+                .WithTypeConverter(new IdentifierYamlTypeConverter())
+                .WithTypeInspector(inner => new SLBTypeInspector(inner), s => s.InsteadOf<YamlAttributesTypeInspector>());
+        }
+    }
+
     internal sealed class SLBTypeInspector : TypeInspectorSkeleton
     {
         private readonly ITypeInspector typeInspector;
