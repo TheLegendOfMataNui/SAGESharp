@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-using Konvenience;
+using NUtils.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -401,7 +401,7 @@ namespace SAGESharp.IO
             }
         }
 
-        private bool IsCorrectLength(object value) => value.As<string>().Length <= length;
+        private bool IsCorrectLength(object value) => (value as string).Length <= length;
 
         private static bool IsString(object value) => typeof(string).Equals(value.GetType());
     }
@@ -577,7 +577,7 @@ namespace SAGESharp.IO
             Validate.ArgumentNotNull(nameof(list), list);
             ValidateIsList(list);
 
-            return list.As<IList<T>>().Count;
+            return (list as IList<T>).Count;
         }
 
         public object GetListEntry(object list, int index)
@@ -585,7 +585,7 @@ namespace SAGESharp.IO
             Validate.ArgumentNotNull(nameof(list), list);
             ValidateIsList(list);
 
-            return list.As<IList<T>>()[index];
+            return (list as IList<T>)[index];
         }
 
         public void AddListEntry(object list, object value)
@@ -598,7 +598,7 @@ namespace SAGESharp.IO
                 $"Value should be of type {typeof(string).Name}, but is of type {value.GetType().Name} instead."
             );
 
-            list.As<IList<T>>().Add((T)value);
+            (list as IList<T>).Add((T)value);
         }
 
         public object CreateList()
@@ -626,10 +626,10 @@ namespace SAGESharp.IO
             Validate.ArgumentNotNull(nameof(value), value);
             ValidateIsList(value);
 
-            binaryWriter.WriteInt32(value.As<IList<T>>().Count);
+            binaryWriter.WriteInt32((value as IList<T>).Count);
             if (duplicateEntryCount)
             {
-                binaryWriter.WriteInt32(value.As<IList<T>>().Count);
+                binaryWriter.WriteInt32((value as IList<T>).Count);
             }
 
             return WriteOffset(binaryWriter);

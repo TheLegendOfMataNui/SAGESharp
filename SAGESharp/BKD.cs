@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-using Konvenience;
+using NUtils.Extensions;
 using SAGESharp.IO;
 using System;
 using System.Collections.Generic;
@@ -182,7 +182,7 @@ namespace SAGESharp
             TCBInterpolatorData2 = newTCBInterpolatorData2;
         }
 
-        private static IList<T> ReadEntry<T>(IBinaryReader binaryReader, ushort count) where T : IBinarySerializable, new()
+        private static IList<T> ReadEntry<T>(IBinaryReader binaryReader, ushort count) where T : class, IBinarySerializable, new()
         {
             uint offset = binaryReader.ReadUInt32();
             IList <T> result = new List<T>(count);
