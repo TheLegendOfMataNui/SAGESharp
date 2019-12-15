@@ -4,6 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using NSubstitute;
+using NUtils.Validations;
 using System;
 using System.Linq;
 
@@ -28,7 +29,7 @@ namespace SAGESharp.Testing
         /// <returns>The value from <see cref="Arg.Do{T}(Action{T})"/>.</returns>
         public static T OrderedDo<T>(params Action<T>[] actions)
         {
-            Validate.ArgumentNotNull(nameof(actions), actions);
+            Validate.ArgumentNotNull(actions, nameof(actions));
 
             int count = 0;
             return Arg.Do<T>(arg =>

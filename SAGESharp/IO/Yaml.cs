@@ -3,6 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+using NUtils.Validations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -87,15 +88,15 @@ namespace SAGESharp.IO
     {
         public bool Accepts(Type type)
         {
-            Validate.ArgumentNotNull(nameof(type), type);
+            Validate.ArgumentNotNull(type, nameof(type));
 
             return typeof(Identifier) == type;
         }
 
         public object ReadYaml(IParser parser, Type type)
         {
-            Validate.ArgumentNotNull(nameof(parser), parser);
-            Validate.ArgumentNotNull(nameof(type), type);
+            Validate.ArgumentNotNull(parser, nameof(parser));
+            Validate.ArgumentNotNull(type, nameof(type));
             ValidateType(type);
 
             string value = parser.Consume<Scalar>().Value;
@@ -105,9 +106,9 @@ namespace SAGESharp.IO
 
         public void WriteYaml(IEmitter emitter, object value, Type type)
         {
-            Validate.ArgumentNotNull(nameof(emitter), emitter);
-            Validate.ArgumentNotNull(nameof(value), value);
-            Validate.ArgumentNotNull(nameof(type), type);
+            Validate.ArgumentNotNull(emitter, nameof(emitter));
+            Validate.ArgumentNotNull(value, nameof(value));
+            Validate.ArgumentNotNull(type, nameof(type));
             Validate.Argument(value.GetType() == typeof(Identifier),
                 $"The input value is type {value.GetType().Name}, was expecting {typeof(Identifier).Name} instead.");
             ValidateType(type);

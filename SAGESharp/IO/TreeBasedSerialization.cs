@@ -4,6 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using NUtils.Extensions;
+using NUtils.Validations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -279,15 +280,15 @@ namespace SAGESharp.IO
 
         public object Read(IBinaryReader binaryReader)
         {
-            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+            Validate.ArgumentNotNull(binaryReader, nameof(binaryReader));
 
             return read(binaryReader);
         }
 
         public void Write(IBinaryWriter binaryWriter, object value)
         {
-            Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
-            Validate.ArgumentNotNull(nameof(value), value);
+            Validate.ArgumentNotNull(binaryWriter, nameof(binaryWriter));
+            Validate.ArgumentNotNull(value, nameof(value));
             Validate.Argument(IsOfType(value), $"Cannot write value of type {value.GetType().Name} as type {typeof(T).Name}.");
 
             write(binaryWriter, value);
@@ -334,7 +335,7 @@ namespace SAGESharp.IO
 
         public object Read(IBinaryReader binaryReader)
         {
-            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+            Validate.ArgumentNotNull(binaryReader, nameof(binaryReader));
 
             if (inlineString)
             {
@@ -376,8 +377,8 @@ namespace SAGESharp.IO
 
         public void Write(IBinaryWriter binaryWriter, object value)
         {
-            Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
-            Validate.ArgumentNotNull(nameof(value), value);
+            Validate.ArgumentNotNull(binaryWriter, nameof(binaryWriter));
+            Validate.ArgumentNotNull(value, nameof(value));
             Validate.Argument(IsString(value), $"Cannot write value of type {value.GetType().Name} as a string.");
             Validate.Argument(IsCorrectLength(value), $"String length is longer than {length}.");
 
@@ -410,7 +411,7 @@ namespace SAGESharp.IO
     {
         public UserTypeDataNode(IReadOnlyList<IEdge> edges)
         {
-            Validate.ArgumentNotNull(nameof(edges), edges);
+            Validate.ArgumentNotNull(edges, nameof(edges));
             Validate.Argument(edges != null, $"{nameof(edges)} should not be empty");
 
             Edges = edges;
@@ -420,15 +421,15 @@ namespace SAGESharp.IO
 
         public object Read(IBinaryReader binaryReader)
         {
-            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+            Validate.ArgumentNotNull(binaryReader, nameof(binaryReader));
 
             return new T();
         }
 
         public void Write(IBinaryWriter binaryWriter, object value)
         {
-            Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
-            Validate.ArgumentNotNull(nameof(value), value);
+            Validate.ArgumentNotNull(binaryWriter, nameof(binaryWriter));
+            Validate.ArgumentNotNull(value, nameof(value));
             Validate.Argument(IsType(value), $"Cannot write value of type {value.GetType().Name} as type {typeof(T).Name}.");
         }
 
@@ -444,7 +445,7 @@ namespace SAGESharp.IO
         public PaddingNode(byte size, IDataNode childNode)
         {
             Validate.Argument(size > 0, "Padding size cannot be 0.");
-            Validate.ArgumentNotNull(nameof(childNode), childNode);
+            Validate.ArgumentNotNull(childNode, nameof(childNode));
 
             padding = new byte[size];
             this.childNode = childNode;
@@ -454,7 +455,7 @@ namespace SAGESharp.IO
 
         public object Read(IBinaryReader binaryReader)
         {
-            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+            Validate.ArgumentNotNull(binaryReader, nameof(binaryReader));
 
             object result = childNode.Read(binaryReader);
 
@@ -465,8 +466,8 @@ namespace SAGESharp.IO
 
         public void Write(IBinaryWriter binaryWriter, object value)
         {
-            Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
-            Validate.ArgumentNotNull(nameof(value), value);
+            Validate.ArgumentNotNull(binaryWriter, nameof(binaryWriter));
+            Validate.ArgumentNotNull(value, nameof(value));
 
             childNode.Write(binaryWriter, value);
 
@@ -482,9 +483,9 @@ namespace SAGESharp.IO
 
         public Edge(Func<T, object> extractor, Action<T, object> setter, object childNode)
         {
-            Validate.ArgumentNotNull(nameof(extractor), extractor);
-            Validate.ArgumentNotNull(nameof(setter), setter);
-            Validate.ArgumentNotNull(nameof(childNode), childNode);
+            Validate.ArgumentNotNull(extractor, nameof(extractor));
+            Validate.ArgumentNotNull(setter, nameof(setter));
+            Validate.ArgumentNotNull(childNode, nameof(childNode));
 
             this.extractor = extractor;
             this.setter = setter;
@@ -495,7 +496,7 @@ namespace SAGESharp.IO
 
         public object ExtractChildValue(object value)
         {
-            Validate.ArgumentNotNull(nameof(value), value);
+            Validate.ArgumentNotNull(value, nameof(value));
             Validate.Argument(IsType(value), $"Expected {nameof(value)} to be of type {typeof(T).Name} but was of type {value.GetType().Name} instead");
 
             return extractor((T)value);
@@ -503,8 +504,8 @@ namespace SAGESharp.IO
 
         public void SetChildValue(object value, object childValue)
         {
-            Validate.ArgumentNotNull(nameof(value), value);
-            Validate.ArgumentNotNull(nameof(childValue), childValue);
+            Validate.ArgumentNotNull(value, nameof(value));
+            Validate.ArgumentNotNull(childValue, nameof(childValue));
             Validate.Argument(IsType(value), $"Expected {nameof(value)} to be of type {typeof(T).Name} but was of type {value.GetType().Name} instead");
 
             setter((T)value, childValue);
@@ -517,7 +518,7 @@ namespace SAGESharp.IO
     {
         protected AbstractOffsetNode(IDataNode childNode)
         {
-            Validate.ArgumentNotNull(nameof(childNode), childNode);
+            Validate.ArgumentNotNull(childNode, nameof(childNode));
 
             ChildNode = childNode;
         }
@@ -526,7 +527,7 @@ namespace SAGESharp.IO
 
         public uint ReadOffset(IBinaryReader binaryReader)
         {
-            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+            Validate.ArgumentNotNull(binaryReader, nameof(binaryReader));
 
             return binaryReader.ReadUInt32();
         }
@@ -556,8 +557,8 @@ namespace SAGESharp.IO
 
         public override uint Write(IBinaryWriter binaryWriter, object value)
         {
-            Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
-            Validate.ArgumentNotNull(nameof(value), value);
+            Validate.ArgumentNotNull(binaryWriter, nameof(binaryWriter));
+            Validate.ArgumentNotNull(value, nameof(value));
 
             return WriteOffset(binaryWriter);
         }
@@ -574,7 +575,7 @@ namespace SAGESharp.IO
 
         public int GetListCount(object list)
         {
-            Validate.ArgumentNotNull(nameof(list), list);
+            Validate.ArgumentNotNull(list, nameof(list));
             ValidateIsList(list);
 
             return (list as IList<T>).Count;
@@ -582,7 +583,7 @@ namespace SAGESharp.IO
 
         public object GetListEntry(object list, int index)
         {
-            Validate.ArgumentNotNull(nameof(list), list);
+            Validate.ArgumentNotNull(list, nameof(list));
             ValidateIsList(list);
 
             return (list as IList<T>)[index];
@@ -590,8 +591,8 @@ namespace SAGESharp.IO
 
         public void AddListEntry(object list, object value)
         {
-            Validate.ArgumentNotNull(nameof(list), list);
-            Validate.ArgumentNotNull(nameof(value), value);
+            Validate.ArgumentNotNull(list, nameof(list));
+            Validate.ArgumentNotNull(value, nameof(value));
             ValidateIsList(list);
             Validate.Argument(
                 typeof(T).Equals(value.GetType()),
@@ -608,7 +609,7 @@ namespace SAGESharp.IO
 
         public int ReadEntryCount(IBinaryReader binaryReader)
         {
-            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+            Validate.ArgumentNotNull(binaryReader, nameof(binaryReader));
 
             int result = binaryReader.ReadInt32();
 
@@ -622,8 +623,8 @@ namespace SAGESharp.IO
 
         public override uint Write(IBinaryWriter binaryWriter, object value)
         {
-            Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
-            Validate.ArgumentNotNull(nameof(value), value);
+            Validate.ArgumentNotNull(binaryWriter, nameof(binaryWriter));
+            Validate.ArgumentNotNull(value, nameof(value));
             ValidateIsList(value);
 
             binaryWriter.WriteInt32((value as IList<T>).Count);
@@ -645,7 +646,7 @@ namespace SAGESharp.IO
     {
         public static IDataNode BuildTreeForType(Type type)
         {
-            Validate.ArgumentNotNull(nameof(type), type);
+            Validate.ArgumentNotNull(type, nameof(type));
 
             return BuildUserTypeDataNode(type);
         }
@@ -866,8 +867,8 @@ namespace SAGESharp.IO
     {
         public object Read(IBinaryReader binaryReader, IDataNode rootNode)
         {
-            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
-            Validate.ArgumentNotNull(nameof(rootNode), rootNode);
+            Validate.ArgumentNotNull(binaryReader, nameof(binaryReader));
+            Validate.ArgumentNotNull(rootNode, nameof(rootNode));
 
             return ProcessDataNode(binaryReader, rootNode);
         }
@@ -966,9 +967,9 @@ namespace SAGESharp.IO
 
         public IReadOnlyList<uint> Write(IBinaryWriter binaryWriter, object value, IDataNode rootNode)
         {
-            Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
-            Validate.ArgumentNotNull(nameof(value), value);
-            Validate.ArgumentNotNull(nameof(rootNode), rootNode);
+            Validate.ArgumentNotNull(binaryWriter, nameof(binaryWriter));
+            Validate.ArgumentNotNull(value, nameof(value));
+            Validate.ArgumentNotNull(rootNode, nameof(rootNode));
 
             queue.Clear();
             offsets.Clear();

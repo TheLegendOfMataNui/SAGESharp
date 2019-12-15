@@ -4,6 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using NUtils.Extensions;
+using NUtils.Validations;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -200,8 +201,8 @@ namespace SAGESharp.IO
         /// <returns>The object read from <paramref name="stream"/> with <paramref name="binarySerializer"/>.</returns>
         public static T Read<T>(this IBinarySerializer<T> binarySerializer, Stream stream)
         {
-            Validate.ArgumentNotNull(nameof(binarySerializer), binarySerializer);
-            Validate.ArgumentNotNull(nameof(stream), stream);
+            Validate.ArgumentNotNull(binarySerializer, nameof(binarySerializer));
+            Validate.ArgumentNotNull(stream, nameof(stream));
 
             return binarySerializer.Read(Reader.ForStream(stream));
         }
@@ -218,9 +219,9 @@ namespace SAGESharp.IO
         /// <param name="value">The object to write.</param>
         public static void Write<T>(this IBinarySerializer<T> binarySerializer, Stream stream, T value)
         {
-            Validate.ArgumentNotNull(nameof(binarySerializer), binarySerializer);
-            Validate.ArgumentNotNull(nameof(stream), stream);
-            Validate.ArgumentNotNull<object>(nameof(value), value);
+            Validate.ArgumentNotNull(binarySerializer, nameof(binarySerializer));
+            Validate.ArgumentNotNull(stream, nameof(stream));
+            Validate.ArgumentNotNull<object>(value, nameof(value));
 
             binarySerializer.Write(Writer.ForStream(stream), value);
         }
@@ -250,10 +251,10 @@ namespace SAGESharp.IO
             IDataNode rootNode,
             Action<IBinaryWriter> footerAligner
         ) {
-            Validate.ArgumentNotNull(nameof(treeReader), treeReader);
-            Validate.ArgumentNotNull(nameof(treeWriter), treeWriter);
-            Validate.ArgumentNotNull(nameof(rootNode), rootNode);
-            Validate.ArgumentNotNull(nameof(footerAligner), footerAligner);
+            Validate.ArgumentNotNull(treeReader, nameof(treeReader));
+            Validate.ArgumentNotNull(treeWriter, nameof(treeWriter));
+            Validate.ArgumentNotNull(rootNode, nameof(rootNode));
+            Validate.ArgumentNotNull(footerAligner, nameof(footerAligner));
 
             this.treeReader = treeReader;
             this.treeWriter = treeWriter;
@@ -263,15 +264,15 @@ namespace SAGESharp.IO
 
         public T Read(IBinaryReader binaryReader)
         {
-            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+            Validate.ArgumentNotNull(binaryReader, nameof(binaryReader));
 
             return (T)treeReader(binaryReader, rootNode);
         }
 
         public void Write(IBinaryWriter binaryWriter, T value)
         {
-            Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
-            Validate.ArgumentNotNull<object>(nameof(value), value);
+            Validate.ArgumentNotNull(binaryWriter, nameof(binaryWriter));
+            Validate.ArgumentNotNull<object>(value, nameof(value));
 
             IReadOnlyList<uint> offsets = treeWriter(binaryWriter, value, rootNode);
 
@@ -295,7 +296,7 @@ namespace SAGESharp.IO
 
         public T Read(IBinaryReader binaryReader)
         {
-            Validate.ArgumentNotNull(nameof(binaryReader), binaryReader);
+            Validate.ArgumentNotNull(binaryReader, nameof(binaryReader));
 
             T result = constructor();
 
@@ -306,8 +307,8 @@ namespace SAGESharp.IO
 
         public void Write(IBinaryWriter binaryWriter, T value)
         {
-            Validate.ArgumentNotNull(nameof(binaryWriter), binaryWriter);
-            Validate.ArgumentNotNull<object>(nameof(value), value);
+            Validate.ArgumentNotNull(binaryWriter, nameof(binaryWriter));
+            Validate.ArgumentNotNull<object>(value, nameof(value));
 
             value.Write(binaryWriter);
         }
