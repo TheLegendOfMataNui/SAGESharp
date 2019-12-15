@@ -4,10 +4,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using FluentAssertions;
-using Konvenience;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
+using NUtils.Extensions;
 using SAGESharp.Testing;
 using System;
 using System.Collections.Generic;

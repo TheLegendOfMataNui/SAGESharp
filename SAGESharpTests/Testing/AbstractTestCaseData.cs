@@ -3,8 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-using Konvenience;
 using NUnit.Framework;
+using NUtils.Extensions;
 
 namespace SAGESharp.Testing
 {
@@ -23,7 +23,7 @@ namespace SAGESharp.Testing
         protected AbstractTestCaseData(string description)
           => this.description = description
                 .Trim()
-                .TakeReferenceUnless(s => s.Length == 0)
+                .TakeUnless(s => s.Length == 0)
                 ?? base.ToString();
 
         /// <summary>
