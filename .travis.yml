@@ -1,10 +1,14 @@
-language: csharp
-solution: ShoefitterDX.sln
+language: bash
+os: windows
+env:
+  - MSBUILD_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
 install:
+  - choco install nuget.commandline
   - nuget restore ShoefitterDX.sln
 script:
-  - msbuild /p:Configuration=Release ShoefitterDX.sln
-  - mono ./packages/NUnit.ConsoleRunner.3.10.0/tools/nunit3-console.exe ./SAGESharpTests/bin/Release/SAGESharpTests.dll
+  - export PATH="$MSBUILD_PATH:$PATH"
+  - MSBuild.exe //p:Configuration=Release ShoefitterDX.sln
+  - packages/NUnit.ConsoleRunner.3.10.0/tools/nunit3-console.exe ./SAGESharpTests/bin/Release/SAGESharpTests.dll
 # Build only in the master branch
 branches:
   only:
