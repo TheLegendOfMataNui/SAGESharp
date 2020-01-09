@@ -4,7 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using NUnit.Framework;
-using NUtils.Extensions;
+using NUtils.Extensions.Unconstrained;
 
 namespace SAGESharp.Testing
 {
@@ -23,7 +23,7 @@ namespace SAGESharp.Testing
         protected AbstractTestCaseData(string description)
           => this.description = description
                 .Trim()
-                .TakeUnless(s => s.Length == 0)
+                .TakeReferenceUnless(s => s.Length == 0)
                 ?? base.ToString();
 
         /// <summary>
