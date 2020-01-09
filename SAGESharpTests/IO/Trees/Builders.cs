@@ -78,7 +78,7 @@ namespace SAGESharp.IO.Trees
                 // otherwise "list" will be the same for different calls
                 void setup()
                 {
-                    IList<T> list = default;
+                    IList<T> list = default(IList<T>);
                     node.AddListEntry(
                         Arg.Do<IList<T>>(val => list = val),
                         Arg.Do<T>(entry => list.Add(entry))
@@ -121,7 +121,7 @@ namespace SAGESharp.IO.Trees
                 // otherwise "value" will be the same for different calls
                 void setup()
                 {
-                    T value = default;
+                    T value = default(T);
                     edge.SetChildValue(
                         Arg.Do<T>(val => value = val),
                         Arg.Do<object>(childVal => ChildSetter(value, childVal))
