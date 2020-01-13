@@ -17,26 +17,5 @@ namespace SAGESharp
             .Should()
             .Throw<ArgumentNullException>()
             .Where(e => e.Message.Contains("value"));
-
-        [Test]
-        public void Test_Setting_A_Null_TCBQuaternion_List_To_A_BKDEntry_Object() => new BKDEntry()
-            .Invoking(e => e.TCBQuaternionData = null)
-            .Should()
-            .Throw<ArgumentNullException>()
-            .Where(e => e.Message.Contains("value"));
-
-        [Test]
-        public void Test_Setting_A_Null_TCBInpterpolationData1_List_To_A_BKDEntry_Object() => new BKDEntry()
-            .Invoking(e => e.TCBInterpolatorData1 = null)
-            .Should()
-            .Throw<ArgumentNullException>()
-            .Where(e => e.Message.Contains("value"));
-
-        [Test]
-        public void Test_Setting_A_Null_TCBInpterpolationData2_List_To_A_BKDEntry_Object() => new BKDEntry()
-            .Invoking(e => e.TCBInterpolatorData2 = null)
-            .Should()
-            .Throw<ArgumentNullException>()
-            .Where(e => e.Message.Contains("value"));
     }
 }

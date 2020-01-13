@@ -26,24 +26,4 @@ namespace SAGESharp
             .Parameters(bkd => bkd.Entries.Add(new BKDEntry()))
             .Build();
     }
-
-    class BKDEntryEqualityTests : AbstractEqualityByRefTests<BKDEntry>
-    {
-        protected override BKDEntry GetDefault() => new BKDEntry();
-
-        protected override bool EqualsOperator(BKDEntry left, BKDEntry right) => left == right;
-
-        protected override bool NotEqualsOperator(BKDEntry left, BKDEntry right) => left != right;
-
-        [TestCaseSource(nameof(Modifiers))]
-        public void Test_Compare_Default_Object_With_Modified_Object(Action<BKDEntry> modifier)
-            => TestCompareDefaultObjectWithModifiedObject(modifier);
-
-        static object[] Modifiers() => new ParameterGroup<Action<BKDEntry>>()
-            .Parameters(bkdEntry => bkdEntry.Id = 5)
-            .Parameters(bkdEntry => bkdEntry.TCBQuaternionData.Add(new TCBQuaternionData()))
-            .Parameters(bkdEntry => bkdEntry.TCBInterpolatorData1.Add(new TCBInterpolationData()))
-            .Parameters(bkdEntry => bkdEntry.TCBInterpolatorData2.Add(new TCBInterpolationData()))
-            .Build();
-    }
 }
