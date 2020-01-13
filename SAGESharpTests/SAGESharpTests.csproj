@@ -114,7 +114,7 @@
     <Compile Include="SLB\Level\InfoTests.cs" />
     <Compile Include="SLB\Level\SerializationTests.cs" />
     <Compile Include="SLB\Level\TestData.cs" />
-    <Compile Include="SLB\Point3DEqualityTests.cs" />
+    <Compile Include="SLB\Point3DTests.cs" />
     <Compile Include="TCBInterpolationDataTests.cs" />
     <Compile Include="TCBQuaternionDataTests.cs" />
     <Compile Include="Testing\AbstractTestCaseData.cs" />
