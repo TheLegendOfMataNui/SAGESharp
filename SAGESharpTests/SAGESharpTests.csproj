@@ -110,7 +110,7 @@
     <Compile Include="SLB\Cinematic\FrameEqualityTests.cs" />
     <Compile Include="SLB\IdentifierEqualityTests.cs" />
     <Compile Include="SLB\IdentifierTests.cs" />
-    <Compile Include="SLB\Level\CharacterEqualityTests.cs" />
+    <Compile Include="SLB\Level\ConversationCharacterTests.cs" />
     <Compile Include="SLB\Level\Defaults.cs" />
     <Compile Include="SLB\Level\FrameTests.cs" />
     <Compile Include="SLB\Level\InfoTests.cs" />
