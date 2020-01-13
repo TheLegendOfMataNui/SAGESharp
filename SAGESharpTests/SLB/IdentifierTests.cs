@@ -141,5 +141,35 @@ namespace SAGESharp.SLB
             .Parameters(i => i.WithC2('A'), 0x00410000)
             .Parameters(i => i.WithC3('A'), 0x41000000)
             .Build();
+
+        [TestCaseSource(nameof(EqualObjectsTestCases))]
+        public void Test_Comparing_Equal_Objects(IComparisionTestCase<Identifier> testCase) => testCase.Execute();
+
+        public static IComparisionTestCase<Identifier>[] EqualObjectsTestCases() => new IComparisionTestCase<Identifier>[]
+        {
+            ComparisionTestCase.CompareObjectAgainstItself(SampleIdentifier()),
+            ComparisionTestCase.CompareTwoEqualObjects(SampleIdentifier)
+        };
+
+        [TestCaseSource(nameof(NotEqualObjectsTestCases))]
+        public void Test_Comparing_NotEqual_Objects(IComparisionTestCase<Identifier> testCase) => testCase.Execute();
+
+        public static IComparisionTestCase<Identifier>[] NotEqualObjectsTestCases() => new IComparisionTestCase<Identifier>[]
+        {
+            ComparisionTestCase.CompareTwoNotEqualObjects(SampleIdentifier(), SampleIdentifier().WithB0(0x01)),
+            ComparisionTestCase.CompareTwoNotEqualObjects(SampleIdentifier(), SampleIdentifier().WithB1(0x01)),
+            ComparisionTestCase.CompareTwoNotEqualObjects(SampleIdentifier(), SampleIdentifier().WithB2(0x01)),
+            ComparisionTestCase.CompareTwoNotEqualObjects(SampleIdentifier(), SampleIdentifier().WithB3(0x01)),
+            ComparisionTestCase.CompareTwoNotEqualObjects(SampleIdentifier(), SampleIdentifier().WithC0('A')),
+            ComparisionTestCase.CompareTwoNotEqualObjects(SampleIdentifier(), SampleIdentifier().WithC1('B')),
+            ComparisionTestCase.CompareTwoNotEqualObjects(SampleIdentifier(), SampleIdentifier().WithC2('C')),
+            ComparisionTestCase.CompareTwoNotEqualObjects(SampleIdentifier(), SampleIdentifier().WithC3('D')),
+            ComparisionTestCase.CompareTwoNotEqualObjects(SampleIdentifier(), (Identifier)1),
+            ComparisionTestCase.CompareTwoNotEqualObjects(SampleIdentifier(), Identifier.From(new byte[] { 0x01, 0x02, 0x03, 0x04 })),
+            ComparisionTestCase.CompareTwoNotEqualObjects(SampleIdentifier(), Identifier.From("BCDA")),
+            ComparisionTestCase.CompareTwoNotEqualObjects((Identifier)0x11223344, (Identifier)0x11121314)
+        };
+
+        public static Identifier SampleIdentifier() => 0xAABBCCDD;
     }
 }

@@ -154,12 +154,33 @@ namespace SAGESharp.Testing
         /// <returns>
         /// A new instance of <see cref="IComparisionTestCase{T}"/>.
         /// </returns>
-        public static IComparisionTestCase<T> CompareTwoNotEqualObjects<T>(Func<T> supplier, Action<T> updater) where T : class, IEquatable<T>
+        public static IComparisionTestCase<T> CompareTwoNotEqualObjects<T>(Func<T> supplier, Action<T> updater) where T : IEquatable<T>
         {
             Validate.ArgumentNotNull(supplier, nameof(supplier));
             Validate.ArgumentNotNull(updater, nameof(updater));
 
             return new CompareTwoNotEqualObjectsTestCase<T>(a: supplier(), b: supplier().Also(updater));
+        }
+
+        /// <summary>
+        /// Creates an instance of <see cref="IComparisionTestCase{T}"/> to test comparing two objects of type
+        /// <typeparamref name="T"/> which are not equal.
+        /// </summary>
+        /// 
+        /// <typeparam name="T">The type with which comparision tests are made.</typeparam>
+        /// 
+        /// <param name="a">The first value to compare.</param>
+        /// <param name="b">The second value to compare.</param>
+        /// 
+        /// <returns>
+        /// A new instance of <see cref="IComparisionTestCase{T}"/>.
+        /// </returns>
+        public static IComparisionTestCase<T> CompareTwoNotEqualObjects<T>(T a, T b) where T : IEquatable<T>
+        {
+            Validate.ArgumentNotNull<object>(a, nameof(a));
+            Validate.ArgumentNotNull<object>(b, nameof(b));
+
+            return new CompareTwoNotEqualObjectsTestCase<T>(a: a, b: b);
         }
 
         private class CompareTwoNotEqualObjectsTestCase<T> : IComparisionTestCase<T> where T : IEquatable<T>
