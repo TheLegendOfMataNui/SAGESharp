@@ -5,17 +5,56 @@
  */
 using FluentAssertions;
 using NUnit.Framework;
+using SAGESharp.Testing;
 using System;
+using System.Collections.Generic;
 
 namespace SAGESharp
 {
     class BKDTests
     {
         [Test]
-        public void Test_Setting_A_Null_Entry_List_To_A_BKD_Object() => new BKD()
-            .Invoking(o => o.Entries = null)
-            .Should()
-            .Throw<ArgumentNullException>()
-            .Where(e => e.Message.Contains("value"));
+        public void Test_Setting_A_Null_Entry_List_To_A_BKD_Object()
+        {
+            BKD bkd = new BKD();
+            Action action = () => bkd.Entries = null;
+
+            action.Should().ThrowArgumentNullException("value");
+        }
+
+        [TestCaseSource(nameof(EqualObjectsTestCases))]
+        public void Test_Comparing_Equal_Objects(IComparisionTestCase<BKD> testCase) => testCase.Execute();
+
+        public static IComparisionTestCase<BKD>[] EqualObjectsTestCases() => new IComparisionTestCase<BKD>[]
+        {
+            ComparisionTestCase.CompareObjectAgainstItself(SampleBKD()),
+            ComparisionTestCase.CompareTwoEqualObjects(SampleBKD),
+            ComparisionTestCase.CompareNullWithOperators<BKD>()
+        };
+
+        [TestCaseSource(nameof(NotEqualObjectsTestCases))]
+        public void Test_Comparing_NotEqual_Objects(IComparisionTestCase<BKD> testCase) => testCase.Execute();
+
+        public static IComparisionTestCase<BKD>[] NotEqualObjectsTestCases() => new IComparisionTestCase<BKD>[]
+        {
+            ComparisionTestCase.CompareTwoNotEqualObjects(
+                supplier: SampleBKD,
+                updater: bkd => bkd.Length *= 2
+            ),
+            ComparisionTestCase.CompareTwoNotEqualObjects(
+                supplier: SampleBKD,
+                updater: bkd => bkd.Entries.Add(new BKDEntry())
+            ),
+            ComparisionTestCase.CompareNotNullObjectAgainstNull(SampleBKD())
+        };
+
+        public static BKD SampleBKD() => new BKD
+        {
+            Length = 5,
+            Entries = new List<BKDEntry>
+            {
+                BKDEntryTests.SampleBKDEntry()
+            }
+        };
     }
 }
