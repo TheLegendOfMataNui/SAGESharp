@@ -67,24 +67,4 @@ namespace SAGESharp
             .Parameters(tcbQuaternionData => tcbQuaternionData.Short5 = 9)
             .Build();
     }
-
-    class TCBInterpolationDataEqualityTests : AbstractEqualityByRefTests<TCBInterpolationData>
-    {
-        protected override TCBInterpolationData GetDefault() => new TCBInterpolationData();
-
-        protected override bool EqualsOperator(TCBInterpolationData left, TCBInterpolationData right) => left == right;
-
-        protected override bool NotEqualsOperator(TCBInterpolationData left, TCBInterpolationData right) => left != right;
-
-        [TestCaseSource(nameof(Modifiers))]
-        public void Test_Compare_Default_Object_With_Modified_Object(Action<TCBInterpolationData> modifier)
-            => TestCompareDefaultObjectWithModifiedObject(modifier);
-
-        static object[] Modifiers() => new ParameterGroup<Action<TCBInterpolationData>>()
-            .Parameters(tcbQuaternionData => tcbQuaternionData.Long1 = 12)
-            .Parameters(tcbQuaternionData => tcbQuaternionData.Float1 = 6.9f)
-            .Parameters(tcbQuaternionData => tcbQuaternionData.Float2 = 3.2f)
-            .Parameters(tcbQuaternionData => tcbQuaternionData.Float3 = 5.4f)
-            .Build();
-    }
 }
