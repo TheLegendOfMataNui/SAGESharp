@@ -119,6 +119,7 @@
     <Compile Include="SLB\Point3DEqualityTests.cs" />
     <Compile Include="Testing\AbstractTestCaseData.cs" />
     <Compile Include="Testing\Assertions.cs" />
+    <Compile Include="Testing\ComparisionTestCases.cs" />
     <Compile Include="Testing\NSubstitute.cs" />
     <Compile Include="Testing\ParameterGroup.cs" />
     <Compile Include="Testing\AbstractEqualityByRefTests.cs" />
