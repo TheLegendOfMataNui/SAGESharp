@@ -113,7 +113,7 @@
     <Compile Include="SLB\Level\CharacterEqualityTests.cs" />
     <Compile Include="SLB\Level\Defaults.cs" />
     <Compile Include="SLB\Level\FrameTests.cs" />
-    <Compile Include="SLB\Level\InfoEqualityTests.cs" />
+    <Compile Include="SLB\Level\InfoTests.cs" />
     <Compile Include="SLB\Level\SerializationTests.cs" />
     <Compile Include="SLB\Level\TestData.cs" />
     <Compile Include="SLB\Point3DEqualityTests.cs" />
