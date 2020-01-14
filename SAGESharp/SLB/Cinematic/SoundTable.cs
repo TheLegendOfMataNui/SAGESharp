@@ -3,6 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+using Equ;
 using NUtils.Extensions;
 using SAGESharp.IO;
 using System;
@@ -17,14 +18,7 @@ namespace SAGESharp.SLB.Cinematic
         public IList<string> Sounds { get; set; }
 
         public bool Equals(SoundTable other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return Sounds.SafeSequenceEquals(other.Sounds);
-        }
+            => MemberwiseEqualityComparer<SoundTable>.ByProperties.Equals(this, other);
 
         public override string ToString() =>
             $"Objects={Sounds?.Let(Sounds => "[(" + string.Join("), (", Sounds) + ")]") ?? "null"}";
@@ -33,28 +27,10 @@ namespace SAGESharp.SLB.Cinematic
             => Equals(other as SoundTable);
 
         public override int GetHashCode()
-        {
-            int hash = 8527;
-            Sounds.AddHashCodesByRef(ref hash, 5503, 2687);
-
-            return hash;
-        }
+            => MemberwiseEqualityComparer<SoundTable>.ByProperties.GetHashCode(this);
 
         public static bool operator ==(SoundTable left, SoundTable right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true;
-            }
-            else if (left is null)
-            {
-                return right.Equals(left);
-            }
-            else
-            {
-                return left.Equals(right);
-            }
-        }
+            => left?.Equals(right) ?? right?.Equals(left) ?? true;
 
         public static bool operator !=(SoundTable left, SoundTable right)
             => !(left == right);
