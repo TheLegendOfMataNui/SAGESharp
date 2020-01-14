@@ -81,7 +81,6 @@
     <Compile Include="BCLFile.cs" />
     <Compile Include="BHDFile.cs" />
     <Compile Include="ColladaUtils.cs" />
-    <Compile Include="EqualityUtils.cs" />
     <Compile Include="INIConfig.cs" />
     <Compile Include="IO\Attributes.cs" />
     <Compile Include="IO\BinaryReader.cs" />

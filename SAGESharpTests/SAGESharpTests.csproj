@@ -77,7 +77,6 @@
     <Compile Include="BKDEntryTests.cs" />
     <Compile Include="BKDSerializationTests.cs" />
     <Compile Include="BKDTests.cs" />
-    <Compile Include="EqualityUtilsTests.cs" />
     <Compile Include="IO\BinaryReaderTests.cs" />
     <Compile Include="IO\BinaryReaderWrapperTests.cs" />
     <Compile Include="IO\BinarySerializableSerializerTests.cs" />
