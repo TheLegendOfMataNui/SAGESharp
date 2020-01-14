@@ -3,6 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+using Equ;
 using SAGESharp.IO;
 using System;
 
@@ -20,16 +21,7 @@ namespace SAGESharp.SLB.Cinematic
         public Point3D Orientation { get; set; }
 
         public bool Equals(Location other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return Time == other.Time &&
-                Position == other.Position &&
-                Orientation == other.Orientation;
-        }
+            => MemberwiseEqualityComparer<Location>.ByProperties.Equals(this, other);
 
         public override string ToString()
             => $"Time={Time}, Position={Position}, Orientation={Orientation}";
@@ -38,30 +30,10 @@ namespace SAGESharp.SLB.Cinematic
             => Equals(other as Location);
 
         public override int GetHashCode()
-        {
-            int hash = 7673;
-            Time.AddHashCodeByVal(ref hash, 9103);
-            Position.AddHashCodeByRef(ref hash, 9103);
-            Orientation.AddHashCodeByRef(ref hash, 9103);
-
-            return hash;
-        }
+            => MemberwiseEqualityComparer<Location>.ByProperties.GetHashCode(this);
 
         public static bool operator ==(Location left, Location right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true;
-            }
-            else if (left is null)
-            {
-                return right.Equals(left);
-            }
-            else
-            {
-                return left.Equals(right);
-            }
-        }
+            => left?.Equals(right) ?? right?.Equals(left) ?? true;
 
         public static bool operator !=(Location left, Location right)
             => !(left == right);
