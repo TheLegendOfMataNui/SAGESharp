@@ -3,6 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+using Equ;
 using SAGESharp.IO;
 using SAGESharp.Utils;
 using System;
@@ -411,16 +412,7 @@ namespace SAGESharp.SLB
         public float Z { get; set; }
 
         public bool Equals(Point3D other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return X == other.X &&
-                Y == other.Y &&
-                Z == other.Z;
-        }
+            => MemberwiseEqualityComparer<Point3D>.ByProperties.Equals(this, other);
 
         public override string ToString()
             => $"X={X}, Y={Y}, Z={Z}";
@@ -429,30 +421,10 @@ namespace SAGESharp.SLB
             => Equals(other as Point3D);
 
         public override int GetHashCode()
-        {
-            int hash = 5381;
-            X.AddHashCodeByVal(ref hash, 4243);
-            Y.AddHashCodeByVal(ref hash, 4243);
-            Z.AddHashCodeByVal(ref hash, 4243);
-
-            return hash;
-        }
+            => MemberwiseEqualityComparer<Point3D>.ByProperties.GetHashCode(this);
 
         public static bool operator ==(Point3D left, Point3D right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true;
-            }
-            else if (left is null)
-            {
-                return right.Equals(left);
-            }
-            else
-            {
-                return left.Equals(right);
-            }
-        }
+            => left?.Equals(right) ?? right?.Equals(left) ?? true;
 
         public static bool operator !=(Point3D left, Point3D right)
             => !(left == right);
