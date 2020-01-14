@@ -3,6 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+using Equ;
 using NUtils.Extensions;
 using SAGESharp.IO;
 using System;
@@ -16,14 +17,7 @@ namespace SAGESharp.SLB.Cinematic
         public IList<Object> Entries { get; set; }
 
         public bool Equals(ObjectTable other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return Entries.SafeSequenceEquals(other.Entries);
-        }
+            => MemberwiseEqualityComparer<ObjectTable>.ByProperties.Equals(this, other);
 
         public override string ToString() =>
             $"Objects={Entries?.Let(Objects => "[(" + string.Join("), (", Objects) + ")]") ?? "null"}";
@@ -32,28 +26,10 @@ namespace SAGESharp.SLB.Cinematic
             => Equals(other as ObjectTable);
 
         public override int GetHashCode()
-        {
-            int hash = 2179;
-            Entries.AddHashCodesByRef(ref hash, 2161, 2791);
-
-            return hash;
-        }
+            => MemberwiseEqualityComparer<ObjectTable>.ByProperties.GetHashCode(this);
 
         public static bool operator ==(ObjectTable left, ObjectTable right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true;
-            }
-            else if (left is null)
-            {
-                return right.Equals(left);
-            }
-            else
-            {
-                return left.Equals(right);
-            }
-        }
+            => left?.Equals(right) ?? right?.Equals(left) ?? true;
 
         public static bool operator !=(ObjectTable left, ObjectTable right)
             => !(left == right);
@@ -71,16 +47,7 @@ namespace SAGESharp.SLB.Cinematic
         public IList<Location> Locations { get; set; }
 
         public bool Equals(Object other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return Instance == other.Instance &&
-                Type == other.Type &&
-                Locations.SafeSequenceEquals(other.Locations);
-        }
+            => MemberwiseEqualityComparer<Object>.ByProperties.Equals(this, other);
 
         public override string ToString() => $"Instance={Instance}," +
             $"Type={Type}," +
@@ -90,30 +57,10 @@ namespace SAGESharp.SLB.Cinematic
             => Equals(other as Object);
 
         public override int GetHashCode()
-        {
-            int hash = 9787;
-            Instance.AddHashCodeByVal(ref hash, 9323);
-            Type.AddHashCodeByVal(ref hash, 9323);
-            Locations.AddHashCodesByRef(ref hash, 9323, 7699);
-
-            return hash;
-        }
+            => MemberwiseEqualityComparer<Object>.ByProperties.GetHashCode(this);
 
         public static bool operator ==(Object left, Object right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true;
-            }
-            else if (left is null)
-            {
-                return right.Equals(left);
-            }
-            else
-            {
-                return left.Equals(right);
-            }
-        }
+            => left?.Equals(right) ?? right?.Equals(left) ?? true;
 
         public static bool operator !=(Object left, Object right)
             => !(left == right);
