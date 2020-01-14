@@ -3,6 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+using Equ;
 using NUtils.Extensions;
 using SAGESharp.IO;
 using System;
@@ -16,14 +17,7 @@ namespace SAGESharp.SLB.Cinematic
         public IList<Character> Entries { get; set; }
 
         public bool Equals(CharacterTable other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return Entries.SafeSequenceEquals(other.Entries);
-        }
+            => MemberwiseEqualityComparer<CharacterTable>.ByProperties.Equals(this, other);
 
         public override string ToString() =>
             $"Characters={Entries?.Let(Characters => "[(" + string.Join("), (", Characters) + ")]") ?? "null"}";
@@ -32,28 +26,10 @@ namespace SAGESharp.SLB.Cinematic
             => Equals(other as CharacterTable);
 
         public override int GetHashCode()
-        {
-            int hash = 739;
-            Entries.AddHashCodesByRef(ref hash, 3217, 5563);
-
-            return hash;
-        }
+            => MemberwiseEqualityComparer<CharacterTable>.ByProperties.GetHashCode(this);
 
         public static bool operator ==(CharacterTable left, CharacterTable right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true;
-            }
-            else if (left is null)
-            {
-                return right.Equals(left);
-            }
-            else
-            {
-                return left.Equals(right);
-            }
-        }
+            => left?.Equals(right) ?? right?.Equals(left) ?? true;
 
         public static bool operator !=(CharacterTable left, CharacterTable right)
             => !(left == right);
@@ -80,19 +56,7 @@ namespace SAGESharp.SLB.Cinematic
         public IList<Location> Locations { get; set; }
 
         public bool Equals(Character other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return AnimHierarchy == other.AnimHierarchy &&
-                CharacterId == other.CharacterId &&
-                AnimBaked == other.AnimBaked &&
-                SwitchMaskTimes1 == other.SwitchMaskTimes1 &&
-                SwitchMaskTimes2 == other.SwitchMaskTimes2 &&
-                Locations.SafeSequenceEquals(other.Locations);
-        }
+            => MemberwiseEqualityComparer<Character>.ByProperties.Equals(this, other);
 
         public override string ToString() => $"AnimHierarchy={AnimHierarchy}," +
             $"Character={CharacterId}," +
@@ -105,33 +69,10 @@ namespace SAGESharp.SLB.Cinematic
             => Equals(other as Character);
 
         public override int GetHashCode()
-        {
-            int hash = 7639;
-            AnimHierarchy.AddHashCodeByVal(ref hash, 4539);
-            CharacterId.AddHashCodeByVal(ref hash, 4539);
-            AnimBaked.AddHashCodeByVal(ref hash, 4539);
-            SwitchMaskTimes1.AddHashCodeByVal(ref hash, 4539);
-            SwitchMaskTimes2.AddHashCodeByVal(ref hash, 4539);
-            Locations.AddHashCodesByRef(ref hash, 4539, 8219);
-
-            return hash;
-        }
+            => MemberwiseEqualityComparer<Character>.ByProperties.GetHashCode(this);
 
         public static bool operator ==(Character left, Character right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true;
-            }
-            else if (left is null)
-            {
-                return right.Equals(left);
-            }
-            else
-            {
-                return left.Equals(right);
-            }
-        }
+            => left?.Equals(right) ?? right?.Equals(left) ?? true;
 
         public static bool operator !=(Character left, Character right)
             => !(left == right);
