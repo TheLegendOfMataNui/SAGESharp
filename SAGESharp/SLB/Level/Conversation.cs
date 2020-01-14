@@ -3,6 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+using Equ;
 using SAGESharp.IO;
 using System;
 using System.Collections.Generic;
@@ -16,14 +17,7 @@ namespace SAGESharp.SLB.Level
         public IList<ConversationCharacter> Entries { get; set; }
 
         public bool Equals(Conversation other)
-        {
-            if (other is null)
-            {
-                return false;
-            }
-
-            return Entries.SafeSequenceEquals(other.Entries);
-        }
+            => MemberwiseEqualityComparer<Conversation>.ByProperties.Equals(this, other);
 
         public override string ToString()
         {
@@ -41,18 +35,10 @@ namespace SAGESharp.SLB.Level
             }
         }
 
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as Conversation);
-        }
+        public override bool Equals(object obj) => Equals(obj as Conversation);
 
         public override int GetHashCode()
-        {
-            int hash = 79;
-            Entries.AddHashCodesByRef(ref hash, 3717, 7699);
-
-            return hash;
-        }
+            => MemberwiseEqualityComparer<Conversation>.ByProperties.GetHashCode(this);
     }
 
     public sealed class ConversationCharacter : IEquatable<ConversationCharacter>
@@ -80,17 +66,7 @@ namespace SAGESharp.SLB.Level
         public IList<Info> Entries { get; set; }
 
         public bool Equals(ConversationCharacter other)
-        {
-            if (other is null)
-            {
-                return false;
-            }
-
-            return ToaName == other.ToaName &&
-                CharName == other.CharName &&
-                CharCont == other.CharCont &&
-                Entries.SafeSequenceEquals(other.Entries);
-        }
+            => MemberwiseEqualityComparer<ConversationCharacter>.ByProperties.Equals(this, other);
 
         public override string ToString()
         {
@@ -115,42 +91,16 @@ namespace SAGESharp.SLB.Level
             return result.ToString();
         }
 
-        public override bool Equals(object other)
-        {
-            return Equals(other as ConversationCharacter);
-        }
+        public override bool Equals(object other) => Equals(other as ConversationCharacter);
 
         public override int GetHashCode()
-        {
-            int hash = 19;
-            ToaName.AddHashCodeByVal(ref hash, 89);
-            CharName.AddHashCodeByVal(ref hash, 89);
-            CharCont.AddHashCodeByVal(ref hash, 89);
-            Entries.AddHashCodesByRef(ref hash, 89, 53);
-
-            return hash;
-        }
+            => MemberwiseEqualityComparer<ConversationCharacter>.ByProperties.GetHashCode(this);
 
         public static bool operator ==(ConversationCharacter left, ConversationCharacter right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true;
-            }
-            else if(left is null)
-            {
-                return right.Equals(left);
-            }
-            else
-            {
-                return left.Equals(right);
-            }
-        }
+            => left?.Equals(right) ?? right?.Equals(left) ?? true;
 
         public static bool operator !=(ConversationCharacter left, ConversationCharacter right)
-        {
-            return !(left == right);
-        }
+            => !(left == right);
     }
 
     public sealed class Info : IEquatable<Info>
@@ -183,19 +133,7 @@ namespace SAGESharp.SLB.Level
         public IList<Frame> Frames { get; set; }
 
         public bool Equals(Info other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return LineSide == other.LineSide &&
-                ConditionStart == other.ConditionStart &&
-                ConditionEnd == other.ConditionEnd &&
-                StringLabel == other.StringLabel &&
-                StringIndex == other.StringIndex &&
-                Frames.SafeSequenceEquals(other.Frames);
-        }
+            => MemberwiseEqualityComparer<Info>.ByProperties.Equals(this, other);
 
         public override string ToString()
         {
@@ -222,44 +160,15 @@ namespace SAGESharp.SLB.Level
             return result.ToString();
         }
 
-        public override bool Equals(object other)
-        {
-            return Equals(other as Info);
-        }
+        public override bool Equals(object other) => Equals(other as Info);
 
         public override int GetHashCode()
-        {
-            int hash = 17;
-            LineSide.AddHashCodeByVal(ref hash, 73);
-            ConditionStart.AddHashCodeByVal(ref hash, 73);
-            ConditionEnd.AddHashCodeByVal(ref hash, 73);
-            StringLabel.AddHashCodeByVal(ref hash, 73);
-            StringIndex.AddHashCodeByVal(ref hash, 73);
-            Frames.AddHashCodesByRef(ref hash, 73, 37);
-
-            return hash;
-        }
+            => MemberwiseEqualityComparer<Info>.ByProperties.GetHashCode(this);
 
         public static bool operator ==(Info left, Info right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true;
-            }
-            else if (left is null)
-            {
-                return right.Equals(left);
-            }
-            else
-            {
-                return left.Equals(right);
-            }
-        }
+            => left?.Equals(right) ?? right?.Equals(left) ?? true;
 
-        public static bool operator !=(Info left, Info right)
-        {
-            return !(left == right);
-        }
+        public static bool operator !=(Info left, Info right) => !(left == right);
     }
 
     [Flags]
@@ -301,19 +210,7 @@ namespace SAGESharp.SLB.Level
         public string ConversationSounds { get; set; }
 
         public bool Equals(Frame other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return ToaAnimation == other.ToaAnimation &&
-                CharAnimation == other.CharAnimation &&
-                CameraPositionTarget == other.CameraPositionTarget &&
-                CameraDistance == other.CameraDistance &&
-                StringIndex == other.StringIndex &&
-                ConversationSounds.SafeEquals(other.ConversationSounds);
-        }
+            => MemberwiseEqualityComparer<Frame>.ByProperties.Equals(this, other);
 
         public override string ToString()
         {
@@ -329,43 +226,14 @@ namespace SAGESharp.SLB.Level
             return result.ToString();
         }
 
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as Frame);
-        }
+        public override bool Equals(object obj) => Equals(obj as Frame);
 
         public override int GetHashCode()
-        {
-            var hash = 31;
-            ToaAnimation.AddHashCodeByVal(ref hash, 89);
-            CharAnimation.AddHashCodeByVal(ref hash, 89);
-            CameraPositionTarget.AddHashCodeByVal(ref hash, 89);
-            CameraDistance.AddHashCodeByVal(ref hash, 89);
-            StringIndex.AddHashCodeByVal(ref hash, 89);
-            ConversationSounds.AddHashCodeByRef(ref hash, 89);
-
-            return hash;
-        }
+            => MemberwiseEqualityComparer<Frame>.ByProperties.GetHashCode(this);
 
         public static bool operator ==(Frame left, Frame right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true;
-            }
-            else if (right is null)
-            {
-                return left.Equals(right);
-            }
-            else
-            {
-                return right.Equals(left);
-            }
-        }
+            => left?.Equals(right) ?? right?.Equals(left) ?? true;
 
-        public static bool operator !=(Frame left, Frame right)
-        {
-            return !(left == right);
-        }
+        public static bool operator !=(Frame left, Frame right) => !(left == right);
     }
 }
