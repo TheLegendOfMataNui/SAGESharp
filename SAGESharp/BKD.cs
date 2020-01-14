@@ -3,6 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+using Equ;
 using NUtils.Extensions;
 using SAGESharp.IO;
 using System;
@@ -80,50 +81,19 @@ namespace SAGESharp
 
         #region Equality
         public bool Equals(BKD other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return Length == other.Length &&
-                Entries.SafeSequenceEquals(other.Entries);
-        }
+            => MemberwiseEqualityComparer<BKD>.ByProperties.Equals(this, other);
 
         public override bool Equals(object obj)
-        {
-            return Equals(obj as BKD);
-        }
+            => Equals(obj as BKD);
 
         public override int GetHashCode()
-        {
-            int hash = 427477;
-            Length.AddHashCodeByVal(ref hash, 446503);
-            Entries.AddHashCodesByRef(ref hash, 446503, 542891);
-
-            return hash;
-        }
+            => MemberwiseEqualityComparer<BKD>.ByProperties.GetHashCode(this);
 
         public static bool operator ==(BKD left, BKD right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true;
-            }
-            else if (left is null)
-            {
-                return right.Equals(left);
-            }
-            else
-            {
-                return left.Equals(right);
-            }
-        }
+            => left?.Equals(right) ?? right?.Equals(left) ?? true;
 
         public static bool operator !=(BKD left, BKD right)
-        {
-            return !(left == right);
-        }
+            => !(left == right);
         #endregion
 
         public override string ToString() => $"{nameof(BKD)}(" +
@@ -214,54 +184,19 @@ namespace SAGESharp
 
         #region Equality
         public bool Equals(BKDEntry other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return Id == other.Id &&
-                TCBQuaternionData.SafeSequenceEquals(other.TCBQuaternionData) &&
-                TCBInterpolatorData1.SafeSequenceEquals(other.TCBInterpolatorData1) &&
-                TCBInterpolatorData2.SafeSequenceEquals(other.TCBInterpolatorData2);
-        }
+            => MemberwiseEqualityComparer<BKDEntry>.ByProperties.Equals(this, other);
 
         public override bool Equals(object obj)
-        {
-            return Equals(obj as BKDEntry);
-        }
+            => Equals(obj as BKDEntry);
 
         public override int GetHashCode()
-        {
-            int hash = 216761;
-            Id.AddHashCodeByVal(ref hash, 114371);
-            TCBQuaternionData.AddHashCodesByRef(ref hash, 114371, 527929);
-            TCBInterpolatorData1.AddHashCodesByRef(ref hash, 114371, 322891);
-            TCBInterpolatorData2.AddHashCodesByRef(ref hash, 114371, 15053);
-
-            return hash;
-        }
+            => MemberwiseEqualityComparer<BKDEntry>.ByProperties.GetHashCode(this);
 
         public static bool operator ==(BKDEntry left, BKDEntry right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true;
-            }
-            else if (left is null)
-            {
-                return right.Equals(left);
-            }
-            else
-            {
-                return left.Equals(right);
-            }
-        }
+            => left?.Equals(right) ?? right?.Equals(left) ?? true;
 
         public static bool operator !=(BKDEntry left, BKDEntry right)
-        {
-            return !(left == right);
-        }
+            => !(left == right);
         #endregion
 
         public override string ToString() => $"{nameof(BKDEntry)}(" +
@@ -312,56 +247,19 @@ namespace SAGESharp
 
         #region Equality
         public bool Equals(TCBQuaternionData other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return Short1 == other.Short1 &&
-                Short2 == other.Short2 &&
-                Short3 == other.Short3 &&
-                Short4 == other.Short4 &&
-                Short5 == other.Short5;
-        }
+            => MemberwiseEqualityComparer<TCBQuaternionData>.ByProperties.Equals(this, other);
 
         public override bool Equals(object obj)
-        {
-            return Equals(obj as TCBQuaternionData);
-        }
+            => Equals(obj as TCBQuaternionData);
 
         public override int GetHashCode()
-        {
-            int hash = 494917;
-            Short1.AddHashCodeByVal(ref hash, 417881);
-            Short2.AddHashCodeByVal(ref hash, 417881);
-            Short3.AddHashCodeByVal(ref hash, 417881);
-            Short4.AddHashCodeByVal(ref hash, 417881);
-            Short5.AddHashCodeByVal(ref hash, 417881);
-
-            return hash;
-        }
+            => MemberwiseEqualityComparer<TCBQuaternionData>.ByProperties.GetHashCode(this);
 
         public static bool operator ==(TCBQuaternionData left, TCBQuaternionData right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true;
-            }
-            else if (left is null)
-            {
-                return right.Equals(left);
-            }
-            else
-            {
-                return left.Equals(right);
-            }
-        }
+            => left?.Equals(right) ?? right?.Equals(left) ?? true;
 
         public static bool operator !=(TCBQuaternionData left, TCBQuaternionData right)
-        {
-            return !(left == right);
-        }
+            => !(left == right);
         #endregion
 
         public override string ToString() => $"{nameof(TCBQuaternionData)}(" +
@@ -408,54 +306,19 @@ namespace SAGESharp
 
         #region Equality
         public bool Equals(TCBInterpolationData other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return Long1 == other.Long1 &&
-                Float1 == other.Float1 &&
-                Float2 == other.Float2 &&
-                Float3 == other.Float3;
-        }
+            => MemberwiseEqualityComparer<TCBInterpolationData>.ByProperties.Equals(this, other);
 
         public override bool Equals(object obj)
-        {
-            return Equals(obj as TCBInterpolationData);
-        }
+            => Equals(obj as TCBInterpolationData);
 
         public override int GetHashCode()
-        {
-            int hash = 324871;
-            Long1.AddHashCodeByVal(ref hash, 25667);
-            Float1.AddHashCodeByVal(ref hash, 25667);
-            Float2.AddHashCodeByVal(ref hash, 25667);
-            Float3.AddHashCodeByVal(ref hash, 25667);
-
-            return hash;
-        }
+            => MemberwiseEqualityComparer<TCBInterpolationData>.ByProperties.GetHashCode(this);
 
         public static bool operator ==(TCBInterpolationData left, TCBInterpolationData right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true;
-            }
-            else if (left is null)
-            {
-                return right.Equals(left);
-            }
-            else
-            {
-                return left.Equals(right);
-            }
-        }
+            => left?.Equals(right) ?? right?.Equals(left) ?? true;
 
         public static bool operator !=(TCBInterpolationData left, TCBInterpolationData right)
-        {
-            return !(left == right);
-        }
+            => !(left == right);
         #endregion
 
         public override string ToString() => $"{nameof(TCBInterpolationData)}(" +
