@@ -192,67 +192,27 @@ namespace SAGESharp.IO
         {
             if (TypeIs<byte>())
             {
-                if (!typeof(T).IsEnum)
-                {
-                    read = (binaryReader) => binaryReader.ReadByte();
-                }
-                else
-                {
-                    read = (binaryReader) => Enum.ToObject(typeof(T), binaryReader.ReadByte());
-                }
-
+                read = WrapBinaryReaderIfEnum(binaryReader => binaryReader.ReadByte());
                 write = (binaryWriter, value) => binaryWriter.WriteByte((byte)value);
             }
             else if (TypeIs<short>())
             {
-                if (!typeof(T).IsEnum)
-                {
-                    read = (binaryReader) => binaryReader.ReadInt16();
-                }
-                else
-                {
-                    read = (binaryReader) => Enum.ToObject(typeof(T), binaryReader.ReadInt16());
-                }
-
+                read = WrapBinaryReaderIfEnum(binaryReader => binaryReader.ReadInt16());
                 write = (binaryWriter, value) => binaryWriter.WriteInt16((short)value);
             }
             else if (TypeIs<ushort>())
             {
-                if (!typeof(T).IsEnum)
-                {
-                    read = (binaryReader) => binaryReader.ReadUInt16();
-                }
-                else
-                {
-                    read = (binaryReader) => Enum.ToObject(typeof(T), binaryReader.ReadUInt16());
-                }
-
+                read = WrapBinaryReaderIfEnum(binaryReader => binaryReader.ReadUInt16());
                 write = (binaryWriter, value) => binaryWriter.WriteUInt16((ushort)value);
             }
             else if (TypeIs<int>())
             {
-                if (!typeof(T).IsEnum)
-                {
-                    read = (binaryReader) => binaryReader.ReadInt32();
-                }
-                else
-                {
-                    read = (binaryReader) => Enum.ToObject(typeof(T), binaryReader.ReadInt32());
-                }
-
+                read = WrapBinaryReaderIfEnum(binaryReader => binaryReader.ReadInt32());
                 write = (binaryWriter, value) => binaryWriter.WriteInt32((int)value);
             }
             else if (TypeIs<uint>())
             {
-                if (!typeof(T).IsEnum)
-                {
-                    read = (binaryReader) => binaryReader.ReadUInt32();
-                }
-                else
-                {
-                    read = (binaryReader) => Enum.ToObject(typeof(T), binaryReader.ReadUInt32());
-                }
-
+                read = WrapBinaryReaderIfEnum(binaryReader => binaryReader.ReadUInt32());
                 write = (binaryWriter, value) => binaryWriter.WriteUInt32((uint)value);
             }
             else if (TypeIs<float>())
@@ -307,6 +267,18 @@ namespace SAGESharp.IO
         }
 
         private static bool IsOfType(object value) => typeof(T) == value.GetType();
+
+        private static Func<IBinaryReader, object> WrapBinaryReaderIfEnum(Func<IBinaryReader, object> function)
+        {
+            if (!typeof(T).IsEnum)
+            {
+                return function;
+            }
+            else
+            {
+                return (binaryReader) => Enum.ToObject(typeof(T), function(binaryReader));
+            }
+        }
     }
 
     internal sealed class StringDataNode : IDataNode
