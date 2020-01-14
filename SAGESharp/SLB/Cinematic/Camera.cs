@@ -3,6 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+using Equ;
 using NUtils.Extensions;
 using SAGESharp.IO;
 using System;
@@ -28,18 +29,7 @@ namespace SAGESharp.SLB.Cinematic
         public IList<Frame> Frames { get; set; }
 
         public bool Equals(Camera other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return ViewAngle == other.ViewAngle &&
-                SpinMaskTimes1 == other.SpinMaskTimes1 &&
-                SpinMaskTimes2 == other.SpinMaskTimes2 &&
-                SpinMaskTimes3 == other.SpinMaskTimes3 &&
-                Frames.SafeSequenceEquals(other.Frames);
-        }
+            => MemberwiseEqualityComparer<Camera>.ByProperties.Equals(this, other);
 
         public override string ToString() => $"ViewAngle={ViewAngle}," +
             $"SpinMaskTimes1={SpinMaskTimes1}," +
@@ -51,32 +41,10 @@ namespace SAGESharp.SLB.Cinematic
             => Equals(other as Camera);
 
         public override int GetHashCode()
-        {
-            int hash = 6311;
-            ViewAngle.AddHashCodeByVal(ref hash, 911);
-            SpinMaskTimes1.AddHashCodeByVal(ref hash, 911);
-            SpinMaskTimes2.AddHashCodeByVal(ref hash, 911);
-            SpinMaskTimes3.AddHashCodeByVal(ref hash, 911);
-            Frames.AddHashCodesByRef(ref hash, 911, 9311);
-
-            return hash;
-        }
+            => MemberwiseEqualityComparer<Camera>.ByProperties.GetHashCode(this);
 
         public static bool operator ==(Camera left, Camera right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true;
-            }
-            else if (left is null)
-            {
-                return right.Equals(left);
-            }
-            else
-            {
-                return left.Equals(right);
-            }
-        }
+            => left?.Equals(right) ?? right?.Equals(left) ?? true;
 
         public static bool operator !=(Camera left, Camera right)
             => !(left == right);
@@ -94,16 +62,7 @@ namespace SAGESharp.SLB.Cinematic
         public Point3D Target { get; set; }
 
         public bool Equals(Frame other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return Time == other.Time &&
-                Position == other.Position &&
-                Target == other.Target;
-        }
+            => MemberwiseEqualityComparer<Frame>.ByProperties.Equals(this, other);
 
         public override string ToString()
             => $"Time={Time}, Position={Position}, Target={Target}";
@@ -112,30 +71,10 @@ namespace SAGESharp.SLB.Cinematic
             => Equals(other as Frame);
 
         public override int GetHashCode()
-        {
-            int hash = 7507;
-            Time.AddHashCodeByVal(ref hash, 907);
-            Position.AddHashCodeByRef(ref hash, 907);
-            Target.AddHashCodeByRef(ref hash, 907);
-
-            return hash;
-        }
+            => MemberwiseEqualityComparer<Frame>.ByProperties.GetHashCode(this);
 
         public static bool operator ==(Frame left, Frame right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true;
-            }
-            else if (left is null)
-            {
-                return right.Equals(left);
-            }
-            else
-            {
-                return left.Equals(right);
-            }
-        }
+            => left?.Equals(right) ?? right?.Equals(left) ?? true;
 
         public static bool operator !=(Frame left, Frame right)
             => !(left == right);
