@@ -122,8 +122,6 @@
     <Compile Include="Testing\ComparisionTestCases.cs" />
     <Compile Include="Testing\NSubstitute.cs" />
     <Compile Include="Testing\ParameterGroup.cs" />
-    <Compile Include="Testing\AbstractEqualityByRefTests.cs" />
-    <Compile Include="Testing\AbstractEqualityByValTests.cs" />
     <Compile Include="Testing\SerializationTestCaseData.cs" />
     <Compile Include="Utils\ASCIIExtensionsTests.cs" />
     <Compile Include="Utils\NumericExtensionsTests.cs" />
