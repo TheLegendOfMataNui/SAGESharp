@@ -4,9 +4,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using Equ;
+using NUtils.Validations;
 using SAGESharp.IO;
 using SAGESharp.Utils;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SAGESharp.SLB
@@ -63,16 +65,18 @@ namespace SAGESharp.SLB
         /// <exception cref="ArgumentNullException">If the array of bytes is null.</exception>
         public static Identifier From(byte[] values)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException();
-            }
+            Validate.ArgumentNotNull(values, nameof(values));
 
-            return ZERO
-                .WithB0(values.ElementAtOrDefault(0))
-                .WithB1(values.ElementAtOrDefault(1))
-                .WithB2(values.ElementAtOrDefault(2))
-                .WithB3(values.ElementAtOrDefault(3));
+            Identifier result = new Identifier
+            {
+                value = values.ElementAtOrDefault(0)
+            };
+
+            result.SetByteValue(1, values.ElementAtOrDefault(1));
+            result.SetByteValue(2, values.ElementAtOrDefault(2));
+            result.SetByteValue(3, values.ElementAtOrDefault(3));
+
+            return result;
         }
 
         /// <summary>
@@ -94,16 +98,19 @@ namespace SAGESharp.SLB
         /// <exception cref="ArgumentNullException">If the string is null.</exception>
         public static Identifier From(string value)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException();
-            }
+            Validate.ArgumentNotNull(value, nameof(value));
 
-            return ZERO
-                .WithB0((value.Length > 0) ? value[value.Length - 1].ToASCIIByte() : (byte)0)
-                .WithB1((value.Length > 1) ? value[value.Length - 2].ToASCIIByte() : (byte)0)
-                .WithB2((value.Length > 2) ? value[value.Length - 3].ToASCIIByte() : (byte)0)
-                .WithB3((value.Length > 3) ? value[value.Length - 4].ToASCIIByte() : (byte)0);
+            IEnumerable<char> chars = value.Reverse();
+            Identifier result = new Identifier
+            {
+                value = chars.ElementAtOrDefault(0).ToASCIIByte()
+            };
+
+            result.SetByteValue(1, chars.ElementAtOrDefault(1).ToASCIIByte());
+            result.SetByteValue(2, chars.ElementAtOrDefault(2).ToASCIIByte());
+            result.SetByteValue(3, chars.ElementAtOrDefault(3).ToASCIIByte());
+
+            return result;
         }
         #endregion
 
