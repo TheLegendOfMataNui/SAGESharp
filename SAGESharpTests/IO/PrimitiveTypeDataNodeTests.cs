@@ -153,6 +153,16 @@ namespace SAGESharp.IO
                 setupRead: (binaryReader, value) => binaryReader.ReadUInt32().Returns(value),
                 verifyWrite: (binaryWriter, value) => binaryWriter.Received().WriteUInt32(value)
             ),
+            new PrimitiveTypeTestCaseData<long>(
+                value: long.MaxValue,
+                setupRead: (binaryReader, value) => binaryReader.ReadInt64().Returns(value),
+                verifyWrite: (binaryWrite, value) => binaryWrite.Received().WriteInt64(value)
+            ),
+            new PrimitiveTypeTestCaseData<ulong>(
+                value: ulong.MaxValue,
+                setupRead: (binaryReader, value) => binaryReader.ReadUInt64().Returns(value),
+                verifyWrite: (binaryWriter, value) => binaryWriter.Received().WriteUInt64(value)
+            ),
             new PrimitiveTypeTestCaseData<float>(
                 value: 2.5f,
                 setupRead: (binaryReader, value) => binaryReader.ReadFloat().Returns(value),

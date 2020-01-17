@@ -215,6 +215,16 @@ namespace SAGESharp.IO
                 read = WrapBinaryReaderIfEnum(binaryReader => binaryReader.ReadUInt32());
                 write = (binaryWriter, value) => binaryWriter.WriteUInt32((uint)value);
             }
+            else if (TypeIs<long>())
+            {
+                read = WrapBinaryReaderIfEnum(binaryReader => binaryReader.ReadInt64());
+                write = (binaryWriter, value) => binaryWriter.WriteInt64((long)value);
+            }
+            else if (TypeIs<ulong>())
+            {
+                read = WrapBinaryReaderIfEnum(binaryReader => binaryReader.ReadUInt64());
+                write = (binaryWriter, value) => binaryWriter.WriteUInt64((ulong)value);
+            }
             else if (TypeIs<float>())
             {
                 read = (binaryReader) => binaryReader.ReadFloat();
@@ -677,7 +687,8 @@ namespace SAGESharp.IO
         private static bool IsPrimitiveType(Type type)
         {
             return type == typeof(byte) || type == typeof(short) || type == typeof(ushort)
-                 || type == typeof(int) || type == typeof(uint) || type == typeof(SLB.Identifier)
+                 || type == typeof(int) || type == typeof(uint) || type == typeof(long)
+                 || type == typeof(ulong) || type == typeof(SLB.Identifier)
                  || type == typeof(float) || type == typeof(double)
                  || (type.IsEnum && IsPrimitiveType(Enum.GetUnderlyingType(type)));
         }
