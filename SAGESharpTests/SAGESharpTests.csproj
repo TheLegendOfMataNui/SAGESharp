@@ -109,6 +109,7 @@
     <Compile Include="SLB\Cinematic\FrameTests.cs" />
     <Compile Include="SLB\IdentifierTests.cs" />
     <Compile Include="SLB\Level\ConversationCharacterTests.cs" />
+    <Compile Include="SLB\Level\ConversationTests.cs" />
     <Compile Include="SLB\Level\FrameTests.cs" />
     <Compile Include="SLB\Level\InfoTests.cs" />
     <Compile Include="SLB\Level\SerializationTests.cs" />

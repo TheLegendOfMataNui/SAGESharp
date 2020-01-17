@@ -39,6 +39,12 @@ namespace SAGESharp.SLB.Level
 
         public override int GetHashCode()
             => MemberwiseEqualityComparer<Conversation>.ByProperties.GetHashCode(this);
+
+        public static bool operator ==(Conversation left, Conversation right)
+            => left?.Equals(right) ?? right?.Equals(left) ?? true;
+
+        public static bool operator !=(Conversation left, Conversation right)
+            => !(left == right);
     }
 
     public sealed class ConversationCharacter : IEquatable<ConversationCharacter>
