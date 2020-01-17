@@ -101,8 +101,12 @@ namespace SAGESharp.IO
 
         public abstract void WriteInt32(int value);
 
+        public abstract void WriteInt64(long value);
+
         public abstract void WriteUInt16(ushort value);
 
         public abstract void WriteUInt32(uint value);
+
+        public abstract void WriteUInt64(ulong value);
     }
 }

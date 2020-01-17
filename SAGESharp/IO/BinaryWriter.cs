@@ -58,11 +58,25 @@ namespace SAGESharp.IO
         void WriteInt32(int value);
 
         /// <summary>
-        /// Writes an unsigned <see cref="uint"/> (4 bytes).
+        /// Writes an <see cref="uint"/> (4 bytes).
         /// </summary>
         /// 
         /// <param name="value">The value to write.</param>
         void WriteUInt32(uint value);
+
+        /// <summary>
+        /// Writes a <see cref="long"/> (8 bytes).
+        /// </summary>
+        /// 
+        /// <param name="value">The value to write.</param>
+        void WriteInt64(long value);
+
+        /// <summary>
+        /// Writes an <see cref="ulong"/> (8 bytes).
+        /// </summary>
+        /// 
+        /// <param name="value">The value to write.</param>
+        void WriteUInt64(ulong value);
 
         /// <summary>
         /// Writes a <see cref="float"/> (4 bytes).
@@ -151,10 +165,16 @@ namespace SAGESharp.IO
         public void WriteInt32(int value)
             => realWriter.Write(value);
 
+        public void WriteInt64(long value)
+            => realWriter.Write(value);
+
         public void WriteUInt16(ushort value)
             => realWriter.Write(value);
 
         public void WriteUInt32(uint value)
+            => realWriter.Write(value);
+
+        public void WriteUInt64(ulong value)
             => realWriter.Write(value);
     }
     #endregion

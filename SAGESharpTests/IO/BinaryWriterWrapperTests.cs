@@ -102,6 +102,18 @@ namespace SAGESharp.IO
                 action: (w, v) => w.WriteUInt32(v),
                 expectedResult: new byte[] { 0xCC, 0xDD, 0xEE, 0xFF }
             ),
+            new TestCaseData<long>(
+                description: "Write a signed 64 bits integer",
+                input: 0x1122334455667788,
+                action: (w, v) => w.WriteInt64(v),
+                expectedResult: new byte[] { 0x88, 0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11 }
+            ),
+            new TestCaseData<ulong>(
+                description: "Write an unsigned 64 bits integer",
+                input: 0xFFEEDDCCBBAA9988,
+                action: (w, v) => w.WriteUInt64(v),
+                expectedResult: new byte[] { 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF }
+            ),
             new TestCaseData<float>(
                 description: "Write a 32 bits floating point number",
                 input: 2.5f,
