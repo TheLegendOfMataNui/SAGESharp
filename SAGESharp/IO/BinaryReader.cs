@@ -65,6 +65,20 @@ namespace SAGESharp.IO
         uint ReadUInt32();
 
         /// <summary>
+        /// Reads a <see cref="long"/> number.
+        /// </summary>
+        /// 
+        /// <returns>A <see cref="long"/> number.</returns>
+        long ReadInt64();
+
+        /// <summary>
+        /// Reads an <see cref="ulong"/> number.
+        /// </summary>
+        /// 
+        /// <returns>An <see cref="ulong"/> number.</returns>
+        ulong ReadUInt64();
+
+        /// <summary>
         /// Reads a <see cref="float"/> number.
         /// </summary>
         /// 
@@ -165,6 +179,12 @@ namespace SAGESharp.IO
 
         public uint ReadUInt32()
             => realReader.ReadUInt32();
+
+        public long ReadInt64()
+            => realReader.ReadInt64();
+
+        public ulong ReadUInt64()
+            => realReader.ReadUInt64();
 
         public float ReadFloat()
             => realReader.ReadSingle();

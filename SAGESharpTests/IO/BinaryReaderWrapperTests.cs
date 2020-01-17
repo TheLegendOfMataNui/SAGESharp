@@ -135,6 +135,19 @@ namespace SAGESharp.IO
                 function: r => r.ReadUInt32(),
                 expectedResult: 0xFFEEDDCC
             ),
+            new TestCaseData<long>(
+                description: "Read a signed 64 bits integer",
+                input: new byte[] { 0x88, 0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11 },
+                function: r => r.ReadInt64(),
+                expectedResult: 0x1122334455667788
+            ),
+            new TestCaseData<ulong>(
+                description: "Read an unsigned 64 bits integer",
+                // 0123456789ABCDEF
+                input: new byte[] { 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF },
+                function: r => r.ReadUInt64(),
+                expectedResult: 0xFFEEDDCCBBAA9988
+            ),
             new TestCaseData<float>(
                 description: "Read a 32 bits floating point number",
                 input: new byte[] { 0x00, 0x00, 0x20, 0x40 },

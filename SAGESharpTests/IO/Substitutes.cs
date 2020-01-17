@@ -74,9 +74,13 @@ namespace SAGESharp.IO
 
         public abstract int ReadInt32();
 
+        public abstract long ReadInt64();
+
         public abstract ushort ReadUInt16();
 
         public abstract uint ReadUInt32();
+
+        public abstract ulong ReadUInt64();
     }
 
     abstract class BinaryWriterSubstitute : IBinaryWriter, IPositionable
