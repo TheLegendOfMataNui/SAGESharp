@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("SAGESharp")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Libraries to manipulate data for the Saffire Advanced Game Engine (SAGE)")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Litestone Studios")]
 [assembly: AssemblyProduct("SAGESharp")]
 [assembly: AssemblyCopyright("Copyright © Litestone 2018")]
 [assembly: AssemblyTrademark("")]

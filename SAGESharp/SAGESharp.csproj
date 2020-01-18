@@ -175,6 +175,7 @@
     <None Include="IO\README.md" />
     <None Include="LSS\readme.md" />
     <None Include="packages.config" />
+    <None Include="SAGESharp.nuspec" />
     <None Include="SAGESharp.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -9,6 +9,8 @@ script:
   - export PATH="$MSBUILD_PATH:$PATH"
   - MSBuild.exe //p:Configuration=Release SAGESharp.sln
   - packages/NUnit.ConsoleRunner.3.10.0/tools/nunit3-console.exe ./SAGESharpTests/bin/Release/SAGESharpTests.dll
+  - MSBuild.exe //p:Configuration="Release Signed" SAGESharp.sln
+  - nuget pack -properties Configuration="Release Signed" SAGESharp/
 # Build only in the master branch
 branches:
   only:
