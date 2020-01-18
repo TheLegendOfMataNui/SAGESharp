@@ -15,3 +15,16 @@ script:
 branches:
   only:
   - master
+deploy:
+  - provider: releases
+    skip_cleanup: true
+    api_key: $GITHUB_KEY
+    file: SAGESharp.$TRAVIS_TAG.nupkg
+    on:
+      tags: true
+  - provider: script
+    skip_cleanup: true
+    script:
+      - nuget push ./SAGESharp.$TRAVIS_TAG.nupkg -ApiKey $NUGET_ORG_KEY -Source https://api.nuget.org/v3/index.json
+    on:
+      tags: true
