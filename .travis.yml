@@ -4,10 +4,10 @@ env:
   - MSBUILD_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
 install:
   - choco install nuget.commandline
-  - nuget restore ShoefitterDX.sln
+  - nuget restore SAGESharp.sln
 script:
   - export PATH="$MSBUILD_PATH:$PATH"
-  - MSBuild.exe //p:Configuration=Release ShoefitterDX.sln
+  - MSBuild.exe //p:Configuration=Release SAGESharp.sln
   - packages/NUnit.ConsoleRunner.3.10.0/tools/nunit3-console.exe ./SAGESharpTests/bin/Release/SAGESharpTests.dll
 # Build only in the master branch
 branches:
