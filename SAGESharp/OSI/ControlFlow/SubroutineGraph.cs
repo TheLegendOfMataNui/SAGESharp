@@ -85,6 +85,7 @@ namespace SAGESharp.OSI.ControlFlow
                             // An empty node...
                             OSINode trueNode = new OSINode(offset + ins.Size, new List<Instruction>());
                             currentNode.CreateJumpTo(trueNode, Jump.JumpType.ConditionalTrue);
+                            nodeLengths.Add(trueNode, 0);
                             Nodes.Add(trueNode);
                             // HACK: Don't add trueNode's location - it's empty, so nobody should want it. Let the false node own the location.
 
