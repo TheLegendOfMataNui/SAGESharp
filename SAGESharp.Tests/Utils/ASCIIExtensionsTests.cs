@@ -5,8 +5,9 @@
  */
 using FluentAssertions;
 using NUnit.Framework;
+using SAGESharp.Utils;
 
-namespace SAGESharp.Utils
+namespace SAGESharp.Tests.Utils
 {
     class ASCIIExtensionsTests
     {
