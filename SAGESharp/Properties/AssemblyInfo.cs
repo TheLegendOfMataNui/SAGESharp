@@ -39,6 +39,6 @@ using System.Runtime.InteropServices;
 // the mocking framework. We don't want the signed assembly to expose
 // any internal classes so that's guarded behind a macro.
 #if !SIGN
-[assembly: InternalsVisibleTo("SAGESharpTests")]
+[assembly: InternalsVisibleTo("SAGESharp.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 #endif

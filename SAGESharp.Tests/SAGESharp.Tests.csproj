@@ -9,8 +9,8 @@
     <ProjectGuid>{62E3C5E4-4C83-48FF-8C4E-4547A13DB764}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SAGESharp</RootNamespace>
-    <AssemblyName>SAGESharpTests</AssemblyName>
+    <RootNamespace>SAGESharp.Tests</RootNamespace>
+    <AssemblyName>SAGESharp.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -74,88 +74,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BKDEntryTests.cs" />
-    <Compile Include="BKDSerializationTests.cs" />
-    <Compile Include="BKDTests.cs" />
-    <Compile Include="IO\BinaryReaderTests.cs" />
-    <Compile Include="IO\BinaryReaderWrapperTests.cs" />
-    <Compile Include="IO\BinarySerializableSerializerTests.cs" />
-    <Compile Include="IO\BinarySerializerTests.cs" />
-    <Compile Include="IO\BinaryWriterTests.cs" />
-    <Compile Include="IO\BinaryWriterWrapperTests.cs" />
-    <Compile Include="IO\EdgeTests.cs" />
-    <Compile Include="IO\IdentifierYamlTypeConverterTests.cs" />
-    <Compile Include="IO\ListNodeTests.cs" />
-    <Compile Include="IO\OffsetNodeTests.cs" />
-    <Compile Include="IO\PaddingNodeTests.cs" />
-    <Compile Include="IO\PrimitiveTypeDataNodeTests.cs" />
-    <Compile Include="IO\SLBTypeInspectorTests.cs" />
-    <Compile Include="IO\StringDataNodeTests.cs" />
-    <Compile Include="IO\Substitutes.cs" />
-    <Compile Include="IO\TreeBinarySerializerTests.cs" />
-    <Compile Include="IO\TreeBuilderTests.cs" />
-    <Compile Include="IO\TreeReaderTests.cs" />
-    <Compile Include="IO\Trees\Builders.cs" />
-    <Compile Include="IO\Trees\TreeWithHeight1.cs" />
-    <Compile Include="IO\Trees\TreeWithHeight2.cs" />
-    <Compile Include="IO\Trees\TreeWithHeight3.cs" />
-    <Compile Include="IO\Trees\TreeWithNestedLists.cs" />
-    <Compile Include="IO\Trees\TreeWithNodeAtOffset.cs" />
-    <Compile Include="IO\Trees\TreeWithUnknownNodeType.cs" />
-    <Compile Include="IO\TreeWriterTests.cs" />
-    <Compile Include="IO\UserTypeDataNodeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SLB\Cinematic\CameraTests.cs" />
-    <Compile Include="SLB\Cinematic\FrameTests.cs" />
-    <Compile Include="SLB\IdentifierTests.cs" />
-    <Compile Include="SLB\Level\ConversationCharacterTests.cs" />
-    <Compile Include="SLB\Level\ConversationTests.cs" />
-    <Compile Include="SLB\Level\FrameTests.cs" />
-    <Compile Include="SLB\Level\InfoTests.cs" />
-    <Compile Include="SLB\Level\SerializationTests.cs" />
-    <Compile Include="SLB\Level\TestData.cs" />
-    <Compile Include="SLB\Point3DTests.cs" />
-    <Compile Include="TCBInterpolationDataTests.cs" />
-    <Compile Include="TCBQuaternionDataTests.cs" />
-    <Compile Include="Testing\AbstractTestCaseData.cs" />
-    <Compile Include="Testing\Assertions.cs" />
-    <Compile Include="Testing\ComparisionTestCases.cs" />
-    <Compile Include="Testing\NSubstitute.cs" />
-    <Compile Include="Testing\ParameterGroup.cs" />
-    <Compile Include="Testing\SerializationTestCaseData.cs" />
-    <Compile Include="Utils\ASCIIExtensionsTests.cs" />
-    <Compile Include="Utils\NumericExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="Test Data\ComplexBKD.bkd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Test Data\EmptyBKD.bkd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Test Data\SimpleBKD.bkd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Test Data\SLB\Level\Conversation\ComplexConversation.slb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Test Data\SLB\Level\Conversation\ComplexConversation.yaml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Test Data\SLB\Level\Conversation\EmptyConversation.slb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Test Data\SLB\Level\Conversation\EmptyConversation.yaml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Test Data\SLB\Level\Conversation\SimpleConversation.slb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Test Data\SLB\Level\Conversation\SimpleConversation.yaml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SAGESharp\SAGESharp.csproj">

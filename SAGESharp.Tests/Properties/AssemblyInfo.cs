@@ -20,5 +20,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
 // Make any internal class visible to NSubstitute
-[assembly: InternalsVisibleTo("SAGESharpTests")]
+[assembly: InternalsVisibleTo("SAGESharp.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

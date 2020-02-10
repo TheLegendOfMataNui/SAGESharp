@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.travis.yml = .travis.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAGESharpTests", "SAGESharpTests\SAGESharpTests.csproj", "{62E3C5E4-4C83-48FF-8C4E-4547A13DB764}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAGESharp.Tests", "SAGESharp.Tests\SAGESharp.Tests.csproj", "{62E3C5E4-4C83-48FF-8C4E-4547A13DB764}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
