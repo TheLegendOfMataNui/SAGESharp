@@ -5,9 +5,10 @@
  */
 using FluentAssertions;
 using NUnit.Framework;
+using SAGESharp.Utils;
 using System;
 
-namespace SAGESharp.Utils
+namespace SAGESharp.Tests.Utils
 {
     class NumericExtensionsTests
     {
