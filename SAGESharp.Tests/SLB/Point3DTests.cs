@@ -4,9 +4,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using NUnit.Framework;
-using SAGESharp.Testing;
+using SAGESharp.SLB;
 
-namespace SAGESharp.SLB
+namespace SAGESharp.Tests.SLB
 {
     class Point3DTests
     {
