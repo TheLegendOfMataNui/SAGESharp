@@ -9,7 +9,7 @@ using NUtils.Validations;
 using System;
 using System.Linq.Expressions;
 
-namespace SAGESharp.Testing
+namespace SAGESharp.Tests
 {
     /// <summary>
     /// Interface that represents a test to compare an object of type <typeparamref name="T"/>.
