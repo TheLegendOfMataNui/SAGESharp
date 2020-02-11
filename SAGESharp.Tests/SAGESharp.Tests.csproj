@@ -77,6 +77,7 @@
     <Compile Include="AbstractTestCaseData.cs" />
     <Compile Include="Assertions.cs" />
     <Compile Include="BKDEntryTests.cs" />
+    <Compile Include="BKDSerializationTests.cs" />
     <Compile Include="BKDTests.cs" />
     <Compile Include="ComparisionTestCases.cs" />
     <Compile Include="IO\BinaryReaderTests.cs" />
@@ -127,6 +128,15 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Test Data\ComplexBKD.bkd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Test Data\EmptyBKD.bkd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Test Data\SimpleBKD.bkd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SAGESharp\SAGESharp.csproj">
