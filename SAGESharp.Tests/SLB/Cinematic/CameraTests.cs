@@ -4,10 +4,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using NUnit.Framework;
-using SAGESharp.Testing;
+using SAGESharp.SLB;
+using SAGESharp.SLB.Cinematic;
 using System.Collections.Generic;
 
-namespace SAGESharp.SLB.Cinematic
+namespace SAGESharp.Tests.SLB.Cinematic
 {
     class CameraTests
     {
