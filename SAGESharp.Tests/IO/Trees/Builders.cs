@@ -4,10 +4,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using NSubstitute;
+using SAGESharp.IO;
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharp.IO.Trees
+namespace SAGESharp.Tests.IO.Trees
 {
     static class BuilderFor
     {
