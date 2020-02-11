@@ -7,11 +7,11 @@ using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
-using SAGESharp.Testing;
+using SAGESharp.IO;
 using System;
 using System.Text;
 
-namespace SAGESharp.IO
+namespace SAGESharp.Tests.IO
 {
     class StringDataNodeTests
     {

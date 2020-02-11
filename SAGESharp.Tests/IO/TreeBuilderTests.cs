@@ -5,12 +5,14 @@
  */
 using FluentAssertions;
 using NUnit.Framework;
-using SAGESharp.Testing;
+using SAGESharp.IO;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace SAGESharp.IO
+using Identifier = SAGESharp.SLB.Identifier;
+
+namespace SAGESharp.Tests.IO
 {
     class TreeBuilderTests
     {
@@ -70,7 +72,7 @@ namespace SAGESharp.IO
             public byte Byte { get; set; }
 
             [SerializableProperty(2)]
-            public SLB.Identifier Identifier { get; set; }
+            public Identifier Identifier { get; set; }
 
             public void VerifyTree(IDataNode dataNode)
             {
@@ -88,7 +90,7 @@ namespace SAGESharp.IO
 
                 VerifyEdge(dataNode.Edges[2], this, v => v.Identifier);
 
-                dataNode.Edges[2].ChildNode.Should().BeOfType<PrimitiveTypeDataNode<SLB.Identifier>>();
+                dataNode.Edges[2].ChildNode.Should().BeOfType<PrimitiveTypeDataNode<Identifier>>();
             }
 
             public static ClassWithNestedClassWithPrimitiveProperties BuildSample() => new ClassWithNestedClassWithPrimitiveProperties

@@ -4,9 +4,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using NSubstitute;
+using SAGESharp.IO;
 using System;
 
-namespace SAGESharp.IO
+namespace SAGESharp.Tests.IO
 {
     /*
      * This is a very janky solution for a limitation of the substitution

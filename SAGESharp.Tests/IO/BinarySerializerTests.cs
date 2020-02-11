@@ -7,12 +7,12 @@ using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
-using SAGESharp.Testing;
+using SAGESharp.IO;
 using System;
 using System.IO;
 using System.Reflection;
 
-namespace SAGESharp.IO
+namespace SAGESharp.Tests.IO
 {
     class BinarySerializerTests
     {

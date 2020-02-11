@@ -6,11 +6,11 @@
 using FluentAssertions;
 using NUnit.Framework;
 using NUtils.Extensions;
-using SAGESharp.Testing;
+using SAGESharp.IO;
 using System;
 using System.IO;
 
-namespace SAGESharp.IO
+namespace SAGESharp.Tests.IO
 {
     class BinaryWriterWrapperTests
     {

@@ -8,12 +8,13 @@ using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
 using NUtils.Extensions;
+using SAGESharp.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using YamlDotNet.Serialization;
 
-namespace SAGESharp.IO
+namespace SAGESharp.Tests.IO
 {
     class SLBTypeInspectorTests
     {
