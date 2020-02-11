@@ -6,11 +6,10 @@
 using FluentAssertions;
 using NUnit.Framework;
 using SAGESharp.IO;
-using SAGESharp.Testing;
 using System.Collections.Generic;
 using System.IO;
 
-namespace SAGESharp
+namespace SAGESharp.Tests
 {
     class BKDSerializationTests
     {
