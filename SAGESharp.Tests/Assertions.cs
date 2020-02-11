@@ -7,7 +7,7 @@ using FluentAssertions;
 using FluentAssertions.Specialized;
 using System;
 
-namespace SAGESharp.Testing
+namespace SAGESharp.Tests
 {
     /// <summary>
     /// Class which contains extensions to the FluentAssertions library.

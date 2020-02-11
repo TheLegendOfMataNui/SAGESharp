@@ -6,7 +6,7 @@
 using NUnit.Framework;
 using NUtils.Extensions.Unconstrained;
 
-namespace SAGESharp.Testing
+namespace SAGESharp.Tests
 {
     /// <summary>
     /// Convenience class to use when writing custom data for <see cref="TestCaseAttribute"/> and <see cref="TestCaseSourceAttribute"/>.

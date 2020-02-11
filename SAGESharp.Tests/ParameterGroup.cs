@@ -7,7 +7,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharp.Testing
+namespace SAGESharp.Tests
 {
     /// <summary>
     /// Convenience class to use when creating arguments for a <see cref="TestCaseSourceAttribute"/>

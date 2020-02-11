@@ -6,7 +6,7 @@
 using SAGESharp.IO;
 using System;
 
-namespace SAGESharp.Testing
+namespace SAGESharp.Tests
 {
     /// <summary>
     /// Class to be used when testing instances of <see cref="IBinarySerializer{T}"/>.

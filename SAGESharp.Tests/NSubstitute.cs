@@ -8,7 +8,7 @@ using NUtils.Validations;
 using System;
 using System.Linq;
 
-namespace SAGESharp.Testing
+namespace SAGESharp.Tests
 {
     /// <summary>
     /// Class with extensions to the <see cref="Arg"/> class.
