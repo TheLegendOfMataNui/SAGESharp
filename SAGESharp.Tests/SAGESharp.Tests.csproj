@@ -77,6 +77,13 @@
     <Compile Include="AbstractTestCaseData.cs" />
     <Compile Include="Assertions.cs" />
     <Compile Include="ComparisionTestCases.cs" />
+    <Compile Include="IO\Trees\Builders.cs" />
+    <Compile Include="IO\Trees\TreeWithHeight1.cs" />
+    <Compile Include="IO\Trees\TreeWithHeight2.cs" />
+    <Compile Include="IO\Trees\TreeWithHeight3.cs" />
+    <Compile Include="IO\Trees\TreeWithNestedLists.cs" />
+    <Compile Include="IO\Trees\TreeWithNodeAtOffset.cs" />
+    <Compile Include="IO\Trees\TreeWithUnknownNodeType.cs" />
     <Compile Include="NSubstitute.cs" />
     <Compile Include="ParameterGroup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
