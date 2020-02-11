@@ -6,11 +6,11 @@
 using FluentAssertions;
 using NUnit.Framework;
 using SAGESharp.IO;
-using SAGESharp.Testing;
+using SAGESharp.SLB.Level;
 using System.IO;
 using YamlDotNet.Serialization;
 
-namespace SAGESharp.SLB.Level
+namespace SAGESharp.Tests.SLB.Level
 {
     class SerializationTests
     {
