@@ -207,7 +207,7 @@ namespace SAGESharp.Tests.IO
             )
         };
 
-        public class PrimitiveTypeTestCaseData<T> : AbstractTestCaseData
+        public class PrimitiveTypeTestCaseData<T> : AbstractTestCase
         {
             private readonly Action<IBinaryReader, T> setupRead;
 

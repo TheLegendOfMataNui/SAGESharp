@@ -74,7 +74,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractTestCaseData.cs" />
+    <Compile Include="AbstractTestCase.cs" />
     <Compile Include="Assertions.cs" />
     <Compile Include="BKDEntryTests.cs" />
     <Compile Include="BKDSerializationTests.cs" />

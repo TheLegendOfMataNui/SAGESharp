@@ -13,7 +13,7 @@ namespace SAGESharp.Tests
     /// </summary>
     /// 
     /// <typeparam name="T">The type to read.</typeparam>
-    class SerializationTestCaseData<T> : AbstractTestCaseData
+    class SerializationTestCaseData<T> : AbstractTestCase
     {
         private readonly Func<T> expectedProvider;
 
