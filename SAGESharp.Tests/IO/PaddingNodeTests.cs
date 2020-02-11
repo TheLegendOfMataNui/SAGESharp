@@ -7,14 +7,11 @@ using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
-using SAGESharp.Testing;
+using SAGESharp.IO;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SAGESharp.IO
+namespace SAGESharp.Tests.IO
 {
     class PaddingNodeTests
     {

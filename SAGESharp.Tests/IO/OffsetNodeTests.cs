@@ -7,10 +7,10 @@ using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
-using SAGESharp.Testing;
+using SAGESharp.IO;
 using System;
 
-namespace SAGESharp.IO
+namespace SAGESharp.Tests.IO
 {
     class OffsetNodeTests
     {

@@ -8,11 +8,11 @@ using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
 using NUtils.Extensions;
-using SAGESharp.Testing;
+using SAGESharp.IO;
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharp.IO
+namespace SAGESharp.Tests.IO
 {
     class TreeBinarySerializerTests
     {

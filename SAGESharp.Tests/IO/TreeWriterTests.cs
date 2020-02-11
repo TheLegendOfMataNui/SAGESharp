@@ -7,12 +7,12 @@ using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
-using SAGESharp.IO.Trees;
-using SAGESharp.Testing;
+using SAGESharp.IO;
+using SAGESharp.Tests.IO.Trees;
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharp.IO
+namespace SAGESharp.Tests.IO
 {
     class TreeWriterTests
     {

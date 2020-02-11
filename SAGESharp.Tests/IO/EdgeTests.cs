@@ -6,10 +6,10 @@
 using FluentAssertions;
 using NSubstitute;
 using NUnit.Framework;
-using SAGESharp.Testing;
+using SAGESharp.IO;
 using System;
 
-namespace SAGESharp.IO
+namespace SAGESharp.Tests.IO
 {
     class EdgeTests
     {

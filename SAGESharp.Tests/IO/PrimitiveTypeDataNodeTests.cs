@@ -7,10 +7,12 @@ using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
-using SAGESharp.Testing;
+using SAGESharp.IO;
 using System;
 
-namespace SAGESharp.IO
+using Identifier = SAGESharp.SLB.Identifier;
+
+namespace SAGESharp.Tests.IO
 {
     class PrimitiveTypeDataNodeTest
     {
@@ -173,8 +175,8 @@ namespace SAGESharp.IO
                 setupRead: (binaryReader, value) => binaryReader.ReadDouble().Returns(value),
                 verifyWrite: (binaryWriter, value) => binaryWriter.Received().WriteDouble(value)
             ),
-            new PrimitiveTypeTestCaseData<SLB.Identifier>(
-                value: SLB.Identifier.From("IDEN"),
+            new PrimitiveTypeTestCaseData<Identifier>(
+                value: Identifier.From("IDEN"),
                 setupRead: (binaryReader, value) => binaryReader.ReadUInt32().Returns((uint)value),
                 verifyWrite: (binaryWriter, value) => binaryWriter.Received().WriteUInt32(value)
             ),
