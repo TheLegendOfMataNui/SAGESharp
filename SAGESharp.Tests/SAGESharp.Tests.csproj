@@ -76,6 +76,8 @@
   <ItemGroup>
     <Compile Include="AbstractTestCaseData.cs" />
     <Compile Include="Assertions.cs" />
+    <Compile Include="BKDEntryTests.cs" />
+    <Compile Include="BKDTests.cs" />
     <Compile Include="ComparisionTestCases.cs" />
     <Compile Include="IO\BinaryReaderTests.cs" />
     <Compile Include="IO\BinaryReaderWrapperTests.cs" />
@@ -108,6 +110,8 @@
     <Compile Include="ParameterGroup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerializationTestCaseData.cs" />
+    <Compile Include="TCBInterpolationDataTests.cs" />
+    <Compile Include="TCBQuaternionDataTests.cs" />
     <Compile Include="Utils\ASCIIExtensionsTests.cs" />
     <Compile Include="Utils\NumericExtensionsTests.cs" />
   </ItemGroup>
