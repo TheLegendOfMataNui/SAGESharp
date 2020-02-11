@@ -162,7 +162,7 @@ namespace SAGESharp.Tests.IO
             )
         };
 
-        public class TestCaseData<T> : AbstractTestCaseData
+        public class TestCaseData<T> : AbstractTestCase
         {
             public TestCaseData(string description, byte[] input, Func<IBinaryReader, T> function, T expectedResult) : base(description)
             {

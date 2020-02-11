@@ -11,7 +11,7 @@ namespace SAGESharp.Tests
     /// <summary>
     /// Convenience class to use when writing custom data for <see cref="TestCaseAttribute"/> and <see cref="TestCaseSourceAttribute"/>.
     /// </summary>
-    abstract class AbstractTestCaseData
+    abstract class AbstractTestCase
     {
         private readonly string description;
 
@@ -20,7 +20,7 @@ namespace SAGESharp.Tests
         /// </summary>
         /// 
         /// <param name="description">The description of the test case data.</param>
-        protected AbstractTestCaseData(string description)
+        protected AbstractTestCase(string description)
           => this.description = description
                 .Trim()
                 .TakeReferenceUnless(s => s.Length == 0)

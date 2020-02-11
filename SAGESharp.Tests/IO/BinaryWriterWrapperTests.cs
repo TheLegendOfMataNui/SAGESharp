@@ -128,7 +128,7 @@ namespace SAGESharp.Tests.IO
             )
         };
 
-        public class TestCaseData<T> : AbstractTestCaseData
+        public class TestCaseData<T> : AbstractTestCase
         {
             private readonly T input;
 
