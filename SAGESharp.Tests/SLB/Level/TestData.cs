@@ -3,9 +3,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+using SAGESharp.SLB;
+using SAGESharp.SLB.Level;
 using System.Collections.Generic;
 
-namespace SAGESharp.SLB.Level
+namespace SAGESharp.Tests.SLB.Level
 {
     static class TestData
     {
