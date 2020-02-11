@@ -6,11 +6,10 @@
 using FluentAssertions;
 using NUnit.Framework;
 using NUtils.Extensions;
-using SAGESharp.Testing;
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharp
+namespace SAGESharp.Tests
 {
     class BKDEntryTests
     {
