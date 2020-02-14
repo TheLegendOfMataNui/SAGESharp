@@ -10,6 +10,7 @@ using SAGESharp.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace SAGESharp.SLB
 {
@@ -20,6 +21,8 @@ namespace SAGESharp.SLB
     /// </summary>
     public struct Identifier : IEquatable<Identifier>
     {
+        private const char EscapeCharacter = '|';
+
         /// <summary>
         /// Char that will be shown if any invalid byte is used in the identifier.
         /// </summary>
@@ -326,15 +329,41 @@ namespace SAGESharp.SLB
         public static implicit operator uint(Identifier identifier) => identifier.value;
 
         /// <summary>
-        /// Gets the identifier as a (4 character) string.
+        /// Gets the identifier as a string. Each byte in the identifier is converted
+        /// to an ASCII character (if possible), if not it is scaped between horizontal
+        /// bars.
         /// </summary>
         /// 
         /// <remarks>Byte 3 is the first element of the string, and so on.</remarks>
         /// 
-        /// <returns>The identifier as a (4 character) string.</returns>
+        /// <returns>The identifier as a string.</returns>
         public override string ToString()
         {
-            return new string(new[] { C3, C2, C1, C0 });
+            StringBuilder stringBuilder = new StringBuilder();
+
+            void appendByte(byte @byte)
+            {
+                // Any ASCII character before 0x20 (space)
+                // and after 0x7A (z) are going to be printed
+                // escaped (as hexadecimal between EscapeCharacter
+                if (@byte < 0x20 || @byte > 0x7A)
+                {
+                    stringBuilder.Append(EscapeCharacter);
+                    stringBuilder.AppendFormat("0x{0:X2}", @byte);
+                    stringBuilder.Append(EscapeCharacter);
+                }
+                else
+                {
+                    stringBuilder.Append(@byte.ToASCIIChar());
+                }
+            }
+
+            appendByte(B3);
+            appendByte(B2);
+            appendByte(B1);
+            appendByte(B0);
+
+            return stringBuilder.ToString();
         }
         #endregion
 

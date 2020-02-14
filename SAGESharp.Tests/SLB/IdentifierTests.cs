@@ -110,15 +110,50 @@ namespace SAGESharp.Tests.SLB
         public void Test_Cast_Identifier_To_Unsigned_Integer()
             => ((Identifier)0x44434241).Let(i => (uint)i).Should().Be(0x44434241);
 
-        [TestCaseSource(nameof(IdentifierWithString))]
-        public void Test_Identifier_To_String(Identifier identifier, string expected)
-            => identifier.ToString().Should().Be(expected);
+        [TestCaseSource(nameof(ToStringTestCases))]
+        public void Test_Identifier_ToString(ToStringTestCase testCase)
+        {
+            string result = testCase.Value.ToString();
 
-        static object[] IdentifierWithString() => new ParameterGroup<Identifier, string>()
-            .Parameters(0x44434241, "DCBA")
-            .Parameters(0, new string(Identifier.EMPY_CHAR, 4))
-            .Parameters(0x44434201, $"DCB{Identifier.EMPY_CHAR}")
-            .Build();
+            result.Should().Be(testCase.Expected);
+        }
+
+        static ToStringTestCase[] ToStringTestCases() => new ToStringTestCase[]
+        {
+            new ToStringTestCase(
+                value: 0x546F6130,
+                expected: "Toa0",
+                description: "Test converting an identifier with only alphanumerical characters to a string"
+            ),
+            new ToStringTestCase(
+                value: 0x546F617B,
+                expected: "Toa|0x7B|",
+                description: "Test converting an identifier with alphanumerical and symbols to a string"
+            ),
+            new ToStringTestCase(
+                value: 0x101F9AEF,
+                expected: "|0x10||0x1F||0x9A||0xEF|",
+                description: "Test converting an identifier with only symbols to a string"
+            ),
+            new ToStringTestCase(
+                value: Identifier.ZERO,
+                expected: "|0x00||0x00||0x00||0x00|",
+                description: "Test converting an identifier with value 0 to a string"
+            )
+        };
+
+        public class ToStringTestCase : AbstractTestCase
+        {
+            public ToStringTestCase(Identifier value, string expected, string description) : base(description)
+            {
+                Value = value;
+                Expected = expected;
+            }
+
+            public Identifier Value { get; }
+
+            public string Expected { get; }
+        }
 
         [TestCaseSource(nameof(IdentifiersToTestSettingBytes))]
         public void Test_Modify_A_Byte_From_An_Identifier(Func<Identifier, Identifier> function, Identifier expected)
