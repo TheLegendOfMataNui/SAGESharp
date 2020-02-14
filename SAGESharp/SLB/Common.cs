@@ -53,31 +53,31 @@ namespace SAGESharp.SLB
             => new Identifier { value = value };
 
         /// <summary>
-        /// Creates an <see cref="Identifier"/> from an array of bytes.
+        /// Creates an <see cref="Identifier"/> from an array of bytes,
+        /// which needs to be exactly four bytes long.
         /// </summary>
         /// 
-        /// Only the first four elements from the array will be used to
-        /// set the bytes of the identifier, if the array is shorter than
-        /// four bytes the missing ones are set to zero, if is larger than
-        /// four the remaining are ignored.
-        /// 
-        /// <param name="values">The array of bytes that will be used to create the identifier.</param>
+        /// <param name="values">
+        /// The array of bytes that will be used to create the identifier.
+        /// </param>
         /// 
         /// <returns>An identifier created from the input values.</returns>
         /// 
         /// <exception cref="ArgumentNullException">If the array of bytes is null.</exception>
+        /// <exception cref="ArgumentException">If the array is not four bytes long.</exception>
         public static Identifier From(byte[] values)
         {
             Validate.ArgumentNotNull(values, nameof(values));
+            Validate.Argument(values.Length == 4, "Input is not 4 bytes long.");
 
             Identifier result = new Identifier
             {
-                value = values.ElementAtOrDefault(0)
+                value = values[0]
             };
 
-            result.SetByteValue(1, values.ElementAtOrDefault(1));
-            result.SetByteValue(2, values.ElementAtOrDefault(2));
-            result.SetByteValue(3, values.ElementAtOrDefault(3));
+            result.SetByteValue(1, values[1]);
+            result.SetByteValue(2, values[2]);
+            result.SetByteValue(3, values[3]);
 
             return result;
         }
