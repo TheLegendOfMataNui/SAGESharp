@@ -44,20 +44,60 @@ namespace SAGESharp.Tests.SLB
             field.GetValue(identifier).Should().Be(value);
         }
 
-        [TestCaseSource(nameof(ByteArraysAndIdentifiers))]
-        public void Test_Create_Identifier_From_Byte_Array(byte[] values, Identifier expected)
-            => Identifier.From(values).Should().Be(expected);
+        [Test]
+        public void Test_Create_Identifier_From_Byte_Array()
+        {
+            byte[] input = new byte[] { 0x11, 0x22, 0x33, 0x44 };
 
-        static object[] ByteArraysAndIdentifiers() => new ParameterGroup<byte[], Identifier>()
-            .Parameters(new byte[0], 0)
-            .Parameters(new byte[] { 0x11 }, 0x11)
-            .Parameters(new byte[] { 0x11, 0x22, 0x33, 0x44 }, 0x44332211)
-            .Parameters(new byte[] { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66 }, 0x44332211)
-            .Build();
+            Identifier result = Identifier.From(input);
+
+            result.Should().Be((Identifier)0x44332211);
+        }
+
+        [TestCaseSource(nameof(IncorrectByteArrayTestCases))]
+        public void Test_Creating_An_Identifier_From_An_incorrect_Byte_Array(IncorrectByteArrayTestCase testCase)
+        {
+            Action action = () => Identifier.From(testCase.Values);
+
+            action.Should()
+                .ThrowExactly<ArgumentException>()
+                .WithMessage("Input is not 4 bytes long.");
+        }
+
+        static IncorrectByteArrayTestCase[] IncorrectByteArrayTestCases() => new IncorrectByteArrayTestCase[]
+        {
+            new IncorrectByteArrayTestCase(
+                values: new byte[0],
+                description: "Test creating an Identifier from an empty array."
+            ),
+            new IncorrectByteArrayTestCase(
+                values: new byte[1],
+                description: "Test creating an Identifier from an array with only one element."
+            ),
+            new IncorrectByteArrayTestCase(
+                values: new byte[5],
+                description: "Test creating an Identifier from an array with more than four elements."
+            )
+        };
+
+        public class IncorrectByteArrayTestCase : AbstractTestCase
+        {
+            public IncorrectByteArrayTestCase(byte[] values, string description) : base(description)
+            {
+                Values = values;
+            }
+
+            public byte[] Values { get; }
+        }
 
         [Test]
         public void Test_Create_Identifier_From_Null_Byte_Array_Should_Throw_ArgumentNullException()
-            => ((byte[])null).Invoking(nullByteArray => Identifier.From(nullByteArray)).Should().Throw<ArgumentNullException>();
+        {
+            Action action = () => Identifier.From((byte[])null);
+
+            action.Should()
+                .ThrowArgumentNullException("values");
+        }
 
         [TestCaseSource(nameof(StringsAndIdentifiers))]
         public void Test_Create_Identifier_From_String(string value, Identifier expected)
