@@ -5,7 +5,7 @@
  */
 using System;
 
-namespace SAGESharp.IO
+namespace SAGESharp.IO.Binary
 {
     /// <summary>
     /// Specifies a list (or a list of the given class) should read/write twice its length in a binary file.

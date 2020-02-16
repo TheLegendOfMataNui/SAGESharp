@@ -82,10 +82,10 @@
     <Compile Include="BHDFile.cs" />
     <Compile Include="ColladaUtils.cs" />
     <Compile Include="INIConfig.cs" />
-    <Compile Include="IO\Attributes.cs" />
     <Compile Include="IO\BinaryReader.cs" />
     <Compile Include="IO\BinarySerializers.cs" />
     <Compile Include="IO\BinaryWriter.cs" />
+    <Compile Include="IO\Binary\DuplicateEntryCountAttribute.cs" />
     <Compile Include="IO\Binary\InlineStringAttribute.cs" />
     <Compile Include="IO\Binary\OffsetStringAttribute.cs" />
     <Compile Include="IO\Binary\RightPaddingAttribute.cs" />
