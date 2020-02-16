@@ -83,6 +83,7 @@
     <Compile Include="ColladaUtils.cs" />
     <Compile Include="INIConfig.cs" />
     <Compile Include="IO\BinarySerializers.cs" />
+    <Compile Include="IO\Binary\BadTypeException.cs" />
     <Compile Include="IO\Binary\BinaryReaderWrapper.cs" />
     <Compile Include="IO\Binary\BinarySerializableSerializer.cs" />
     <Compile Include="IO\Binary\BinarySerializer.cs" />
