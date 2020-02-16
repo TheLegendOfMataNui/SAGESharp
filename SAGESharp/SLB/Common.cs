@@ -24,7 +24,7 @@ namespace SAGESharp.SLB
         /// <summary>
         /// A constant identifier object with value zero.
         /// </summary>
-        public static readonly Identifier ZERO = 0;
+        public static readonly Identifier Zero = 0;
 
         private uint value;
 
