@@ -91,6 +91,7 @@
     <Compile Include="IO\Binary\DuplicateEntryCountAttribute.cs" />
     <Compile Include="IO\Binary\IBinaryReader.cs" />
     <Compile Include="IO\Binary\IBinarySerializable.cs" />
+    <Compile Include="IO\Binary\IBinarySerializer.cs" />
     <Compile Include="IO\Binary\IBinaryWriter.cs" />
     <Compile Include="IO\Binary\InlineStringAttribute.cs" />
     <Compile Include="IO\Binary\OffsetStringAttribute.cs" />
