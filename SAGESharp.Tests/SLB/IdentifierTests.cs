@@ -273,27 +273,88 @@ namespace SAGESharp.Tests.SLB
             public string Expected { get; }
         }
 
-        [TestCaseSource(nameof(IdentifiersToTestSettingBytes))]
-        public void Test_Modify_A_Byte_From_An_Identifier(Func<Identifier, Identifier> function, Identifier expected)
-            => Identifier.Zero.Let(function).Should().Be(expected);
+        [TestCaseSource(nameof(ModifyCopyIdentifierTestCases))]
+        public void Test_Modify_An_Identifier_Copy(ModifyIdentifierCopyTestCase testCase)
+            => testCase.Execute();
 
-        static object[] IdentifiersToTestSettingBytes() => new ParameterGroup<Func<Identifier, Identifier>, Identifier>()
-            .Parameters(i => i.WithB0(0x11), 0x00000011)
-            .Parameters(i => i.WithB1(0x11), 0x00001100)
-            .Parameters(i => i.WithB2(0x11), 0x00110000)
-            .Parameters(i => i.WithB3(0x11), 0x11000000)
-            .Build();
+        static ModifyIdentifierCopyTestCase[] ModifyCopyIdentifierTestCases() => new ModifyIdentifierCopyTestCase[]
+        {
+            new ModifyIdentifierCopyTestCase(
+                value: 0x12345678,
+                getModifiedIdentifierCopy: identifier => identifier.WithB0(0x00),
+                expected: 0x00345678,
+                description: "Test changing the byte 0 of an identifier"
+            ),
+            new ModifyIdentifierCopyTestCase(
+                value: 0x12345678,
+                getModifiedIdentifierCopy: identifier => identifier.WithB1(0x00),
+                expected: 0x12005678,
+                description: "Test changing the byte 1 of an identifier"
+            ),
+            new ModifyIdentifierCopyTestCase(
+                value: 0x12345678,
+                getModifiedIdentifierCopy: identifier => identifier.WithB2(0x00),
+                expected: 0x12340078,
+                description: "Test changing the byte 2 of an identifier"
+            ),
+            new ModifyIdentifierCopyTestCase(
+                value: 0x12345678,
+                getModifiedIdentifierCopy: identifier => identifier.WithB3(0x00),
+                expected: 0x12345600,
+                description: "Test changing the byte 3 of an identifier"
+            ),
+            new ModifyIdentifierCopyTestCase(
+                value: Identifier.From("ABCD"),
+                getModifiedIdentifierCopy: identifier => identifier.WithC0(' '),
+                expected: Identifier.From(" BCD"),
+                description: "Test changing the char 0 of an identifier"
+            ),
+            new ModifyIdentifierCopyTestCase(
+                value: Identifier.From("ABCD"),
+                getModifiedIdentifierCopy: identifier => identifier.WithC1(' '),
+                expected: Identifier.From("A CD"),
+                description: "Test changing the char 1 of an identifier"
+            ),
+            new ModifyIdentifierCopyTestCase(
+                value: Identifier.From("ABCD"),
+                getModifiedIdentifierCopy: identifier => identifier.WithC2(' '),
+                expected: Identifier.From("AB D"),
+                description: "Test changing the char 2 of an identifier"
+            ),
+            new ModifyIdentifierCopyTestCase(
+                value: Identifier.From("ABCD"),
+                getModifiedIdentifierCopy: identifier => identifier.WithC3(' '),
+                expected: Identifier.From("ABC "),
+                description: "Test changing the char 3 of an identifier"
+            )
+        };
 
-        [TestCaseSource(nameof(IdentifiersToTestSettingBytesWithChars))]
-        public void Test_Modify_A_Byte_From_An_Identifier_With_A_Char(Func<Identifier, Identifier> function, Identifier expected)
-            => Identifier.Zero.Let(function).Should().Be(expected);
+        public class ModifyIdentifierCopyTestCase : AbstractTestCase
+        {
+            private readonly Identifier value;
 
-        static object[] IdentifiersToTestSettingBytesWithChars() => new ParameterGroup<Func<Identifier, Identifier>, Identifier>()
-            .Parameters(i => i.WithC0('A'), 0x00000041)
-            .Parameters(i => i.WithC1('A'), 0x00004100)
-            .Parameters(i => i.WithC2('A'), 0x00410000)
-            .Parameters(i => i.WithC3('A'), 0x41000000)
-            .Build();
+            private readonly Func<Identifier, Identifier> getModifiedIdentifierCopy;
+
+            private readonly Identifier expected;
+
+            public ModifyIdentifierCopyTestCase(
+                Identifier value,
+                Func<Identifier, Identifier> getModifiedIdentifierCopy,
+                Identifier expected,
+                string description
+            ) : base(description) {
+                this.value = value;
+                this.getModifiedIdentifierCopy = getModifiedIdentifierCopy;
+                this.expected = expected;
+            }
+
+            public void Execute()
+            {
+                Identifier result = getModifiedIdentifierCopy(value);
+
+                result.Should().Be(expected);
+            }
+        }
 
         [TestCaseSource(nameof(EqualObjectsTestCases))]
         public void Test_Comparing_Equal_Objects(IComparisionTestCase<Identifier> testCase) => testCase.Execute();
