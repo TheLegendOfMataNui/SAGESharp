@@ -198,33 +198,27 @@ namespace SAGESharp.Tests.SLB
                 .ThrowArgumentNullException("value");
         }
 
-        [TestCaseSource(nameof(IdentifierAndBytes))]
-        public void Test_Getting_Identifier_Individual_Bytes(Identifier identifier, byte b0, byte b1, byte b2, byte b3)
+        [Test]
+        public void Test_Getting_Identifier_Individual_Bytes()
         {
-            identifier.B0.Should().Be(b0);
-            identifier.B1.Should().Be(b1);
-            identifier.B2.Should().Be(b2);
-            identifier.B3.Should().Be(b3);
+            Identifier value = 0x11223344;
+
+            value.B0.Should().Be(0x11);
+            value.B1.Should().Be(0x22);
+            value.B2.Should().Be(0x33);
+            value.B3.Should().Be(0x44);
         }
 
-        static object[] IdentifierAndBytes() => new ParameterGroup<Identifier, byte, byte, byte, byte>()
-            .Parameters(0, 0, 0, 0, 0)
-            .Parameters(0x44434241, 0x41, 0x42, 0x43, 0x44)
-            .Build();
-
-        [TestCaseSource(nameof(IdentifierAndChars))]
-        public void Test_Getting_Identifier_Individual_Bytes_As_Chars(Identifier identifier, char c0, char c1, char c2, char c3)
+        [Test]
+        public void Test_Getting_Identifier_Individual_Bytes_As_Chars()
         {
-            identifier.C0.Should().Be(c0);
-            identifier.C1.Should().Be(c1);
-            identifier.C2.Should().Be(c2);
-            identifier.C3.Should().Be(c3);
-        }
+            Identifier value = Identifier.From("Id01");
 
-        static object[] IdentifierAndChars() => new ParameterGroup<Identifier, char, char, char, char>()
-            .Parameters(0, Identifier.EMPY_CHAR, Identifier.EMPY_CHAR, Identifier.EMPY_CHAR, Identifier.EMPY_CHAR)
-            .Parameters(0x44434241, 'A', 'B', 'C', 'D')
-            .Build();
+            value.C0.Should().Be('I');
+            value.C1.Should().Be('d');
+            value.C2.Should().Be('0');
+            value.C3.Should().Be('1');
+        }
 
         [Test]
         public void Test_Cast_Identifier_To_Integer()
