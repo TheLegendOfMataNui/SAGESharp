@@ -243,7 +243,7 @@ namespace SAGESharp.SLB
         {
             var result = new Identifier() { value = this.value };
 
-            result.SetByteValue(0, value);
+            result.SetByteValue(3, value);
 
             return result;
         }
@@ -259,7 +259,7 @@ namespace SAGESharp.SLB
         {
             var result = new Identifier() { value = this.value };
 
-            result.SetByteValue(1, value);
+            result.SetByteValue(2, value);
 
             return result;
         }
@@ -275,7 +275,7 @@ namespace SAGESharp.SLB
         {
             var result = new Identifier() { value = this.value };
 
-            result.SetByteValue(2, value);
+            result.SetByteValue(1, value);
 
             return result;
         }
@@ -291,7 +291,7 @@ namespace SAGESharp.SLB
         {
             var result = new Identifier() { value = this.value };
 
-            result.SetByteValue(3, value);
+            result.SetByteValue(0, value);
 
             return result;
         }
