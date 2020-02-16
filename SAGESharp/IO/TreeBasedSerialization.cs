@@ -529,20 +529,5 @@ namespace SAGESharp.IO
             return offsetPosition;
         }
     }
-
-    internal sealed class OffsetNode : AbstractOffsetNode
-    {
-        public OffsetNode(IDataNode childNode) : base(childNode)
-        {
-        }
-
-        public override uint Write(IBinaryWriter binaryWriter, object value)
-        {
-            Validate.ArgumentNotNull(binaryWriter, nameof(binaryWriter));
-            Validate.ArgumentNotNull(value, nameof(value));
-
-            return WriteOffset(binaryWriter);
-        }
-    }
     #endregion
 }
