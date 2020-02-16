@@ -9,12 +9,13 @@ using NSubstitute.ClearExtensions;
 using NUnit.Framework;
 using NUtils.Extensions;
 using SAGESharp.IO;
+using SAGESharp.IO.Binary.TreeBasedSerialization;
 using SAGESharp.Tests.IO.Trees;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SAGESharp.Tests.IO
+namespace SAGESharp.Tests.IO.Binary.TreeBasedSerialization
 {
     class TreeReaderTests
     {
@@ -343,7 +344,7 @@ namespace SAGESharp.Tests.IO
             SetupTreeWithNodeAtOffset(rootNode, expected, offset);
 
             object result = treeReader.Read(binaryReader, rootNode);
-            
+
             Received.InOrder(() => VerifyReadTreeWithNodeAtOffset(rootNode, originalPosition, offset));
 
             result.Should().BeEquivalentTo(expected);
