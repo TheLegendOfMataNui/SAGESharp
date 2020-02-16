@@ -8,15 +8,6 @@ using System;
 namespace SAGESharp.IO
 {
     /// <summary>
-    /// Specifies the value for a string property is stored as an offset and with a
-    /// single byte for the string length in the binary file.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
-    public sealed class OffsetStringAttribute : Attribute
-    {
-    }
-
-    /// <summary>
     /// Specifies the value for a string property is stored inline (no offset) with a fixed length.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
