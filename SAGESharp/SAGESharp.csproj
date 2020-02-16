@@ -96,6 +96,7 @@
     <Compile Include="IO\Binary\OffsetStringAttribute.cs" />
     <Compile Include="IO\Binary\Reader.cs" />
     <Compile Include="IO\Binary\RightPaddingAttribute.cs" />
+    <Compile Include="IO\Binary\TreeBasedSerialization\AbstractOffsetNode.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\ListNode.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\OffsetNode.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\TreeBinarySerializer.cs" />
