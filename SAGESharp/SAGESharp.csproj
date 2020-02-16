@@ -87,7 +87,11 @@
     <Compile Include="IO\BinarySerializers.cs" />
     <Compile Include="IO\BinaryWriter.cs" />
     <Compile Include="IO\TreeBasedSerialization.cs" />
-    <Compile Include="IO\Yaml.cs" />
+    <Compile Include="IO\Yaml\BuilderSkeletonExtensions.cs" />
+    <Compile Include="IO\Yaml\IdentifierYamlTypeConverter.cs" />
+    <Compile Include="IO\Yaml\SLBTypeInspector.cs" />
+    <Compile Include="IO\Yaml\YamlDeserializer.cs" />
+    <Compile Include="IO\Yaml\YamlSerializer.cs" />
     <Compile Include="LSS\Compiler.cs" />
     <Compile Include="LSS\Decompiler.cs" />
     <Compile Include="LSS\Expressions\ArrayAccessExpression.cs" />
