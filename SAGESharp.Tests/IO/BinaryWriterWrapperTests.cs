@@ -30,7 +30,7 @@ namespace SAGESharp.Tests.IO
 
         [Test]
         public void Test_Create_A_Reader_With_A_Null_Stream() => this
-            .Invoking(_ => new BinaryReaderWrapper(null))
+            .Invoking(_ => new BinaryWriterWrapper(null))
             .Should()
             .Throw<ArgumentNullException>();
 
