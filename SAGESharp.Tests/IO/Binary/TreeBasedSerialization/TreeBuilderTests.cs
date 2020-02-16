@@ -7,13 +7,14 @@ using FluentAssertions;
 using NUnit.Framework;
 using SAGESharp.IO;
 using SAGESharp.IO.Binary;
+using SAGESharp.IO.Binary.TreeBasedSerialization;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 
 using Identifier = SAGESharp.SLB.Identifier;
 
-namespace SAGESharp.Tests.IO
+namespace SAGESharp.Tests.IO.Binary.TreeBasedSerialization
 {
     class TreeBuilderTests
     {
@@ -403,7 +404,7 @@ namespace SAGESharp.Tests.IO
         public void Test_Building_A_Tree_For_A_Class_With_String_Property_With_Both_String_Attributes()
         {
             string propertyName = nameof(ClassWithStringPropertyWithBothStringAttributes.Value);
-            
+
             BadTypeExceptionShouldBeThrownForType<ClassWithStringPropertyWithBothStringAttributes>
             (
                 message: $"Property {propertyName} has duplicate string location attributes."
