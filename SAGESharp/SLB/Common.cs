@@ -22,11 +22,6 @@ namespace SAGESharp.SLB
         private const char EscapeCharacter = '|';
 
         /// <summary>
-        /// Char that will be shown if any invalid byte is used in the identifier.
-        /// </summary>
-        public const char EMPY_CHAR = '?';
-
-        /// <summary>
         /// A constant identifier object with value zero.
         /// </summary>
         public static readonly Identifier ZERO = 0;
@@ -158,47 +153,35 @@ namespace SAGESharp.SLB
 
         #region Access individual bytes as chars
         /// <summary>
-        /// Byte 0 of the id in character form.
+        /// Byte 0 of the id in ASCII character form.
         /// </summary>
         public char C0
         {
-            get
-            {
-                return GetReadableByte(0);
-            }
+            get => B0.ToASCIIChar();
         }
 
         /// <summary>
-        /// Byte 1 of the id in chracter form.
+        /// Byte 1 of the id in ASCII character form.
         /// </summary>
         public char C1
         {
-            get
-            {
-                return GetReadableByte(1);
-            }
+            get => B1.ToASCIIChar();
         }
 
         /// <summary>
-        /// Byte 2 of the id in chracter form.
+        /// Byte 2 of the id in ASCII character form.
         /// </summary>
         public char C2
         {
-            get
-            {
-                return GetReadableByte(2);
-            }
+            get => B2.ToASCIIChar();
         }
 
         /// <summary>
-        /// Byte 3 of the id in chracter form.
+        /// Byte 3 of the id in ASCII character form.
         /// </summary>
         public char C3
         {
-            get
-            {
-                return GetReadableByte(3);
-            }
+            get => B3.ToASCIIChar();
         }
         #endregion
 
@@ -210,7 +193,7 @@ namespace SAGESharp.SLB
         {
             get
             {
-                return value.GetByte(0);
+                return value.GetByte(3);
             }
         }
 
@@ -221,7 +204,7 @@ namespace SAGESharp.SLB
         {
             get
             {
-                return value.GetByte(1);
+                return value.GetByte(2);
             }
         }
 
@@ -232,7 +215,7 @@ namespace SAGESharp.SLB
         {
             get
             {
-                return value.GetByte(2);
+                return value.GetByte(1);
             }
         }
 
@@ -243,7 +226,7 @@ namespace SAGESharp.SLB
         {
             get
             {
-                return value.GetByte(3);
+                return value.GetByte(0);
             }
         }
         #endregion
@@ -397,10 +380,10 @@ namespace SAGESharp.SLB
                 }
             }
 
-            appendByte(B3);
-            appendByte(B2);
-            appendByte(B1);
             appendByte(B0);
+            appendByte(B1);
+            appendByte(B2);
+            appendByte(B3);
 
             return stringBuilder.ToString();
         }
@@ -456,18 +439,6 @@ namespace SAGESharp.SLB
             return !(left == right);
         }
         #endregion
-
-        private char GetReadableByte(byte b)
-        {
-            var result = value.GetByte(b);
-
-            if (!result.IsASCIIDigit() && !result.IsASCIILowercaseLetter() && !result.IsASCIIUppercaseLetter())
-            {
-                return EMPY_CHAR;
-            }
-
-            return result.ToASCIIChar();
-        }
 
         private void SetByteValue(byte bytePosition, byte value)
         {
