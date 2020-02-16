@@ -80,9 +80,9 @@
     <Compile Include="BKDSerializationTests.cs" />
     <Compile Include="BKDTests.cs" />
     <Compile Include="ComparisionTestCases.cs" />
-    <Compile Include="IO\BinarySerializerTests.cs" />
     <Compile Include="IO\Binary\BinaryReaderWrapperTests.cs" />
     <Compile Include="IO\Binary\BinarySerializableSerializerTests.cs" />
+    <Compile Include="IO\Binary\BinarySerializerTests.cs" />
     <Compile Include="IO\Binary\BinaryWriterWrapperTests.cs" />
     <Compile Include="IO\Binary\ReaderTests.cs" />
     <Compile Include="IO\Binary\WriterTests.cs" />
