@@ -82,10 +82,10 @@
     <Compile Include="ComparisionTestCases.cs" />
     <Compile Include="IO\BinarySerializableSerializerTests.cs" />
     <Compile Include="IO\BinarySerializerTests.cs" />
-    <Compile Include="IO\BinaryWriterTests.cs" />
     <Compile Include="IO\Binary\BinaryReaderWrapperTests.cs" />
     <Compile Include="IO\Binary\BinaryWriterWrapperTests.cs" />
     <Compile Include="IO\Binary\ReaderTests.cs" />
+    <Compile Include="IO\Binary\WriterTests.cs" />
     <Compile Include="IO\EdgeTests.cs" />
     <Compile Include="IO\ListNodeTests.cs" />
     <Compile Include="IO\OffsetNodeTests.cs" />
