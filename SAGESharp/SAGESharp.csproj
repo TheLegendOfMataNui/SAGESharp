@@ -82,7 +82,6 @@
     <Compile Include="BHDFile.cs" />
     <Compile Include="ColladaUtils.cs" />
     <Compile Include="INIConfig.cs" />
-    <Compile Include="IO\BinarySerializers.cs" />
     <Compile Include="IO\Binary\BadTypeException.cs" />
     <Compile Include="IO\Binary\BinaryReaderWrapper.cs" />
     <Compile Include="IO\Binary\BinarySerializableSerializer.cs" />
@@ -97,6 +96,7 @@
     <Compile Include="IO\Binary\OffsetStringAttribute.cs" />
     <Compile Include="IO\Binary\Reader.cs" />
     <Compile Include="IO\Binary\RightPaddingAttribute.cs" />
+    <Compile Include="IO\Binary\TreeBasedSerialization\TreeBinarySerializer.cs" />
     <Compile Include="IO\Binary\Writer.cs" />
     <Compile Include="IO\SerializablePropertyAttribute.cs" />
     <Compile Include="IO\TreeBasedSerialization.cs" />

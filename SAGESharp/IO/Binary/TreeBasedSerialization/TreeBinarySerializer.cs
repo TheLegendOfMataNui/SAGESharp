@@ -1,17 +1,15 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using NUtils.Extensions;
 using NUtils.Validations;
-using SAGESharp.IO.Binary;
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharp.IO
+namespace SAGESharp.IO.Binary.TreeBasedSerialization
 {
-    #region Implementation
     internal sealed class TreeBinarySerializer<T> : IBinarySerializer<T>
     {
         public delegate object TreeReader(IBinaryReader binaryReader, IDataNode rootNode);
@@ -67,5 +65,4 @@ namespace SAGESharp.IO
             binaryWriter.WriteUInt32(FOOTER_MAGIC_NUMBER);
         }
     }
-    #endregion
 }
