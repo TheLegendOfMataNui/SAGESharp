@@ -85,6 +85,7 @@
     <Compile Include="IO\BinarySerializers.cs" />
     <Compile Include="IO\BinaryWriter.cs" />
     <Compile Include="IO\Binary\BinaryReaderWrapper.cs" />
+    <Compile Include="IO\Binary\BinaryWriterWrapper.cs" />
     <Compile Include="IO\Binary\DuplicateEntryCountAttribute.cs" />
     <Compile Include="IO\Binary\IBinaryReader.cs" />
     <Compile Include="IO\Binary\InlineStringAttribute.cs" />
