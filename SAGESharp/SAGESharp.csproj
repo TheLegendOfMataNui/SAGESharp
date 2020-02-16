@@ -98,6 +98,7 @@
     <Compile Include="IO\Binary\RightPaddingAttribute.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\TreeBinarySerializer.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\TreeBuilder.cs" />
+    <Compile Include="IO\Binary\TreeBasedSerialization\TreeWriter.cs" />
     <Compile Include="IO\Binary\Writer.cs" />
     <Compile Include="IO\SerializablePropertyAttribute.cs" />
     <Compile Include="IO\TreeBasedSerialization.cs" />

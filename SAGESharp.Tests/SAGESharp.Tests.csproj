@@ -87,6 +87,7 @@
     <Compile Include="IO\Binary\ReaderTests.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\TreeBinarySerializerTests.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\TreeBuilderTests.cs" />
+    <Compile Include="IO\Binary\TreeBasedSerialization\TreeWriterTests.cs" />
     <Compile Include="IO\Binary\WriterTests.cs" />
     <Compile Include="IO\EdgeTests.cs" />
     <Compile Include="IO\ListNodeTests.cs" />
@@ -103,7 +104,6 @@
     <Compile Include="IO\Trees\TreeWithNestedLists.cs" />
     <Compile Include="IO\Trees\TreeWithNodeAtOffset.cs" />
     <Compile Include="IO\Trees\TreeWithUnknownNodeType.cs" />
-    <Compile Include="IO\TreeWriterTests.cs" />
     <Compile Include="IO\UserTypeDataNodeTests.cs" />
     <Compile Include="IO\Yaml\IdentifierYamlTypeConverterTests.cs" />
     <Compile Include="IO\Yaml\SLBTypeInspectorTests.cs" />

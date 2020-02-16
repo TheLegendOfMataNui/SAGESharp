@@ -8,11 +8,12 @@ using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
 using SAGESharp.IO;
+using SAGESharp.IO.Binary.TreeBasedSerialization;
 using SAGESharp.Tests.IO.Trees;
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharp.Tests.IO
+namespace SAGESharp.Tests.IO.Binary.TreeBasedSerialization
 {
     class TreeWriterTests
     {
