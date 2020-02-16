@@ -11,7 +11,7 @@ using SAGESharp.IO;
 using SAGESharp.IO.Binary;
 using System;
 
-namespace SAGESharp.Tests.IO
+namespace SAGESharp.Tests.IO.Binary
 {
     class BinarySerializableSerializerTests
     {
