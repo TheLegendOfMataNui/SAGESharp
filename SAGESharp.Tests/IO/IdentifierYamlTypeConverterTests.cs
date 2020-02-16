@@ -113,7 +113,7 @@ namespace SAGESharp.Tests.IO
         [Test]
         public void Test_Writing_To_A_Null_Emitter()
         {
-            Action action = () => converter.WriteYaml(null, Identifier.ZERO, IDENTIFIER_TYPE);
+            Action action = () => converter.WriteYaml(null, Identifier.Zero, IDENTIFIER_TYPE);
 
             action.Should()
                 .ThrowArgumentNullException("emitter");
@@ -131,7 +131,7 @@ namespace SAGESharp.Tests.IO
         [Test]
         public void Test_Writing_With_A_Null_Type()
         {
-            Action action = () => converter.WriteYaml(emitter, Identifier.ZERO, null);
+            Action action = () => converter.WriteYaml(emitter, Identifier.Zero, null);
 
             action.Should()
                 .ThrowArgumentNullException("type");
@@ -141,7 +141,7 @@ namespace SAGESharp.Tests.IO
         public void Test_Writing_With_An_Invalid_Type()
         {
             Type type = typeof(string);
-            Action action = () => converter.WriteYaml(emitter, Identifier.ZERO, type);
+            Action action = () => converter.WriteYaml(emitter, Identifier.Zero, type);
 
             action.Should()
                 .ThrowExactly<ArgumentException>()

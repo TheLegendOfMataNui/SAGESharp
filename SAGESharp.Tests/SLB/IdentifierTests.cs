@@ -254,7 +254,7 @@ namespace SAGESharp.Tests.SLB
                 description: "Test converting an identifier with only symbols to a string"
             ),
             new ToStringTestCase(
-                value: Identifier.ZERO,
+                value: Identifier.Zero,
                 expected: "|0x00||0x00||0x00||0x00|",
                 description: "Test converting an identifier with value 0 to a string"
             )
@@ -275,7 +275,7 @@ namespace SAGESharp.Tests.SLB
 
         [TestCaseSource(nameof(IdentifiersToTestSettingBytes))]
         public void Test_Modify_A_Byte_From_An_Identifier(Func<Identifier, Identifier> function, Identifier expected)
-            => Identifier.ZERO.Let(function).Should().Be(expected);
+            => Identifier.Zero.Let(function).Should().Be(expected);
 
         static object[] IdentifiersToTestSettingBytes() => new ParameterGroup<Func<Identifier, Identifier>, Identifier>()
             .Parameters(i => i.WithB0(0x11), 0x00000011)
@@ -286,7 +286,7 @@ namespace SAGESharp.Tests.SLB
 
         [TestCaseSource(nameof(IdentifiersToTestSettingBytesWithChars))]
         public void Test_Modify_A_Byte_From_An_Identifier_With_A_Char(Func<Identifier, Identifier> function, Identifier expected)
-            => Identifier.ZERO.Let(function).Should().Be(expected);
+            => Identifier.Zero.Let(function).Should().Be(expected);
 
         static object[] IdentifiersToTestSettingBytesWithChars() => new ParameterGroup<Func<Identifier, Identifier>, Identifier>()
             .Parameters(i => i.WithC0('A'), 0x00000041)
