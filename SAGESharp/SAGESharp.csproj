@@ -86,6 +86,7 @@
     <Compile Include="IO\BinaryReader.cs" />
     <Compile Include="IO\BinarySerializers.cs" />
     <Compile Include="IO\BinaryWriter.cs" />
+    <Compile Include="IO\SerializablePropertyAttribute.cs" />
     <Compile Include="IO\TreeBasedSerialization.cs" />
     <Compile Include="IO\Yaml\BuilderSkeletonExtensions.cs" />
     <Compile Include="IO\Yaml\IdentifierYamlTypeConverter.cs" />
