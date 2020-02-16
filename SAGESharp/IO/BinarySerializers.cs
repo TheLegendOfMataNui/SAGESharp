@@ -40,26 +40,6 @@ namespace SAGESharp.IO
         /// <exception cref="ArgumentNullException">If either <paramref name="binaryWriter"/> or <paramref name="value"/> are null.</exception>
         void Write(IBinaryWriter binaryWriter, T value);
     }
-
-    /// <summary>
-    /// Represents an object that can serialize itself.
-    /// </summary>
-    public interface IBinarySerializable
-    {
-        /// <summary>
-        /// Reads data from the <paramref name="binaryReader"/> into the object itself.
-        /// </summary>
-        /// 
-        /// <param name="binaryReader">The input reader.</param>
-        void Read(IBinaryReader binaryReader);
-
-        /// <summary>
-        /// Writes data to the <paramref name="binaryWriter"/> from the object itself.
-        /// </summary>
-        /// 
-        /// <param name="binaryWriter">The output writer.</param>
-        void Write(IBinaryWriter binaryWriter);
-    }
     #endregion
 
     #region Implementation
