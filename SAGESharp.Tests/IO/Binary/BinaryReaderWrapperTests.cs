@@ -6,11 +6,12 @@
 using FluentAssertions;
 using NUnit.Framework;
 using SAGESharp.IO;
+using SAGESharp.IO.Binary;
 using System;
 using System.IO;
 using System.Linq;
 
-namespace SAGESharp.Tests.IO
+namespace SAGESharp.Tests.IO.Binary
 {
     class BinaryReaderWrapperTests
     {
