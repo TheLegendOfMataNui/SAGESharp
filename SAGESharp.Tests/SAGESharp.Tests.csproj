@@ -108,7 +108,6 @@
     <Compile Include="IO\TreeWriterTests.cs" />
     <Compile Include="IO\UserTypeDataNodeTests.cs" />
     <Compile Include="NSubstitute.cs" />
-    <Compile Include="ParameterGroup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerializationTestCaseData.cs" />
     <Compile Include="SLB\Cinematic\CameraTests.cs" />
