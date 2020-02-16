@@ -10,10 +10,11 @@ using NUnit.Framework;
 using NUtils.Extensions;
 using SAGESharp.IO;
 using SAGESharp.IO.Binary;
+using SAGESharp.IO.Binary.TreeBasedSerialization;
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharp.Tests.IO
+namespace SAGESharp.Tests.IO.Binary.TreeBasedSerialization
 {
     class TreeBinarySerializerTests
     {

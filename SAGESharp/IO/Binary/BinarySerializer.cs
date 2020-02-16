@@ -4,7 +4,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using NUtils.Validations;
-using SAGESharp.IO.Binary;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,7 +26,7 @@ namespace SAGESharp.IO.Binary
         /// <returns>A binary serializer for type <typeparamref name="T"/>.</returns>
         public static IBinarySerializer<T> ForType<T>()
         {
-            return new TreeBinarySerializer<T>(
+            return new TreeBasedSerialization.TreeBinarySerializer<T>(
                 treeReader: treeReader.Read,
                 treeWriter: WriteTree,
                 rootNode: TreeBuilder.BuildTreeForType(typeof(T)),
