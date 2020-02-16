@@ -80,12 +80,12 @@
     <Compile Include="BKDSerializationTests.cs" />
     <Compile Include="BKDTests.cs" />
     <Compile Include="ComparisionTestCases.cs" />
-    <Compile Include="IO\BinaryReaderTests.cs" />
     <Compile Include="IO\BinarySerializableSerializerTests.cs" />
     <Compile Include="IO\BinarySerializerTests.cs" />
     <Compile Include="IO\BinaryWriterTests.cs" />
     <Compile Include="IO\BinaryWriterWrapperTests.cs" />
     <Compile Include="IO\Binary\BinaryReaderWrapperTests.cs" />
+    <Compile Include="IO\Binary\ReaderTests.cs" />
     <Compile Include="IO\EdgeTests.cs" />
     <Compile Include="IO\ListNodeTests.cs" />
     <Compile Include="IO\OffsetNodeTests.cs" />

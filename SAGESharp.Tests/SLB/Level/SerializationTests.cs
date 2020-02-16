@@ -6,6 +6,7 @@
 using FluentAssertions;
 using NUnit.Framework;
 using SAGESharp.IO;
+using SAGESharp.IO.Binary;
 using SAGESharp.IO.Yaml;
 using SAGESharp.SLB.Level;
 using System.IO;

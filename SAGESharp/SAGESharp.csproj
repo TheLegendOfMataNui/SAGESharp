@@ -89,6 +89,7 @@
     <Compile Include="IO\Binary\DuplicateEntryCountAttribute.cs" />
     <Compile Include="IO\Binary\InlineStringAttribute.cs" />
     <Compile Include="IO\Binary\OffsetStringAttribute.cs" />
+    <Compile Include="IO\Binary\Reader.cs" />
     <Compile Include="IO\Binary\RightPaddingAttribute.cs" />
     <Compile Include="IO\SerializablePropertyAttribute.cs" />
     <Compile Include="IO\TreeBasedSerialization.cs" />

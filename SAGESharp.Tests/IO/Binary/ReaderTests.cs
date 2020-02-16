@@ -8,11 +8,12 @@ using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
 using SAGESharp.IO;
+using SAGESharp.IO.Binary;
 using System;
 
-namespace SAGESharp.Tests.IO
+namespace SAGESharp.Tests.IO.Binary
 {
-    class BinaryReaderTests
+    class ReaderTests
     {
         private readonly BinaryReaderSubstitute binaryReader = BinaryReaderSubstitute.New();
 
