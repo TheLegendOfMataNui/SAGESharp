@@ -5,6 +5,7 @@
  */
 using Equ;
 using SAGESharp.IO;
+using SAGESharp.IO.Binary;
 using System;
 using System.Collections.Generic;
 using System.Text;
