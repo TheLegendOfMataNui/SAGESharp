@@ -9,6 +9,7 @@ using NSubstitute.ClearExtensions;
 using NUnit.Framework;
 using NUtils.Extensions;
 using SAGESharp.IO;
+using SAGESharp.IO.Binary;
 using System;
 using System.Collections.Generic;
 

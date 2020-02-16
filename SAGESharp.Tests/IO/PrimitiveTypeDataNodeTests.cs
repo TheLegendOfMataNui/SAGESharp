@@ -8,6 +8,7 @@ using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
 using SAGESharp.IO;
+using SAGESharp.IO.Binary;
 using System;
 
 using Identifier = SAGESharp.SLB.Identifier;

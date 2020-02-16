@@ -5,6 +5,7 @@
  */
 using NSubstitute;
 using SAGESharp.IO;
+using SAGESharp.IO.Binary;
 using System;
 
 namespace SAGESharp.Tests.IO
