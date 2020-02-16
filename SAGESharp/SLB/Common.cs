@@ -8,8 +8,6 @@ using NUtils.Validations;
 using SAGESharp.IO;
 using SAGESharp.Utils;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace SAGESharp.SLB
@@ -86,34 +84,75 @@ namespace SAGESharp.SLB
         /// Creates an <see cref="Identifier"/> from a string.
         /// </summary>
         /// 
-        /// Only the first for characters from the string will be used to
-        /// set the bytes of the identifier, if the array is shorter than
-        /// four chars the missing bytes are set to zero, if is larger then
-        /// four the remaining are ignored.
-        /// 
-        /// Any character from the string is interpreted as an ASCII value
-        /// and that's stored into the identifier.
-        /// 
         /// <param name="value">The string that will be used to create the identifier.</param>
         /// 
         /// <returns>An identifier created from the input string.</returns>
         /// 
         /// <exception cref="ArgumentNullException">If the string is null.</exception>
+        /// <exception cref="ArgumentException">If the input <paramref name="value"/> is ill formed.</exception>
         public static Identifier From(string value)
         {
             Validate.ArgumentNotNull(value, nameof(value));
 
-            IEnumerable<char> chars = value.Reverse();
-            Identifier result = new Identifier
+            byte[] bytes = new byte[sizeof(uint)];
+            int n = bytes.Length;
+            bool escaping = false;
+            string escapedValue = string.Empty;
+            foreach (char @char in value)
             {
-                value = chars.ElementAtOrDefault(0).ToASCIIByte()
-            };
+                if (!escaping)
+                {
+                    if (@char != EscapeCharacter)
+                    {
+                        try
+                        {
+                            bytes[--n] = @char.ToASCIIByte();
+                        }
+                        catch (IndexOutOfRangeException exception)
+                        {
+                            throw new ArgumentException($"\"{value}\" is not a valid Identifier.", exception);
+                        }
+                    }
+                    else
+                    {
+                        escaping = true;
+                        escapedValue = string.Empty;
+                    }
+                }
+                else
+                {
+                    if (@char != EscapeCharacter)
+                    {
+                        escapedValue += @char;
+                    }
+                    else
+                    {
+                        bool isHex = escapedValue.StartsWith("0x");
+                        if (isHex)
+                        {
+                            escapedValue = escapedValue.Replace("0x", string.Empty);
+                        }
 
-            result.SetByteValue(1, chars.ElementAtOrDefault(1).ToASCIIByte());
-            result.SetByteValue(2, chars.ElementAtOrDefault(2).ToASCIIByte());
-            result.SetByteValue(3, chars.ElementAtOrDefault(3).ToASCIIByte());
+                        try
+                        {
+                            bytes[--n] = Convert.ToByte(escapedValue, isHex ? 16 : 10);
+                        }
+                        catch (Exception exception)
+                        {
+                            throw new ArgumentException($"\"{value}\" is not a valid Identifier.", exception);
+                        }
 
-            return result;
+                        escaping = false;
+                    }
+                }
+            }
+
+            if (escaping || n != 0)
+            {
+                throw new ArgumentException($"\"{value}\" is not a valid Identifier.");
+            }
+
+            return From(bytes);
         }
         #endregion
 

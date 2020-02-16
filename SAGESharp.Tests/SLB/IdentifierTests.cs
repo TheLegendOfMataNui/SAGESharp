@@ -99,20 +99,104 @@ namespace SAGESharp.Tests.SLB
                 .ThrowArgumentNullException("values");
         }
 
-        [TestCaseSource(nameof(StringsAndIdentifiers))]
-        public void Test_Create_Identifier_From_String(string value, Identifier expected)
-            => Identifier.From(value).Should().Be(expected);
+        [TestCaseSource(nameof(IdentifierFromStingTestCases))]
+        public void Test_Create_Identifier_From_String(IdentifierFromStringTestCase testCase)
+        {
+            Identifier result = Identifier.From(testCase.Value);
 
-        static object[] StringsAndIdentifiers() => new ParameterGroup<string, Identifier>()
-            .Parameters(string.Empty, Identifier.ZERO)
-            .Parameters("A", 0x41)
-            .Parameters("DCBA", 0x44434241)
-            .Parameters("FEDCBA", 0x44434241)
-            .Build();
+            result.Should().Be(testCase.Expected);
+        }
+
+        static IdentifierFromStringTestCase[] IdentifierFromStingTestCases() => new IdentifierFromStringTestCase[]
+        {
+            new IdentifierFromStringTestCase(
+                value: "Id01",
+                expected: 0x49643031,
+                description: "Creating an identifier form a string with a digit character"
+            ),
+            new IdentifierFromStringTestCase(
+                value: "val|0xab|",
+                expected: 0x76616CAB,
+                description: "Creating an identifier form a string with an escaped byte as a lowercase hexadecimal"
+            ),
+            new IdentifierFromStringTestCase(
+                value: "val|0xEF|",
+                expected: 0x76616CEF,
+                description: "Creating an identifier form a string with an escaped byte as an uppercase hexadecimal"
+            ),
+            new IdentifierFromStringTestCase(
+                value: "val|1|",
+                expected: 0x76616C01,
+                description: "Creating an identifier form a string with an escaped byte as decimal"
+            ),
+            new IdentifierFromStringTestCase(
+                value: "|0x10||0x23||0x7B||0xB6|",
+                expected: 0x10237BB6,
+                description: "Creating an identifier form a string with only escaped characters"
+            )
+        };
+
+        public class IdentifierFromStringTestCase : AbstractTestCase
+        {
+            public IdentifierFromStringTestCase(string value, Identifier expected, string description) : base(description)
+            {
+                Value = value;
+                Expected = expected;
+            }
+
+            public string Value { get; }
+
+            public Identifier Expected { get; }
+        }
+
+        [TestCaseSource(nameof(IdentifierFromInvalidStringTestCases))]
+        public void Test_Create_Identifier_From_Invalid_String(IdentifierFromInvalidStringTestCase testCase)
+        {
+            Action action = () => Identifier.From(testCase.Value);
+
+            action.Should()
+                .ThrowExactly<ArgumentException>()
+                .WithMessage($"\"{testCase.Value}\" is not a valid Identifier.");
+        }
+
+        static IdentifierFromInvalidStringTestCase[] IdentifierFromInvalidStringTestCases() => new IdentifierFromInvalidStringTestCase[]
+        {
+            new IdentifierFromInvalidStringTestCase(
+                value: string.Empty,
+                description: "Creating an identifier form a string with no characters"
+            ),
+            new IdentifierFromInvalidStringTestCase(
+                value: "A",
+                description: "Creating an identifier from a string with a single character"
+            ),
+            new IdentifierFromInvalidStringTestCase(
+                value: "FEDCBA",
+                description: "Creating an identifier from a string with more than four characters"
+            ),
+            new IdentifierFromInvalidStringTestCase(
+                value: "FED|0",
+                description: "Creating an identifier from a string with with bad escaping"
+            )
+        };
+
+        public class IdentifierFromInvalidStringTestCase : AbstractTestCase
+        {
+            public IdentifierFromInvalidStringTestCase(string value, string description) : base(description)
+            {
+                Value = value;
+            }
+
+            public string Value { get; }
+        }
 
         [Test]
         public void Test_Create_Identifier_From_Null_String_Should_Throw_ArgumentNullException()
-            => ((string)null).Invoking(nullString => Identifier.From(nullString)).Should().Throw<ArgumentNullException>();
+        {
+            Action action = () => Identifier.From((string)null);
+
+            action.Should()
+                .ThrowArgumentNullException("value");
+        }
 
         [TestCaseSource(nameof(IdentifierAndBytes))]
         public void Test_Getting_Identifier_Individual_Bytes(Identifier identifier, byte b0, byte b1, byte b2, byte b3)
