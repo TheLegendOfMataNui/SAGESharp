@@ -92,6 +92,7 @@
     <Compile Include="IO\Binary\OffsetStringAttribute.cs" />
     <Compile Include="IO\Binary\Reader.cs" />
     <Compile Include="IO\Binary\RightPaddingAttribute.cs" />
+    <Compile Include="IO\Binary\Writer.cs" />
     <Compile Include="IO\SerializablePropertyAttribute.cs" />
     <Compile Include="IO\TreeBasedSerialization.cs" />
     <Compile Include="IO\Yaml\BuilderSkeletonExtensions.cs" />
