@@ -87,12 +87,10 @@
     <Compile Include="IO\BinaryWriterTests.cs" />
     <Compile Include="IO\BinaryWriterWrapperTests.cs" />
     <Compile Include="IO\EdgeTests.cs" />
-    <Compile Include="IO\IdentifierYamlTypeConverterTests.cs" />
     <Compile Include="IO\ListNodeTests.cs" />
     <Compile Include="IO\OffsetNodeTests.cs" />
     <Compile Include="IO\PaddingNodeTests.cs" />
     <Compile Include="IO\PrimitiveTypeDataNodeTests.cs" />
-    <Compile Include="IO\SLBTypeInspectorTests.cs" />
     <Compile Include="IO\StringDataNodeTests.cs" />
     <Compile Include="IO\Substitutes.cs" />
     <Compile Include="IO\TreeBinarySerializerTests.cs" />
@@ -107,6 +105,8 @@
     <Compile Include="IO\Trees\TreeWithUnknownNodeType.cs" />
     <Compile Include="IO\TreeWriterTests.cs" />
     <Compile Include="IO\UserTypeDataNodeTests.cs" />
+    <Compile Include="IO\Yaml\IdentifierYamlTypeConverterTests.cs" />
+    <Compile Include="IO\Yaml\SLBTypeInspectorTests.cs" />
     <Compile Include="NSubstitute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerializationTestCaseData.cs" />

@@ -7,7 +7,7 @@ using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
-using SAGESharp.IO;
+using SAGESharp.IO.Yaml;
 using System;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
@@ -15,7 +15,7 @@ using YamlDotNet.Serialization;
 
 using Identifier = SAGESharp.SLB.Identifier;
 
-namespace SAGESharp.Tests.IO
+namespace SAGESharp.Tests.IO.Yaml
 {
     class IdentifierYamlTypeConverterTests
     {
