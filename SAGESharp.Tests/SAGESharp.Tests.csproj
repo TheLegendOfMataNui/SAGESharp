@@ -86,6 +86,7 @@
     <Compile Include="IO\Binary\BinaryWriterWrapperTests.cs" />
     <Compile Include="IO\Binary\ReaderTests.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\TreeBinarySerializerTests.cs" />
+    <Compile Include="IO\Binary\TreeBasedSerialization\TreeBuilderTests.cs" />
     <Compile Include="IO\Binary\WriterTests.cs" />
     <Compile Include="IO\EdgeTests.cs" />
     <Compile Include="IO\ListNodeTests.cs" />
@@ -94,7 +95,6 @@
     <Compile Include="IO\PrimitiveTypeDataNodeTests.cs" />
     <Compile Include="IO\StringDataNodeTests.cs" />
     <Compile Include="IO\Substitutes.cs" />
-    <Compile Include="IO\TreeBuilderTests.cs" />
     <Compile Include="IO\TreeReaderTests.cs" />
     <Compile Include="IO\Trees\Builders.cs" />
     <Compile Include="IO\Trees\TreeWithHeight1.cs" />

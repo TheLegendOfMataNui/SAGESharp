@@ -29,7 +29,7 @@ namespace SAGESharp.IO.Binary
             return new TreeBasedSerialization.TreeBinarySerializer<T>(
                 treeReader: treeReader.Read,
                 treeWriter: WriteTree,
-                rootNode: TreeBuilder.BuildTreeForType(typeof(T)),
+                rootNode: TreeBasedSerialization.TreeBuilder.BuildTreeForType(typeof(T)),
                 footerAligner: AlignFooter
             );
         }
