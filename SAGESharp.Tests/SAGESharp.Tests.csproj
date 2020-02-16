@@ -85,13 +85,13 @@
     <Compile Include="IO\Binary\BinarySerializerTests.cs" />
     <Compile Include="IO\Binary\BinaryWriterWrapperTests.cs" />
     <Compile Include="IO\Binary\ReaderTests.cs" />
+    <Compile Include="IO\Binary\TreeBasedSerialization\ListNodeTests.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\TreeBinarySerializerTests.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\TreeBuilderTests.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\TreeReaderTests.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\TreeWriterTests.cs" />
     <Compile Include="IO\Binary\WriterTests.cs" />
     <Compile Include="IO\EdgeTests.cs" />
-    <Compile Include="IO\ListNodeTests.cs" />
     <Compile Include="IO\OffsetNodeTests.cs" />
     <Compile Include="IO\PaddingNodeTests.cs" />
     <Compile Include="IO\PrimitiveTypeDataNodeTests.cs" />
