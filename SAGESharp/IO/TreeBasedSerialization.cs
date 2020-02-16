@@ -5,6 +5,7 @@
  */
 using NUtils.Extensions;
 using NUtils.Validations;
+using SAGESharp.IO.Binary;
 using System;
 using System.Collections.Generic;
 using System.Linq;

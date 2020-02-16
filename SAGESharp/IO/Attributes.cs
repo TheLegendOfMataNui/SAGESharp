@@ -8,25 +8,6 @@ using System;
 namespace SAGESharp.IO
 {
     /// <summary>
-    /// Specifies a property should be followed by a padding.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
-    public sealed class RightPaddingAttribute : Attribute
-    {
-        /// <summary>
-        /// Initailizes a new attribute to mark a property with right padding.
-        /// </summary>
-        /// 
-        /// <param name="size">The size of the padding (in bytes).</param>
-        public RightPaddingAttribute(byte size) => Size = size;
-
-        /// <summary>
-        /// The length of the padding in bytes.
-        /// </summary>
-        public byte Size { get; }
-    }
-
-    /// <summary>
     /// Specifies the value for a string property is stored as an offset and with a
     /// single byte for the string length in the binary file.
     /// </summary>
