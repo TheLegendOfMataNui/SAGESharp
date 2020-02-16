@@ -5,7 +5,7 @@
  */
 using System;
 
-namespace SAGESharp.IO
+namespace SAGESharp.IO.Binary
 {
     /// <summary>
     /// Interface to write chunks of binary data from numbers.
