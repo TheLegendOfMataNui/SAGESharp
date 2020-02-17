@@ -98,6 +98,7 @@
     <Compile Include="IO\Binary\RightPaddingAttribute.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\AbstractOffsetNode.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\Edge.cs" />
+    <Compile Include="IO\Binary\TreeBasedSerialization\IDataNode.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\IListNode.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\IOffsetNode.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\ListNode.cs" />

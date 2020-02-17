@@ -4,6 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using SAGESharp.IO;
+using SAGESharp.IO.Binary.TreeBasedSerialization;
 using System.Collections.Generic;
 
 namespace SAGESharp.Tests.IO.Binary.TreeBasedSerialization.Trees
