@@ -8,7 +8,7 @@ using SAGESharp.IO;
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharp.Tests.IO.Trees
+namespace SAGESharp.Tests.IO.Binary.TreeBasedSerialization.Trees
 {
     static class BuilderFor
     {
@@ -58,7 +58,7 @@ namespace SAGESharp.Tests.IO.Trees
 
                     return list.Count;
                 });
-                
+
                 node.GetListEntry(Arg.Any<IList<T>>(), Arg.Any<int>()).Returns(args =>
                 {
                     IList<T> list = (IList<T>)args[0];

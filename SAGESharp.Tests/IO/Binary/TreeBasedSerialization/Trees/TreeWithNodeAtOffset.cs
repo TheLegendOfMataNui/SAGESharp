@@ -6,7 +6,7 @@
 using SAGESharp.IO;
 using System.Collections.Generic;
 
-namespace SAGESharp.Tests.IO.Trees
+namespace SAGESharp.Tests.IO.Binary.TreeBasedSerialization.Trees
 {
     static class TreeWithNodeAtOffset
     {

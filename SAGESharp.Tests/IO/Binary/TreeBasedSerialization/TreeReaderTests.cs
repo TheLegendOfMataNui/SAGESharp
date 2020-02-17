@@ -10,7 +10,7 @@ using NUnit.Framework;
 using NUtils.Extensions;
 using SAGESharp.IO;
 using SAGESharp.IO.Binary.TreeBasedSerialization;
-using SAGESharp.Tests.IO.Trees;
+using SAGESharp.Tests.IO.Binary.TreeBasedSerialization.Trees;
 using System;
 using System.Collections.Generic;
 using System.Linq;

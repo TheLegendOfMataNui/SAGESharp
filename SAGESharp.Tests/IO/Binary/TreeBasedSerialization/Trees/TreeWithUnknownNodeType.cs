@@ -4,10 +4,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using SAGESharp.IO;
-using System;
 using System.Collections.Generic;
 
-namespace SAGESharp.Tests.IO.Trees
+namespace SAGESharp.Tests.IO.Binary.TreeBasedSerialization.Trees
 {
     static class TreeWithUnknownNodeType
     {
