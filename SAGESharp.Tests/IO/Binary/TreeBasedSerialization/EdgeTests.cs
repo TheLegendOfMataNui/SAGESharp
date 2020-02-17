@@ -7,9 +7,10 @@ using FluentAssertions;
 using NSubstitute;
 using NUnit.Framework;
 using SAGESharp.IO;
+using SAGESharp.IO.Binary.TreeBasedSerialization;
 using System;
 
-namespace SAGESharp.Tests.IO
+namespace SAGESharp.Tests.IO.Binary.TreeBasedSerialization
 {
     class EdgeTests
     {
