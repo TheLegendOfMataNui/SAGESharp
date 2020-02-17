@@ -6,7 +6,6 @@
 using FluentAssertions;
 using NSubstitute;
 using NUnit.Framework;
-using SAGESharp.IO;
 using SAGESharp.IO.Binary.TreeBasedSerialization;
 using System;
 

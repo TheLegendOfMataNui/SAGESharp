@@ -5,7 +5,6 @@
  */
 using FluentAssertions;
 using NUnit.Framework;
-using SAGESharp.IO;
 using SAGESharp.IO.Binary;
 using System.Collections.Generic;
 using System.IO;

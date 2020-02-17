@@ -8,7 +8,6 @@ using NSubstitute;
 using NSubstitute.ClearExtensions;
 using NUnit.Framework;
 using NUtils.Extensions;
-using SAGESharp.IO;
 using SAGESharp.IO.Binary.TreeBasedSerialization;
 using SAGESharp.Tests.IO.Binary.TreeBasedSerialization.Trees;
 using System;
