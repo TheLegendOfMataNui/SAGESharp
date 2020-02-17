@@ -99,6 +99,7 @@
     <Compile Include="IO\Binary\TreeBasedSerialization\AbstractOffsetNode.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\Edge.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\IDataNode.cs" />
+    <Compile Include="IO\Binary\TreeBasedSerialization\IEdge.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\IListNode.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\IOffsetNode.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\ListNode.cs" />
@@ -113,7 +114,6 @@
     <Compile Include="IO\Binary\TreeBasedSerialization\UserTypeDataNode.cs" />
     <Compile Include="IO\Binary\Writer.cs" />
     <Compile Include="IO\SerializablePropertyAttribute.cs" />
-    <Compile Include="IO\TreeBasedSerialization.cs" />
     <Compile Include="IO\Yaml\BuilderSkeletonExtensions.cs" />
     <Compile Include="IO\Yaml\IdentifierYamlTypeConverter.cs" />
     <Compile Include="IO\Yaml\SLBTypeInspector.cs" />

@@ -5,9 +5,8 @@
  */
 using System;
 
-namespace SAGESharp.IO
+namespace SAGESharp.IO.Binary.TreeBasedSerialization
 {
-    #region Interfaces
     /// <summary>
     /// Represents an edge connecting a <see cref="IDataNode"/> to
     /// a node (ex: <see cref="IDataNode"/>, <see cref="IOffsetNode"/>).
@@ -38,5 +37,4 @@ namespace SAGESharp.IO
         /// <exception cref="ArgumentNullException">If either argument is null.</exception>
         void SetChildValue(object value, object childValue);
     }
-    #endregion
 }
