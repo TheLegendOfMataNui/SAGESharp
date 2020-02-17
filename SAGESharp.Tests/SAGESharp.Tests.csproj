@@ -80,10 +80,14 @@
     <Compile Include="BKDSerializationTests.cs" />
     <Compile Include="BKDTests.cs" />
     <Compile Include="ComparisionTestCases.cs" />
+    <Compile Include="IO\Binary\BinaryReaderSubstitute.cs" />
     <Compile Include="IO\Binary\BinaryReaderWrapperTests.cs" />
     <Compile Include="IO\Binary\BinarySerializableSerializerTests.cs" />
     <Compile Include="IO\Binary\BinarySerializerTests.cs" />
+    <Compile Include="IO\Binary\BinaryWriterSubstitute.cs" />
     <Compile Include="IO\Binary\BinaryWriterWrapperTests.cs" />
+    <Compile Include="IO\Binary\IPositionable.cs" />
+    <Compile Include="IO\Binary\Positionable.cs" />
     <Compile Include="IO\Binary\ReaderTests.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\EdgeTests.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\ListNodeTests.cs" />
@@ -104,7 +108,6 @@
     <Compile Include="IO\Binary\TreeBasedSerialization\TreeWriterTests.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\UserTypeDataNodeTests.cs" />
     <Compile Include="IO\Binary\WriterTests.cs" />
-    <Compile Include="IO\Substitutes.cs" />
     <Compile Include="IO\Yaml\IdentifierYamlTypeConverterTests.cs" />
     <Compile Include="IO\Yaml\SLBTypeInspectorTests.cs" />
     <Compile Include="NSubstitute.cs" />
