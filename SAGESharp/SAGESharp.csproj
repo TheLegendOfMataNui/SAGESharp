@@ -101,6 +101,7 @@
     <Compile Include="IO\Binary\TreeBasedSerialization\ListNode.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\OffsetNode.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\PaddingNode.cs" />
+    <Compile Include="IO\Binary\TreeBasedSerialization\StringDataNode.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\TreeBinarySerializer.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\TreeBuilder.cs" />
     <Compile Include="IO\Binary\TreeBasedSerialization\TreeReader.cs" />
