@@ -9,13 +9,14 @@ using NSubstitute.ClearExtensions;
 using NUnit.Framework;
 using SAGESharp.IO;
 using SAGESharp.IO.Binary;
+using SAGESharp.IO.Binary.TreeBasedSerialization;
 using System;
 
 using Identifier = SAGESharp.SLB.Identifier;
 
-namespace SAGESharp.Tests.IO
+namespace SAGESharp.Tests.IO.Binary.TreeBasedSerialization
 {
-    class PrimitiveTypeDataNodeTest
+    class PrimitiveTypeDataNodeTests
     {
         private readonly IBinaryReader binaryReader = Substitute.For<IBinaryReader>();
 
