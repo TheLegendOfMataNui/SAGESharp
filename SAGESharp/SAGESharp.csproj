@@ -203,7 +203,7 @@
     <Compile Include="XUtils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="IO\README.md" />
+    <None Include="IO\Binary\README.md" />
     <None Include="LSS\readme.md" />
     <None Include="packages.config" />
     <None Include="SAGESharp.nuspec" />
