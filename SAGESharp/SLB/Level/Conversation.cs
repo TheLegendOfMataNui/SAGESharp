@@ -50,16 +50,6 @@ namespace SAGESharp.SLB.Level
 
     public sealed class ConversationCharacter : IEquatable<ConversationCharacter>
     {
-        /// <summary>
-        /// The size of a <see cref="ConversationCharacter"/> entry in a binary SLB file.
-        /// </summary>
-        /// 
-        /// This includes only <see cref="ToaName"/>, <see cref="CharName"/>,
-        /// <see cref="CharCont"/>, the size of <see cref="Entries"/> and the
-        /// position (offset) for all the entries (not represented in <see cref="ConversationCharacter"/>)
-        /// in that order.
-        internal const int BINARY_SIZE = 20;
-
         [SerializableProperty(1)]
         public Identifier ToaName { get; set; }
 
@@ -112,15 +102,6 @@ namespace SAGESharp.SLB.Level
 
     public sealed class Info : IEquatable<Info>
     {
-        /// <summary>
-        /// The size in bytes of an <see cref="Info"/> object in a binary SLB file.
-        /// </summary>
-        /// 
-        /// This include all the properties (as 32 bit numbers) except by
-        /// <see cref="Frames"/>, for those the size and an offset for the
-        /// actual entries are saved instead.
-        internal const int BINARY_SIZE = 28;
-
         [SerializableProperty(1)]
         public LineSide LineSide { get; set; }
 
@@ -188,15 +169,6 @@ namespace SAGESharp.SLB.Level
 
     public sealed class Frame : IEquatable<Frame>
     {
-        /// <summary>
-        /// The size in bytes of an <see cref="Frame"/> in a binary SLB file.
-        /// </summary>
-        /// 
-        /// This includes all the properties (as 32 bit numbers) except by
-        /// <see cref="ConversationSounds"/>, for that property the only the
-        /// offset where the actual string is located is stored instead.
-        internal const int BINARY_SIZE = 24;
-
         [SerializableProperty(1)]
         public int ToaAnimation { get; set; }
 
