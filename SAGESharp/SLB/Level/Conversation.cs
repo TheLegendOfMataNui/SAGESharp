@@ -4,37 +4,35 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using Equ;
+using NUtils.MethodBuilders;
 using SAGESharp.IO;
 using SAGESharp.IO.Binary;
 using System;
 using System.Collections.Generic;
-using System.Text;
+
+using static SAGESharp.Utils.ToStringUtils;
 
 namespace SAGESharp.SLB.Level
 {
     public sealed class Conversation : IEquatable<Conversation>
     {
+        private static readonly ToStringMethod<Conversation> toString;
+
+        static Conversation()
+        {
+            toString = new ToStringMethodBuilder<Conversation>()
+                .UseProperties()
+                .Substitute<IList<ConversationCharacter>>(nameof(Entries), entries => entries.ListToString())
+                .Build();
+        }
+
         [SerializableProperty(1, name: nameof(Conversation))]
         public IList<ConversationCharacter> Entries { get; set; }
 
         public bool Equals(Conversation other)
             => MemberwiseEqualityComparer<Conversation>.ByProperties.Equals(this, other);
 
-        public override string ToString()
-        {
-            if (Entries == null)
-            {
-                return $"{nameof(Entries)}=null";
-            }
-            else if (Entries.Count != 0)
-            {
-                return $"{nameof(Entries)}=[({string.Join("),(", Entries)})]";
-            }
-            else
-            {
-                return $"{nameof(Entries)}=[]";
-            }
-        }
+        public override string ToString() => toString(this);
 
         public override bool Equals(object obj) => Equals(obj as Conversation);
 
@@ -50,6 +48,16 @@ namespace SAGESharp.SLB.Level
 
     public sealed class ConversationCharacter : IEquatable<ConversationCharacter>
     {
+        private static readonly ToStringMethod<ConversationCharacter> toString;
+
+        static ConversationCharacter()
+        {
+            toString = new ToStringMethodBuilder<ConversationCharacter>()
+                .UseProperties()
+                .Substitute<IList<Info>>(nameof(Entries), entries => entries.ListToString())
+                .Build();
+        }
+
         [SerializableProperty(1)]
         public Identifier ToaName { get; set; }
 
@@ -65,28 +73,7 @@ namespace SAGESharp.SLB.Level
         public bool Equals(ConversationCharacter other)
             => MemberwiseEqualityComparer<ConversationCharacter>.ByProperties.Equals(this, other);
 
-        public override string ToString()
-        {
-            StringBuilder result = new StringBuilder();
-
-            result.AppendFormat("ToaName={0}", ToaName).Append(", ");
-            result.AppendFormat("CharName={0}", ToaName).Append(", ");
-            result.AppendFormat("CharCont={0}", ToaName).Append(", ");
-            if (Entries == null)
-            {
-                result.Append("Entries=null");
-            }
-            else if (Entries.Count != 0)
-            {
-                result.AppendFormat("Entries=[({0})]", string.Join("), (", Entries));
-            }
-            else
-            {
-                result.Append("Entries=[]");
-            }
-
-            return result.ToString();
-        }
+        public override string ToString() => toString(this);
 
         public override bool Equals(object other) => Equals(other as ConversationCharacter);
 
@@ -102,6 +89,16 @@ namespace SAGESharp.SLB.Level
 
     public sealed class Info : IEquatable<Info>
     {
+        private static readonly ToStringMethod<Info> toString;
+
+        static Info()
+        {
+            toString = new ToStringMethodBuilder<Info>()
+                .UseProperties()
+                .Substitute<IList<Frame>>(nameof(Frames), frames => frames.ListToString())
+                .Build();
+        }
+
         [SerializableProperty(1)]
         public LineSide LineSide { get; set; }
 
@@ -123,30 +120,7 @@ namespace SAGESharp.SLB.Level
         public bool Equals(Info other)
             => MemberwiseEqualityComparer<Info>.ByProperties.Equals(this, other);
 
-        public override string ToString()
-        {
-            StringBuilder result = new StringBuilder();
-
-            result.AppendFormat("LineSide={0}", LineSide).Append(", ");
-            result.AppendFormat("ConditionStart={0}", ConditionStart).Append(", ");
-            result.AppendFormat("ConditionEnd={0}", ConditionEnd).Append(", ");
-            result.AppendFormat("StringLabel={0}", StringLabel).Append(", ");
-            result.AppendFormat("StringIndex={0}", StringIndex).Append(", ");
-            if (Frames == null)
-            {
-                result.Append("Frames=null");
-            }
-            else if (Frames.Count != 0)
-            {
-                result.AppendFormat("Frames=[({0})]", string.Join("), (", Frames));
-            }
-            else
-            {
-                result.Append("Frames=[]");
-            }
-
-            return result.ToString();
-        }
+        public override string ToString() => toString(this);
 
         public override bool Equals(object other) => Equals(other as Info);
 
@@ -169,6 +143,15 @@ namespace SAGESharp.SLB.Level
 
     public sealed class Frame : IEquatable<Frame>
     {
+        private static readonly ToStringMethod<Frame> toString;
+
+        static Frame()
+        {
+            toString = new ToStringMethodBuilder<Frame>()
+                .UseProperties()
+                .Build();
+        }
+
         [SerializableProperty(1)]
         public int ToaAnimation { get; set; }
 
@@ -191,19 +174,7 @@ namespace SAGESharp.SLB.Level
         public bool Equals(Frame other)
             => MemberwiseEqualityComparer<Frame>.ByProperties.Equals(this, other);
 
-        public override string ToString()
-        {
-            StringBuilder result = new StringBuilder();
-
-            result.AppendFormat("ToaAnimation={0}", ToaAnimation).Append(", ");
-            result.AppendFormat("CharAnimation={0}", CharAnimation).Append(", ");
-            result.AppendFormat("CameraPositionTarget={0}", CameraPositionTarget).Append(", ");
-            result.AppendFormat("CameraDistance={0}", CameraDistance).Append(", ");
-            result.AppendFormat("StringIndex={0}", StringIndex).Append(", ");
-            result.AppendFormat("ConversationSounds={0}", ConversationSounds);
-
-            return result.ToString();
-        }
+        public override string ToString() => toString(this);
 
         public override bool Equals(object obj) => Equals(obj as Frame);
 
