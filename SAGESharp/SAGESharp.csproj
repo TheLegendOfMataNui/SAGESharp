@@ -55,8 +55,8 @@
     <Reference Include="Equ, Version=2.2.0.0, Culture=neutral, PublicKeyToken=2f0282a16347ad60, processorArchitecture=MSIL">
       <HintPath>..\packages\Equ.2.2.0\lib\netstandard2.0\Equ.dll</HintPath>
     </Reference>
-    <Reference Include="NUtils, Version=1.1.1.0, Culture=neutral, PublicKeyToken=74055ef46d91ac56, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUtils.1.1.1\lib\netstandard2.0\NUtils.dll</HintPath>
+    <Reference Include="NUtils, Version=1.2.0.0, Culture=neutral, PublicKeyToken=74055ef46d91ac56, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUtils.1.2.0\lib\netstandard2.0\NUtils.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpDX.4.2.0\lib\net45\SharpDX.dll</HintPath>
