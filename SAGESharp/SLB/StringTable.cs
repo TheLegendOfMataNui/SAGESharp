@@ -9,13 +9,13 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB
 {
-    public sealed class StringGroupTable
+    internal sealed class StringGroupTable
     {
         [SerializableProperty(1)]
         public IList<StringGroup> Entries { get; set; }
     }
 
-    public sealed class StringGroup
+    internal sealed class StringGroup
     {
         [SerializableProperty(1)]
         public Identifier Id { get; set; }
@@ -27,7 +27,7 @@ namespace SAGESharp.SLB
         public IList<StringGroupEntry> Strings { get; set; }
     }
 
-    public sealed class StringGroupEntry
+    internal sealed class StringGroupEntry
     {
         [SerializableProperty(1)]
         [OffsetString]

@@ -7,7 +7,7 @@ using SAGESharp.IO;
 
 namespace SAGESharp.SLB
 {
-    public sealed class Cylinder
+    internal sealed class Cylinder
     {
         [SerializableProperty(1)]
         public Identifier Id { get; set; }
@@ -16,7 +16,7 @@ namespace SAGESharp.SLB
         public CollisionCylinder CollisionCylinder { get; set; }
     }
 
-    public sealed class CollisionCylinder
+    internal sealed class CollisionCylinder
     {
         [SerializableProperty(1)]
         Point3D P1 { get; set; }

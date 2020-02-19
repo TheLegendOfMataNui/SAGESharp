@@ -446,7 +446,7 @@ namespace SAGESharp.SLB
         }
     }
 
-    public sealed class Point3D : IEquatable<Point3D>
+    internal sealed class Point3D : IEquatable<Point3D>
     {
         [SerializableProperty(1)]
         public float X { get; set; }

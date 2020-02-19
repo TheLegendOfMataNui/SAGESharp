@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB
 {
-    public sealed class OffsetTable
+    internal sealed class OffsetTable
     {
         [SerializableProperty(1)]
         public float Unkown1 { get; set; }
@@ -31,7 +31,7 @@ namespace SAGESharp.SLB
         public IList<Offset> Entries { get; set; }
     }
 
-    public sealed class Offset
+    internal sealed class Offset
     {
         [SerializableProperty(1)]
         public float Unkown1 { get; set; }

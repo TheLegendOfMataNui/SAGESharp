@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB.Level
 {
-    public sealed class SPLinePathsTable
+    internal sealed class SPLinePathsTable
     {
         [SerializableProperty(1)]
         public IList<SplinePath> Entries { get; set; }

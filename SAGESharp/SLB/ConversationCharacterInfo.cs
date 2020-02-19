@@ -9,13 +9,13 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB
 {
-    public sealed class ConversationCharacterInfoTable
+    internal sealed class ConversationCharacterInfoTable
     {
         [SerializableProperty(1)]
         public IList<ConversationCharacterInfo> Entries { get; set; }
     }
 
-    public sealed class ConversationCharacterInfo
+    internal sealed class ConversationCharacterInfo
     {
         [SerializableProperty(1)]
         public Identifier Id1 { get; set; }

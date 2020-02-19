@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB.Cinematic
 {
-    public sealed class ObjectTable : IEquatable<ObjectTable>
+    internal sealed class ObjectTable : IEquatable<ObjectTable>
     {
         [SerializableProperty(1)]
         public IList<Object> Entries { get; set; }
@@ -35,7 +35,7 @@ namespace SAGESharp.SLB.Cinematic
             => !(left == right);
     }
 
-    public sealed class Object : IEquatable<Object>
+    internal sealed class Object : IEquatable<Object>
     {
         [SerializableProperty(1)]
         public Identifier Instance { get; set; }

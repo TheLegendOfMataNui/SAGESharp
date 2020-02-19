@@ -9,14 +9,14 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB
 {
-    public sealed class Targets
+    internal sealed class Targets
     {
         [SerializableProperty(1)]
         [DuplicateEntryCount]
         public IList<Target> Entries { get; set; }
     }
 
-    public sealed class Target
+    internal sealed class Target
     {
         [SerializableProperty(1)]
         public Identifier Id { get; set; }

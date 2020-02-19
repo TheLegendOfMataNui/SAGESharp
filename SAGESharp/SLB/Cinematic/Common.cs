@@ -9,7 +9,7 @@ using System;
 
 namespace SAGESharp.SLB.Cinematic
 {
-    public sealed class Location : IEquatable<Location>
+    internal sealed class Location : IEquatable<Location>
     {
         [SerializableProperty(1)]
         public float Time { get; set; }

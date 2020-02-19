@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB
 {
-    public sealed class InstanceTable
+    internal sealed class InstanceTable
     {
         [SerializableProperty(1)]
         public Identifier Id { get; set; }
@@ -19,7 +19,7 @@ namespace SAGESharp.SLB
         public IList<Instance> Entries { get; set; }
     }
 
-    public sealed class Instance
+    internal sealed class Instance
     {
         [SerializableProperty(1)]
         public Identifier Id1 { get; set; }

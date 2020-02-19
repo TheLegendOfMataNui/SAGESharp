@@ -9,13 +9,13 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB
 {
-    public sealed class HiveTable
+    internal sealed class HiveTable
     {
         [DuplicateEntryCount]
         public IList<Hive> Entries { get; set; }
     }
 
-    public sealed class Hive
+    internal sealed class Hive
     {
         [SerializableProperty(1)]
         public Identifier HiveId { get; set; }

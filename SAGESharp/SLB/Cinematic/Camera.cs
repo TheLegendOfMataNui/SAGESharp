@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB.Cinematic
 {
-    public sealed class Camera : IEquatable<Camera>
+    internal sealed class Camera : IEquatable<Camera>
     {
         [SerializableProperty(1)]
         public float ViewAngle { get; set; }
@@ -50,7 +50,7 @@ namespace SAGESharp.SLB.Cinematic
             => !(left == right);
     }
 
-    public sealed class Frame : IEquatable<Frame>
+    internal sealed class Frame : IEquatable<Frame>
     {
         [SerializableProperty(1)]
         public float Time { get; set; }

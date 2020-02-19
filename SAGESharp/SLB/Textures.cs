@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB
 {
-    public sealed class TextureTable
+    internal sealed class TextureTable
     {
         [SerializableProperty(1)]
         [DuplicateEntryCount]
@@ -20,7 +20,7 @@ namespace SAGESharp.SLB
         public IList<Texture2> Textures2 { get; set; }
     }
 
-    public sealed class Texture1
+    internal sealed class Texture1
     {
         // string: offset
         // at offset: length + string + null char
@@ -41,7 +41,7 @@ namespace SAGESharp.SLB
         public int AnimationFrames { get; set; }
     }
 
-    public sealed class Texture2
+    internal sealed class Texture2
     {
         [SerializableProperty(1)]
         [OffsetString]

@@ -9,14 +9,14 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB
 {
-    public sealed class SpotlightTable
+    internal sealed class SpotlightTable
     {
         [SerializableProperty(1)]
         [DuplicateEntryCount]
         public IList<Spotlight> Entries { get; set; }
     }
 
-    public sealed class Spotlight
+    internal sealed class Spotlight
     {
         [SerializableProperty(1)]
         public Identifier Id { get; set; }

@@ -7,7 +7,7 @@ using SAGESharp.IO;
 
 namespace SAGESharp.SLB
 {
-    public sealed class Light
+    internal sealed class Light
     {
         [SerializableProperty(1)]
         public Identifier Id { get; set; }
@@ -28,7 +28,7 @@ namespace SAGESharp.SLB
         public int Flags { get; set; }
     }
 
-    public sealed class RGBA
+    internal sealed class RGBA
     {
         [SerializableProperty(1)]
         public float Red { get; set; }

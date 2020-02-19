@@ -9,13 +9,13 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB
 {
-    public sealed class VineTable
+    internal sealed class VineTable
     {
         [SerializableProperty(1)]
         public IList<Vine> Entries { get; set; }
     }
 
-    public sealed class Vine
+    internal sealed class Vine
     {
         [SerializableProperty(1)]
         public Point3D Position { get; set; }
