@@ -4,9 +4,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using NUnit.Framework;
-using SAGESharp.SLB.Level;
+using SAGESharp.SLB.Level.Conversation;
 
-namespace SAGESharp.Tests.SLB.Level
+namespace SAGESharp.Tests.SLB.Level.Conversation
 {
     class FrameTests
     {

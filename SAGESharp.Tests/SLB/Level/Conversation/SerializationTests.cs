@@ -7,19 +7,19 @@ using FluentAssertions;
 using NUnit.Framework;
 using SAGESharp.IO.Binary;
 using SAGESharp.IO.Yaml;
-using SAGESharp.SLB.Level;
+using SAGESharp.SLB.Level.Conversation;
 using System.IO;
 using YamlDotNet.Serialization;
 
-namespace SAGESharp.Tests.SLB.Level
+namespace SAGESharp.Tests.SLB.Level.Conversation
 {
     class SerializationTests
     {
         #region Binary SLB
         [TestCaseSource(nameof(TEST_CASES))]
-        public void Test_Reading_A_Binary_Conversation_File_Successfully(SerializationTestCaseData<Conversation> testCaseData)
+        public void Test_Reading_A_Binary_Conversation_File_Successfully(SerializationTestCaseData<CharacterTable> testCaseData)
         {
-            var serializer = BinarySerializer.ForType<Conversation>();
+            var serializer = BinarySerializer.ForType<CharacterTable>();
 
             using (var stream = new FileStream(testCaseData.SLBFilePath, FileMode.Open))
             {
@@ -33,9 +33,9 @@ namespace SAGESharp.Tests.SLB.Level
         }
 
         [TestCaseSource(nameof(TEST_CASES))]
-        public void Test_Writing_A_Conversation_To_A_Binary_File_Successfully(SerializationTestCaseData<Conversation> testCaseData)
+        public void Test_Writing_A_Conversation_To_A_Binary_File_Successfully(SerializationTestCaseData<CharacterTable> testCaseData)
         {
-            var serializer = BinarySerializer.ForType<Conversation>();
+            var serializer = BinarySerializer.ForType<CharacterTable>();
             var outputFilePath = $"{testCaseData.SLBFilePath}.tst";
 
             using (var stream = new FileStream(outputFilePath, FileMode.Create))
@@ -54,18 +54,18 @@ namespace SAGESharp.Tests.SLB.Level
 
         #region Yaml
         [TestCaseSource(nameof(TEST_CASES))]
-        public void Test_Reading_A_Yaml_Conversation_File_Successfully(SerializationTestCaseData<Conversation> testCaseData)
+        public void Test_Reading_A_Yaml_Conversation_File_Successfully(SerializationTestCaseData<CharacterTable> testCaseData)
         {
             IDeserializer deserializer = YamlDeserializer.BuildSLBDeserializer();
             string fileContent = File.ReadAllText(testCaseData.YamlFilePath);
 
-            Conversation result = deserializer.Deserialize<Conversation>(fileContent);
+            CharacterTable result = deserializer.Deserialize<CharacterTable>(fileContent);
 
             result.Should().Be(testCaseData.Expected);
         }
 
         [TestCaseSource(nameof(TEST_CASES))]
-        public void Test_Writing_A_Yaml_Conversation_File_Successfully(SerializationTestCaseData<Conversation> testCaseData)
+        public void Test_Writing_A_Yaml_Conversation_File_Successfully(SerializationTestCaseData<CharacterTable> testCaseData)
         {
             ISerializer serializer = YamlSerializer.BuildSLBSerializer();
 
@@ -76,22 +76,22 @@ namespace SAGESharp.Tests.SLB.Level
         }
         #endregion
 
-        static object[] TEST_CASES() => new object[]
+        static SerializationTestCaseData<CharacterTable>[] TEST_CASES() => new SerializationTestCaseData<CharacterTable>[]
         {
-            new SerializationTestCaseData<Conversation>(
+            new SerializationTestCaseData<CharacterTable>(
                 description: "Test serializing with an empty file",
                 testFilePath: PathForTestFile("EmptyConversation"),
-                expectedProvider: TestData.EmptyConversation
+                expectedProvider: TestData.EmptyCharacterTable
             ),
-            new SerializationTestCaseData<Conversation>(
+            new SerializationTestCaseData<CharacterTable>(
                 description: "Test serializing a file with a simple conversation",
                 testFilePath: PathForTestFile("SimpleConversation"),
-                expectedProvider: TestData.SimpleConversation
+                expectedProvider: TestData.SimpleCharacterTable
             ),
-            new SerializationTestCaseData<Conversation>(
+            new SerializationTestCaseData<CharacterTable>(
                 description: "Test serializing a file with a complex conversation",
                 testFilePath: PathForTestFile("ComplexConversation"),
-                expectedProvider: TestData.ComplexConversation
+                expectedProvider: TestData.ComplexCharacterTable
             )
         };
 

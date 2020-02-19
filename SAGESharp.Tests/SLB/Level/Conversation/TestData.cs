@@ -4,23 +4,23 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 using SAGESharp.SLB;
-using SAGESharp.SLB.Level;
+using SAGESharp.SLB.Level.Conversation;
 using System.Collections.Generic;
 
-namespace SAGESharp.Tests.SLB.Level
+namespace SAGESharp.Tests.SLB.Level.Conversation
 {
     static class TestData
     {
-        public static Conversation EmptyConversation() => new Conversation
+        public static CharacterTable EmptyCharacterTable() => new CharacterTable
         {
-            Entries = new List<ConversationCharacter>()
+            Entries = new List<Character>()
         };
 
-        public static Conversation SimpleConversation() => new Conversation
+        public static CharacterTable SimpleCharacterTable() => new CharacterTable
         {
-            Entries = new List<ConversationCharacter>()
+            Entries = new List<Character>()
             {
-                new ConversationCharacter()
+                new Character()
                 {
                     ToaName = Identifier.From("TOA1"),
                     CharName = Identifier.From("NAME"),
@@ -52,11 +52,11 @@ namespace SAGESharp.Tests.SLB.Level
             }
         };
 
-        public static Conversation ComplexConversation() => new Conversation
+        public static CharacterTable ComplexCharacterTable() => new CharacterTable
         {
-            Entries = new List<ConversationCharacter>()
+            Entries = new List<Character>()
             {
-                new ConversationCharacter()
+                new Character()
                 {
                     ToaName = Identifier.From("TOA1"),
                     CharName = Identifier.From("NAM1"),
@@ -152,7 +152,7 @@ namespace SAGESharp.Tests.SLB.Level
                         }
                     }
                 },
-                new ConversationCharacter()
+                new Character()
                 {
                     ToaName = Identifier.From("TOA2"),
                     CharName = Identifier.From("NAM2"),
@@ -201,7 +201,7 @@ namespace SAGESharp.Tests.SLB.Level
                         }
                     }
                 },
-                new ConversationCharacter()
+                new Character()
                 {
                     ToaName = Identifier.From("TOA3"),
                     CharName = Identifier.From("NAM3"),
