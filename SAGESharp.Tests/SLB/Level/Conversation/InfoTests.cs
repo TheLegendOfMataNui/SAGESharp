@@ -27,7 +27,7 @@ namespace SAGESharp.Tests.SLB.Level.Conversation
 
         public static IComparisionTestCase<Info>[] NotEqualObjectsTestCases() => new IComparisionTestCase<Info>[]
         {
-            ComparisionTestCase.CompareTwoNotEqualObjects(supplier: SampleInfo, updater: info => info.LineSide = LineSide.None),
+            ComparisionTestCase.CompareTwoNotEqualObjects(supplier: SampleInfo, updater: info => info.LineSide = LineSide.Left),
             ComparisionTestCase.CompareTwoNotEqualObjects(supplier: SampleInfo, updater: info => info.ConditionStart++),
             ComparisionTestCase.CompareTwoNotEqualObjects(supplier: SampleInfo, updater: info => info.ConditionEnd++),
             ComparisionTestCase.CompareTwoNotEqualObjects(supplier: SampleInfo, updater: info => info.StringLabel += 1),
