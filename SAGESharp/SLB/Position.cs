@@ -9,14 +9,14 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB
 {
-    public sealed class PositionTable
+    internal sealed class PositionTable
     {
         [SerializableProperty(1)]
         [DuplicateEntryCount]
         public IList<Position> Entries { get; set; }
     }
 
-    public sealed class Position
+    internal sealed class Position
     {
         [SerializableProperty(1)]
         Identifier Id { get; set; }

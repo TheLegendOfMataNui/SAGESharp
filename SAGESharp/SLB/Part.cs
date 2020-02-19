@@ -9,14 +9,14 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB
 {
-    public sealed class PartVector
+    internal sealed class PartVector
     {
         [SerializableProperty(1)]
         [DuplicateEntryCount]
         public IList<Part> Entries { get; set; }
     }
 
-    public sealed class Part
+    internal sealed class Part
     {
         [SerializableProperty(1)]
         public float Float1 { get; set; }

@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB.Cinematic
 {
-    public sealed class Text : IEquatable<Text>
+    internal sealed class Text : IEquatable<Text>
     {
         [SerializableProperty(1)]
         public Identifier StrLabel { get; set; }
@@ -42,7 +42,7 @@ namespace SAGESharp.SLB.Cinematic
             => !(left == right);
     }
 
-    public sealed class Data : IEquatable<Data>
+    internal sealed class Data : IEquatable<Data>
     {
         [SerializableProperty(1)]
         public float Time { get; set; }

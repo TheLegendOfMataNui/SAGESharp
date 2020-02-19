@@ -8,7 +8,7 @@ using SAGESharp.IO.Binary;
 
 namespace SAGESharp.SLB
 {
-    public sealed class AIInfo
+    internal sealed class AIInfo
     {
         [SerializableProperty(1)]
         [RightPadding(3)]
@@ -40,7 +40,7 @@ namespace SAGESharp.SLB
         public string ProjectileSprite { get; set; }
     }
 
-    public sealed class TimerValues
+    internal sealed class TimerValues
     {
         [SerializableProperty(1)]
         public float A { get; set; }

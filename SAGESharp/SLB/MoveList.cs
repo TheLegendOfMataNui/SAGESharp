@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB
 {
-    public sealed class MoveList
+    internal sealed class MoveList
     {
         [SerializableProperty(1)]
         public Identifier Id { get; set; }
@@ -21,7 +21,7 @@ namespace SAGESharp.SLB
         public IList<AnimationWithExtra> AnimationsWithExtra { get; set; }
     }
 
-    public sealed class Animation
+    internal sealed class Animation
     {
         [SerializableProperty(1)]
         public Identifier Id1 { get; set; }
@@ -56,7 +56,7 @@ namespace SAGESharp.SLB
         public IList<SplitTrigger> Triggers { get; set; }
     }
 
-    public sealed class AnimationWithExtra
+    internal sealed class AnimationWithExtra
     {
         [SerializableProperty(1)]
         public Animation Animation { get; set; }
@@ -65,7 +65,7 @@ namespace SAGESharp.SLB
         public int Extra { get; set; }
     }
 
-    public sealed class SplitTrigger
+    internal sealed class SplitTrigger
     {
         [SerializableProperty(1)]
         public int Input { get; set; }

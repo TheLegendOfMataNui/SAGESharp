@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB.Cinematic
 {
-    public sealed class SoundTable : IEquatable<SoundTable>
+    internal sealed class SoundTable : IEquatable<SoundTable>
     {
         [SerializableProperty(1)]
         [OffsetString]

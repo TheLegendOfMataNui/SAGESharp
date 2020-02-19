@@ -8,13 +8,13 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB
 {
-    public sealed class EdgeTable
+    internal sealed class EdgeTable
     {
         [SerializableProperty(1)]
         public IList<Edge> Entries { get; set; }
     }
 
-    public sealed class Edge
+    internal sealed class Edge
     {
         [SerializableProperty(1)]
         public Identifier Id { get; set; }
@@ -23,7 +23,7 @@ namespace SAGESharp.SLB
         public IList<EdgeData> EdgeData { get; set; }
     }
 
-    public sealed class EdgeData
+    internal sealed class EdgeData
     {
         [SerializableProperty(1)]
         public float A { get; set; }

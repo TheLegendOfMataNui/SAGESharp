@@ -8,13 +8,13 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB
 {
-    public sealed class MaterialTable
+    internal sealed class MaterialTable
     {
         [SerializableProperty(1)]
         public IList<Material> Entries { get; set; }
     }
 
-    public sealed class Material
+    internal sealed class Material
     {
         [SerializableProperty(1)]
         public int Index { get; set; }

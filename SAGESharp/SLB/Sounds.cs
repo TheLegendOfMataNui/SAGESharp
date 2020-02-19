@@ -9,13 +9,13 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB
 {
-    public sealed class Sounds
+    internal sealed class Sounds
     {
         [SerializableProperty(1)]
         public IList<Sound> Entries { get; set; }
     }
 
-    public sealed class Sound
+    internal sealed class Sound
     {
         [SerializableProperty(1)]
         [OffsetString]

@@ -9,13 +9,13 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB
 {
-    public sealed class EmitterVector
+    internal sealed class EmitterVector
     {
         [DuplicateEntryCount]
         public IList<Emitter> Entries { get; set; }
     }
 
-    public sealed class Emitter
+    internal sealed class Emitter
     {
         [SerializableProperty(1)]
         public int Id { get; set; }
@@ -57,7 +57,7 @@ namespace SAGESharp.SLB
         public IList<EmitterFunction> Group6 { get; set; }
     }
 
-    public sealed class EmitterFunction
+    internal sealed class EmitterFunction
     {
         [SerializableProperty(1)]
         public int EmitterFunctionIndex { get; set; }
@@ -67,7 +67,7 @@ namespace SAGESharp.SLB
         public IList<EmitterFunctionParameter> Parameters { get; set; }
     }
 
-    public sealed class EmitterFunctionParameter
+    internal sealed class EmitterFunctionParameter
     {
         [SerializableProperty(1)]
         public EmitterFunctionParameterType Type { get; set; }

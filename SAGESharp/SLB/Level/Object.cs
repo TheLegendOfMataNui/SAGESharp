@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB.Level
 {
-    public sealed class Object
+    internal sealed class Object
     {
         [SerializableProperty(1)]
         public Identifier Id { get; set; }
@@ -19,7 +19,7 @@ namespace SAGESharp.SLB.Level
         public IList<Position> Entries { get; set; }
     }
 
-    public sealed class Position
+    internal sealed class Position
     {
         [SerializableProperty(1)]
         public Identifier Id { get; set; }

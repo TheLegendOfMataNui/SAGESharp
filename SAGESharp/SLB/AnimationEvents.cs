@@ -9,13 +9,13 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB
 {
-    public sealed class AnimationEventsTable
+    internal sealed class AnimationEventsTable
     {
         [DuplicateEntryCount]
         public IList<AnimationEvent> Entries { get; set; }
     }
 
-    public sealed class AnimationEvent
+    internal sealed class AnimationEvent
     {
         [SerializableProperty(1)]
         public Identifier Id { get; set; }

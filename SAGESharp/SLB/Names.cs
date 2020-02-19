@@ -9,13 +9,13 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB
 {
-    public sealed class Names
+    internal sealed class Names
     {
         [SerializableProperty(1)]
         public IList<Name> Entries { get; set; }
     }
 
-    public sealed class Name
+    internal sealed class Name
     {
         [SerializableProperty(1)]
         [InlineString(128)]

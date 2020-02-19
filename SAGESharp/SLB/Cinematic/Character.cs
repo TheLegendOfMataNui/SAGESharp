@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB.Cinematic
 {
-    public sealed class CharacterTable : IEquatable<CharacterTable>
+    internal sealed class CharacterTable : IEquatable<CharacterTable>
     {
         [SerializableProperty(1)]
         public IList<Character> Entries { get; set; }
@@ -35,7 +35,7 @@ namespace SAGESharp.SLB.Cinematic
             => !(left == right);
     }
 
-    public sealed class Character : IEquatable<Character>
+    internal sealed class Character : IEquatable<Character>
     {
         [SerializableProperty(1)]
         public Identifier AnimHierarchy { get; set; }

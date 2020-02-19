@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace SAGESharp.SLB
 {
-    public sealed class Trigger
+    internal sealed class Trigger
     {
         [SerializableProperty(1)]
         [DuplicateEntryCount]
@@ -20,7 +20,7 @@ namespace SAGESharp.SLB
         public IList<Plane> Planes { get; set; }
     }
 
-    public sealed class Box
+    internal sealed class Box
     {
         [SerializableProperty(1)]
         public Identifier Id { get; set; }
@@ -32,7 +32,7 @@ namespace SAGESharp.SLB
         public Point3D Point2 { get; set; }
     }
 
-    public sealed class Plane
+    internal sealed class Plane
     {
         [SerializableProperty(1)]
         public Identifier Id { get; set; }
