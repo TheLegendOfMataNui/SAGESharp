@@ -180,7 +180,11 @@
     <Compile Include="SLB\Level\Camera.cs" />
     <Compile Include="SLB\Level\Character.cs" />
     <Compile Include="SLB\Level\Common.cs" />
-    <Compile Include="SLB\Level\Conversation.cs" />
+    <Compile Include="SLB\Level\Conversation\Character.cs" />
+    <Compile Include="SLB\Level\Conversation\CharacterTable.cs" />
+    <Compile Include="SLB\Level\Conversation\Frame.cs" />
+    <Compile Include="SLB\Level\Conversation\Info.cs" />
+    <Compile Include="SLB\Level\Conversation\LineSide.cs" />
     <Compile Include="SLB\Level\Object.cs" />
     <Compile Include="SLB\Light.cs" />
     <Compile Include="SLB\Material.cs" />

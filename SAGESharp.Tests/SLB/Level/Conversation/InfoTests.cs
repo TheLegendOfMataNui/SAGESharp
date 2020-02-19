@@ -5,10 +5,10 @@
  */
 using NUnit.Framework;
 using NUtils.Extensions;
-using SAGESharp.SLB.Level;
+using SAGESharp.SLB.Level.Conversation;
 using System.Collections.Generic;
 
-namespace SAGESharp.Tests.SLB.Level
+namespace SAGESharp.Tests.SLB.Level.Conversation
 {
     class InfoTests
     {
