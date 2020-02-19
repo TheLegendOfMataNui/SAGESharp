@@ -126,6 +126,7 @@
     <Compile Include="TCBInterpolationDataTests.cs" />
     <Compile Include="TCBQuaternionDataTests.cs" />
     <Compile Include="Utils\ASCIIExtensionsTests.cs" />
+    <Compile Include="Utils\EqualityUtilsTests.cs" />
     <Compile Include="Utils\NumericExtensionsTests.cs" />
     <Compile Include="Utils\ToStringUtilsTests.cs" />
   </ItemGroup>
