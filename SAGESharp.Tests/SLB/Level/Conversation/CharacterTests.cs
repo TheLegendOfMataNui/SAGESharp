@@ -49,7 +49,7 @@ namespace SAGESharp.Tests.SLB.Level.Conversation
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleCharacter,
-                updater: character => character.Entries[0].LineSide = LineSide.None
+                updater: character => character.Entries[0].ConditionStart += 20
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleCharacter,
