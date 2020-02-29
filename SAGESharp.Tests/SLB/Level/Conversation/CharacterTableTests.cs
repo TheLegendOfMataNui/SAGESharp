@@ -7,6 +7,8 @@ using NUnit.Framework;
 using SAGESharp.SLB.Level.Conversation;
 using System.Collections.Generic;
 
+using ConversationCharacter = SAGESharp.SLB.Level.Conversation.Character;
+
 namespace SAGESharp.Tests.SLB.Level.Conversation
 {
     class CharacterTableTests
@@ -32,11 +34,11 @@ namespace SAGESharp.Tests.SLB.Level.Conversation
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: TestData.SimpleCharacterTable,
-                updater: conversation => conversation.Entries.Add(new Character())
+                updater: conversation => conversation.Entries.Add(new ConversationCharacter())
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: TestData.SimpleCharacterTable,
-                updater: conversation => conversation.Entries = new List<Character>()
+                updater: conversation => conversation.Entries = new List<ConversationCharacter>()
             ),
             ComparisionTestCase.CompareNotNullObjectAgainstNull(TestData.SimpleCharacterTable())
         };

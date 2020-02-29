@@ -8,24 +8,26 @@ using SAGESharp.SLB;
 using SAGESharp.SLB.Level.Conversation;
 using System.Collections.Generic;
 
+using ConversationCharacter = SAGESharp.SLB.Level.Conversation.Character;
+
 namespace SAGESharp.Tests.SLB.Level.Conversation
 {
     class CharacterTests
     {
         [TestCaseSource(nameof(EqualObjectsTestCases))]
-        public void Test_Comparing_Equal_Objects(IComparisionTestCase<Character> testCase) => testCase.Execute();
+        public void Test_Comparing_Equal_Objects(IComparisionTestCase<ConversationCharacter> testCase) => testCase.Execute();
 
-        public static IComparisionTestCase<Character>[] EqualObjectsTestCases() => new IComparisionTestCase<Character>[]
+        public static IComparisionTestCase<ConversationCharacter>[] EqualObjectsTestCases() => new IComparisionTestCase<ConversationCharacter>[]
         {
             ComparisionTestCase.CompareObjectAgainstItself(SampleCharacter()),
             ComparisionTestCase.CompareTwoEqualObjects(SampleCharacter),
-            ComparisionTestCase.CompareNullWithOperators<Character>()
+            ComparisionTestCase.CompareNullWithOperators<ConversationCharacter>()
         };
 
         [TestCaseSource(nameof(NotEqualObjectsTestCases))]
-        public void Test_Comparing_NotEqual_Objects(IComparisionTestCase<Character> testCase) => testCase.Execute();
+        public void Test_Comparing_NotEqual_Objects(IComparisionTestCase<ConversationCharacter> testCase) => testCase.Execute();
 
-        public static IComparisionTestCase<Character>[] NotEqualObjectsTestCases() => new IComparisionTestCase<Character>[]
+        public static IComparisionTestCase<ConversationCharacter>[] NotEqualObjectsTestCases() => new IComparisionTestCase<ConversationCharacter>[]
         {
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleCharacter,
@@ -62,7 +64,7 @@ namespace SAGESharp.Tests.SLB.Level.Conversation
             ComparisionTestCase.CompareNotNullObjectAgainstNull(SampleCharacter())
         };
 
-        public static Character SampleCharacter() => new Character
+        public static ConversationCharacter SampleCharacter() => new ConversationCharacter
         {
             ToaName = Identifier.From("TOA1"),
             CharName = Identifier.From("CHA1"),

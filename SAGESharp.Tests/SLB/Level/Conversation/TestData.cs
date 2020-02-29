@@ -7,20 +7,22 @@ using SAGESharp.SLB;
 using SAGESharp.SLB.Level.Conversation;
 using System.Collections.Generic;
 
+using ConversationCharacter = SAGESharp.SLB.Level.Conversation.Character;
+
 namespace SAGESharp.Tests.SLB.Level.Conversation
 {
     static class TestData
     {
         public static CharacterTable EmptyCharacterTable() => new CharacterTable
         {
-            Entries = new List<Character>()
+            Entries = new List<ConversationCharacter>()
         };
 
         public static CharacterTable SimpleCharacterTable() => new CharacterTable
         {
-            Entries = new List<Character>()
+            Entries = new List<ConversationCharacter>()
             {
-                new Character()
+                new ConversationCharacter()
                 {
                     ToaName = Identifier.From("TOA1"),
                     CharName = Identifier.From("NAME"),
@@ -54,9 +56,9 @@ namespace SAGESharp.Tests.SLB.Level.Conversation
 
         public static CharacterTable ComplexCharacterTable() => new CharacterTable
         {
-            Entries = new List<Character>()
+            Entries = new List<ConversationCharacter>()
             {
-                new Character()
+                new ConversationCharacter()
                 {
                     ToaName = Identifier.From("TOA1"),
                     CharName = Identifier.From("NAM1"),
@@ -152,7 +154,7 @@ namespace SAGESharp.Tests.SLB.Level.Conversation
                         }
                     }
                 },
-                new Character()
+                new ConversationCharacter()
                 {
                     ToaName = Identifier.From("TOA2"),
                     CharName = Identifier.From("NAM2"),
@@ -201,7 +203,7 @@ namespace SAGESharp.Tests.SLB.Level.Conversation
                         }
                     }
                 },
-                new Character()
+                new ConversationCharacter()
                 {
                     ToaName = Identifier.From("TOA3"),
                     CharName = Identifier.From("NAM3"),
