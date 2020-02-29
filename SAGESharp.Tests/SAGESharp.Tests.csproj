@@ -125,6 +125,7 @@
     <Compile Include="SLB\Level\Conversation\SerializationTests.cs" />
     <Compile Include="SLB\Level\Conversation\TestData.cs" />
     <Compile Include="SLB\Point3DTests.cs" />
+    <Compile Include="SLB\SerializationTestCase.cs" />
     <Compile Include="TCBInterpolationDataTests.cs" />
     <Compile Include="TCBQuaternionDataTests.cs" />
     <Compile Include="Utils\ASCIIExtensionsTests.cs" />
