@@ -24,7 +24,7 @@ namespace SAGESharp.Tests.SLB.Character.AnimationEvents
 
         [TestCaseSource(nameof(TEST_CASES))]
         public void Test_Writing_A_Yaml_Animation_Event_Table_File_Successfully(SerializationTestCaseData<AnimationEventsTable> testCaseData)
-            => SerializationTestCase<AnimationEventsTable>.TestWritingBinarySLBFile(testCaseData);
+            => SerializationTestCase<AnimationEventsTable>.TestWritingYamlSLBFile(testCaseData);
 
         static SerializationTestCaseData<AnimationEventsTable>[] TEST_CASES() => new SerializationTestCaseData<AnimationEventsTable>[]
         {

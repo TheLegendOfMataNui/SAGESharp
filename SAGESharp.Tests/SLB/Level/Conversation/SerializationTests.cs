@@ -24,7 +24,7 @@ namespace SAGESharp.Tests.SLB.Level.Conversation
 
         [TestCaseSource(nameof(TEST_CASES))]
         public void Test_Writing_A_Yaml_Conversation_File_Successfully(SerializationTestCaseData<CharacterTable> testCaseData)
-            => SerializationTestCase<CharacterTable>.TestWritingBinarySLBFile(testCaseData);
+            => SerializationTestCase<CharacterTable>.TestWritingYamlSLBFile(testCaseData);
 
         static SerializationTestCaseData<CharacterTable>[] TEST_CASES() => new SerializationTestCaseData<CharacterTable>[]
         {

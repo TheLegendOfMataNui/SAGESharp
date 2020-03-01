@@ -3,7 +3,7 @@
   EventArg2: TOA2
   EventArg3: TOA3
   EventArg4: TOA4
-  EventArg5: 5.1
+  EventArg5: 1.5
   EventArg6: 16777386
   EventArg7: 16777403
   EventArg8: 16777420
@@ -14,7 +14,7 @@
   EventArg2: TUR2
   EventArg3: TUR3
   EventArg4: TUR4
-  EventArg5: 5.2
+  EventArg5: 2.5
   EventArg6: 33554602
   EventArg7: 33554619
   EventArg8: 33554636
@@ -25,7 +25,7 @@
   EventArg2: VLG2
   EventArg3: VLG3
   EventArg4: VLG4
-  EventArg5: 5.3
+  EventArg5: 3.5
   EventArg6: 50331818
   EventArg7: 50331835
   EventArg8: 50331852
