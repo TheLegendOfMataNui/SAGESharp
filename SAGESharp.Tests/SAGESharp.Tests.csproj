@@ -115,6 +115,8 @@
     <Compile Include="SerializationTestCaseData.cs" />
     <Compile Include="SLB\Character\AnimationEvents\AnimationEventsTableTests.cs" />
     <Compile Include="SLB\Character\AnimationEvents\AnimationEventTests.cs" />
+    <Compile Include="SLB\Character\AnimationEvents\SerializationTests.cs" />
+    <Compile Include="SLB\Character\AnimationEvents\TestData.cs" />
     <Compile Include="SLB\Cinematic\CameraTests.cs" />
     <Compile Include="SLB\Cinematic\FrameTests.cs" />
     <Compile Include="SLB\IdentifierTests.cs" />
@@ -143,6 +145,24 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Test Data\SimpleBKD.bkd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Test Data\SLB\Character\AnimationEvents\ComplexAnimationEventsTable.slb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Test Data\SLB\Character\AnimationEvents\ComplexAnimationEventsTable.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Test Data\SLB\Character\AnimationEvents\EmptyAnimationEventsTable.slb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Test Data\SLB\Character\AnimationEvents\EmptyAnimationEventsTable.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Test Data\SLB\Character\AnimationEvents\SimpleAnimationEventsTable.slb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Test Data\SLB\Character\AnimationEvents\SimpleAnimationEventsTable.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Test Data\SLB\Level\Conversation\ComplexConversation.slb">
