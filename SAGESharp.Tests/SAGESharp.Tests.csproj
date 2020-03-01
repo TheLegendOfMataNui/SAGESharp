@@ -120,7 +120,9 @@
     <Compile Include="SLB\Character\MoveList\AnimationTests.cs" />
     <Compile Include="SLB\Character\MoveList\AnimationWithExtraTests.cs" />
     <Compile Include="SLB\Character\MoveList\MoveListTableTests.cs" />
+    <Compile Include="SLB\Character\MoveList\SerializationTests.cs" />
     <Compile Include="SLB\Character\MoveList\SplitTriggerTests.cs" />
+    <Compile Include="SLB\Character\MoveList\TestData.cs" />
     <Compile Include="SLB\Cinematic\CameraTests.cs" />
     <Compile Include="SLB\Cinematic\FrameTests.cs" />
     <Compile Include="SLB\IdentifierTests.cs" />
@@ -167,6 +169,24 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Test Data\SLB\Character\AnimationEvents\SimpleAnimationEventsTable.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Test Data\SLB\Character\MoveList\ComplexMoveListTable.slb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Test Data\SLB\Character\MoveList\ComplexMoveListTable.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Test Data\SLB\Character\MoveList\EmptyMoveListTable.slb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Test Data\SLB\Character\MoveList\EmptyMoveListTable.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Test Data\SLB\Character\MoveList\SimpleMoveListTable.slb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Test Data\SLB\Character\MoveList\SimpleMoveListTable.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Test Data\SLB\Level\Conversation\ComplexConversation.slb">

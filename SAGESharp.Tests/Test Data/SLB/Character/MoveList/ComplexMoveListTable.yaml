@@ -1,0 +1,67 @@
+Id: ID03
+Animations:
+- Id1: ANI5
+  Id2: ANI6
+  Flags1: 15018
+  Index: 15291
+  Int1: 1020054732
+  Float1: 11.5
+  Float2: 12.5
+  Flags2: 1037950429
+  ReservedCounter: 16110
+  Triggers:
+  - Input: 1252698794
+    Id: TRI3
+    Float1: 13.5
+    Float2: 14.5
+    Float3: 15.5
+    Flags: 76
+  - Input: 1521134250
+    Id: TRI4
+    Float1: 16.5
+    Float2: 17.5
+    Float3: 18.5
+    Flags: 92
+  - Input: 1789569706
+    Id: TRI5
+    Float1: 19.5
+    Float2: 20.5
+    Float3: 21.5
+    Flags: 108
+AnimationsWithExtra:
+- Animation:
+    Id1: ANI7
+    Id2: ANI8
+    Flags1: 31402
+    Index: 31675
+    Int1: 2093796556
+    Float1: 22.5
+    Float2: 23.5
+    Flags2: 2111692253
+    ReservedCounter: 32494
+    Triggers: []
+  Extra: 2147483647
+- Animation:
+    Id1: ANI9
+    Id2: ANI0
+    Flags1: 28672
+    Index: 28673
+    Int1: 1879048194
+    Float1: 24.5
+    Float2: 25.5
+    Flags2: 1879048195
+    ReservedCounter: 28676
+    Triggers:
+    - Input: 1789569706
+      Id: TRI6
+      Float1: 26.5
+      Float2: 27.5
+      Float3: 28.5
+      Flags: 108
+    - Input: 2058005162
+      Id: TRI7
+      Float1: 29.5
+      Float2: 30.5
+      Float3: 31.5
+      Flags: 124
+  Extra: 2129587950
