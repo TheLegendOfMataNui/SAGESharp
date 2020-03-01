@@ -1,0 +1,37 @@
+Id: ID02
+Animations:
+- Id1: ANI1
+  Id2: ANI2
+  Flags1: 6826
+  Index: 7099
+  Int1: 483183820
+  Float1: 1.5
+  Float2: 2.5
+  Flags2: 501079517
+  ReservedCounter: 7918
+  Triggers:
+  - Input: 715827882
+    Id: TRI1
+    Float1: 3.5
+    Float2: 4.5
+    Float3: 5.5
+    Flags: 44
+AnimationsWithExtra:
+- Animation:
+    Id1: ANI3
+    Id2: ANI4
+    Flags1: 10922
+    Index: 11195
+    Int1: 751619276
+    Float1: 6.5
+    Float2: 7.5
+    Flags2: 769514973
+    ReservedCounter: 12014
+    Triggers:
+    - Input: 984263338
+      Id: TRI2
+      Float1: 8.5
+      Float2: 9.5
+      Float3: 10.5
+      Flags: 60
+  Extra: 1073741823
