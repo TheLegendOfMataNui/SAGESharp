@@ -15,21 +15,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAGESharp.Tests", "SAGEShar
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug Signed|Any CPU = Debug Signed|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release Signed|Any CPU = Release Signed|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CA7EBE43-FEBB-49F4-AD76-04075FBA3B13}.Debug Signed|Any CPU.ActiveCfg = Debug Signed|Any CPU
-		{CA7EBE43-FEBB-49F4-AD76-04075FBA3B13}.Debug Signed|Any CPU.Build.0 = Debug Signed|Any CPU
 		{CA7EBE43-FEBB-49F4-AD76-04075FBA3B13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CA7EBE43-FEBB-49F4-AD76-04075FBA3B13}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA7EBE43-FEBB-49F4-AD76-04075FBA3B13}.Release Signed|Any CPU.ActiveCfg = Release Signed|Any CPU
 		{CA7EBE43-FEBB-49F4-AD76-04075FBA3B13}.Release Signed|Any CPU.Build.0 = Release Signed|Any CPU
 		{CA7EBE43-FEBB-49F4-AD76-04075FBA3B13}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA7EBE43-FEBB-49F4-AD76-04075FBA3B13}.Release|Any CPU.Build.0 = Release|Any CPU
-		{62E3C5E4-4C83-48FF-8C4E-4547A13DB764}.Debug Signed|Any CPU.ActiveCfg = Debug|Any CPU
 		{62E3C5E4-4C83-48FF-8C4E-4547A13DB764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{62E3C5E4-4C83-48FF-8C4E-4547A13DB764}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62E3C5E4-4C83-48FF-8C4E-4547A13DB764}.Release Signed|Any CPU.ActiveCfg = Release|Any CPU
