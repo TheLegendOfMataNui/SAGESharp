@@ -154,6 +154,10 @@
     <Compile Include="SLB\AIInfo.cs" />
     <Compile Include="SLB\Character\AnimationEvents\AnimationEvent.cs" />
     <Compile Include="SLB\Character\AnimationEvents\AnimationEventsTable.cs" />
+    <Compile Include="SLB\Character\MoveList\Animation.cs" />
+    <Compile Include="SLB\Character\MoveList\AnimationWithExtra.cs" />
+    <Compile Include="SLB\Character\MoveList\MoveListTable.cs" />
+    <Compile Include="SLB\Character\MoveList\SplitTrigger.cs" />
     <Compile Include="SLB\Cinematic\Camera.cs" />
     <Compile Include="SLB\Cinematic\Character.cs" />
     <Compile Include="SLB\Cinematic\Common.cs" />
@@ -178,7 +182,6 @@
     <Compile Include="SLB\Level\Object.cs" />
     <Compile Include="SLB\Light.cs" />
     <Compile Include="SLB\Material.cs" />
-    <Compile Include="SLB\MoveList.cs" />
     <Compile Include="SLB\Names.cs" />
     <Compile Include="SLB\Offsets.cs" />
     <Compile Include="SLB\Part.cs" />
