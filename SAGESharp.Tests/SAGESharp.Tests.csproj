@@ -117,6 +117,10 @@
     <Compile Include="SLB\Character\AnimationEvents\AnimationEventTests.cs" />
     <Compile Include="SLB\Character\AnimationEvents\SerializationTests.cs" />
     <Compile Include="SLB\Character\AnimationEvents\TestData.cs" />
+    <Compile Include="SLB\Character\MoveList\AnimationTests.cs" />
+    <Compile Include="SLB\Character\MoveList\AnimationWithExtraTests.cs" />
+    <Compile Include="SLB\Character\MoveList\MoveListTableTests.cs" />
+    <Compile Include="SLB\Character\MoveList\SplitTriggerTests.cs" />
     <Compile Include="SLB\Cinematic\CameraTests.cs" />
     <Compile Include="SLB\Cinematic\FrameTests.cs" />
     <Compile Include="SLB\IdentifierTests.cs" />
