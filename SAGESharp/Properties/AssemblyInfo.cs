@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Litestone Studios")]
 [assembly: AssemblyProduct("SAGESharp")]
-[assembly: AssemblyCopyright("Copyright © Litestone 2020")]
+[assembly: AssemblyCopyright("Copyright (c) Litestone 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
