@@ -5,10 +5,11 @@
  */
 using FluentAssertions;
 using NUnit.Framework;
+using SAGESharp.Animations;
 using System;
 using System.Collections.Generic;
 
-namespace SAGESharp.Tests
+namespace SAGESharp.Tests.Animations
 {
     class BKDTests
     {
