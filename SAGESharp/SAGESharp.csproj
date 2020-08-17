@@ -1,18 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{CA7EBE43-FEBB-49F4-AD76-04075FBA3B13}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SAGESharp</RootNamespace>
-    <AssemblyName>SAGESharp</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
+
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -40,173 +32,33 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>SAGESharp.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Equ, Version=2.2.0.0, Culture=neutral, PublicKeyToken=2f0282a16347ad60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Equ.2.2.0\lib\netstandard2.0\Equ.dll</HintPath>
-    </Reference>
-    <Reference Include="NUtils, Version=1.2.0.0, Culture=neutral, PublicKeyToken=74055ef46d91ac56, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUtils.1.2.0\lib\netstandard2.0\NUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.4.2.0\lib\net45\SharpDX.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Mathematics, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.Mathematics.4.2.0\lib\net45\SharpDX.Mathematics.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="YamlDotNet, Version=8.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
-      <HintPath>..\packages\YamlDotNet.8.0.0\lib\net45\YamlDotNet.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Equ" Version="2.2.0" />
+    <PackageReference Include="NUtils" Version="1.2.0" />
+    <PackageReference Include="SharpDX" Version="4.2.0" />
+    <PackageReference Include="SharpDX.Mathematics" Version="4.2.0" />
+    <PackageReference Include="YamlDotNet" Version="8.0.0.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="BKD.cs" />
-    <Compile Include="BCLFile.cs" />
-    <Compile Include="BHDFile.cs" />
-    <Compile Include="ColladaUtils.cs" />
-    <Compile Include="INIConfig.cs" />
-    <Compile Include="IO\Binary\BadTypeException.cs" />
-    <Compile Include="IO\Binary\BinaryReaderWrapper.cs" />
-    <Compile Include="IO\Binary\BinarySerializableSerializer.cs" />
-    <Compile Include="IO\Binary\BinarySerializer.cs" />
-    <Compile Include="IO\Binary\BinaryWriterWrapper.cs" />
-    <Compile Include="IO\Binary\DuplicateEntryCountAttribute.cs" />
-    <Compile Include="IO\Binary\IBinaryReader.cs" />
-    <Compile Include="IO\Binary\IBinarySerializable.cs" />
-    <Compile Include="IO\Binary\IBinarySerializer.cs" />
-    <Compile Include="IO\Binary\IBinaryWriter.cs" />
-    <Compile Include="IO\Binary\InlineStringAttribute.cs" />
-    <Compile Include="IO\Binary\OffsetStringAttribute.cs" />
-    <Compile Include="IO\Binary\Reader.cs" />
-    <Compile Include="IO\Binary\RightPaddingAttribute.cs" />
-    <Compile Include="IO\Binary\TreeBasedSerialization\AbstractOffsetNode.cs" />
-    <Compile Include="IO\Binary\TreeBasedSerialization\Edge.cs" />
-    <Compile Include="IO\Binary\TreeBasedSerialization\IDataNode.cs" />
-    <Compile Include="IO\Binary\TreeBasedSerialization\IEdge.cs" />
-    <Compile Include="IO\Binary\TreeBasedSerialization\IListNode.cs" />
-    <Compile Include="IO\Binary\TreeBasedSerialization\IOffsetNode.cs" />
-    <Compile Include="IO\Binary\TreeBasedSerialization\ListNode.cs" />
-    <Compile Include="IO\Binary\TreeBasedSerialization\OffsetNode.cs" />
-    <Compile Include="IO\Binary\TreeBasedSerialization\PaddingNode.cs" />
-    <Compile Include="IO\Binary\TreeBasedSerialization\PrimitiveTypeDataNode.cs" />
-    <Compile Include="IO\Binary\TreeBasedSerialization\StringDataNode.cs" />
-    <Compile Include="IO\Binary\TreeBasedSerialization\TreeBinarySerializer.cs" />
-    <Compile Include="IO\Binary\TreeBasedSerialization\TreeBuilder.cs" />
-    <Compile Include="IO\Binary\TreeBasedSerialization\TreeReader.cs" />
-    <Compile Include="IO\Binary\TreeBasedSerialization\TreeWriter.cs" />
-    <Compile Include="IO\Binary\TreeBasedSerialization\UserTypeDataNode.cs" />
-    <Compile Include="IO\Binary\Writer.cs" />
-    <Compile Include="IO\SerializablePropertyAttribute.cs" />
-    <Compile Include="IO\Yaml\BuilderSkeletonExtensions.cs" />
-    <Compile Include="IO\Yaml\IdentifierYamlTypeConverter.cs" />
-    <Compile Include="IO\Yaml\SLBTypeInspector.cs" />
-    <Compile Include="IO\Yaml\YamlDeserializer.cs" />
-    <Compile Include="IO\Yaml\YamlSerializer.cs" />
-    <Compile Include="LSS\Compiler.cs" />
-    <Compile Include="LSS\Decompiler.cs" />
-    <Compile Include="LSS\Expressions\ArrayAccessExpression.cs" />
-    <Compile Include="LSS\Expressions\ArrayExpression.cs" />
-    <Compile Include="LSS\Expressions\BinaryExpression.cs" />
-    <Compile Include="LSS\Expressions\CallExpression.cs" />
-    <Compile Include="LSS\Expressions\ConstructorExpression.cs" />
-    <Compile Include="LSS\Expressions\Expression.cs" />
-    <Compile Include="LSS\Expressions\GroupingExpression.cs" />
-    <Compile Include="LSS\Expressions\LiteralExpression.cs" />
-    <Compile Include="LSS\Expressions\UnaryExpression.cs" />
-    <Compile Include="LSS\Expressions\VariableExpression.cs" />
-    <Compile Include="LSS\Parser.cs" />
-    <Compile Include="LSS\PrettyPrinter.cs" />
-    <Compile Include="LSS\Scanner.cs" />
-    <Compile Include="LSS\Statements\AssignmentStatement.cs" />
-    <Compile Include="LSS\Statements\BlockStatement.cs" />
-    <Compile Include="LSS\Statements\ClassStatement.cs" />
-    <Compile Include="LSS\Statements\DoWhileStatement.cs" />
-    <Compile Include="LSS\Statements\ExpressionStatement.cs" />
-    <Compile Include="LSS\Statements\ForEachStatement.cs" />
-    <Compile Include="LSS\Statements\GlobalStatement.cs" />
-    <Compile Include="LSS\Statements\IfStatement.cs" />
-    <Compile Include="LSS\Statements\InstructionStatement.cs" />
-    <Compile Include="LSS\Statements\PropertyStatement.cs" />
-    <Compile Include="LSS\Statements\ReturnStatement.cs" />
-    <Compile Include="LSS\Statements\Statement.cs" />
-    <Compile Include="LSS\Statements\SubroutineStatement.cs" />
-    <Compile Include="LSS\Statements\VariableDeclarationStatement.cs" />
-    <Compile Include="LSS\Statements\WhileStatement.cs" />
-    <Compile Include="LSS\SyntaxError.cs" />
-    <Compile Include="LSS\Token.cs" />
-    <Compile Include="OCLFile.cs" />
-    <Compile Include="OSI\BCLInstruction.cs" />
-    <Compile Include="OSI\ControlFlow\Analyzer.cs" />
-    <Compile Include="OSI\ControlFlow\OSINode.cs" />
-    <Compile Include="OSI\ControlFlow\SubroutineGraph.cs" />
-    <Compile Include="OSI\ControlFlow\Jump.cs" />
-    <Compile Include="OSI\ControlFlow\Node.cs" />
-    <Compile Include="OSI\JumpStaticInstruction.cs" />
-    <Compile Include="OSI\OSIFile.cs" />
-    <Compile Include="OSI\Instruction.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SLB\AIInfo.cs" />
-    <Compile Include="SLB\Character\AnimationEvents\AnimationEvent.cs" />
-    <Compile Include="SLB\Character\AnimationEvents\AnimationEventsTable.cs" />
-    <Compile Include="SLB\Character\MoveList\Animation.cs" />
-    <Compile Include="SLB\Character\MoveList\AnimationWithExtra.cs" />
-    <Compile Include="SLB\Character\MoveList\MoveListTable.cs" />
-    <Compile Include="SLB\Character\MoveList\SplitTrigger.cs" />
-    <Compile Include="SLB\Cinematic\Camera.cs" />
-    <Compile Include="SLB\Cinematic\Character.cs" />
-    <Compile Include="SLB\Cinematic\Common.cs" />
-    <Compile Include="SLB\Cinematic\Object.cs" />
-    <Compile Include="SLB\Cinematic\SoundTable.cs" />
-    <Compile Include="SLB\Cinematic\Text.cs" />
-    <Compile Include="SLB\Common.cs" />
-    <Compile Include="SLB\ConversationCharacterInfo.cs" />
-    <Compile Include="SLB\Cylinder.cs" />
-    <Compile Include="SLB\Edge.cs" />
-    <Compile Include="SLB\Emitter.cs" />
-    <Compile Include="SLB\Hive.cs" />
-    <Compile Include="SLB\Instance.cs" />
-    <Compile Include="SLB\Level\Camera.cs" />
-    <Compile Include="SLB\Level\Character.cs" />
-    <Compile Include="SLB\Level\Common.cs" />
-    <Compile Include="SLB\Level\Conversation\Character.cs" />
-    <Compile Include="SLB\Level\Conversation\CharacterTable.cs" />
-    <Compile Include="SLB\Level\Conversation\Frame.cs" />
-    <Compile Include="SLB\Level\Conversation\Info.cs" />
-    <Compile Include="SLB\Level\Conversation\LineSide.cs" />
-    <Compile Include="SLB\Level\Object.cs" />
-    <Compile Include="SLB\Light.cs" />
-    <Compile Include="SLB\Material.cs" />
-    <Compile Include="SLB\Names.cs" />
-    <Compile Include="SLB\Offsets.cs" />
-    <Compile Include="SLB\Part.cs" />
-    <Compile Include="SLB\Position.cs" />
-    <Compile Include="SLB\Sounds.cs" />
-    <Compile Include="SLB\SoundTable.cs" />
-    <Compile Include="SLB\Spotlight.cs" />
-    <Compile Include="SLB\StringTable.cs" />
-    <Compile Include="SLB\Targets.cs" />
-    <Compile Include="SLB\Textures.cs" />
-    <Compile Include="SLB\Trigger.cs" />
-    <Compile Include="SLB\Vine.cs" />
-    <Compile Include="Utils\ASCIIExtensions.cs" />
-    <Compile Include="Utils\EqualityUtils.cs" />
-    <Compile Include="Utils\NumericExtensions.cs" />
-    <Compile Include="Utils\ToStringUtils.cs" />
-    <Compile Include="XFile.cs" />
-    <Compile Include="XUtils.cs" />
+
+  <PropertyGroup>
+    <AssemblyTitle>SAGESharp</AssemblyTitle>
+    <Description>Libraries to manipulate data for the Saffire Advanced Game Engine (SAGE)</Description>
+    <Company>Litestone Studios</Company>
+    <Product>SAGESharp</Product>
+    <Copyright>Copyright (c) Litestone 2020</Copyright>
+    <VersionPrefix>1.2.1</VersionPrefix>
+    <AssemblyVersion>1.2.1</AssemblyVersion>
+    <FileVersion>1.2.1</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(SignAssembly)'!='true'">
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>$(AssemblyName).Tests</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="IO\Binary\README.md" />
-    <None Include="LSS\readme.md" />
-    <None Include="packages.config" />
-    <None Include="SAGESharp.nuspec" />
-    <None Include="SAGESharp.snk" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>
