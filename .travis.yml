@@ -1,16 +1,12 @@
-language: bash
+language: csharp
 os: windows
-env:
-  - MSBUILD_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
+mono: none
 install:
-  - choco install nuget.commandline
-  - nuget restore SAGESharp.sln
+  - dotnet restore
 script:
-  - export PATH="$MSBUILD_PATH:$PATH"
-  - MSBuild.exe //p:Configuration=Release SAGESharp.sln
-  - packages/NUnit.ConsoleRunner.3.10.0/tools/nunit3-console.exe ./SAGESharp.Tests/bin/Release/SAGESharp.Tests.dll
-  - MSBuild.exe //p:Configuration="Release Signed" SAGESharp.sln
-  - nuget pack -properties Configuration="Release Signed" SAGESharp/
+  - dotnet build -c Release
+  - dotnet test -c Release
+  - dotnet pack -c "Release Signed" -o . SAGESharp/
 deploy:
   - provider: releases
     skip_cleanup: true
