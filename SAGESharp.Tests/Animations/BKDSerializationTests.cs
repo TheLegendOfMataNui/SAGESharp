@@ -5,11 +5,12 @@
  */
 using FluentAssertions;
 using NUnit.Framework;
+using SAGESharp.Animations;
 using SAGESharp.IO.Binary;
 using System.Collections.Generic;
 using System.IO;
 
-namespace SAGESharp.Tests
+namespace SAGESharp.Tests.Animations
 {
     class BKDSerializationTests
     {
