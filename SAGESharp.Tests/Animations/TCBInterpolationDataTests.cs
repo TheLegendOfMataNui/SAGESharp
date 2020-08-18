@@ -27,29 +27,29 @@ namespace SAGESharp.Tests.Animations
         {
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleTCBInterpolationData,
-                updater: tcbInterpolationData => tcbInterpolationData.Long1 = 12
+                updater: tcbInterpolationData => tcbInterpolationData.Keyframe = 12
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleTCBInterpolationData,
-                updater: tcbInterpolationData => tcbInterpolationData.Float1 = 6.9f
+                updater: tcbInterpolationData => tcbInterpolationData.X = 6.9f
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleTCBInterpolationData,
-                updater: tcbInterpolationData => tcbInterpolationData.Float2 = 3.2f
+                updater: tcbInterpolationData => tcbInterpolationData.Y = 3.2f
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleTCBInterpolationData,
-                updater: tcbInterpolationData => tcbInterpolationData.Float3 = 5.4f
+                updater: tcbInterpolationData => tcbInterpolationData.Z = 5.4f
             ),
             ComparisionTestCase.CompareNotNullObjectAgainstNull(SampleTCBInterpolationData())
         };
 
         public static TCBInterpolationData SampleTCBInterpolationData() => new TCBInterpolationData
         {
-            Long1 = 0xABCD,
-            Float1 = 2.2f,
-            Float2 = 3.5f,
-            Float3 = 4.9f
+            Keyframe = 0xABCD,
+            X = 2.2f,
+            Y = 3.5f,
+            Z = 4.9f
         };
     }
 }
