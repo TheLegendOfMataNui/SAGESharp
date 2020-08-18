@@ -71,8 +71,8 @@ namespace SAGESharp.Tests.SLB
         {
             ISerializer serializer = YamlSerializer.BuildSLBSerializer();
 
-            string result = serializer.Serialize(testCaseData.Expected);
-            string expectedFile = File.ReadAllText(testCaseData.YamlFilePath);
+            string result = serializer.Serialize(testCaseData.Expected).Replace("\r", string.Empty);
+            string expectedFile = File.ReadAllText(testCaseData.YamlFilePath).Replace("\r", string.Empty);
 
             result.Should().Be(expectedFile);
         }
