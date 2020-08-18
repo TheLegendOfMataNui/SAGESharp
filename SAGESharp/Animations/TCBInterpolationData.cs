@@ -11,34 +11,34 @@ namespace SAGESharp.Animations
 {
     public sealed class TCBInterpolationData : IEquatable<TCBInterpolationData>, IBinarySerializable
     {
-        public int Long1 { get; set; }
+        public int Keyframe { get; set; }
 
-        public float Float1 { get; set; }
+        public float X { get; set; }
 
-        public float Float2 { get; set; }
+        public float Y { get; set; }
 
-        public float Float3 { get; set; }
+        public float Z { get; set; }
 
         #region IBinarySerializable
         public void Read(IBinaryReader binaryReader)
         {
-            int newLong1 = binaryReader.ReadInt32();
-            float newFloat1 = binaryReader.ReadFloat();
-            float newFloat2 = binaryReader.ReadFloat();
-            float newFloat3 = binaryReader.ReadFloat();
+            int keyframe = binaryReader.ReadInt32();
+            float x = binaryReader.ReadFloat();
+            float y = binaryReader.ReadFloat();
+            float z = binaryReader.ReadFloat();
 
-            Long1 = newLong1;
-            Float1 = newFloat1;
-            Float2 = newFloat2;
-            Float3 = newFloat3;
+            Keyframe = keyframe;
+            X = x;
+            Y = y;
+            Z = z;
         }
 
         public void Write(IBinaryWriter binaryWriter)
         {
-            binaryWriter.WriteInt32(Long1);
-            binaryWriter.WriteFloat(Float1);
-            binaryWriter.WriteFloat(Float2);
-            binaryWriter.WriteFloat(Float3);
+            binaryWriter.WriteInt32(Keyframe);
+            binaryWriter.WriteFloat(X);
+            binaryWriter.WriteFloat(Y);
+            binaryWriter.WriteFloat(Z);
         }
         #endregion
 
@@ -60,10 +60,10 @@ namespace SAGESharp.Animations
         #endregion
 
         public override string ToString() => $"{nameof(TCBInterpolationData)}(" +
-            $"{nameof(Long1)}={Long1}, " +
-            $"{nameof(Float1)}={Float1}, " +
-            $"{nameof(Float2)}={Float2}, " +
-            $"{nameof(Float3)}={Float3}" +
+            $"{nameof(Keyframe)}={Keyframe}, " +
+            $"{nameof(X)}={X}, " +
+            $"{nameof(Y)}={Y}, " +
+            $"{nameof(Z)}={Z}" +
         ")";
     }
 }

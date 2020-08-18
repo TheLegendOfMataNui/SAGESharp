@@ -1269,24 +1269,24 @@ namespace SAGESharp
                     }
                     foreach (TCBInterpolationData trans in track.TCBInterpolatorData1)
                     {
-                        if (keyframes.ContainsKey(trans.Long1))
+                        if (keyframes.ContainsKey(trans.Keyframe))
                         {
-                            keyframes[trans.Long1] = new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(keyframes[trans.Long1].Item1, trans, null);
+                            keyframes[trans.Keyframe] = new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(keyframes[trans.Keyframe].Item1, trans, null);
                         }
                         else 
                         {
-                            keyframes.Add(trans.Long1, new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(null, trans, null));
+                            keyframes.Add(trans.Keyframe, new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(null, trans, null));
                         }
                     }
                     foreach (TCBInterpolationData scale in track.TCBInterpolatorData2)
                     {
-                        if (keyframes.ContainsKey(scale.Long1))
+                        if (keyframes.ContainsKey(scale.Keyframe))
                         {
-                            keyframes[scale.Long1] = new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(keyframes[scale.Long1].Item1, keyframes[scale.Long1].Item2, scale);
+                            keyframes[scale.Keyframe] = new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(keyframes[scale.Keyframe].Item1, keyframes[scale.Keyframe].Item2, scale);
                         }
                         else
                         {
-                            keyframes.Add(scale.Long1, new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(null, null, scale));
+                            keyframes.Add(scale.Keyframe, new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(null, null, scale));
                         }
                     }
 
@@ -1320,7 +1320,7 @@ namespace SAGESharp
                         {
                             //bindPoseTransform.Decompose(out scale, out _, out _);
                             //scale = new Vector3(scale.X * pair.Value.Item3.Float1, scale.Y * pair.Value.Item3.Float2, scale.Z * pair.Value.Item3.Float3);
-                            scale = new Vector3(pair.Value.Item3.Float1, pair.Value.Item3.Float2, pair.Value.Item3.Float3);
+                            scale = new Vector3(pair.Value.Item3.X, pair.Value.Item3.Y, pair.Value.Item3.Z);
                         }
                         else
                         {
@@ -1331,7 +1331,7 @@ namespace SAGESharp
                         {
                             //translation = bindPoseTransform.TranslationVector;
                             //translation += new Vector3(pair.Value.Item2.Float1, pair.Value.Item2.Float2, pair.Value.Item2.Float3);
-                            translation = new Vector3(pair.Value.Item2.Float1, pair.Value.Item2.Float2, pair.Value.Item2.Float3);
+                            translation = new Vector3(pair.Value.Item2.X, pair.Value.Item2.Y, pair.Value.Item2.Z);
                         }
                         else
                         {

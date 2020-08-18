@@ -83,20 +83,20 @@ namespace SAGESharp.Tests.Animations
                             {
                                 new TCBInterpolationData()
                                 {
-                                    Long1 = 0x11111111,
-                                    Float1 = 2.5f,
-                                    Float2 = 3.5f,
-                                    Float3 = -0.875f
+                                    Keyframe = 0x11111111,
+                                    X = 2.5f,
+                                    Y = 3.5f,
+                                    Z = -0.875f
                                 }
                             },
                             TCBInterpolatorData2 = new List<TCBInterpolationData>()
                             {
                                 new TCBInterpolationData()
                                 {
-                                    Long1 = 0x22222222,
-                                    Float1 = -49.5f,
-                                    Float2 = 4.6875f,
-                                    Float3 = -75.25f
+                                    Keyframe = 0x22222222,
+                                    X = -49.5f,
+                                    Y = 4.6875f,
+                                    Z = -75.25f
                                 }
                             }
                         }
@@ -156,24 +156,24 @@ namespace SAGESharp.Tests.Animations
                             {
                                 new TCBInterpolationData()
                                 {
-                                    Long1 = 0x11121314,
-                                    Float1 = 11f,
-                                    Float2 = 12f,
-                                    Float3 = 13f
+                                    Keyframe = 0x11121314,
+                                    X = 11f,
+                                    Y = 12f,
+                                    Z = 13f
                                 },
                                 new TCBInterpolationData()
                                 {
-                                    Long1 = 0x21222324,
-                                    Float1 = 21f,
-                                    Float2 = 22f,
-                                    Float3 = 23f,
+                                    Keyframe = 0x21222324,
+                                    X = 21f,
+                                    Y = 22f,
+                                    Z = 23f,
                                 },
                                 new TCBInterpolationData()
                                 {
-                                    Long1 = 0x31323334,
-                                    Float1 = 31f,
-                                    Float2 = 32f,
-                                    Float3 = 33f,
+                                    Keyframe = 0x31323334,
+                                    X = 31f,
+                                    Y = 32f,
+                                    Z = 33f,
                                 }
                             }
                         },
@@ -211,27 +211,27 @@ namespace SAGESharp.Tests.Animations
                             {
                                 new TCBInterpolationData()
                                 {
-                                    Long1 = 0x41424344,
-                                    Float1 = 41f,
-                                    Float2 = 42f,
-                                    Float3 = 43f
+                                    Keyframe = 0x41424344,
+                                    X = 41f,
+                                    Y = 42f,
+                                    Z = 43f
                                 }
                             },
                             TCBInterpolatorData2 = new List<TCBInterpolationData>()
                             {
                                 new TCBInterpolationData()
                                 {
-                                    Long1 = 0x51525354,
-                                    Float1 = 51f,
-                                    Float2 = 52f,
-                                    Float3 = 53f
+                                    Keyframe = 0x51525354,
+                                    X = 51f,
+                                    Y = 52f,
+                                    Z = 53f
                                 },
                                 new TCBInterpolationData()
                                 {
-                                    Long1 = 0x61626364,
-                                    Float1 = 61f,
-                                    Float2 = 62f,
-                                    Float3 = 63f
+                                    Keyframe = 0x61626364,
+                                    X = 61f,
+                                    Y = 62f,
+                                    Z = 63f
                                 }
                             }
                         }

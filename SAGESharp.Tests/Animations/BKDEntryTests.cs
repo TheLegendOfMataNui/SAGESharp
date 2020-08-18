@@ -90,10 +90,10 @@ namespace SAGESharp.Tests.Animations
             {
                 TCBInterpolationDataTests.SampleTCBInterpolationData().Also(o =>
                 {
-                    o.Long1 *= 3;
-                    o.Float1 *= 5;
-                    o.Float2 *= 2;
-                    o.Float3 *= 4;
+                    o.Keyframe *= 3;
+                    o.X *= 5;
+                    o.Y *= 2;
+                    o.Z *= 4;
                 })
             }
         };
