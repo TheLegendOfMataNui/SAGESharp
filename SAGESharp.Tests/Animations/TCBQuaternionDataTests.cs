@@ -27,34 +27,34 @@ namespace SAGESharp.Tests.Animations
         {
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleTCBQuaternionData,
-                updater: tcbQuaternionData => tcbQuaternionData.Short1 = 51
+                updater: tcbQuaternionData => tcbQuaternionData.Keyframe = 51
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleTCBQuaternionData,
-                updater: tcbQuaternionData => tcbQuaternionData.Short2 = 61
+                updater: tcbQuaternionData => tcbQuaternionData.X = 61
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleTCBQuaternionData,
-                updater: tcbQuaternionData => tcbQuaternionData.Short3 = 71
+                updater: tcbQuaternionData => tcbQuaternionData.Y = 71
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleTCBQuaternionData,
-                updater: tcbQuaternionData => tcbQuaternionData.Short4 = 81
+                updater: tcbQuaternionData => tcbQuaternionData.Z = 81
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleTCBQuaternionData,
-                updater: tcbQuaternionData => tcbQuaternionData.Short5 = 91
+                updater: tcbQuaternionData => tcbQuaternionData.W = 91
             ),
             ComparisionTestCase.CompareNotNullObjectAgainstNull(SampleTCBQuaternionData())
         };
 
         public static TCBQuaternionData SampleTCBQuaternionData() => new TCBQuaternionData
         {
-            Short1 = 0xAA,
-            Short2 = 0xBB,
-            Short3 = 0xCC,
-            Short4 = 0xDD,
-            Short5 = 0xEE
+            Keyframe = 0xAA,
+            X = 0xBB,
+            Y = 0xCC,
+            Z = 0xDD,
+            W = 0xEE
         };
     }
 }

@@ -72,11 +72,11 @@ namespace SAGESharp.Tests.Animations
                             {
                                 new TCBQuaternionData()
                                 {
-                                    Short1 = 0x1ABB,
-                                    Short2 = 0x1ACC,
-                                    Short3 = 0x1ADD,
-                                    Short4 = 0x1AEE,
-                                    Short5 = 0x1AFF
+                                    Keyframe = 0x1ABB,
+                                    X = 0x1ACC,
+                                    Y = 0x1ADD,
+                                    Z = 0x1AEE,
+                                    W = 0x1AFF
                                 }
                             },
                             TCBInterpolatorData1 = new List<TCBInterpolationData>()
@@ -122,19 +122,19 @@ namespace SAGESharp.Tests.Animations
                             {
                                 new TCBQuaternionData()
                                 {
-                                    Short1 = 0x01AA,
-                                    Short2 = 0x01BB,
-                                    Short3 = 0x01CC,
-                                    Short4 = 0x01DD,
-                                    Short5 = 0x01EE
+                                    Keyframe = 0x01AA,
+                                    X = 0x01BB,
+                                    Y = 0x01CC,
+                                    Z = 0x01DD,
+                                    W = 0x01EE
                                 },
                                 new TCBQuaternionData()
                                 {
-                                    Short1 = 0x02AA,
-                                    Short2 = 0x02BB,
-                                    Short3 = 0x02CC,
-                                    Short4 = 0x02DD,
-                                    Short5 = 0x02EE
+                                    Keyframe = 0x02AA,
+                                    X = 0x02BB,
+                                    Y = 0x02CC,
+                                    Z = 0x02DD,
+                                    W = 0x02EE
                                 }
                             }
                         },
@@ -145,11 +145,11 @@ namespace SAGESharp.Tests.Animations
                             {
                                 new TCBQuaternionData()
                                 {
-                                    Short1 = 0x11AA,
-                                    Short2 = 0x11BB,
-                                    Short3 = 0x11CC,
-                                    Short4 = 0x11DD,
-                                    Short5 = 0x11EE
+                                    Keyframe = 0x11AA,
+                                    X = 0x11BB,
+                                    Y = 0x11CC,
+                                    Z = 0x11DD,
+                                    W = 0x11EE
                                 }
                             },
                             TCBInterpolatorData1 = new List<TCBInterpolationData>()
@@ -184,27 +184,27 @@ namespace SAGESharp.Tests.Animations
                             {
                                 new TCBQuaternionData()
                                 {
-                                    Short1 = 0x21AA,
-                                    Short2 = 0x21BB,
-                                    Short3 = 0x21CC,
-                                    Short4 = 0x21DD,
-                                    Short5 = 0x21EE
+                                    Keyframe = 0x21AA,
+                                    X = 0x21BB,
+                                    Y = 0x21CC,
+                                    Z = 0x21DD,
+                                    W = 0x21EE
                                 },
                                 new TCBQuaternionData()
                                 {
-                                    Short1 = 0x22AA,
-                                    Short2 = 0x22BB,
-                                    Short3 = 0x22CC,
-                                    Short4 = 0x22DD,
-                                    Short5 = 0x22EE
+                                    Keyframe = 0x22AA,
+                                    X = 0x22BB,
+                                    Y = 0x22CC,
+                                    Z = 0x22DD,
+                                    W = 0x22EE
                                 },
                                 new TCBQuaternionData()
                                 {
-                                    Short1 = 0x23AA,
-                                    Short2 = 0x23BB,
-                                    Short3 = 0x23CC,
-                                    Short4 = 0x23DD,
-                                    Short5 = 0x23EE
+                                    Keyframe = 0x23AA,
+                                    X = 0x23BB,
+                                    Y = 0x23CC,
+                                    Z = 0x23DD,
+                                    W = 0x23EE
                                 }
                             },
                             TCBInterpolatorData1 = new List<TCBInterpolationData>()

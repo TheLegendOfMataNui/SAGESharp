@@ -1265,7 +1265,7 @@ namespace SAGESharp
                     Dictionary<int, Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>> keyframes = new Dictionary<int, Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>>();
                     foreach (TCBQuaternionData quat in track.TCBQuaternionData)
                     {
-                        keyframes.Add(quat.Short1, new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(quat, null, null));
+                        keyframes.Add(quat.Keyframe, new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(quat, null, null));
                     }
                     foreach (TCBInterpolationData trans in track.TCBInterpolatorData1)
                     {
@@ -1343,8 +1343,8 @@ namespace SAGESharp
                             //bindPoseTransform.Decompose(out _, out rotation, out _);
                             //rotation = new Quaternion(DecompressShort(pair.Value.Item1.Short2), DecompressShort(pair.Value.Item1.Short3), DecompressShort(pair.Value.Item1.Short4),
                             //    DecompressShort(pair.Value.Item1.Short5)) * rotation;
-                            rotation = new Quaternion(DecompressShort(pair.Value.Item1.Short2), DecompressShort(pair.Value.Item1.Short3), DecompressShort(pair.Value.Item1.Short4),
-                                DecompressShort(pair.Value.Item1.Short5));
+                            rotation = new Quaternion(DecompressShort(pair.Value.Item1.X), DecompressShort(pair.Value.Item1.Y), DecompressShort(pair.Value.Item1.Z),
+                                DecompressShort(pair.Value.Item1.W));
                         }
                         else
                         {
