@@ -11,39 +11,39 @@ namespace SAGESharp.Animations
 {
     public sealed class TCBQuaternionData : IEquatable<TCBQuaternionData>, IBinarySerializable
     {
-        public short Short1 { get; set; }
+        public short Keyframe { get; set; }
 
-        public short Short2 { get; set; }
+        public short X { get; set; }
 
-        public short Short3 { get; set; }
+        public short Y { get; set; }
 
-        public short Short4 { get; set; }
+        public short Z { get; set; }
 
-        public short Short5 { get; set; }
+        public short W { get; set; }
 
         #region IBinarySerializable
         public void Read(IBinaryReader binaryReader)
         {
-            short newShort1 = binaryReader.ReadInt16();
-            short newShort2 = binaryReader.ReadInt16();
-            short newShort3 = binaryReader.ReadInt16();
-            short newShort4 = binaryReader.ReadInt16();
-            short newShort5 = binaryReader.ReadInt16();
+            short keyframe = binaryReader.ReadInt16();
+            short x = binaryReader.ReadInt16();
+            short y = binaryReader.ReadInt16();
+            short z = binaryReader.ReadInt16();
+            short w = binaryReader.ReadInt16();
 
-            Short1 = newShort1;
-            Short2 = newShort2;
-            Short3 = newShort3;
-            Short4 = newShort4;
-            Short5 = newShort5;
+            Keyframe = keyframe;
+            X = x;
+            Y = y;
+            Z = z;
+            W = w;
         }
 
         public void Write(IBinaryWriter binaryWriter)
         {
-            binaryWriter.WriteInt16(Short1);
-            binaryWriter.WriteInt16(Short2);
-            binaryWriter.WriteInt16(Short3);
-            binaryWriter.WriteInt16(Short4);
-            binaryWriter.WriteInt16(Short5);
+            binaryWriter.WriteInt16(Keyframe);
+            binaryWriter.WriteInt16(X);
+            binaryWriter.WriteInt16(Y);
+            binaryWriter.WriteInt16(Z);
+            binaryWriter.WriteInt16(W);
         }
         #endregion
 
@@ -65,11 +65,11 @@ namespace SAGESharp.Animations
         #endregion
 
         public override string ToString() => $"{nameof(TCBQuaternionData)}(" +
-            $"{nameof(Short1)}={Short1}, " +
-            $"{nameof(Short2)}={Short2}, " +
-            $"{nameof(Short3)}={Short3}, " +
-            $"{nameof(Short4)}={Short4}, " +
-            $"{nameof(Short5)}={Short5}" +
+            $"{nameof(Keyframe)}={Keyframe}, " +
+            $"{nameof(X)}={X}, " +
+            $"{nameof(Y)}={Y}, " +
+            $"{nameof(Z)}={Z}, " +
+            $"{nameof(W)}={W}" +
         ")";
     }
 }
