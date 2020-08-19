@@ -66,15 +66,15 @@ namespace SAGESharp.Animations
             {
                 long offsetPosition = offsetPositions[n];
                 binaryWriter.DoAtPosition(offsetPosition, offset => binaryWriter.WriteUInt32((uint)offset));
-                entry.TCBQuaternionData.ForEach(WriteObject);
+                entry.RotationData.ForEach(WriteObject);
 
                 offsetPosition += 4;
                 binaryWriter.DoAtPosition(offsetPosition, offset => binaryWriter.WriteUInt32((uint)offset));
-                entry.TCBInterpolatorData1.ForEach(WriteObject);
+                entry.TranslationData.ForEach(WriteObject);
 
                 offsetPosition += 4;
                 binaryWriter.DoAtPosition(offsetPosition, offset => binaryWriter.WriteUInt32((uint)offset));
-                entry.TCBInterpolatorData2.ForEach(WriteObject);
+                entry.ScalingData.ForEach(WriteObject);
             });
         }
         #endregion
