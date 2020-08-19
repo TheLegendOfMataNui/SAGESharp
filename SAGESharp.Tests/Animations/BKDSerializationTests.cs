@@ -68,7 +68,7 @@ namespace SAGESharp.Tests.Animations
                         new BKDEntry()
                         {
                             Id = 1,
-                            TCBQuaternionData = new List<TCBQuaternionData>()
+                            RotationData = new List<TCBQuaternionData>()
                             {
                                 new TCBQuaternionData()
                                 {
@@ -79,7 +79,7 @@ namespace SAGESharp.Tests.Animations
                                     W = 0x1AFF
                                 }
                             },
-                            TCBInterpolatorData1 = new List<TCBInterpolationData>()
+                            TranslationData = new List<TCBInterpolationData>()
                             {
                                 new TCBInterpolationData()
                                 {
@@ -89,7 +89,7 @@ namespace SAGESharp.Tests.Animations
                                     Z = -0.875f
                                 }
                             },
-                            TCBInterpolatorData2 = new List<TCBInterpolationData>()
+                            ScalingData = new List<TCBInterpolationData>()
                             {
                                 new TCBInterpolationData()
                                 {
@@ -118,7 +118,7 @@ namespace SAGESharp.Tests.Animations
                         new BKDEntry()
                         {
                             Id = 0x0B,
-                            TCBQuaternionData = new List<TCBQuaternionData>()
+                            RotationData = new List<TCBQuaternionData>()
                             {
                                 new TCBQuaternionData()
                                 {
@@ -141,7 +141,7 @@ namespace SAGESharp.Tests.Animations
                         new BKDEntry()
                         {
                             Id = 0x0C,
-                            TCBQuaternionData = new List<TCBQuaternionData>()
+                            RotationData = new List<TCBQuaternionData>()
                             {
                                 new TCBQuaternionData()
                                 {
@@ -152,7 +152,7 @@ namespace SAGESharp.Tests.Animations
                                     W = 0x11EE
                                 }
                             },
-                            TCBInterpolatorData1 = new List<TCBInterpolationData>()
+                            TranslationData = new List<TCBInterpolationData>()
                             {
                                 new TCBInterpolationData()
                                 {
@@ -180,7 +180,7 @@ namespace SAGESharp.Tests.Animations
                         new BKDEntry()
                         {
                             Id = 0x0D,
-                            TCBQuaternionData = new List<TCBQuaternionData>()
+                            RotationData = new List<TCBQuaternionData>()
                             {
                                 new TCBQuaternionData()
                                 {
@@ -207,7 +207,7 @@ namespace SAGESharp.Tests.Animations
                                     W = 0x23EE
                                 }
                             },
-                            TCBInterpolatorData1 = new List<TCBInterpolationData>()
+                            TranslationData = new List<TCBInterpolationData>()
                             {
                                 new TCBInterpolationData()
                                 {
@@ -217,7 +217,7 @@ namespace SAGESharp.Tests.Animations
                                     Z = 43f
                                 }
                             },
-                            TCBInterpolatorData2 = new List<TCBInterpolationData>()
+                            ScalingData = new List<TCBInterpolationData>()
                             {
                                 new TCBInterpolationData()
                                 {

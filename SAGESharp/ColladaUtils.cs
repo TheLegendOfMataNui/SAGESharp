@@ -1263,11 +1263,11 @@ namespace SAGESharp
                 {
                     // Glob keys in the same frame together.
                     Dictionary<int, Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>> keyframes = new Dictionary<int, Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>>();
-                    foreach (TCBQuaternionData quat in track.TCBQuaternionData)
+                    foreach (TCBQuaternionData quat in track.RotationData)
                     {
                         keyframes.Add(quat.Keyframe, new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(quat, null, null));
                     }
-                    foreach (TCBInterpolationData trans in track.TCBInterpolatorData1)
+                    foreach (TCBInterpolationData trans in track.TranslationData)
                     {
                         if (keyframes.ContainsKey(trans.Keyframe))
                         {
@@ -1278,7 +1278,7 @@ namespace SAGESharp
                             keyframes.Add(trans.Keyframe, new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(null, trans, null));
                         }
                     }
-                    foreach (TCBInterpolationData scale in track.TCBInterpolatorData2)
+                    foreach (TCBInterpolationData scale in track.ScalingData)
                     {
                         if (keyframes.ContainsKey(scale.Keyframe))
                         {

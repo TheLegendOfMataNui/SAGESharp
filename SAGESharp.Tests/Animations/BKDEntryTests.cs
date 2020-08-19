@@ -18,7 +18,7 @@ namespace SAGESharp.Tests.Animations
         public void Test_Setting_A_Null_TCBQuaternion_List()
         {
             BKDEntry entry = new BKDEntry();
-            Action action = () => entry.TCBQuaternionData = null;
+            Action action = () => entry.RotationData = null;
 
             action.Should().ThrowArgumentNullException("value");
         }
@@ -27,7 +27,7 @@ namespace SAGESharp.Tests.Animations
         public void Test_Setting_A_Null_TCBInpterpolationData1_List()
         {
             BKDEntry entry = new BKDEntry();
-            Action action = () => entry.TCBInterpolatorData1 = null;
+            Action action = () => entry.TranslationData = null;
 
             action.Should().ThrowArgumentNullException("value");
         }
@@ -36,7 +36,7 @@ namespace SAGESharp.Tests.Animations
         public void Test_Setting_A_Null_TCBInpterpolationData2_List()
         {
             BKDEntry entry = new BKDEntry();
-            Action action = () => entry.TCBInterpolatorData2 = null;
+            Action action = () => entry.ScalingData = null;
 
             action.Should().ThrowArgumentNullException("value");
         }
@@ -62,15 +62,15 @@ namespace SAGESharp.Tests.Animations
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleBKDEntry,
-                updater: bkdEntry => bkdEntry.TCBQuaternionData.Add(new TCBQuaternionData())
+                updater: bkdEntry => bkdEntry.RotationData.Add(new TCBQuaternionData())
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleBKDEntry,
-                updater: bkdEntry => bkdEntry.TCBInterpolatorData1.Add(new TCBInterpolationData())
+                updater: bkdEntry => bkdEntry.TranslationData.Add(new TCBInterpolationData())
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleBKDEntry,
-                updater: bkdEntry => bkdEntry.TCBInterpolatorData2.Add(new TCBInterpolationData())
+                updater: bkdEntry => bkdEntry.ScalingData.Add(new TCBInterpolationData())
             ),
             ComparisionTestCase.CompareNotNullObjectAgainstNull(SampleBKDEntry())
         };
@@ -78,15 +78,15 @@ namespace SAGESharp.Tests.Animations
         public static BKDEntry SampleBKDEntry() => new BKDEntry
         {
             Id = 6,
-            TCBQuaternionData = new List<TCBQuaternionData>
+            RotationData = new List<TCBQuaternionData>
             {
                 TCBQuaternionDataTests.SampleTCBQuaternionData()
             },
-            TCBInterpolatorData1 = new List<TCBInterpolationData>
+            TranslationData = new List<TCBInterpolationData>
             {
                 TCBInterpolationDataTests.SampleTCBInterpolationData()
             },
-            TCBInterpolatorData2 = new List<TCBInterpolationData>
+            ScalingData = new List<TCBInterpolationData>
             {
                 TCBInterpolationDataTests.SampleTCBInterpolationData().Also(o =>
                 {

@@ -14,54 +14,54 @@ namespace SAGESharp.Animations
     public sealed class BKDEntry : IEquatable<BKDEntry>, IBinarySerializable
     {
         #region Fields
-        private IList<TCBQuaternionData> tcbQuaternionData = new List<TCBQuaternionData>();
+        private IList<TCBQuaternionData> rotationData = new List<TCBQuaternionData>();
 
-        private IList<TCBInterpolationData> tcbInterpolationData1 = new List<TCBInterpolationData>();
+        private IList<TCBInterpolationData> translationData = new List<TCBInterpolationData>();
 
-        private IList<TCBInterpolationData> tcbInterpolationData2 = new List<TCBInterpolationData>();
+        private IList<TCBInterpolationData> scalingData = new List<TCBInterpolationData>();
         #endregion
 
         public ushort Id { get; set; }
 
-        public IList<TCBQuaternionData> TCBQuaternionData
+        public IList<TCBQuaternionData> RotationData
         {
-            get => tcbQuaternionData;
-            set => tcbQuaternionData = value ?? throw new ArgumentNullException(nameof(value));
+            get => rotationData;
+            set => rotationData = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        public IList<TCBInterpolationData> TCBInterpolatorData1
+        public IList<TCBInterpolationData> TranslationData
         {
-            get => tcbInterpolationData1;
-            set => tcbInterpolationData1 = value ?? throw new ArgumentNullException(nameof(value));
+            get => translationData;
+            set => translationData = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        public IList<TCBInterpolationData> TCBInterpolatorData2
+        public IList<TCBInterpolationData> ScalingData
         {
-            get => tcbInterpolationData2;
-            set => tcbInterpolationData2 = value ?? throw new ArgumentNullException(nameof(value));
+            get => scalingData;
+            set => scalingData = value ?? throw new ArgumentNullException(nameof(value));
         }
 
         #region IBinarySerializable
         public void Read(IBinaryReader binaryReader)
         {
             ushort newId = binaryReader.ReadUInt16();
-            ushort newTCBQuaternionDataCount = binaryReader.ReadUInt16();
-            ushort newTCBInterpolatorData1Count = binaryReader.ReadUInt16();
-            ushort newTCBInterpolatorData2Count = binaryReader.ReadUInt16();
+            ushort rotationsCount = binaryReader.ReadUInt16();
+            ushort translationsCount = binaryReader.ReadUInt16();
+            ushort scalesCount = binaryReader.ReadUInt16();
 
-            IList<TCBQuaternionData> newTCBQuaternionData = ReadEntry<TCBQuaternionData>(binaryReader, newTCBQuaternionDataCount);
+            IList<TCBQuaternionData> rotationData = ReadEntries<TCBQuaternionData>(binaryReader, rotationsCount);
 
-            IList<TCBInterpolationData> newTCBInterpolatorData1 = ReadEntry<TCBInterpolationData>(binaryReader, newTCBInterpolatorData1Count);
+            IList<TCBInterpolationData> translationData = ReadEntries<TCBInterpolationData>(binaryReader, translationsCount);
 
-            IList<TCBInterpolationData> newTCBInterpolatorData2 = ReadEntry<TCBInterpolationData>(binaryReader, newTCBInterpolatorData2Count);
+            IList<TCBInterpolationData> scaleData = ReadEntries<TCBInterpolationData>(binaryReader, scalesCount);
 
             Id = newId;
-            TCBQuaternionData = newTCBQuaternionData;
-            TCBInterpolatorData1 = newTCBInterpolatorData1;
-            TCBInterpolatorData2 = newTCBInterpolatorData2;
+            RotationData = rotationData;
+            TranslationData = translationData;
+            ScalingData = scaleData;
         }
 
-        private static IList<T> ReadEntry<T>(IBinaryReader binaryReader, ushort count) where T : class, IBinarySerializable, new()
+        private static IList<T> ReadEntries<T>(IBinaryReader binaryReader, ushort count) where T : class, IBinarySerializable, new()
         {
             uint offset = binaryReader.ReadUInt32();
             IList <T> result = new List<T>(count);
@@ -82,12 +82,12 @@ namespace SAGESharp.Animations
         public void Write(IBinaryWriter binaryWriter)
         {
             binaryWriter.WriteUInt16(Id);
-            binaryWriter.WriteUInt16((ushort)TCBQuaternionData.Count);
-            binaryWriter.WriteUInt16((ushort)TCBInterpolatorData1.Count);
-            binaryWriter.WriteUInt16((ushort)TCBInterpolatorData2.Count);
-            binaryWriter.WriteUInt32(0); // TCBQuaternionData offset
-            binaryWriter.WriteUInt32(0); // TCBInterpolatorData1 offset
-            binaryWriter.WriteUInt32(0); // TCBInterpolatorData2 offset
+            binaryWriter.WriteUInt16((ushort)RotationData.Count);
+            binaryWriter.WriteUInt16((ushort)TranslationData.Count);
+            binaryWriter.WriteUInt16((ushort)ScalingData.Count);
+            binaryWriter.WriteUInt32(0); // RotationData offset
+            binaryWriter.WriteUInt32(0); // TranslationData offset
+            binaryWriter.WriteUInt32(0); // ScalingData offset
         }
         #endregion
 
@@ -110,9 +110,9 @@ namespace SAGESharp.Animations
 
         public override string ToString() => $"{nameof(BKDEntry)}(" +
             $"{nameof(Id)}={Id}, " +
-            $"{nameof(TCBQuaternionData)}=[{string.Join(", ", TCBQuaternionData)}], " +
-            $"{nameof(TCBInterpolatorData1)}=[{string.Join(", ", TCBInterpolatorData1)}], " +
-            $"{nameof(TCBInterpolatorData2)}=[{string.Join(", ", TCBInterpolatorData2)}]"
+            $"{nameof(RotationData)}=[{string.Join(", ", RotationData)}], " +
+            $"{nameof(TranslationData)}=[{string.Join(", ", TranslationData)}], " +
+            $"{nameof(ScalingData)}=[{string.Join(", ", ScalingData)}]"
         + ")";
     }
 }
