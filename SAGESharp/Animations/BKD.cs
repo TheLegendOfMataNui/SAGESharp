@@ -15,11 +15,18 @@ namespace SAGESharp.Animations
     {
         public const int FRAMES_PER_SECOND = 60;
 
+        private const float FLOAT_CONVERTION_CONSTANT = 1/60f;
+
         #region Fields
         private IList<BKDEntry> entries = new List<BKDEntry>();
+        private ushort length;
         #endregion
 
-        public ushort Length { get; set; }
+        public float Length
+        {
+            get => length * FLOAT_CONVERTION_CONSTANT;
+            set => length = (ushort)(value / FLOAT_CONVERTION_CONSTANT);
+        }
 
         public IList<BKDEntry> Entries
         {
@@ -41,7 +48,7 @@ namespace SAGESharp.Animations
                 newEntries.Add(entry);
             }
 
-            Length = newLength;
+            length = newLength;
             Entries = newEntries;
         }
 
@@ -52,7 +59,7 @@ namespace SAGESharp.Animations
                 binarySerializable.Write(binaryWriter);
             }
 
-            binaryWriter.WriteUInt16(Length);
+            binaryWriter.WriteUInt16(length);
             binaryWriter.WriteUInt16((ushort)Entries.Count);
 
             long[] offsetPositions = new long[Entries.Count];

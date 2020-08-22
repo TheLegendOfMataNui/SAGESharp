@@ -54,7 +54,8 @@ namespace SAGESharp.Tests.Animations
                 testFilePath: PathForTestFile("EmptyBKD.bkd"),
                 expectedProvider: () => new BKD()
                 {
-                    Length = 1
+                    // IntegerLength = 1
+                    Length = 0.01666667f
                 }
             ),
             new SerializationTestCaseData<BKD>(
@@ -62,7 +63,8 @@ namespace SAGESharp.Tests.Animations
                 testFilePath: PathForTestFile("SimpleBKD.bkd"),
                 expectedProvider: () => new BKD()
                 {
-                    Length = 522,
+                    // IntegerLength = 522
+                    Length = 8.700001f,
                     Entries = new List<BKDEntry>()
                     {
                         new BKDEntry()
@@ -108,7 +110,8 @@ namespace SAGESharp.Tests.Animations
                 testFilePath: PathForTestFile("ComplexBKD.bkd"),
                 expectedProvider: () => new BKD()
                 {
-                    Length = 312,
+                    // IntegerLength = 312,
+                    Length = 5.20000029f,
                     Entries = new List<BKDEntry>()
                     {
                         new BKDEntry()
