@@ -8,11 +8,36 @@ using NUnit.Framework;
 using SAGESharp.Animations;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace SAGESharp.Tests.Animations
 {
     class BKDTests
     {
+        private static readonly FieldInfo LENGTH_FIELD = typeof(BKD)
+            .GetField("length", BindingFlags.NonPublic | BindingFlags.Instance);
+
+        [Test]
+        public void Test_Getting_The_Length_Of_A_BKD_Object()
+        {
+            BKD bkd = new BKD();
+
+            LENGTH_FIELD.SetValue(bkd, (ushort)3647);
+
+            bkd.Length.Should().Be(60.7833366f);
+        }
+
+        [Test]
+        public void Test_Setting_The_Length_Of_A_BKD_Object()
+        {
+            BKD bkd = new BKD
+            {
+                Length = 60.7833366f
+            };
+
+            LENGTH_FIELD.GetValue(bkd).Should().Be(3647);
+        }
+
         [Test]
         public void Test_Setting_A_Null_Entry_List_To_A_BKD_Object()
         {
@@ -39,7 +64,7 @@ namespace SAGESharp.Tests.Animations
         {
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleBKD,
-                updater: bkd => bkd.Length *= 2
+                updater: bkd => bkd.Length *= 4
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleBKD,
@@ -50,7 +75,7 @@ namespace SAGESharp.Tests.Animations
 
         public static BKD SampleBKD() => new BKD
         {
-            Length = 5,
+            Length = 1.5f,
             Entries = new List<BKDEntry>
             {
                 BKDEntryTests.SampleBKDEntry()
