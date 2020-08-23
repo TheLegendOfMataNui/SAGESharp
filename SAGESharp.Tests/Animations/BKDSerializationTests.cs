@@ -75,10 +75,10 @@ namespace SAGESharp.Tests.Animations
                                 new TCBQuaternionData()
                                 {
                                     Keyframe = 0x1ABB,
-                                    X = 0x1ACC,
-                                    Y = 0x1ADD,
-                                    Z = 0x1AEE,
-                                    W = 0x1AFF
+                                    X = 0.20935058508f, // 0x1ACC in binary
+                                    Y = 0.209869383906f, // 0x1ADD in binary
+                                    Z = 0.210388182732f, // 0x1AEE in binary
+                                    W = 0.210906981558f // 0x1AFF in binary
                                 }
                             },
                             TranslationData = new List<TCBInterpolationData>()
@@ -126,18 +126,18 @@ namespace SAGESharp.Tests.Animations
                                 new TCBQuaternionData()
                                 {
                                     Keyframe = 0x01AA,
-                                    X = 0x01BB,
-                                    Y = 0x01CC,
-                                    Z = 0x01DD,
-                                    W = 0x01EE
+                                    X = 0.013519287054f, // 0x01BB in binary
+                                    Y = 0.01403808588f, // 0x01CC in binary
+                                    Z = 0.014556884706f, // 0x01DD in binary
+                                    W = 0.015075683532f, // 0x01EE in binary
                                 },
                                 new TCBQuaternionData()
                                 {
                                     Keyframe = 0x02AA,
-                                    X = 0x02BB,
-                                    Y = 0x02CC,
-                                    Z = 0x02DD,
-                                    W = 0x02EE
+                                    X = 0.021331787022f, // 0x02BB in binary
+                                    Y = 0.021850585848f, // 0x02CC in binary
+                                    Z = 0.022369384674f, // 0x02DD in binary
+                                    W = 0.0228881835f, // 0x02EE in binary
                                 }
                             }
                         },
@@ -149,10 +149,10 @@ namespace SAGESharp.Tests.Animations
                                 new TCBQuaternionData()
                                 {
                                     Keyframe = 0x11AA,
-                                    X = 0x11BB,
-                                    Y = 0x11CC,
-                                    Z = 0x11DD,
-                                    W = 0x11EE
+                                    X = 0.138519286542f, // 0x11BB in binary
+                                    Y = 0.139038085368f, // 0x11CC in binary
+                                    Z = 0.139556884194f, // 0x11DD in binary
+                                    W = 0.14007568302f, // 0x11EE in binary
                                 }
                             },
                             TranslationData = new List<TCBInterpolationData>()
@@ -188,26 +188,26 @@ namespace SAGESharp.Tests.Animations
                                 new TCBQuaternionData()
                                 {
                                     Keyframe = 0x21AA,
-                                    X = 0x21BB,
-                                    Y = 0x21CC,
-                                    Z = 0x21DD,
-                                    W = 0x21EE
+                                    X = 0.26351928603f, // 0x21BB in binary
+                                    Y = 0.264038084856f, // 0x21CC in binary
+                                    Z = 0.264556883682f, // 0x21DD in binary
+                                    W = 0.265075682508f, // 0x21EE in binary
                                 },
                                 new TCBQuaternionData()
                                 {
                                     Keyframe = 0x22AA,
-                                    X = 0x22BB,
-                                    Y = 0x22CC,
-                                    Z = 0x22DD,
-                                    W = 0x22EE
+                                    X = 0.271331785998f, // 0x22BB in binary
+                                    Y = 0.271850584824f, // 0x22CC in binary
+                                    Z = 0.27236938365f, // 0x22DD in binary
+                                    W = 0.272888182476f, // 0x22EE in binary
                                 },
                                 new TCBQuaternionData()
                                 {
                                     Keyframe = 0x23AA,
-                                    X = 0x23BB,
-                                    Y = 0x23CC,
-                                    Z = 0x23DD,
-                                    W = 0x23EE
+                                    X = 0.279144285966f, // 0x23BB in binary
+                                    Y = 0.279663084792f, // 0x23CC in binary
+                                    Z = 0.280181883618f, // 0x23DD in binary
+                                    W = 0.280700682444f // 0x23EE in binary
                                 }
                             },
                             TranslationData = new List<TCBInterpolationData>()

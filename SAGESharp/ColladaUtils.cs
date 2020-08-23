@@ -68,11 +68,6 @@ namespace SAGESharp
             return new XElement((XNamespace)SCHEMA_URL + "matrix", String.Join(" ", m.ToArray()));
         }
 
-        private static float DecompressShort(short value)
-        {
-            return (float)value * 0.000030517578f;
-        }
-
         private static XObject ImportCOLLADAMesh(string name, XElement materialBinding, Matrix totalTransform, XElement geometryElement, Dictionary<string, XObject> materials, bool flipV, bool mergeVertices, List<List<int>> positionUsage = null)
         {
             XNamespace ns = SCHEMA_URL;
@@ -1343,8 +1338,7 @@ namespace SAGESharp
                             //bindPoseTransform.Decompose(out _, out rotation, out _);
                             //rotation = new Quaternion(DecompressShort(pair.Value.Item1.Short2), DecompressShort(pair.Value.Item1.Short3), DecompressShort(pair.Value.Item1.Short4),
                             //    DecompressShort(pair.Value.Item1.Short5)) * rotation;
-                            rotation = new Quaternion(DecompressShort(pair.Value.Item1.X), DecompressShort(pair.Value.Item1.Y), DecompressShort(pair.Value.Item1.Z),
-                                DecompressShort(pair.Value.Item1.W));
+                            rotation = new Quaternion(pair.Value.Item1.X, pair.Value.Item1.Y, pair.Value.Item1.Z, pair.Value.Item1.W);
                         }
                         else
                         {
