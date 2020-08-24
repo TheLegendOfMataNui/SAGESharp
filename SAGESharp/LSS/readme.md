@@ -69,7 +69,7 @@ Assignments set the value of an assignable variable to the value specificed by t
 
 **Block**  
 ```
-{ statement1, statement2, [...] }
+{ statement1; statement2; [...] }
 ```
 Block statements execute a sequence of zero or more contained statements in order.
 
