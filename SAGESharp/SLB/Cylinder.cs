@@ -7,21 +7,30 @@ using SAGESharp.IO;
 
 namespace SAGESharp.SLB
 {
-    internal sealed class Cylinder
+    public sealed class Cylinder
     {
         [SerializableProperty(1)]
-        public Identifier Id { get; set; }
+        public Identifier ID { get; set; }
 
         [SerializableProperty(2)]
-        public CollisionCylinder CollisionCylinder { get; set; }
+        public CylinderBounds Bounds { get; set; }
     }
 
-    internal sealed class CollisionCylinder
+    /// <summary>
+    /// Defines the shape of a vertical cylinder by specifying the corners of the bounding box it occupies.
+    /// </summary>
+    public sealed class CylinderBounds
     {
+        /// <summary>
+        /// The location of the corner of the bounding box with the lowest coordinate values.
+        /// </summary>
         [SerializableProperty(1)]
-        Point3D P1 { get; set; }
+        public Point3D Min { get; set; }
 
+        /// <summary>
+        /// The location of the corner of the bounding box with the greatest coordinate values.
+        /// </summary>
         [SerializableProperty(2)]
-        Point3D P2 { get; set; }
+        public Point3D Max { get; set; }
     }
 }
