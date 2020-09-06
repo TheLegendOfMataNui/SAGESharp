@@ -9,6 +9,7 @@ using SAGESharp.IO;
 using SAGESharp.Utils;
 using System;
 using System.Text;
+using SharpDX;
 
 namespace SAGESharp.SLB
 {
@@ -446,7 +447,7 @@ namespace SAGESharp.SLB
         }
     }
 
-    internal sealed class Point3D : IEquatable<Point3D>
+    public sealed class Point3D : IEquatable<Point3D>
     {
         [SerializableProperty(1)]
         public float X { get; set; }
@@ -457,11 +458,30 @@ namespace SAGESharp.SLB
         [SerializableProperty(3)]
         public float Z { get; set; }
 
-        public bool Equals(Point3D other)
-            => MemberwiseEqualityComparer<Point3D>.ByProperties.Equals(this, other);
+        public Point3D() : this(0.0f, 0.0f, 0.0f)
+        {
+            
+        }
+
+        public Point3D(float x, float y, float z)
+        {
+            this.X = x;
+            this.Y = y;
+            this.Z = z;
+        }
 
         public override string ToString()
             => $"X={X}, Y={Y}, Z={Z}";
+
+        #region Conversion to & from Vector3
+        public static implicit operator Vector3(Point3D point) => new Vector3(point.X, point.Y, point.Z);
+
+        public static implicit operator Point3D(Vector3 vector3) => new Point3D(vector3.X, vector3.Y, vector3.Z);
+        #endregion
+
+        #region Equality
+        public bool Equals(Point3D other)
+            => MemberwiseEqualityComparer<Point3D>.ByProperties.Equals(this, other);
 
         public override bool Equals(object other)
             => Equals(other as Point3D);
@@ -474,5 +494,6 @@ namespace SAGESharp.SLB
 
         public static bool operator !=(Point3D left, Point3D right)
             => !(left == right);
+        #endregion
     }
 }
