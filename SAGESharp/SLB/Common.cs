@@ -10,11 +10,12 @@ using SAGESharp.Utils;
 using System;
 using System.Text;
 using SharpDX;
+using System.ComponentModel;
 
 namespace SAGESharp.SLB
 {
     /// <summary>
-    /// Class that represents an identifier within SLB files.
+    /// Immutable class that represents an identifier within SLB files.
     /// 
     /// The identifier consist of 4 bytes/characters (a 32 bit integer).
     /// </summary>
@@ -447,16 +448,43 @@ namespace SAGESharp.SLB
         }
     }
 
-    public sealed class Point3D : IEquatable<Point3D>
+    public sealed class Point3D : IEquatable<Point3D>, INotifyPropertyChanged
     {
+        private float _x;
         [SerializableProperty(1)]
-        public float X { get; set; }
+        public float X
+        {
+            get => _x;
+            set
+            {
+                _x = value;
+                RaisePropertyChanged(nameof(X));
+            }
+        }
 
+        private float _y;
         [SerializableProperty(2)]
-        public float Y { get; set; }
+        public float Y
+        {
+            get => _y;
+            set
+            {
+                _y = value;
+                RaisePropertyChanged(nameof(Y));
+            }
+        }
 
+        private float _z;
         [SerializableProperty(3)]
-        public float Z { get; set; }
+        public float Z
+        {
+            get => _z;
+            set
+            {
+                _z = value;
+                RaisePropertyChanged(nameof(Z));
+            }
+        }
 
         public Point3D() : this(0.0f, 0.0f, 0.0f)
         {
@@ -472,6 +500,15 @@ namespace SAGESharp.SLB
 
         public override string ToString()
             => $"X={X}, Y={Y}, Z={Z}";
+
+        #region INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void RaisePropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        #endregion
 
         #region Conversion to & from Vector3
         public static implicit operator Vector3(Point3D point) => new Vector3(point.X, point.Y, point.Z);

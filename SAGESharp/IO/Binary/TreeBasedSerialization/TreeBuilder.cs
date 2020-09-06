@@ -135,7 +135,7 @@ namespace SAGESharp.IO.Binary.TreeBasedSerialization
         {
             if (type.GetConstructor(Array.Empty<Type>()) is null)
             {
-                throw new BadTypeException(type, "Type doesn't have a public parameterless constructor.");
+                throw new BadTypeException(type, $"Type {type} doesn't have a public parameterless constructor.");
             }
         }
 
@@ -144,11 +144,11 @@ namespace SAGESharp.IO.Binary.TreeBasedSerialization
             int count = properties.Count();
             if (count == 0)
             {
-                throw new BadTypeException(type, "Type doesn't have serializable properties.");
+                throw new BadTypeException(type, $"Type {type} doesn't have serializable properties.");
             }
             else if (count != properties.Select(p => p.Order).Distinct().Count())
             {
-                throw new BadTypeException(type, "Type has two or more properties with the same serialization order.");
+                throw new BadTypeException(type, $"Type {type} has two or more properties with the same serialization order.");
             }
         }
 

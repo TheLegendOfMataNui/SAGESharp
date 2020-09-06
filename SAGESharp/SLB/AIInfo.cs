@@ -5,48 +5,176 @@
  */
 using SAGESharp.IO;
 using SAGESharp.IO.Binary;
+using System.ComponentModel;
 
 namespace SAGESharp.SLB
 {
-    internal sealed class AIInfo
+    public sealed class AIInfo : INotifyPropertyChanged
     {
+        private byte _flying;
         [SerializableProperty(1)]
         [RightPadding(3)]
-        public bool Flying { get; set; }
+        public byte Flying
+        {
+            get => _flying;
+            set
+            {
+                _flying = value;
+                RaisePropertyChanged(nameof(Flying));
+            }
+        }
 
+        private float _range;
         [SerializableProperty(2)]
-        public float Range { get; set; }
+        public float Range
+        {
+            get => _range;
+            set
+            {
+                _range = value;
+                RaisePropertyChanged(nameof(Range));
+            }
+        }
 
+        private long _patrolRandomness;
         [SerializableProperty(3)]
-        public long PatrolRandomness { get; set; }
+        public long PatrolRandomness
+        {
+            get => _patrolRandomness;
+            set
+            {
+                _patrolRandomness = value;
+                RaisePropertyChanged(nameof(PatrolRandomness));
+            }
+        }
 
+        private TimerValues _timerValuesIdle;
         [SerializableProperty(4)]
-        public TimerValues TimerValuesIdle { get; set; }
+        public TimerValues TimerValuesIdle
+        {
+            get => _timerValuesIdle;
+            set
+            {
+                _timerValuesIdle = value;
+                RaisePropertyChanged(nameof(TimerValuesIdle));
+            }
+        }
 
+        private TimerValues _timerValuesPatrol;
         [SerializableProperty(5)]
-        public TimerValues TimerValuesPatrol { get; set; }
+        public TimerValues TimerValuesPatrol
+        {
+            get => _timerValuesPatrol;
+            set
+            {
+                _timerValuesPatrol = value;
+                RaisePropertyChanged(nameof(TimerValuesPatrol));
+            }
+        }
 
+        private short _toughness;
         [SerializableProperty(6)]
-        public short Toughness { get; set; }
+        public short Toughness
+        {
+            get => _toughness;
+            set
+            {
+                _toughness = value;
+                RaisePropertyChanged(nameof(Toughness));
+            }
+        }
 
+        private AttackType _attackType;
         [SerializableProperty(7)]
-        public AttackType AttackType { get; set; }
+        public AttackType AttackType
+        {
+            get => _attackType;
+            set
+            {
+                _attackType = value;
+                RaisePropertyChanged(nameof(AttackType));
+            }
+        }
 
+        private byte _benign;
         [SerializableProperty(8)]
-        public bool Benign { get; set; }
+        public byte Benign
+        {
+            get => _benign;
+            set
+            {
+                _benign = value;
+                RaisePropertyChanged(nameof(Benign));
+            }
+        }
 
+        private string _projectileSprite;
         [SerializableProperty(9)]
         [InlineString(32)]
-        public string ProjectileSprite { get; set; }
+        public string ProjectileSprite
+        {
+            get => _projectileSprite;
+            set
+            {
+                _projectileSprite = value;
+                RaisePropertyChanged(nameof(ProjectileSprite));
+            }
+        }
+
+        public AIInfo()
+        {
+
+        }
+
+        #region INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void RaisePropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        #endregion
     }
 
-    internal sealed class TimerValues
+    public sealed class TimerValues : INotifyPropertyChanged
     {
+        private float _a;
         [SerializableProperty(1)]
-        public float A { get; set; }
+        public float A
+        {
+            get => _a;
+            set
+            {
+                _a = value;
+                RaisePropertyChanged(nameof(A));
+            }
+        }
 
+        private float _b;
         [SerializableProperty(2)]
-        public float B { get; set; }
+        public float B
+        {
+            get => _b;
+            set
+            {
+                _b = value;
+                RaisePropertyChanged(nameof(B));
+            }
+        }
+
+        public TimerValues()
+        {
+
+        }
+
+        #region INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void RaisePropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        #endregion
     }
 
     public enum AttackType : short
