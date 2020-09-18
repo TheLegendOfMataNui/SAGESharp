@@ -11,23 +11,23 @@ namespace SAGESharp.Tests.Animations
     class TCBInterpolationDataTests
     {
         [TestCaseSource(nameof(EqualObjectsTestCases))]
-        public void Test_Comparing_Equal_Objects(IComparisionTestCase<TCBInterpolationData> testCase) => testCase.Execute();
+        public void Test_Comparing_Equal_Objects(IComparisionTestCase<VectorKeyframe> testCase) => testCase.Execute();
 
-        public static IComparisionTestCase<TCBInterpolationData>[] EqualObjectsTestCases() => new IComparisionTestCase<TCBInterpolationData>[]
+        public static IComparisionTestCase<VectorKeyframe>[] EqualObjectsTestCases() => new IComparisionTestCase<VectorKeyframe>[]
         {
             ComparisionTestCase.CompareObjectAgainstItself(SampleTCBInterpolationData()),
             ComparisionTestCase.CompareTwoEqualObjects(SampleTCBInterpolationData),
-            ComparisionTestCase.CompareNullWithOperators<TCBInterpolationData>()
+            ComparisionTestCase.CompareNullWithOperators<VectorKeyframe>()
         };
 
         [TestCaseSource(nameof(NotEqualObjectsTestCases))]
-        public void Test_Comparing_NotEqual_Objects(IComparisionTestCase<TCBInterpolationData> testCase) => testCase.Execute();
+        public void Test_Comparing_NotEqual_Objects(IComparisionTestCase<VectorKeyframe> testCase) => testCase.Execute();
 
-        public static IComparisionTestCase<TCBInterpolationData>[] NotEqualObjectsTestCases() => new IComparisionTestCase<TCBInterpolationData>[]
+        public static IComparisionTestCase<VectorKeyframe>[] NotEqualObjectsTestCases() => new IComparisionTestCase<VectorKeyframe>[]
         {
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleTCBInterpolationData,
-                updater: tcbInterpolationData => tcbInterpolationData.Keyframe = 12
+                updater: tcbInterpolationData => tcbInterpolationData.Frame = 12
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleTCBInterpolationData,
@@ -44,9 +44,9 @@ namespace SAGESharp.Tests.Animations
             ComparisionTestCase.CompareNotNullObjectAgainstNull(SampleTCBInterpolationData())
         };
 
-        public static TCBInterpolationData SampleTCBInterpolationData() => new TCBInterpolationData
+        public static VectorKeyframe SampleTCBInterpolationData() => new VectorKeyframe
         {
-            Keyframe = 0xABCD,
+            Frame = 0xABCD,
             X = 2.2f,
             Y = 3.5f,
             Z = 4.9f

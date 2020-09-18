@@ -17,8 +17,8 @@ namespace SAGESharp.Tests.Animations
         [Test]
         public void Test_Setting_A_Null_TCBQuaternion_List()
         {
-            BKDEntry entry = new BKDEntry();
-            Action action = () => entry.RotationData = null;
+            TransformAnimation entry = new TransformAnimation();
+            Action action = () => entry.RotationKeyframes = null;
 
             action.Should().ThrowArgumentNullException("value");
         }
@@ -26,8 +26,8 @@ namespace SAGESharp.Tests.Animations
         [Test]
         public void Test_Setting_A_Null_TCBInpterpolationData1_List()
         {
-            BKDEntry entry = new BKDEntry();
-            Action action = () => entry.TranslationData = null;
+            TransformAnimation entry = new TransformAnimation();
+            Action action = () => entry.TranslationKeyframes = null;
 
             action.Should().ThrowArgumentNullException("value");
         }
@@ -35,62 +35,62 @@ namespace SAGESharp.Tests.Animations
         [Test]
         public void Test_Setting_A_Null_TCBInpterpolationData2_List()
         {
-            BKDEntry entry = new BKDEntry();
-            Action action = () => entry.ScalingData = null;
+            TransformAnimation entry = new TransformAnimation();
+            Action action = () => entry.ScaleKeyframes = null;
 
             action.Should().ThrowArgumentNullException("value");
         }
 
         [TestCaseSource(nameof(EqualObjectsTestCases))]
-        public void Test_Comparing_Equal_Objects(IComparisionTestCase<BKDEntry> testCase) => testCase.Execute();
+        public void Test_Comparing_Equal_Objects(IComparisionTestCase<TransformAnimation> testCase) => testCase.Execute();
 
-        public static IComparisionTestCase<BKDEntry>[] EqualObjectsTestCases() => new IComparisionTestCase<BKDEntry>[]
+        public static IComparisionTestCase<TransformAnimation>[] EqualObjectsTestCases() => new IComparisionTestCase<TransformAnimation>[]
         {
             ComparisionTestCase.CompareObjectAgainstItself(SampleBKDEntry()),
             ComparisionTestCase.CompareTwoEqualObjects(SampleBKDEntry),
-            ComparisionTestCase.CompareNullWithOperators<BKDEntry>()
+            ComparisionTestCase.CompareNullWithOperators<TransformAnimation>()
         };
 
         [TestCaseSource(nameof(NotEqualObjectsTestCases))]
-        public void Test_Comparing_NotEqual_Objects(IComparisionTestCase<BKDEntry> testCase) => testCase.Execute();
+        public void Test_Comparing_NotEqual_Objects(IComparisionTestCase<TransformAnimation> testCase) => testCase.Execute();
 
-        public static IComparisionTestCase<BKDEntry>[] NotEqualObjectsTestCases() => new IComparisionTestCase<BKDEntry>[]
+        public static IComparisionTestCase<TransformAnimation>[] NotEqualObjectsTestCases() => new IComparisionTestCase<TransformAnimation>[]
         {
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleBKDEntry,
-                updater: bkdEntry => bkdEntry.Id++
+                updater: bkdEntry => bkdEntry.BoneID++
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleBKDEntry,
-                updater: bkdEntry => bkdEntry.RotationData.Add(new TCBQuaternionData())
+                updater: bkdEntry => bkdEntry.RotationKeyframes.Add(new QuaternionKeyframe())
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleBKDEntry,
-                updater: bkdEntry => bkdEntry.TranslationData.Add(new TCBInterpolationData())
+                updater: bkdEntry => bkdEntry.TranslationKeyframes.Add(new VectorKeyframe())
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleBKDEntry,
-                updater: bkdEntry => bkdEntry.ScalingData.Add(new TCBInterpolationData())
+                updater: bkdEntry => bkdEntry.ScaleKeyframes.Add(new VectorKeyframe())
             ),
             ComparisionTestCase.CompareNotNullObjectAgainstNull(SampleBKDEntry())
         };
 
-        public static BKDEntry SampleBKDEntry() => new BKDEntry
+        public static TransformAnimation SampleBKDEntry() => new TransformAnimation
         {
-            Id = 6,
-            RotationData = new List<TCBQuaternionData>
+            BoneID = 6,
+            RotationKeyframes = new List<QuaternionKeyframe>
             {
                 TCBQuaternionDataTests.SampleTCBQuaternionData()
             },
-            TranslationData = new List<TCBInterpolationData>
+            TranslationKeyframes = new List<VectorKeyframe>
             {
                 TCBInterpolationDataTests.SampleTCBInterpolationData()
             },
-            ScalingData = new List<TCBInterpolationData>
+            ScaleKeyframes = new List<VectorKeyframe>
             {
                 TCBInterpolationDataTests.SampleTCBInterpolationData().Also(o =>
                 {
-                    o.Keyframe *= 3;
+                    o.Frame *= 3;
                     o.X *= 5;
                     o.Y *= 2;
                     o.Z *= 4;

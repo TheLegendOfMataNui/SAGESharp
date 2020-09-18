@@ -68,7 +68,7 @@ namespace SAGESharp.Tests.Animations
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleBKD,
-                updater: bkd => bkd.Entries.Add(new BKDEntry())
+                updater: bkd => bkd.Entries.Add(new TransformAnimation())
             ),
             ComparisionTestCase.CompareNotNullObjectAgainstNull(SampleBKD())
         };
@@ -76,7 +76,7 @@ namespace SAGESharp.Tests.Animations
         public static BKD SampleBKD() => new BKD
         {
             Length = 1.5f,
-            Entries = new List<BKDEntry>
+            Entries = new List<TransformAnimation>
             {
                 BKDEntryTests.SampleBKDEntry()
             }

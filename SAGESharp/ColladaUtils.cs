@@ -1254,38 +1254,38 @@ namespace SAGESharp
 
             if (animation != null)
             {
-                foreach (BKDEntry track in animation.Entries)
+                foreach (TransformAnimation track in animation.Entries)
                 {
                     // Glob keys in the same frame together.
-                    Dictionary<int, Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>> keyframes = new Dictionary<int, Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>>();
-                    foreach (TCBQuaternionData quat in track.RotationData)
+                    Dictionary<int, Tuple<QuaternionKeyframe, VectorKeyframe, VectorKeyframe>> keyframes = new Dictionary<int, Tuple<QuaternionKeyframe, VectorKeyframe, VectorKeyframe>>();
+                    foreach (QuaternionKeyframe quat in track.RotationKeyframes)
                     {
-                        keyframes.Add(quat.Keyframe, new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(quat, null, null));
+                        keyframes.Add(quat.Frame, new Tuple<QuaternionKeyframe, VectorKeyframe, VectorKeyframe>(quat, null, null));
                     }
-                    foreach (TCBInterpolationData trans in track.TranslationData)
+                    foreach (VectorKeyframe trans in track.TranslationKeyframes)
                     {
-                        if (keyframes.ContainsKey(trans.Keyframe))
+                        if (keyframes.ContainsKey(trans.Frame))
                         {
-                            keyframes[trans.Keyframe] = new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(keyframes[trans.Keyframe].Item1, trans, null);
+                            keyframes[trans.Frame] = new Tuple<QuaternionKeyframe, VectorKeyframe, VectorKeyframe>(keyframes[trans.Frame].Item1, trans, null);
                         }
                         else 
                         {
-                            keyframes.Add(trans.Keyframe, new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(null, trans, null));
+                            keyframes.Add(trans.Frame, new Tuple<QuaternionKeyframe, VectorKeyframe, VectorKeyframe>(null, trans, null));
                         }
                     }
-                    foreach (TCBInterpolationData scale in track.ScalingData)
+                    foreach (VectorKeyframe scale in track.ScaleKeyframes)
                     {
-                        if (keyframes.ContainsKey(scale.Keyframe))
+                        if (keyframes.ContainsKey(scale.Frame))
                         {
-                            keyframes[scale.Keyframe] = new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(keyframes[scale.Keyframe].Item1, keyframes[scale.Keyframe].Item2, scale);
+                            keyframes[scale.Frame] = new Tuple<QuaternionKeyframe, VectorKeyframe, VectorKeyframe>(keyframes[scale.Frame].Item1, keyframes[scale.Frame].Item2, scale);
                         }
                         else
                         {
-                            keyframes.Add(scale.Keyframe, new Tuple<TCBQuaternionData, TCBInterpolationData, TCBInterpolationData>(null, null, scale));
+                            keyframes.Add(scale.Frame, new Tuple<QuaternionKeyframe, VectorKeyframe, VectorKeyframe>(null, null, scale));
                         }
                     }
 
-                    string boneName = skeleton.NameSlots[track.Id];
+                    string boneName = skeleton.NameSlots[track.BoneID];
 
                     // Keyframe times
                     XElement timeFloatArray = new XElement(ns + "float_array", new XAttribute("id", boneName + "-Matrix-animation-input-array"), new XAttribute("count", keyframes.Count.ToString()));
@@ -1308,7 +1308,7 @@ namespace SAGESharp
                     foreach (var pair in keyframes)
                     {
                         // Calculate the transform at this keyframe
-                        Matrix bindPoseTransform = skeleton.Bones[track.Id].Transform;
+                        Matrix bindPoseTransform = skeleton.Bones[track.BoneID].Transform;
                         bindPoseTransform.Transpose();
                         Vector3 scale = Vector3.One;
                         if (pair.Value.Item3 != null)
@@ -1349,7 +1349,7 @@ namespace SAGESharp
 
                         //trans = bindPoseTransform;
 
-                        if (track.Id == 0)
+                        if (track.BoneID == 0)
                             trans = trans * transform;
 
                         trans.Transpose();

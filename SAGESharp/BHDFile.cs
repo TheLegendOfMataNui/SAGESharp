@@ -259,10 +259,10 @@ namespace SAGESharp
                     Bones[(int)b.ParentIndex].Children.Add(b);
                 }
 
-                b.Transform.Column1 = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), 0.0f);
-                b.Transform.Column2 = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), 0.0f);
-                b.Transform.Column3 = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), 0.0f);
-                b.Transform.Column4 = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), 1.0f);
+                b.Transform.Row1 = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), 0.0f);
+                b.Transform.Row2 = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), 0.0f);
+                b.Transform.Row3 = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), 0.0f);
+                b.Transform.Row4 = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), 1.0f);
             }
         }
 
@@ -279,18 +279,18 @@ namespace SAGESharp
             }
             foreach (Bone b in Bones)
             {
-                writer.Write(b.Transform.Column1.X);
-                writer.Write(b.Transform.Column1.Y);
-                writer.Write(b.Transform.Column1.Z);
-                writer.Write(b.Transform.Column2.X);
-                writer.Write(b.Transform.Column2.Y);
-                writer.Write(b.Transform.Column2.Z);
-                writer.Write(b.Transform.Column3.X);
-                writer.Write(b.Transform.Column3.Y);
-                writer.Write(b.Transform.Column3.Z);
-                writer.Write(b.Transform.Column4.X);
-                writer.Write(b.Transform.Column4.Y);
-                writer.Write(b.Transform.Column4.Z);
+                writer.Write(b.Transform.Row1.X);
+                writer.Write(b.Transform.Row1.Y);
+                writer.Write(b.Transform.Row1.Z);
+                writer.Write(b.Transform.Row2.X);
+                writer.Write(b.Transform.Row2.Y);
+                writer.Write(b.Transform.Row2.Z);
+                writer.Write(b.Transform.Row3.X);
+                writer.Write(b.Transform.Row3.Y);
+                writer.Write(b.Transform.Row3.Z);
+                writer.Write(b.Transform.Row4.X);
+                writer.Write(b.Transform.Row4.Y);
+                writer.Write(b.Transform.Row4.Z);
             }
         }
     }

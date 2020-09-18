@@ -26,10 +26,10 @@ namespace SAGESharp
             Header = new XHeader(reader);
             XReader xReader = new XReader(reader, Header, Templates, Objects);
 
-            foreach (XToken token in xReader.Tokens)
+            /*foreach (XToken token in xReader.Tokens)
             {
                 System.Diagnostics.Debug.WriteLine(token.ToString());
-            }
+            }*/
 
             while (!xReader.EndOfStream)
             {
@@ -51,19 +51,19 @@ namespace SAGESharp
 
             foreach (XTemplate template in Templates)
             {
-                Console.WriteLine("    Writing template '" + template.Name + "'...");
+                //Console.WriteLine("    Writing template '" + template.Name + "'...");
                 template.Write(xWriter);
             }
 
             foreach (XObject obj in Objects)
             {
-                Console.WriteLine("    Writing object '" + obj.Name + "'...");
+                //Console.WriteLine("    Writing object '" + obj.Name + "'...");
                 obj.Write(xWriter);
             }
 
             foreach (XToken token in xWriter.Tokens)
             {
-                System.Diagnostics.Debug.WriteLine(token.ToString());
+                //System.Diagnostics.Debug.WriteLine(token.ToString());
                 token.Write(writer, Header);
             }
         }
@@ -426,7 +426,7 @@ namespace SAGESharp
                     colorRGBA.Members.Add(new XTemplateMember(new XToken(XToken.TokenID.FLOAT), "alpha"));
                     _nativeTemplates.Add(colorRGBA.Name, colorRGBA);
 
-                    //CompressedAnimationSet
+                    // CompressedAnimationSet
 
                     XTemplate coords2d = new XTemplate("Coords2d", new Guid("F6F23F44-7686-11cf-8F52-0040333594A3"), null);
                     coords2d.Members.Add(new XTemplateMember(new XToken(XToken.TokenID.FLOAT), "u"));
@@ -464,7 +464,6 @@ namespace SAGESharp
 
                     // Guid
 
-                    // IndexedColor
                     XTemplate indexedColor = new XTemplate("IndexedColor", new Guid("1630B820-7842-11cf-8F52-0040333594A3"), null);
                     indexedColor.Members.Add(new XTemplateMember(new XToken(XToken.TokenID.DWORD), "index"));
                     indexedColor.Members.Add(new XTemplateMember(new XToken(XToken.TokenID.NAME) { NameData = "ColorRGBA" }));
@@ -532,7 +531,6 @@ namespace SAGESharp
 
                     // PMVSplitRecord
 
-                    // SkinWeights
                     XTemplate skinWeights = new XTemplate("SkinWeights", new Guid("6F0D123B-BAD2-4167-A0D0-80224F25FABB"), null);
                     skinWeights.Members.Add(new XTemplateMember(new XToken(XToken.TokenID.LPSTR), "transformNodeName"));
                     skinWeights.Members.Add(new XTemplateMember(new XToken(XToken.TokenID.DWORD), "nWeights"));

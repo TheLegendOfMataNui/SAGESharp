@@ -65,37 +65,37 @@ namespace SAGESharp.Tests.Animations
                 {
                     // IntegerLength = 522
                     Length = 8.700001f,
-                    Entries = new List<BKDEntry>()
+                    Entries = new List<TransformAnimation>()
                     {
-                        new BKDEntry()
+                        new TransformAnimation()
                         {
-                            Id = 1,
-                            RotationData = new List<TCBQuaternionData>()
+                            BoneID = 1,
+                            RotationKeyframes = new List<QuaternionKeyframe>()
                             {
-                                new TCBQuaternionData()
+                                new QuaternionKeyframe()
                                 {
-                                    Keyframe = 0x1ABB,
+                                    Frame = 0x1ABB,
                                     X = 0.20935058508f, // 0x1ACC in binary
                                     Y = 0.209869383906f, // 0x1ADD in binary
                                     Z = 0.210388182732f, // 0x1AEE in binary
                                     W = 0.210906981558f // 0x1AFF in binary
                                 }
                             },
-                            TranslationData = new List<TCBInterpolationData>()
+                            TranslationKeyframes = new List<VectorKeyframe>()
                             {
-                                new TCBInterpolationData()
+                                new VectorKeyframe()
                                 {
-                                    Keyframe = 0x11111111,
+                                    Frame = 0x11111111,
                                     X = 2.5f,
                                     Y = 3.5f,
                                     Z = -0.875f
                                 }
                             },
-                            ScalingData = new List<TCBInterpolationData>()
+                            ScaleKeyframes = new List<VectorKeyframe>()
                             {
-                                new TCBInterpolationData()
+                                new VectorKeyframe()
                                 {
-                                    Keyframe = 0x22222222,
+                                    Frame = 0x22222222,
                                     X = -49.5f,
                                     Y = 4.6875f,
                                     Z = -75.25f
@@ -112,28 +112,28 @@ namespace SAGESharp.Tests.Animations
                 {
                     // IntegerLength = 312,
                     Length = 5.20000029f,
-                    Entries = new List<BKDEntry>()
+                    Entries = new List<TransformAnimation>()
                     {
-                        new BKDEntry()
+                        new TransformAnimation()
                         {
-                            Id = 0x0A
+                            BoneID = 0x0A
                         },
-                        new BKDEntry()
+                        new TransformAnimation()
                         {
-                            Id = 0x0B,
-                            RotationData = new List<TCBQuaternionData>()
+                            BoneID = 0x0B,
+                            RotationKeyframes = new List<QuaternionKeyframe>()
                             {
-                                new TCBQuaternionData()
+                                new QuaternionKeyframe()
                                 {
-                                    Keyframe = 0x01AA,
+                                    Frame = 0x01AA,
                                     X = 0.013519287054f, // 0x01BB in binary
                                     Y = 0.01403808588f, // 0x01CC in binary
                                     Z = 0.014556884706f, // 0x01DD in binary
                                     W = 0.015075683532f, // 0x01EE in binary
                                 },
-                                new TCBQuaternionData()
+                                new QuaternionKeyframe()
                                 {
-                                    Keyframe = 0x02AA,
+                                    Frame = 0x02AA,
                                     X = 0.021331787022f, // 0x02BB in binary
                                     Y = 0.021850585848f, // 0x02CC in binary
                                     Z = 0.022369384674f, // 0x02DD in binary
@@ -141,97 +141,97 @@ namespace SAGESharp.Tests.Animations
                                 }
                             }
                         },
-                        new BKDEntry()
+                        new TransformAnimation()
                         {
-                            Id = 0x0C,
-                            RotationData = new List<TCBQuaternionData>()
+                            BoneID = 0x0C,
+                            RotationKeyframes = new List<QuaternionKeyframe>()
                             {
-                                new TCBQuaternionData()
+                                new QuaternionKeyframe()
                                 {
-                                    Keyframe = 0x11AA,
+                                    Frame = 0x11AA,
                                     X = 0.138519286542f, // 0x11BB in binary
                                     Y = 0.139038085368f, // 0x11CC in binary
                                     Z = 0.139556884194f, // 0x11DD in binary
                                     W = 0.14007568302f, // 0x11EE in binary
                                 }
                             },
-                            TranslationData = new List<TCBInterpolationData>()
+                            TranslationKeyframes = new List<VectorKeyframe>()
                             {
-                                new TCBInterpolationData()
+                                new VectorKeyframe()
                                 {
-                                    Keyframe = 0x11121314,
+                                    Frame = 0x11121314,
                                     X = 11f,
                                     Y = 12f,
                                     Z = 13f
                                 },
-                                new TCBInterpolationData()
+                                new VectorKeyframe()
                                 {
-                                    Keyframe = 0x21222324,
+                                    Frame = 0x21222324,
                                     X = 21f,
                                     Y = 22f,
                                     Z = 23f,
                                 },
-                                new TCBInterpolationData()
+                                new VectorKeyframe()
                                 {
-                                    Keyframe = 0x31323334,
+                                    Frame = 0x31323334,
                                     X = 31f,
                                     Y = 32f,
                                     Z = 33f,
                                 }
                             }
                         },
-                        new BKDEntry()
+                        new TransformAnimation()
                         {
-                            Id = 0x0D,
-                            RotationData = new List<TCBQuaternionData>()
+                            BoneID = 0x0D,
+                            RotationKeyframes = new List<QuaternionKeyframe>()
                             {
-                                new TCBQuaternionData()
+                                new QuaternionKeyframe()
                                 {
-                                    Keyframe = 0x21AA,
+                                    Frame = 0x21AA,
                                     X = 0.26351928603f, // 0x21BB in binary
                                     Y = 0.264038084856f, // 0x21CC in binary
                                     Z = 0.264556883682f, // 0x21DD in binary
                                     W = 0.265075682508f, // 0x21EE in binary
                                 },
-                                new TCBQuaternionData()
+                                new QuaternionKeyframe()
                                 {
-                                    Keyframe = 0x22AA,
+                                    Frame = 0x22AA,
                                     X = 0.271331785998f, // 0x22BB in binary
                                     Y = 0.271850584824f, // 0x22CC in binary
                                     Z = 0.27236938365f, // 0x22DD in binary
                                     W = 0.272888182476f, // 0x22EE in binary
                                 },
-                                new TCBQuaternionData()
+                                new QuaternionKeyframe()
                                 {
-                                    Keyframe = 0x23AA,
+                                    Frame = 0x23AA,
                                     X = 0.279144285966f, // 0x23BB in binary
                                     Y = 0.279663084792f, // 0x23CC in binary
                                     Z = 0.280181883618f, // 0x23DD in binary
                                     W = 0.280700682444f // 0x23EE in binary
                                 }
                             },
-                            TranslationData = new List<TCBInterpolationData>()
+                            TranslationKeyframes = new List<VectorKeyframe>()
                             {
-                                new TCBInterpolationData()
+                                new VectorKeyframe()
                                 {
-                                    Keyframe = 0x41424344,
+                                    Frame = 0x41424344,
                                     X = 41f,
                                     Y = 42f,
                                     Z = 43f
                                 }
                             },
-                            ScalingData = new List<TCBInterpolationData>()
+                            ScaleKeyframes = new List<VectorKeyframe>()
                             {
-                                new TCBInterpolationData()
+                                new VectorKeyframe()
                                 {
-                                    Keyframe = 0x51525354,
+                                    Frame = 0x51525354,
                                     X = 51f,
                                     Y = 52f,
                                     Z = 53f
                                 },
-                                new TCBInterpolationData()
+                                new VectorKeyframe()
                                 {
-                                    Keyframe = 0x61626364,
+                                    Frame = 0x61626364,
                                     X = 61f,
                                     Y = 62f,
                                     Z = 63f

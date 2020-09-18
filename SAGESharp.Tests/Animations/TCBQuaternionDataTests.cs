@@ -15,7 +15,7 @@ namespace SAGESharp.Tests.Animations
         [TestCaseSource(nameof(ComponentTestCases))]
         public void Test_Getting_The_Value_Of_A_Component(ComponentTestCase testCase)
         {
-            TCBQuaternionData quaternion = new TCBQuaternionData();
+            QuaternionKeyframe quaternion = new QuaternionKeyframe();
 
             testCase.SetPrivateField(quaternion, 0x8000);
 
@@ -25,7 +25,7 @@ namespace SAGESharp.Tests.Animations
         [TestCaseSource(nameof(ComponentTestCases))]
         public void Test_Setting_The_Value_Of_A_Component(ComponentTestCase testCase)
         {
-            TCBQuaternionData quaternion = new TCBQuaternionData();
+            QuaternionKeyframe quaternion = new QuaternionKeyframe();
 
             testCase.SetProperty(quaternion, 1f);
 
@@ -37,22 +37,22 @@ namespace SAGESharp.Tests.Animations
             new ComponentTestCase(
                 description: "For component X",
                 fieldName: "x",
-                propertyName: nameof(TCBQuaternionData.X)
+                propertyName: nameof(QuaternionKeyframe.X)
             ),
             new ComponentTestCase(
                 description: "For component Y",
                 fieldName: "y",
-                propertyName: nameof(TCBQuaternionData.Y)
+                propertyName: nameof(QuaternionKeyframe.Y)
             ),
             new ComponentTestCase(
                 description: "For component Z",
                 fieldName: "z",
-                propertyName: nameof(TCBQuaternionData.Z)
+                propertyName: nameof(QuaternionKeyframe.Z)
             ),
             new ComponentTestCase(
                 description: "For component W",
                 fieldName: "w",
-                propertyName: nameof(TCBQuaternionData.W)
+                propertyName: nameof(QuaternionKeyframe.W)
             )
         };
 
@@ -64,41 +64,41 @@ namespace SAGESharp.Tests.Animations
 
             public ComponentTestCase(string description, string fieldName, string propertyName) : base(description)
             {
-                fieldInfo = typeof(TCBQuaternionData).GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
-                propertyInfo = typeof(TCBQuaternionData).GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
+                fieldInfo = typeof(QuaternionKeyframe).GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+                propertyInfo = typeof(QuaternionKeyframe).GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
             }
 
-            public ushort GetPrivateField(TCBQuaternionData quaternion)
+            public ushort GetPrivateField(QuaternionKeyframe quaternion)
                 => (ushort)fieldInfo.GetValue(quaternion);
 
-            public float GetProperty(TCBQuaternionData quaternion)
+            public float GetProperty(QuaternionKeyframe quaternion)
                 => (float)propertyInfo.GetValue(quaternion);
 
-            public void SetPrivateField(TCBQuaternionData quaternion, ushort value)
+            public void SetPrivateField(QuaternionKeyframe quaternion, ushort value)
                 => fieldInfo.SetValue(quaternion, value);
 
-            public void SetProperty(TCBQuaternionData quaternion, float value)
+            public void SetProperty(QuaternionKeyframe quaternion, float value)
                 => propertyInfo.SetValue(quaternion, value);
         }
 
         [TestCaseSource(nameof(EqualObjectsTestCases))]
-        public void Test_Comparing_Equal_Objects(IComparisionTestCase<TCBQuaternionData> testCase) => testCase.Execute();
+        public void Test_Comparing_Equal_Objects(IComparisionTestCase<QuaternionKeyframe> testCase) => testCase.Execute();
 
-        public static IComparisionTestCase<TCBQuaternionData>[] EqualObjectsTestCases() => new IComparisionTestCase<TCBQuaternionData>[]
+        public static IComparisionTestCase<QuaternionKeyframe>[] EqualObjectsTestCases() => new IComparisionTestCase<QuaternionKeyframe>[]
         {
             ComparisionTestCase.CompareObjectAgainstItself(SampleTCBQuaternionData()),
             ComparisionTestCase.CompareTwoEqualObjects(SampleTCBQuaternionData),
-            ComparisionTestCase.CompareNullWithOperators<TCBQuaternionData>()
+            ComparisionTestCase.CompareNullWithOperators<QuaternionKeyframe>()
         };
 
         [TestCaseSource(nameof(NotEqualObjectsTestCases))]
-        public void Test_Comparing_NotEqual_Objects(IComparisionTestCase<TCBQuaternionData> testCase) => testCase.Execute();
+        public void Test_Comparing_NotEqual_Objects(IComparisionTestCase<QuaternionKeyframe> testCase) => testCase.Execute();
 
-        public static IComparisionTestCase<TCBQuaternionData>[] NotEqualObjectsTestCases() => new IComparisionTestCase<TCBQuaternionData>[]
+        public static IComparisionTestCase<QuaternionKeyframe>[] NotEqualObjectsTestCases() => new IComparisionTestCase<QuaternionKeyframe>[]
         {
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleTCBQuaternionData,
-                updater: tcbQuaternionData => tcbQuaternionData.Keyframe = 51
+                updater: tcbQuaternionData => tcbQuaternionData.Frame = 51
             ),
             ComparisionTestCase.CompareTwoNotEqualObjects(
                 supplier: SampleTCBQuaternionData,
@@ -119,9 +119,9 @@ namespace SAGESharp.Tests.Animations
             ComparisionTestCase.CompareNotNullObjectAgainstNull(SampleTCBQuaternionData())
         };
 
-        public static TCBQuaternionData SampleTCBQuaternionData() => new TCBQuaternionData
+        public static QuaternionKeyframe SampleTCBQuaternionData() => new QuaternionKeyframe
         {
-            Keyframe = 0xAA,
+            Frame = 0xAA,
             X = 43.23f,
             Y = 36.78f,
             Z = 12.49f,

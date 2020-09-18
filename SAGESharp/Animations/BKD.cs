@@ -18,7 +18,7 @@ namespace SAGESharp.Animations
         private const float FLOAT_CONVERTION_CONSTANT = 1/60f;
 
         #region Fields
-        private IList<BKDEntry> entries = new List<BKDEntry>();
+        private IList<TransformAnimation> entries = new List<TransformAnimation>();
         private ushort length;
         #endregion
 
@@ -28,7 +28,7 @@ namespace SAGESharp.Animations
             set => length = (ushort)(value / FLOAT_CONVERTION_CONSTANT);
         }
 
-        public IList<BKDEntry> Entries
+        public IList<TransformAnimation> Entries
         {
             get => entries;
             set => entries = value ?? throw new ArgumentNullException(nameof(value));
@@ -40,10 +40,10 @@ namespace SAGESharp.Animations
             ushort newLength = binaryReader.ReadUInt16();
             ushort newEntriesCount = binaryReader.ReadUInt16();
 
-            IList<BKDEntry> newEntries = new List<BKDEntry>(newEntriesCount);
+            IList<TransformAnimation> newEntries = new List<TransformAnimation>(newEntriesCount);
             for (int n = 0; n < newEntriesCount; n++)
             {
-                BKDEntry entry = new BKDEntry();
+                TransformAnimation entry = new TransformAnimation();
                 entry.Read(binaryReader);
                 newEntries.Add(entry);
             }
@@ -73,15 +73,15 @@ namespace SAGESharp.Animations
             {
                 long offsetPosition = offsetPositions[n];
                 binaryWriter.DoAtPosition(offsetPosition, offset => binaryWriter.WriteUInt32((uint)offset));
-                entry.RotationData.ForEach(WriteObject);
+                entry.RotationKeyframes.ForEach(WriteObject);
 
                 offsetPosition += 4;
                 binaryWriter.DoAtPosition(offsetPosition, offset => binaryWriter.WriteUInt32((uint)offset));
-                entry.TranslationData.ForEach(WriteObject);
+                entry.TranslationKeyframes.ForEach(WriteObject);
 
                 offsetPosition += 4;
                 binaryWriter.DoAtPosition(offsetPosition, offset => binaryWriter.WriteUInt32((uint)offset));
-                entry.ScalingData.ForEach(WriteObject);
+                entry.ScaleKeyframes.ForEach(WriteObject);
             });
         }
         #endregion

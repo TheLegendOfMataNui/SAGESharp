@@ -9,9 +9,9 @@ using System;
 
 namespace SAGESharp.Animations
 {
-    public sealed class TCBInterpolationData : IEquatable<TCBInterpolationData>, IBinarySerializable
+    public sealed class VectorKeyframe : IEquatable<VectorKeyframe>, IBinarySerializable
     {
-        public int Keyframe { get; set; }
+        public int Frame { get; set; }
 
         public float X { get; set; }
 
@@ -27,7 +27,7 @@ namespace SAGESharp.Animations
             float y = binaryReader.ReadFloat();
             float z = binaryReader.ReadFloat();
 
-            Keyframe = keyframe;
+            Frame = keyframe;
             X = x;
             Y = y;
             Z = z;
@@ -35,7 +35,7 @@ namespace SAGESharp.Animations
 
         public void Write(IBinaryWriter binaryWriter)
         {
-            binaryWriter.WriteInt32(Keyframe);
+            binaryWriter.WriteInt32(Frame);
             binaryWriter.WriteFloat(X);
             binaryWriter.WriteFloat(Y);
             binaryWriter.WriteFloat(Z);
@@ -43,24 +43,24 @@ namespace SAGESharp.Animations
         #endregion
 
         #region Equality
-        public bool Equals(TCBInterpolationData other)
-            => MemberwiseEqualityComparer<TCBInterpolationData>.ByProperties.Equals(this, other);
+        public bool Equals(VectorKeyframe other)
+            => MemberwiseEqualityComparer<VectorKeyframe>.ByProperties.Equals(this, other);
 
         public override bool Equals(object obj)
-            => Equals(obj as TCBInterpolationData);
+            => Equals(obj as VectorKeyframe);
 
         public override int GetHashCode()
-            => MemberwiseEqualityComparer<TCBInterpolationData>.ByProperties.GetHashCode(this);
+            => MemberwiseEqualityComparer<VectorKeyframe>.ByProperties.GetHashCode(this);
 
-        public static bool operator ==(TCBInterpolationData left, TCBInterpolationData right)
+        public static bool operator ==(VectorKeyframe left, VectorKeyframe right)
             => left?.Equals(right) ?? right?.Equals(left) ?? true;
 
-        public static bool operator !=(TCBInterpolationData left, TCBInterpolationData right)
+        public static bool operator !=(VectorKeyframe left, VectorKeyframe right)
             => !(left == right);
         #endregion
 
-        public override string ToString() => $"{nameof(TCBInterpolationData)}(" +
-            $"{nameof(Keyframe)}={Keyframe}, " +
+        public override string ToString() => $"{nameof(VectorKeyframe)}(" +
+            $"{nameof(Frame)}={Frame}, " +
             $"{nameof(X)}={X}, " +
             $"{nameof(Y)}={Y}, " +
             $"{nameof(Z)}={Z}" +
