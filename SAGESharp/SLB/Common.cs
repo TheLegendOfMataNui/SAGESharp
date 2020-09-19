@@ -15,7 +15,7 @@ using System.ComponentModel;
 namespace SAGESharp.SLB
 {
     /// <summary>
-    /// Immutable class that represents an identifier within SLB files.
+    /// Immutable struct that represents an identifier within SLB files.
     /// 
     /// The identifier consist of 4 bytes/characters (a 32 bit integer).
     /// </summary>
