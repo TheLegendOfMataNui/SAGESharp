@@ -17,7 +17,7 @@ namespace SAGESharp.Tests.Animations
         {
             QuaternionKeyframe quaternion = new QuaternionKeyframe();
 
-            testCase.SetPrivateField(quaternion, 0x8000);
+            testCase.SetPrivateField(quaternion, System.Int16.MaxValue);
 
             testCase.GetProperty(quaternion).Should().Be(1f);
         }
@@ -29,7 +29,7 @@ namespace SAGESharp.Tests.Animations
 
             testCase.SetProperty(quaternion, 1f);
 
-            testCase.GetPrivateField(quaternion).Should().Be(0x8000);
+            testCase.GetPrivateField(quaternion).Should().Be(System.Int16.MaxValue);
         }
 
         public static ComponentTestCase[] ComponentTestCases() => new ComponentTestCase[]
@@ -68,13 +68,13 @@ namespace SAGESharp.Tests.Animations
                 propertyInfo = typeof(QuaternionKeyframe).GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
             }
 
-            public ushort GetPrivateField(QuaternionKeyframe quaternion)
-                => (ushort)fieldInfo.GetValue(quaternion);
+            public short GetPrivateField(QuaternionKeyframe quaternion)
+                => (short)fieldInfo.GetValue(quaternion);
 
             public float GetProperty(QuaternionKeyframe quaternion)
                 => (float)propertyInfo.GetValue(quaternion);
 
-            public void SetPrivateField(QuaternionKeyframe quaternion, ushort value)
+            public void SetPrivateField(QuaternionKeyframe quaternion, short value)
                 => fieldInfo.SetValue(quaternion, value);
 
             public void SetProperty(QuaternionKeyframe quaternion, float value)

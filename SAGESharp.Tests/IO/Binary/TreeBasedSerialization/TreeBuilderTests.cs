@@ -324,7 +324,7 @@ namespace SAGESharp.Tests.IO.Binary.TreeBasedSerialization
         {
             BadTypeExceptionShouldBeThrownForType<ClassWithPrivateParameterlessConstructor>
             (
-                message: $"Type doesn't have a public parameterless constructor."
+                message: $"Type {typeof(ClassWithPrivateParameterlessConstructor)} doesn't have a public parameterless constructor."
             );
         }
 
@@ -340,7 +340,7 @@ namespace SAGESharp.Tests.IO.Binary.TreeBasedSerialization
         {
             BadTypeExceptionShouldBeThrownForType<ClassWithoutParameterlessConstructor>
             (
-                message: $"Type doesn't have a public parameterless constructor."
+                message: $"Type {typeof(ClassWithoutParameterlessConstructor)} doesn't have a public parameterless constructor."
             );
         }
 
@@ -356,7 +356,7 @@ namespace SAGESharp.Tests.IO.Binary.TreeBasedSerialization
         {
             BadTypeExceptionShouldBeThrownForType<ClassWithoutSerializableProperties>
             (
-                message: $"Type doesn't have serializable properties."
+                message: $"Type {typeof(ClassWithoutSerializableProperties)} doesn't have serializable properties."
             );
         }
 
@@ -370,7 +370,7 @@ namespace SAGESharp.Tests.IO.Binary.TreeBasedSerialization
         {
             BadTypeExceptionShouldBeThrownForType<ClassWithPropertiesWithDuplicateSerializationOrder>
             (
-                message: $"Type has two or more properties with the same serialization order."
+                message: $"Type {typeof(ClassWithPropertiesWithDuplicateSerializationOrder)} has two or more properties with the same serialization order."
             );
         }
 
