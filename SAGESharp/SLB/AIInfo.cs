@@ -11,112 +11,112 @@ namespace SAGESharp.SLB
 {
     public sealed class AIInfo : INotifyPropertyChanged
     {
-        private byte _flying;
+        private byte flying;
         [SerializableProperty(1)]
         [RightPadding(3)]
         public byte Flying
         {
-            get => _flying;
+            get => flying;
             set
             {
-                _flying = value;
+                flying = value;
                 RaisePropertyChanged(nameof(Flying));
             }
         }
 
-        private float _range;
+        private float range;
         [SerializableProperty(2)]
         public float Range
         {
-            get => _range;
+            get => range;
             set
             {
-                _range = value;
+                range = value;
                 RaisePropertyChanged(nameof(Range));
             }
         }
 
-        private long _patrolRandomness;
+        private long patrolRandomness;
         [SerializableProperty(3)]
         public long PatrolRandomness
         {
-            get => _patrolRandomness;
+            get => patrolRandomness;
             set
             {
-                _patrolRandomness = value;
+                patrolRandomness = value;
                 RaisePropertyChanged(nameof(PatrolRandomness));
             }
         }
 
-        private TimerValues _timerValuesIdle;
+        private TimerValues timerValuesIdle;
         [SerializableProperty(4)]
         public TimerValues TimerValuesIdle
         {
-            get => _timerValuesIdle;
+            get => timerValuesIdle;
             set
             {
-                _timerValuesIdle = value;
+                timerValuesIdle = value;
                 RaisePropertyChanged(nameof(TimerValuesIdle));
             }
         }
 
-        private TimerValues _timerValuesPatrol;
+        private TimerValues timerValuesPatrol;
         [SerializableProperty(5)]
         public TimerValues TimerValuesPatrol
         {
-            get => _timerValuesPatrol;
+            get => timerValuesPatrol;
             set
             {
-                _timerValuesPatrol = value;
+                timerValuesPatrol = value;
                 RaisePropertyChanged(nameof(TimerValuesPatrol));
             }
         }
 
-        private short _toughness;
+        private short toughness;
         [SerializableProperty(6)]
         public short Toughness
         {
-            get => _toughness;
+            get => toughness;
             set
             {
-                _toughness = value;
+                toughness = value;
                 RaisePropertyChanged(nameof(Toughness));
             }
         }
 
-        private AttackType _attackType;
+        private AttackType attackType;
         [SerializableProperty(7)]
         public AttackType AttackType
         {
-            get => _attackType;
+            get => attackType;
             set
             {
-                _attackType = value;
+                attackType = value;
                 RaisePropertyChanged(nameof(AttackType));
             }
         }
 
-        private byte _benign;
+        private byte benign;
         [SerializableProperty(8)]
         public byte Benign
         {
-            get => _benign;
+            get => benign;
             set
             {
-                _benign = value;
+                benign = value;
                 RaisePropertyChanged(nameof(Benign));
             }
         }
 
-        private string _projectileSprite;
+        private string projectileSprite;
         [SerializableProperty(9)]
         [InlineString(32)]
         public string ProjectileSprite
         {
-            get => _projectileSprite;
+            get => projectileSprite;
             set
             {
-                _projectileSprite = value;
+                projectileSprite = value;
                 RaisePropertyChanged(nameof(ProjectileSprite));
             }
         }
@@ -138,26 +138,26 @@ namespace SAGESharp.SLB
 
     public sealed class TimerValues : INotifyPropertyChanged
     {
-        private float _a;
+        private float a;
         [SerializableProperty(1)]
         public float A
         {
-            get => _a;
+            get => a;
             set
             {
-                _a = value;
+                a = value;
                 RaisePropertyChanged(nameof(A));
             }
         }
 
-        private float _b;
+        private float b;
         [SerializableProperty(2)]
         public float B
         {
-            get => _b;
+            get => b;
             set
             {
-                _b = value;
+                b = value;
                 RaisePropertyChanged(nameof(B));
             }
         }

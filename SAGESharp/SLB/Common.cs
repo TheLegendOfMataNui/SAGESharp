@@ -450,38 +450,38 @@ namespace SAGESharp.SLB
 
     public sealed class Point3D : IEquatable<Point3D>, INotifyPropertyChanged
     {
-        private float _x;
+        private float x;
         [SerializableProperty(1)]
         public float X
         {
-            get => _x;
+            get => x;
             set
             {
-                _x = value;
+                x = value;
                 RaisePropertyChanged(nameof(X));
             }
         }
 
-        private float _y;
+        private float y;
         [SerializableProperty(2)]
         public float Y
         {
-            get => _y;
+            get => y;
             set
             {
-                _y = value;
+                y = value;
                 RaisePropertyChanged(nameof(Y));
             }
         }
 
-        private float _z;
+        private float z;
         [SerializableProperty(3)]
         public float Z
         {
-            get => _z;
+            get => z;
             set
             {
-                _z = value;
+                z = value;
                 RaisePropertyChanged(nameof(Z));
             }
         }

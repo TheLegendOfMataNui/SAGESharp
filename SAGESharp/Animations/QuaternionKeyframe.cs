@@ -11,8 +11,6 @@ namespace SAGESharp.Animations
 {
     public sealed class QuaternionKeyframe : IEquatable<QuaternionKeyframe>, IBinarySerializable
     {
-        //private static readonly float FLOAT_CONVERSION_CONSTANT = 1 / (float)Math.Pow(2, 15); // 32767 is max of short
-
         private short x;
         private short y;
         private short z;

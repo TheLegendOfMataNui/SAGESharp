@@ -26,11 +26,6 @@ namespace SAGESharp
             Header = new XHeader(reader);
             XReader xReader = new XReader(reader, Header, Templates, Objects);
 
-            /*foreach (XToken token in xReader.Tokens)
-            {
-                System.Diagnostics.Debug.WriteLine(token.ToString());
-            }*/
-
             while (!xReader.EndOfStream)
             {
                 if (xReader.PeekToken().ID == XToken.TokenID.TEMPLATE)
@@ -51,19 +46,16 @@ namespace SAGESharp
 
             foreach (XTemplate template in Templates)
             {
-                //Console.WriteLine("    Writing template '" + template.Name + "'...");
                 template.Write(xWriter);
             }
 
             foreach (XObject obj in Objects)
             {
-                //Console.WriteLine("    Writing object '" + obj.Name + "'...");
                 obj.Write(xWriter);
             }
 
             foreach (XToken token in xWriter.Tokens)
             {
-                //System.Diagnostics.Debug.WriteLine(token.ToString());
                 token.Write(writer, Header);
             }
         }

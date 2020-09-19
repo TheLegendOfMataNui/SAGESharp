@@ -10,26 +10,26 @@ namespace SAGESharp.SLB
 {
     public sealed class Cylinder : INotifyPropertyChanged
     {
-        private Identifier _id;
+        private Identifier id;
         [SerializableProperty(1)]
         public Identifier ID
         {
-            get => _id;
+            get => id;
             set
             {
-                _id = value;
+                id = value;
                 RaisePropertyChanged(nameof(ID));
             }
         }
 
-        private CylinderBounds _bounds;
+        private CylinderBounds bounds;
         [SerializableProperty(2)]
         public CylinderBounds Bounds
         {
-            get => _bounds;
+            get => bounds;
             set
             {
-                _bounds = value;
+                bounds = value;
                 RaisePropertyChanged(nameof(Bounds));
             }
         }
@@ -49,32 +49,32 @@ namespace SAGESharp.SLB
     /// </summary>
     public sealed class CylinderBounds : INotifyPropertyChanged
     {
-        private Point3D _min;
+        private Point3D min;
         /// <summary>
         /// The location of the corner of the bounding box with the lowest coordinate values.
         /// </summary>
         [SerializableProperty(1)]
         public Point3D Min
         {
-            get => _min;
+            get => min;
             set
             {
-                _min = value;
+                min = value;
                 RaisePropertyChanged(nameof(Min));
             }
         }
 
-        private Point3D _max;
+        private Point3D max;
         /// <summary>
         /// The location of the corner of the bounding box with the greatest coordinate values.
         /// </summary>
         [SerializableProperty(2)]
         public Point3D Max
         {
-            get => _max;
+            get => max;
             set
             {
-                _max = value;
+                max = value;
                 RaisePropertyChanged(nameof(Max));
             }
         }
