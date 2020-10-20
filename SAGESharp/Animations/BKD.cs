@@ -15,8 +15,6 @@ namespace SAGESharp.Animations
     {
         public const int FRAMES_PER_SECOND = 60;
 
-        private const float FLOAT_CONVERTION_CONSTANT = 1/60f;
-
         #region Fields
         private IList<TransformAnimation> entries = new List<TransformAnimation>();
         private ushort length;
@@ -24,8 +22,8 @@ namespace SAGESharp.Animations
 
         public float Length
         {
-            get => length * FLOAT_CONVERTION_CONSTANT;
-            set => length = (ushort)(value / FLOAT_CONVERTION_CONSTANT);
+            get => length / (float)FRAMES_PER_SECOND;
+            set => length = (ushort)(value * FRAMES_PER_SECOND);
         }
 
         public IList<TransformAnimation> Entries

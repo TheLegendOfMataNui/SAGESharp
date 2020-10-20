@@ -1309,45 +1309,27 @@ namespace SAGESharp
                     {
                         // Calculate the transform at this keyframe
                         Matrix bindPoseTransform = skeleton.Bones[track.BoneID].Transform;
-                        bindPoseTransform.Transpose();
+
                         Vector3 scale = Vector3.One;
                         if (pair.Value.Item3 != null)
                         {
-                            //bindPoseTransform.Decompose(out scale, out _, out _);
-                            //scale = new Vector3(scale.X * pair.Value.Item3.Float1, scale.Y * pair.Value.Item3.Float2, scale.Z * pair.Value.Item3.Float3);
                             scale = new Vector3(pair.Value.Item3.X, pair.Value.Item3.Y, pair.Value.Item3.Z);
                         }
-                        else
-                        {
-                            bindPoseTransform.Decompose(out scale, out _, out _);
-                        }
+
                         Vector3 translation = Vector3.Zero;
                         if (pair.Value.Item2 != null)
                         {
-                            //translation = bindPoseTransform.TranslationVector;
-                            //translation += new Vector3(pair.Value.Item2.Float1, pair.Value.Item2.Float2, pair.Value.Item2.Float3);
                             translation = new Vector3(pair.Value.Item2.X, pair.Value.Item2.Y, pair.Value.Item2.Z);
                         }
-                        else
-                        {
-                            translation = bindPoseTransform.TranslationVector;
-                        }
+
                         Quaternion rotation = Quaternion.Identity;
                         if (pair.Value.Item1 != null)
                         {
-                            //bindPoseTransform.Decompose(out _, out rotation, out _);
-                            //rotation = new Quaternion(DecompressShort(pair.Value.Item1.Short2), DecompressShort(pair.Value.Item1.Short3), DecompressShort(pair.Value.Item1.Short4),
-                            //    DecompressShort(pair.Value.Item1.Short5)) * rotation;
                             rotation = new Quaternion(pair.Value.Item1.X, pair.Value.Item1.Y, pair.Value.Item1.Z, pair.Value.Item1.W);
+                            rotation.Invert();
                         }
-                        else
-                        {
-                            bindPoseTransform.Decompose(out _, out rotation, out _);
-                        }
-                        //rotation = Quaternion.RotationMatrix(transform) * rotation;
-                        Matrix trans = Matrix.Scaling(scale) * Matrix.RotationQuaternion(rotation) * Matrix.Translation(translation);
 
-                        //trans = bindPoseTransform;
+                        Matrix trans = Matrix.Translation(translation) * Matrix.RotationQuaternion(rotation) * bindPoseTransform; // TODO: Implement scale
 
                         if (track.BoneID == 0)
                             trans = trans * transform;
