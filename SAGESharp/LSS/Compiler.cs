@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -570,7 +571,7 @@ namespace SAGESharp.LSS
                                 bool complexA = false;
                                 if (expr.Arguments[0] is LiteralExpression rLiteral && rLiteral.Value.Type == TokenType.IntegerLiteral)
                                 {
-                                    int value = Int32.Parse(rLiteral.Value.Content);
+                                    int value = Int32.Parse(rLiteral.Value.Content, CultureInfo.InvariantCulture);
                                     if (value > Byte.MaxValue || value < Byte.MinValue)
                                     {
                                         Error(Messages, "Literal value is out of the acceptable range (0 - 255) for R component.", "LSS068", expr.Arguments[0].Span, true);
@@ -587,7 +588,7 @@ namespace SAGESharp.LSS
 
                                 if (expr.Arguments[1] is LiteralExpression gLiteral && gLiteral.Value.Type == TokenType.IntegerLiteral)
                                 {
-                                    int value = Int32.Parse(gLiteral.Value.Content);
+                                    int value = Int32.Parse(gLiteral.Value.Content, CultureInfo.InvariantCulture);
                                     if (value > Byte.MaxValue || value < Byte.MinValue)
                                     {
                                         Error(Messages, "Literal value is out of the acceptable range (0 - 255) for G component.", "LSS068", expr.Arguments[1].Span, true);
@@ -604,7 +605,7 @@ namespace SAGESharp.LSS
 
                                 if (expr.Arguments[2] is LiteralExpression bLiteral && bLiteral.Value.Type == TokenType.IntegerLiteral)
                                 {
-                                    int value = Int32.Parse(bLiteral.Value.Content);
+                                    int value = Int32.Parse(bLiteral.Value.Content, CultureInfo.InvariantCulture);
                                     if (value > Byte.MaxValue || value < Byte.MinValue)
                                     {
                                         Error(Messages, "Literal value is out of the acceptable range (0 - 255) for B component.", "LSS068", expr.Arguments[2].Span, true);
@@ -621,7 +622,7 @@ namespace SAGESharp.LSS
 
                                 if (expr.Arguments[3] is LiteralExpression aLiteral && aLiteral.Value.Type == TokenType.IntegerLiteral)
                                 {
-                                    int value = Int32.Parse(aLiteral.Value.Content);
+                                    int value = Int32.Parse(aLiteral.Value.Content, CultureInfo.InvariantCulture);
                                     if (value > Byte.MaxValue || value < Byte.MinValue)
                                     {
                                         Error(Messages, "Literal value is out of the acceptable range (0 - 255) for A component.", "LSS068", expr.Arguments[3].Span, true);
@@ -1021,7 +1022,7 @@ namespace SAGESharp.LSS
                 }
                 else if (expr.Value.Type == TokenType.IntegerLiteral)
                 {
-                    int value = Int32.Parse(expr.Value.Content);
+                    int value = Int32.Parse(expr.Value.Content, CultureInfo.InvariantCulture);
                     if (value == 0)
                     {
                         size += EmitBCLInstruction(BCLOpcode.PushConstant0);
@@ -1041,7 +1042,7 @@ namespace SAGESharp.LSS
                 }
                 else if (expr.Value.Type == TokenType.FloatLiteral)
                 {
-                    size += EmitBCLInstruction(BCLOpcode.PushConstantf32, Single.Parse(expr.Value.Content));
+                    size += EmitBCLInstruction(BCLOpcode.PushConstantf32, Single.Parse(expr.Value.Content, CultureInfo.InvariantCulture));
                 }
                 else if (expr.Value.Type == TokenType.KeywordTrue)
                 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -276,18 +277,18 @@ namespace SAGESharp
                         
                     if (parts[0] == "v")
                     {
-                        Vector4 v = Vector3.Transform(new Vector3(Single.Parse(parts[1]), Single.Parse(parts[2]), Single.Parse(parts[3])), transform);
+                        Vector4 v = Vector3.Transform(new Vector3(Single.Parse(parts[1], CultureInfo.InvariantCulture), Single.Parse(parts[2], CultureInfo.InvariantCulture), Single.Parse(parts[3], CultureInfo.InvariantCulture)), transform);
                         //MeshObject["vertices"].Values.Add(Vector(new Vector3(v.X, v.Y, v.Z)));
                         positions.Add(new Vector3(v.X, v.Y, v.Z));
                     }
                     else if (parts[0] == "vn")
                     {
-                        Vector4 v = Vector4.Transform(new Vector4(Single.Parse(parts[1]), Single.Parse(parts[2]), Single.Parse(parts[3]), 0.0f), transform);
+                        Vector4 v = Vector4.Transform(new Vector4(Single.Parse(parts[1], CultureInfo.InvariantCulture), Single.Parse(parts[2], CultureInfo.InvariantCulture), Single.Parse(parts[3], CultureInfo.InvariantCulture), 0.0f), transform);
                         MeshNormalsObject["normals"].Values.Add(Vector(new Vector3(v.X, v.Y, v.Z)));
                     }
                     else if (parts[0] == "vt")
                     {
-                        Vector2 coords = new Vector2(Single.Parse(parts[1]), Single.Parse(parts[2]));
+                        Vector2 coords = new Vector2(Single.Parse(parts[1], CultureInfo.InvariantCulture), Single.Parse(parts[2], CultureInfo.InvariantCulture));
                         if (flipV)
                             coords.Y = 1.0f - coords.Y;
                         //MeshTextureCoordsObject["textureCoords"].Values.Add(TexCoord(coords));
@@ -300,7 +301,7 @@ namespace SAGESharp
                             MeshObject.Children.Add(new XChildObject(MeshVertexColorsObject, false));
                             hasColor = true;
                         }
-                        Vector4 color = new Vector4(Single.Parse(parts[1]), Single.Parse(parts[2]), Single.Parse(parts[3]), Single.Parse(parts[4]));
+                        Vector4 color = new Vector4(Single.Parse(parts[1], CultureInfo.InvariantCulture), Single.Parse(parts[2], CultureInfo.InvariantCulture), Single.Parse(parts[3], CultureInfo.InvariantCulture), Single.Parse(parts[4], CultureInfo.InvariantCulture));
                         colors.Add(color);
                     }
                     else if (parts[0] == "f")
@@ -312,23 +313,23 @@ namespace SAGESharp
                         for (int i = 1; i < parts.Length; i++)
                         {
                             string[] components = parts[i].Split('/');
-                            int pindex = Int32.Parse(components[0]) - 1;
+                            int pindex = Int32.Parse(components[0], CultureInfo.InvariantCulture) - 1;
                             int uvindex = -1;
 
                             if (components.Length > 1 && components[1].Length > 0)
-                                uvindex = Int32.Parse(components[1]) - 1;
+                                uvindex = Int32.Parse(components[1], CultureInfo.InvariantCulture) - 1;
                             else
                                 Console.WriteLine("[WARNING]: No UVs! Please add some.");
 
                             if (components.Length > 2 && components[2].Length > 0)
-                                normIndices.Add(Int32.Parse(components[2]) - 1);
+                                normIndices.Add(Int32.Parse(components[2], CultureInfo.InvariantCulture) - 1);
                             else
                                 Console.WriteLine("[WARNING]: No normals! Please add some.");
 
                             if (components.Length > 3 && components[3].Length > 0)
                             {
                                 // Set / overwrite color for position pindex.
-                                int colorIndex = Int32.Parse(components[3]) - 1;
+                                int colorIndex = Int32.Parse(components[3], CultureInfo.InvariantCulture) - 1;
                                 if (!positionColors.ContainsKey(pindex))
                                     positionColors.Add(pindex, colorIndex);
                                 else
@@ -396,27 +397,27 @@ namespace SAGESharp
                                     }
                                     else if (mtlParts[0] == "Kd")
                                     {
-                                        MaterialObject["faceColor"].Values[0] = (ColorRGBA(Double.Parse(mtlParts[1]), Double.Parse(mtlParts[2]), Double.Parse(mtlParts[3]), 1.0));
+                                        MaterialObject["faceColor"].Values[0] = (ColorRGBA(Double.Parse(mtlParts[1], CultureInfo.InvariantCulture), Double.Parse(mtlParts[2], CultureInfo.InvariantCulture), Double.Parse(mtlParts[3], CultureInfo.InvariantCulture), 1.0));
                                     }
                                     else if (mtlParts[0] == "Ks")
                                     {
-                                        MaterialObject["specularColor"].Values[0] = (ColorRGB(Double.Parse(mtlParts[1]), Double.Parse(mtlParts[2]), Double.Parse(mtlParts[3])));
+                                        MaterialObject["specularColor"].Values[0] = (ColorRGB(Double.Parse(mtlParts[1], CultureInfo.InvariantCulture), Double.Parse(mtlParts[2], CultureInfo.InvariantCulture), Double.Parse(mtlParts[3], CultureInfo.InvariantCulture)));
                                     }
                                     else if (mtlParts[0] == "Ke")
                                     {
-                                        MaterialObject["emissiveColor"].Values[0] = (ColorRGB(Double.Parse(mtlParts[1]), Double.Parse(mtlParts[2]), Double.Parse(mtlParts[3])));
+                                        MaterialObject["emissiveColor"].Values[0] = (ColorRGB(Double.Parse(mtlParts[1], CultureInfo.InvariantCulture), Double.Parse(mtlParts[2], CultureInfo.InvariantCulture), Double.Parse(mtlParts[3], CultureInfo.InvariantCulture)));
                                     }
                                     else if (mtlParts[0] == "Ns")
                                     {
-                                        MaterialObject["power"].Values[0] = (Double.Parse(mtlParts[1]));
+                                        MaterialObject["power"].Values[0] = (Double.Parse(mtlParts[1], CultureInfo.InvariantCulture));
                                     }
                                     else if (mtlParts[0] == "Tr")
                                     {
-                                        (MaterialObject["faceColor"].Values[0] as XObjectStructure)["alpha"].Values[0] = 1.0 - Double.Parse(mtlParts[1]);
+                                        (MaterialObject["faceColor"].Values[0] as XObjectStructure)["alpha"].Values[0] = 1.0 - Double.Parse(mtlParts[1], CultureInfo.InvariantCulture);
                                     }
                                     else if (mtlParts[0] == "d")
                                     {
-                                        (MaterialObject["faceColor"].Values[0] as XObjectStructure)["alpha"].Values[0] = Double.Parse(mtlParts[1]);
+                                        (MaterialObject["faceColor"].Values[0] as XObjectStructure)["alpha"].Values[0] = Double.Parse(mtlParts[1], CultureInfo.InvariantCulture);
                                     }
                                     else if (mtlParts[0] == "map_Kd")
                                     {

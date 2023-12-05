@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -125,7 +126,7 @@ namespace SAGESharp
 
             foreach (XElement trianglesElement in meshElement.Elements(ns + "triangles"))
             {
-                int triangleCount = Int32.Parse(trianglesElement.Attribute("count").Value);
+                int triangleCount = Int32.Parse(trianglesElement.Attribute("count").Value, CultureInfo.InvariantCulture);
                 string materialName = trianglesElement.Attribute("material").Value;
 
                 // Map the material name
@@ -149,7 +150,7 @@ namespace SAGESharp
                 string[] indexData = trianglesElement.Element(ns + "p").Value.Split(new char[] { ' ', '\n', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                 int[] indices = new int[indexData.Length];
                 for (int i = 0; i < indexData.Length; i++)
-                    indices[i] = Int32.Parse(indexData[i].Trim());
+                    indices[i] = Int32.Parse(indexData[i].Trim(), CultureInfo.InvariantCulture);
 
                 int posOffset = -1;
                 string[] posData = null;
@@ -165,7 +166,7 @@ namespace SAGESharp
                 foreach (XElement inputElement in trianglesElement.Elements(ns + "input"))
                 {
                     string semantic = inputElement.Attribute("semantic").Value.ToUpper();
-                    int offset = Int32.Parse(inputElement.Attribute("offset").Value);
+                    int offset = Int32.Parse(inputElement.Attribute("offset").Value, CultureInfo.InvariantCulture);
                     string sourceReference = inputElement.Attribute("source").Value;
 
                     if (semantic == "VERTEX")
@@ -192,7 +193,7 @@ namespace SAGESharp
                             }
                             else if (semantic == "TEXCOORD")
                             {
-                                if (inputElement.Attribute("set") == null || Int32.Parse(inputElement.Attribute("set").Value) == 0)
+                                if (inputElement.Attribute("set") == null || Int32.Parse(inputElement.Attribute("set").Value, CultureInfo.InvariantCulture) == 0)
                                 {
                                     uvData = data;
                                     uvOffset = offset;
@@ -226,7 +227,7 @@ namespace SAGESharp
                         }
                         else if (semantic == "TEXCOORD")
                         {
-                            if (inputElement.Attribute("set") == null || Int32.Parse(inputElement.Attribute("set").Value) == 0)
+                            if (inputElement.Attribute("set") == null || Int32.Parse(inputElement.Attribute("set").Value, CultureInfo.InvariantCulture) == 0)
                             {
                                 uvData = data;
                                 uvOffset = offset;
@@ -449,7 +450,7 @@ namespace SAGESharp
                 float[] matrixValues = new float[16];
                 for (int i = 0; i < matrixValues.Length; i++)
                 {
-                    matrixValues[i] = Single.Parse(jointsMatrixElements[jointsNameIndex * 16 + i]); // Assumes 4x4 matrices, matrix order matches bone name order
+                    matrixValues[i] = Single.Parse(jointsMatrixElements[jointsNameIndex * 16 + i], CultureInfo.InvariantCulture); // Assumes 4x4 matrices, matrix order matches bone name order
                 }
                 Matrix boneMat = new Matrix(matrixValues);
                 boneMat.Transpose();
@@ -482,11 +483,11 @@ namespace SAGESharp
             //int maxInfluenceCount = 0;
             foreach (string count in weightsCounts)
             {
-                int countValue = Int32.Parse(count);
+                int countValue = Int32.Parse(count, CultureInfo.InvariantCulture);
                 for (int i = 0; i < countValue; i++)
                 {
-                    string boneName = weightsNames[Int32.Parse(weightsValues[influenceIndex * 2])];
-                    float weight = Single.Parse(weightsWeights[Int32.Parse(weightsValues[influenceIndex * 2 + 1])]);
+                    string boneName = weightsNames[Int32.Parse(weightsValues[influenceIndex * 2], CultureInfo.InvariantCulture)];
+                    float weight = Single.Parse(weightsWeights[Int32.Parse(weightsValues[influenceIndex * 2 + 1], CultureInfo.InvariantCulture)]);
                     //int vertIndex = vertex
 
                     // The influenced position could be used in any number of vertices 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -531,12 +532,12 @@ namespace SAGESharp.LSS
                 {
                     if (literal.Value.Type == TokenType.IntegerLiteral)
                     {
-                        string newContent = (-1 * Int32.Parse(literal.Value.Content)).ToString();
+                        string newContent = (-1 * Int32.Parse(literal.Value.Content, CultureInfo.InvariantCulture)).ToString();
                         return new LiteralExpression(new Token(TokenType.IntegerLiteral, newContent, token.Span.Start.Filename, token.Span.Start.Offset, token.Span.Start.Line, literal.Value.Span.Start.Offset + literal.Value.Span.Length - token.Span.Start.Offset));
                     }
                     else //if (literal.Value.Type == TokenType.FloatLiteral)
                     {
-                        string newContent = (-1.0f * Single.Parse(literal.Value.Content)).ToString();
+                        string newContent = (-1.0f * Single.Parse(literal.Value.Content, CultureInfo.InvariantCulture)).ToString();
                         return new LiteralExpression(new Token(TokenType.FloatLiteral, newContent, token.Span.Start.Filename, token.Span.Start.Offset, token.Span.Start.Line, literal.Value.Span.Start.Offset + literal.Value.Span.Length - token.Span.Start.Offset));
                     }
                 }

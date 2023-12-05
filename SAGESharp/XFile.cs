@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Globalization;
 
 namespace SAGESharp
 {
@@ -99,7 +100,7 @@ namespace SAGESharp
             VersionMain = Byte.Parse(Encoding.ASCII.GetString(reader.ReadBytes(2)));
             VersionSub = Byte.Parse(Encoding.ASCII.GetString(reader.ReadBytes(2)));
             Format = (HeaderFormat)reader.ReadUInt32();
-            Precision = Int32.Parse(Encoding.ASCII.GetString(reader.ReadBytes(4)));
+            Precision = Int32.Parse(Encoding.ASCII.GetString(reader.ReadBytes(4)), CultureInfo.InvariantCulture);
         }
 
         public void Write(BinaryWriter writer)

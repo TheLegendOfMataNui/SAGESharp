@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using SharpDX;
+using System.Globalization;
 
 namespace SAGESharp
 {
@@ -144,7 +145,7 @@ namespace SAGESharp
                     string[] data = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     if (data[0] == "v")
                     {
-                        vertices.Add(new Vector3(Single.Parse(data[1]), Single.Parse(data[2]), Single.Parse(data[3])));
+                        vertices.Add(new Vector3(Single.Parse(data[1], CultureInfo.InvariantCulture), Single.Parse(data[2], CultureInfo.InvariantCulture), Single.Parse(data[3], CultureInfo.InvariantCulture)));
                     }
                     else if (data[0] == "f")
                     {
@@ -152,14 +153,14 @@ namespace SAGESharp
                         string[] v2 = data[2].Split('/');
                         string[] v3 = data[3].Split('/');
 
-                        triangles.Add(new Triangle((ushort)(UInt16.Parse(v1[0]) - 1), (ushort)(UInt16.Parse(v2[0]) - 1), (ushort)(UInt16.Parse(v3[0]) - 1), currentMaterial));
+                        triangles.Add(new Triangle((ushort)(UInt16.Parse(v1[0], CultureInfo.InvariantCulture) - 1), (ushort)(UInt16.Parse(v2[0], CultureInfo.InvariantCulture) - 1), (ushort)(UInt16.Parse(v3[0], CultureInfo.InvariantCulture) - 1), currentMaterial));
                     }
                     else if (data[0] == "usemtl")
                     {
                         string materialName = data[1].ToLower();
                         if (materialName.StartsWith("material_"))
                         {
-                            currentMaterial = UInt16.Parse(materialName.Split('_')[1]);
+                            currentMaterial = UInt16.Parse(materialName.Split('_')[1], CultureInfo.InvariantCulture);
                         }
                         else
                         {
