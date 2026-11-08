@@ -1,11 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <ProjectGuid>{62E3C5E4-4C83-48FF-8C4E-4547A13DB764}</ProjectGuid>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
   <ItemGroup>
     <None Include="Test Data\ComplexBKD.bkd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -70,27 +68,20 @@
     <None Include="Test Data\SLB\Level\Conversation\SimpleConversation.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.6.0.0" />
     <PackageReference Include="NSubstitute" Version="4.0.0.0" />
     <PackageReference Include="nunit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="NUtils" Version="1.2.0" />
-    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.1" />
     <PackageReference Include="YamlDotNet" Version="8.0.0.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\SAGESharp\SAGESharp.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
-
 </Project>

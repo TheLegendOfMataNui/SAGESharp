@@ -1,10 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <ProjectGuid>{CA7EBE43-FEBB-49F4-AD76-04075FBA3B13}</ProjectGuid>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyTitle>SAGESharp</AssemblyTitle>
+    <Description>Libraries to manipulate data for the Saffire Advanced Game Engine (SAGE)</Description>
+    <Company>Litestone Studios</Company>
+    <Product>SAGESharp</Product>
+    <Copyright>Copyright (c) Litestone 2027</Copyright>
+    <VersionPrefix>1.2.1</VersionPrefix>
+    <AssemblyVersion>1.2.1</AssemblyVersion>
+    <FileVersion>1.2.1</FileVersion>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -32,7 +38,6 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>SAGESharp.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Equ" Version="2.2.0" />
     <PackageReference Include="NUtils" Version="1.2.0" />
@@ -40,18 +45,6 @@
     <PackageReference Include="SharpDX.Mathematics" Version="4.2.0" />
     <PackageReference Include="YamlDotNet" Version="8.0.0.0" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <AssemblyTitle>SAGESharp</AssemblyTitle>
-    <Description>Libraries to manipulate data for the Saffire Advanced Game Engine (SAGE)</Description>
-    <Company>Litestone Studios</Company>
-    <Product>SAGESharp</Product>
-    <Copyright>Copyright (c) Litestone 2020</Copyright>
-    <VersionPrefix>1.2.1</VersionPrefix>
-    <AssemblyVersion>1.2.1</AssemblyVersion>
-    <FileVersion>1.2.1</FileVersion>
-  </PropertyGroup>
-
   <ItemGroup Condition="'$(SignAssembly)'!='true'">
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>$(AssemblyName).Tests</_Parameter1>
@@ -60,5 +53,4 @@
       <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
-
 </Project>
