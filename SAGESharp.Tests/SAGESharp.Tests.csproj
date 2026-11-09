@@ -70,9 +70,9 @@
     </None>
     <PackageReference Include="FluentAssertions" Version="5.6.0.0" />
     <PackageReference Include="NSubstitute" Version="4.0.0.0" />
-    <PackageReference Include="nunit" Version="3.12.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="nunit" Version="3.14.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="6.3.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageReference Include="NUtils" Version="1.2.0" />
     <PackageReference Include="YamlDotNet" Version="8.0.0.0" />
   </ItemGroup>
