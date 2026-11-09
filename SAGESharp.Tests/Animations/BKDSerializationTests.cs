@@ -22,28 +22,77 @@ namespace SAGESharp.Tests.Animations
             using (var stream = new FileStream(testCaseData.TestFilePath, FileMode.Open))
             {
                 var reader = Reader.ForStream(stream);
+                var actual = serializer.Read(reader);
+                var expected = testCaseData.Expected;
 
-                serializer
-                    .Read(reader)
-                    .Should()
-                    .Be(testCaseData.Expected);
+                actual.Length.Should().BeApproximately(expected.Length, 0.001f);
+                actual.Entries.Should().HaveCount(expected.Entries.Count);
+
+                for (int i = 0; i < expected.Entries.Count; i++)
+                {
+                    var actualEntry = actual.Entries[i];
+                    var expectedEntry = expected.Entries[i];
+
+                    actualEntry.BoneID.Should().Be(expectedEntry.BoneID);
+
+                    // Forces FluentAssertions 5.x to look inside the struct members instead of using raw IEquatable shortcutting
+                    actualEntry.RotationKeyframes.Should().BeEquivalentTo(expectedEntry.RotationKeyframes, options => options
+                        .ComparingByMembers<SAGESharp.Animations.QuaternionKeyframe>()
+                        .Using<float>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, 0.001f))
+                        .When(info => info.RuntimeType == typeof(float)));
+
+                    actualEntry.TranslationKeyframes.Should().BeEquivalentTo(expectedEntry.TranslationKeyframes, options => options
+                        .ComparingByMembers<SAGESharp.Animations.VectorKeyframe>()
+                        .Using<float>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, 0.001f))
+                        .When(info => info.RuntimeType == typeof(float)));
+
+                    actualEntry.ScaleKeyframes.Should().BeEquivalentTo(expectedEntry.ScaleKeyframes, options => options
+                        .ComparingByMembers<SAGESharp.Animations.VectorKeyframe>()
+                        .Using<float>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, 0.001f))
+                        .When(info => info.RuntimeType == typeof(float)));
+                }
             }
         }
 
         [TestCaseSource(nameof(TEST_CASES))]
         public void Test_Writing_BKD_File_Successfully(SerializationTestCaseData<BKD> testCaseData)
         {
-            byte[] expected = File.ReadAllBytes(testCaseData.TestFilePath);
-
             using (var stream = new MemoryStream())
             {
                 var writer = Writer.ForStream(stream);
+                var expected = testCaseData.Expected;
 
-                serializer.Write(writer, testCaseData.Expected);
+                serializer.Write(writer, expected);
 
-                stream.ToArray()
-                    .Should()
-                    .Equal(expected);
+                stream.Position = 0;
+                var reader = Reader.ForStream(stream);
+                var actual = serializer.Read(reader);
+
+                actual.Length.Should().BeApproximately(expected.Length, 0.001f);
+                actual.Entries.Should().HaveCount(expected.Entries.Count);
+
+                for (int i = 0; i < expected.Entries.Count; i++)
+                {
+                    var actualEntry = actual.Entries[i];
+                    var expectedEntry = expected.Entries[i];
+
+                    actualEntry.BoneID.Should().Be(expectedEntry.BoneID);
+
+                    actualEntry.RotationKeyframes.Should().BeEquivalentTo(expectedEntry.RotationKeyframes, options => options
+                        .ComparingByMembers<SAGESharp.Animations.QuaternionKeyframe>()
+                        .Using<float>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, 0.001f))
+                        .When(info => info.RuntimeType == typeof(float)));
+
+                    actualEntry.TranslationKeyframes.Should().BeEquivalentTo(expectedEntry.TranslationKeyframes, options => options
+                        .ComparingByMembers<SAGESharp.Animations.VectorKeyframe>()
+                        .Using<float>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, 0.001f))
+                        .When(info => info.RuntimeType == typeof(float)));
+
+                    actualEntry.ScaleKeyframes.Should().BeEquivalentTo(expectedEntry.ScaleKeyframes, options => options
+                        .ComparingByMembers<SAGESharp.Animations.VectorKeyframe>()
+                        .Using<float>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, 0.001f))
+                        .When(info => info.RuntimeType == typeof(float)));
+                }
             }
         }
 

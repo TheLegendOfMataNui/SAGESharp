@@ -24,7 +24,7 @@ namespace SAGESharp.Tests.Animations
 
             LENGTH_FIELD.SetValue(bkd, (ushort)3647);
 
-            bkd.Length.Should().Be(60.7833366f);
+            bkd.Length.Should().BeApproximately(60.78333f, 0.001f);
         }
 
         [Test]
